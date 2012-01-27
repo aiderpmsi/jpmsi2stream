@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+
+</head>
+<body bgcolor="white">
+
+Permet d'insérer des fichiers PMSI (RSF et RSS) dans une base de données PostgreSQL. 
+
+Deux applications sont générées :
+
+<ul>
+<li> pmsi2sqlcreate : crée les tables nécessaires à l'insertion des données de PMSI</li>
+<li> pmsi2sql : insère un fichier PMSI (RSF ou RSS) dans la base de données ; le type de fichier est détecté de manière automatique</li>
+</ul>
+
+<h2>Package Specification</h2>
+
+<ol>
+  <li  style="font-size: large">Présentation générale de la solution</li>
+  <ol>
+  <li  style="font-size: medium">Langage de programmation : JAVA</li>
+  Permet de s'interfacer avec les servlets, multiplateforme.
+  <li  style="font-size: medium">Base de données : Postgresql</li>
+  Très bonne compliance au standard SQL, nombreuses fonctionnalités simplifiant le développement.
+  <li  style="font-size: medium">Absence de fichiers de configuration</li>
+  Permet de définir tous les paramètres en ligne de commande. Attention, risque de sécurité car le mot de passe de la bd peut apparaitre dans la liste des processus.
+  </ol>
+
+  <li style="font-size: large">Service rendu</li>
+
+Insertion d'un RSS version 6 ou d'un RSF type nouveau format dans une base de données PostgreSQL.
+Ces insertions permettent de stocker et exploiter les données issues des RSF et RSS. 
+
+  <li style="font-size: large">Environnement à utiliser</li>
+  
+  <li style="font-size: large">Lancement de l'application</li>
+</ol> 
+
+<h2>Related Documentation</h2>
+
+<h2> License </h2>
+Les Bibliothèques utilisées sont sous leurs propres licenses :
+<ul>
+<li> commons-lang : sous licence Apache (<A href = "http://commons.apache.org/lang/">homepage</A>)
+<li> postgresql : sous licence BSD (<A href = "http://jdbc.postgresql.org/license.html">homepage</A>)
+<li> args4j : MIT (<A href = "http://java.net/projects/args4j/">homepage</A>)
+</ul>
+Le présent logiciel est sous license <A href = "http://www.gnu.org/copyleft/gpl.html">GPLv3</A> 
+</body>
+</html>
