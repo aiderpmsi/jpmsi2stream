@@ -40,11 +40,7 @@ public class pmsi2sql {
         try {
             parser.parseArgument(args);
 
-            if(options.isHelp()){
-                parser.printUsage(System.out);
-            } else if (options.isVersion()){
-                System.out.println("Version");
-            } else {
+
             	// Création de la connection à la base de données :
             	Connection myConn = options.getNewSqlConnection();
             	// Insertion du fichier en binaire dans la table des fichiers (pmsiinsertion)
@@ -88,14 +84,18 @@ public class pmsi2sql {
             	myps.setString(2, pmsiErrors);
             	myps.execute();
             	myConn.commit();
-            }
-
+        		System.out.println("Done!\n");
         } catch (CmdLineException e) {
-            parser.setUsageWidth(80);
-            parser.printUsage(System.out);
-            System.out.println(e.getMessage());
+            if(options.isHelp()){
+                parser.printUsage(System.out);
+            } else if (options.isVersion()){
+                System.out.println("Version : test");
+            } else {
+            	parser.setUsageWidth(80);
+            	parser.printUsage(System.out);
+            	System.out.println(e.getMessage());
+            }
         }
-		System.out.println("Done!\n");
 	}
 	
 	public static FileType ReadPMSI(Pmsi2SqlMainOptions options, Connection myConn, FileType myType) throws Exception {

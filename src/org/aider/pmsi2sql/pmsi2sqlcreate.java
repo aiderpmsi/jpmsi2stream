@@ -18,11 +18,6 @@ public class pmsi2sqlcreate {
         try {
             parser.parseArgument(args);
 
-            if(options.isHelp()){
-                parser.printUsage(System.out);
-            } else if (options.isVersion()){
-                System.out.println("Version");
-            } else {
             	Connection myConn = options.getNewSqlConnection();
             	PmsiInsertion myInsertionTable = new PmsiInsertion("");
             	myConn.createStatement().execute(myInsertionTable.getSQLTable());
@@ -44,15 +39,22 @@ public class pmsi2sqlcreate {
         		f.createIndexes();
         		f.createKF();
         		f.commit();
-            }
+        		
+                System.out.println("Done!");
+
 
         } catch (CmdLineException e) {
+            if(options.isHelp()){
+                parser.printUsage(System.out);
+            } else if (options.isVersion()){
+                System.out.println("Version : test");
+            } else {
             parser.setUsageWidth(80);
             parser.printUsage(System.out);
             System.out.println(e.getMessage());
+            }
         }	
         
-        System.out.println("Done!");
 	}
 	
 }
