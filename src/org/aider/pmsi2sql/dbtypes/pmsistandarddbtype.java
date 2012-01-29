@@ -108,6 +108,6 @@ public abstract class pmsistandarddbtype extends pmsidbtype {
 			default:
 				break;
 			}
-			return MyRet + constrain;
+			return MyRet + " " + constrain;
 		}
 	}
