@@ -21,6 +21,8 @@ import org.aider.pmsi2sql.machineState.machineState;
  * <li> Création du schéma de base de données permettant d'insérer correctement les données issues d'un fichier PMSI</li>
  * <li> Insertion d'un fichier PMSI dans la base de données</li>
  * </ul>
+ * Cette classe est abstraite et sert de canvas pour les classes qui réalisent réellement la lecture
+ * des fichiers. Un certain nombre de fonctions doivent être surchargées.
  * @author delabre
  *
  */
@@ -133,9 +135,10 @@ public abstract class PmsiReader extends machineState {
 	}
 	
 	/**
-	 * 
-	 * @param MyLineTypes
-	 * @return
+	 * Tentative de recherche de correspondance entre la ligne actuellement lue
+	 * et les types de ligne que l'on peut rechercher
+	 * @param MyLineTypes Types de lignes que l'on est susceptible de lire à ce moment
+	 * @return la ligne lue, avec les données récupérées dans les différents 
 	 */
 	public pmsilinetype parseLine(Vector<Integer> MyLineTypes) {
 		Iterator<Integer> it = MyLineTypes.iterator();
@@ -148,7 +151,9 @@ public abstract class PmsiReader extends machineState {
 				for (int MyI = 0 ; MyI < MyMatch.groupCount(); MyI++) {
 					MyResults.add(MyMatch.group(MyI + 1));
 				}
+			// Insertion des valeurs récupérées dans le type de ligne lue 
 			linesTypes.get(MyIndex).setValues(MyResults);
+			// Renvoi de l'objet correspondant à la ligne lue
 			return linesTypes.get(MyIndex);
 			}
 		}
