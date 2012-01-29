@@ -142,6 +142,21 @@ C:\Documents and Settings\delabre\Mes documents>java -jar jpmsi2sql.jar -h<br/>
       <li>Arguments de la ligne de commande</li>
         Les arguments de la ligne de commande ne sont pas échappés et peuvent entraîner des problèmes de sécurité.
         La présence dans la liste des processus du mot de passe de la base de données peut compromettre sa sécurité.
+      <li>Fichiers RSF lus</li>
+        <ol class="niveau3">
+          <li>Types de fichiers RSF</li>
+            Seuls les fichiers RSF postérieurs à mars 2009 sont lus.
+          <li>Types de lignes RSF</li>
+            Seules les lignes H, A, B, C, H et M sont lues. Il est très facile de rajouter d'autres lignes,
+            mais nous n'en avons pas besoin pour le moment.
+        </ol>
+      <li>Fichiers RSS lus</li>
+        <ol class="niveau3">
+          <li>Types de fichiers RSS</li>
+            Seuls les RSS de type 116 sont lus.
+          <li>Types de données RSS</li>
+            Pour le moment, l'existence de diagnostics associés, documentaires ou actes n'a pas été testé.
+        </ol>
     </ol>
 </ol> 
 
