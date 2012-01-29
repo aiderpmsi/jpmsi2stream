@@ -129,6 +129,19 @@ C:\Documents and Settings\delabre\Mes documents>java -jar jpmsi2sql.jar -h<br/>
 	        <li>Si la tentative d'insertion a été une réussite, le statut de l'insertion (réussi ou non) est
 	          stocké dans la table pmsiinsertion</li>
 	      </ol>
+	  <li>Transformation des données pour sauvegarde dans la base de données</li>
+	    Les données des fichiers de PMSI sont séparées en 3 groupes :
+	      <ul>
+	        <li>numeric : stockée 'null' si vide</li>
+	        <li>date : stockée 'null' si vide, transformée pour correspondre au format de date (yyyy-MM-dd)</li>
+	        <li>chaine de caractères : chaine de caractère vide acceptée, pas de valeurs null possibles</li>
+	      </ul>
+    </ol>
+  <li>Limitations</li>
+    <ol class="niveau2">
+      <li>Arguments de la ligne de commande</li>
+        Les arguments de la ligne de commande ne sont pas échappés et peuvent entraîner des problèmes de sécurité.
+        La présence dans la liste des processus du mot de passe de la base de données peut compromettre sa sécurité.
     </ol>
 </ol> 
 
