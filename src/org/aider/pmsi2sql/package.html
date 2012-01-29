@@ -88,18 +88,51 @@ C:\Documents and Settings\delabre\Mes documents>java -jar jpmsi2sql.jar -h<br/>
  	        l'ordre de classement pour prendre en compte le fichier valide consiste à prendre le dernier
  	        inséré parmi ceux qui n'ont pas été invalidés dans la table d'invalidation.
  	      <li>Création des tables et outils d'historisation</li>
- 	      Le script <code>Invalisation.sql</code> crée une table listant les RSF ou RSS invalidés, organisés par date.
- 	      La vue V_Admin_RSFHeader_Valides liste les dernières versions utilisées des RSF au moment où la requête est
- 	      effectuée. La requête V_Admin_RSFHeader_getValides renvoie toutes les versions des RSF existants à un moment
- 	      défini comme argument de la fonction, avec leur état : en cours d'utilisation, invalidé (ou ni l'un ni l'autre).
- 	      La vue V_Admin_RSSHeader_Valides liste les dernières versions utilisées des RSS au moment où la requête est
- 	      effectuée. La requête V_Admin_RSSHeader_getValides renvoie toutes les versions des RSS existants à un moment
- 	      défini comme argument de la fonction, avec leur état : en cours d'utilisation, invalidé (ou ni l'un ni l'autre).
+ 	        Le script <code>Invalisation.sql</code> crée une table listant les RSF ou RSS invalidés, organisés par date.
+ 	        La vue V_Admin_RSFHeader_Valides liste les dernières versions utilisées des RSF au moment où la requête est
+   	        effectuée. La requête V_Admin_RSFHeader_getValides renvoie toutes les versions des RSF existants à un moment
+ 	        défini comme argument de la fonction, avec leur état : en cours d'utilisation, invalidé (ou ni l'un ni l'autre).
+ 	        La vue V_Admin_RSSHeader_Valides liste les dernières versions utilisées des RSS au moment où la requête est
+ 	        effectuée. La requête V_Admin_RSSHeader_getValides renvoie toutes les versions des RSS existants à un moment
+ 	        défini comme argument de la fonction, avec leur état : en cours d'utilisation, invalidé (ou ni l'un ni l'autre).
+ 	      <li>En cas d'erreur au cours de l'exécution du programme</li>
+ 	        Les messages d'erreur ne sont pas encore définis de manière correcte. Le fichier de log devrait petre utilisé
+ 	        pour tracer toutes les erreurs, sauf l'impossibilité à accéder à ce fichier qui devrait d'afficher sur la
+ 	        sortie standard.
         </ol>
+    </ol>
+    <li>Spécifications techniques</li>
+    <ol class="niveau2">
+      <li>Liens entre les tables de la base de données</li>
+        Les foreign keys permettent de garantir la cohérence des tables. Le principe est le suivant :
+          <ol class="standard">
+            <li>Sauvegarde du fichier dans la table pmsiinsertion : chaque fichier pour lequel une tentative d'insertion
+              dans la base de données est réalisé est enregistré dans cette table. Les champs permettant de définir
+              la réussite ou l'échec de l'insertion sont laissés à null et ne seron remplis qu'à la fin du programme</li>
+            <li>Selon le type de fichier, l'entête du fichier est enregistrée dans rsfheader ou rssheader, avec un lien
+              vers la table pmsiinsertion : </li>
+                <ul>
+                  <li>Pour les fichiers RSF :</li>
+                    <ol>
+                      <li>Chaque ligne A du RSF est enregistrée avec un lien vers le fichier entête rsfheader. L'association
+                        id de l'entête + numéro de facture doit être unique</li>
+                      <li>Les autres lignes sont enregistrées avec un lien vers la ligne A correspondant au numéro de facture,
+                        la clef étrangère est une clef multiple associant rsfheaderid et numéro de facture</li>
+                    </ol>
+                  <li>Pour les fichiers RSS :</li>
+                    <ol>
+                      <li>Chaque début de ligne (avec diagnostic principal) est enregistré dans la table RSSMain</li>
+                      <li>Puis chaque diagnostic associé, documentaire ou acte est enregistré dans la table correspondante
+                        avec un lien vers l'identifiant du diagnostic principal associé</li>
+                    </ol>
+                </ul>
+	        <li>Si la tentative d'insertion a été une réussite, le statut de l'insertion (réussi ou non) est
+	          stocké dans la table pmsiinsertion</li>
+	      </ol>
     </ol>
 </ol> 
 
-<h2> Schéma Merise de la base de données </h2>
+<h2> Schéma de la base de données </h2>
 <img src="doc-files/pmsi2sql.png" alt="schéma de la base de données"/>
 
 <h2>Related Documentation</h2>
