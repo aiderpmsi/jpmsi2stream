@@ -49,10 +49,14 @@ public class pmsi2sqlcreate {
     		// L'affichage de l'aide a été demandée
     		parser.setUsageWidth(80);
             parser.printUsage(System.out);
+            // Sortie du programme
+            return;
         } else if (options.isVersion()){
         	// L'affichage de la version a été demandé
     		parser.setUsageWidth(80);
             System.out.println("Version : test");
+            // sortie du programme
+            return;
         }
 
     	// Connexion à la base de données selon les arguments de la ligne de commande
