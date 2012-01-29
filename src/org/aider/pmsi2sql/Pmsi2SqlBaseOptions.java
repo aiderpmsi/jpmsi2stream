@@ -10,42 +10,29 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
- * Définit les options suivantes à utiliser :
+ * Permet de définirdes options et de renvoyer la connexion à la base de données Postgresql
+ * selon les arguments fournis. Les options suivantes sont définies :
  * <ul>
  * <li>Aide</li>
- * <p>
  * <code>-h (--help)</code>
  * <li>Numéro de version</li>
- * <p>
  * <code>-v (--version)</code>
  * <li>Fichier de log</li>
- * <p>
  * <code>-l (--logfile)</code>
  * <li>Hôte de la base de données</li>
- * <p>
  * <code>-dbh (--dbhost) HOST</code>
- * <p>
  * Définit la machine du réseau sur laquelle se trouve la base de données. Seul PostgreSQL est supporté pour le moment.
- * <p>
  * Par défaut, <code>localhost</code>
  * <li>Port de la base de données</li>
- * <p>
  * <code>-dbh (--dbhost) PORT</code>
- * <p>
  * Par défaut <code>5432</code>
  * <li>Utilisateur de la base de données : paramètre requis</li>
- * <p>
  * <code>-dbu (--dbuser) USER</code>
- * <p>
  * Définit l'utilisateur de la db à utiliser.
- * <p>
  * ATTENTION, Sera affiché dans la liste des processus, risque de sécurité  
  * <li>Mot de pass de l'utilisateur de la base de données : paramètre requis</li>
- * <p>
  * <code>-dbp (--dbpassword) PWD</code>
- * <p>
  * Définit le mot de passe de l'utilisateur de la db à utiliser.
- * <p>
  * ATTENTION, Trou de sécurité : sera affiché dans la liste des processus!  
  * </ul>
  * @author delabre
