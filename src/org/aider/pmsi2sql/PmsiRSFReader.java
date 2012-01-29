@@ -87,7 +87,7 @@ public class PmsiRSFReader extends PmsiReader {
 	/**
 	 * Constructeur d'un lecteur de fichier rsf
 	 * @param MyReader Flux à lire (habituellement un fichier)
-	 * @param myConn Connexion à la base de données ç untiliser
+	 * @param myConn Connexion à la base de données à utiliser
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 * @throws SQLException 
