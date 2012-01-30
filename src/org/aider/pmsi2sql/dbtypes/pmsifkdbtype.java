@@ -27,15 +27,22 @@ public class pmsifkdbtype extends pmsidbtype {
 	private Vector<String> sourceNames;
 	
 	/**
+	 * Constrainte de ce champ
+	 */
+	private String constrain;
+	
+	/**
 	 * Constructeur
 	 * @param MyNomChamp String Nom de la clef étrangère
-	 * @param MyDestination String Destination de la clef étrangère
+	 * @param MyDestination Table de destination de la clef étrangère
+	 * @param myConstrain type de contrainte associée (INITIALLY DEFERRED, ...)
 	 */
-	public pmsifkdbtype(String MyNomChamp, String MyDestination) {
+	public pmsifkdbtype(String MyNomChamp, String MyDestination, String myConstrain) {
 		super(MyNomChamp);
 		destination = MyDestination;
 		destNames = new Vector<String>();
 		sourceNames = new Vector<String>();
+		constrain = myConstrain;
 	}
 	
 	/**
@@ -76,6 +83,6 @@ public class pmsifkdbtype extends pmsidbtype {
 				getNomChamp() + " FOREIGN KEY (" +
 				StringUtils.join(sourceNames.iterator(), ", ") + ") REFERENCES " +
 				destination + "(" + StringUtils.join(destNames.iterator(), ", ") +
-				") DEFERRABLE INITIALLY DEFERRED;\n";
+				") " + constrain + ";\n";
 	}
 }
