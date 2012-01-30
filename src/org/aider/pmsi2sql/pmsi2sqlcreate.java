@@ -55,7 +55,7 @@ public class pmsi2sqlcreate {
         } else if (options.isVersion()){
         	// L'affichage de la version a été demandé
     		parser.setUsageWidth(80);
-            System.out.println("Version : 0.1.1");
+            System.out.println("Version : 0.1.2");
             // sortie du programme
             return;
         }
