@@ -113,7 +113,7 @@ public class pmsi2sql {
             if(options.isHelp()){
                 parser.printUsage(System.out);
             } else if (options.isVersion()){
-                System.out.println("Version : test");
+                System.out.println("Version : 0.1.1");
             } else {
             	parser.setUsageWidth(80);
             	parser.printUsage(System.out);
