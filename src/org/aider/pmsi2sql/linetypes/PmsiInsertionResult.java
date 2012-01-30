@@ -6,7 +6,7 @@ import org.aider.pmsi2sql.dbtypes.pmsifiledbtype;
 import org.aider.pmsi2sql.dbtypes.pmsiindexdbtype;
 
 /**
- * Capture l'entête d'un fichier pmsi RSS
+ * Stocke le statut d'une insertion de fichier pmsi 
  * @author delabre
  *
  */
