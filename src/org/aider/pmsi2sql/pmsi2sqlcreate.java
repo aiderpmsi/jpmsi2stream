@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.sql.Connection;
 
 import org.aider.pmsi2sql.linetypes.PmsiInsertion;
+import org.aider.pmsi2sql.linetypes.PmsiInsertionResult;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -62,28 +63,32 @@ public class pmsi2sqlcreate {
     	// Connexion à la base de données selon les arguments de la ligne de commande
        	Connection myConn = options.getNewSqlConnection();
        	
+       	// Création de la table qui trace le résultat des tentatives d'insertion de fichiers pmsi
+       	PmsiInsertionResult myInsertionResultTable = new PmsiInsertionResult("", "");
+       	myConn.createStatement().execute(myInsertionResultTable.getSQLTable());
+    	myConn.createStatement().execute(myInsertionResultTable.getSQLIndex());
+    	myConn.createStatement().execute(myInsertionResultTable.getSQLFK());
+       	
        	// Création de la table qui trace les tentatives d'insertion de fichiers pmsi
     	PmsiInsertion myInsertionTable = new PmsiInsertion("");
     	myConn.createStatement().execute(myInsertionTable.getSQLTable());
     	myConn.createStatement().execute(myInsertionTable.getSQLIndex());
     	myConn.createStatement().execute(myInsertionTable.getSQLFK());
-    	myConn.commit();
     	
     	// Création des tables permettant de stocker les RSS
     	PmsiRSSReader r = new PmsiRSSReader(new StringReader(""), options.getNewSqlConnection());
     	r.createTables();
     	r.createIndexes();
     	r.createKF();
-    	r.commit();
-
+    	
     	// Création des tables permettant de stocker les RSF
 		PmsiRSFReader f = new PmsiRSFReader(new StringReader(""), options.getNewSqlConnection());
 		f.createTables();
 		f.createIndexes();
 		f.createKF();
-		f.commit();
-
+		
 		//Fermeture de la connexion à la base de données
+		myConn.commit();
     	myConn.close();
 
     	// Affichage de la réussite du programme
