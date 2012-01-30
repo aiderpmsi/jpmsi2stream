@@ -76,13 +76,13 @@ public class pmsi2sqlcreate {
     	myConn.createStatement().execute(myInsertionTable.getSQLFK());
     	
     	// Création des tables permettant de stocker les RSS
-    	PmsiRSSReader r = new PmsiRSSReader(new StringReader(""), options.getNewSqlConnection());
+    	PmsiRSSReader r = new PmsiRSSReader(new StringReader(""), myConn);
     	r.createTables();
     	r.createIndexes();
     	r.createKF();
     	
     	// Création des tables permettant de stocker les RSF
-		PmsiRSFReader f = new PmsiRSFReader(new StringReader(""), options.getNewSqlConnection());
+		PmsiRSFReader f = new PmsiRSFReader(new StringReader(""), myConn);
 		f.createTables();
 		f.createIndexes();
 		f.createKF();
