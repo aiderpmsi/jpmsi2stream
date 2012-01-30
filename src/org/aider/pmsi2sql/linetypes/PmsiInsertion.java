@@ -3,6 +3,7 @@ package org.aider.pmsi2sql.linetypes;
 import org.aider.pmsi2sql.dbtypes.PmsiStandardDbTypeEnum;
 import org.aider.pmsi2sql.dbtypes.pmsidbinternaldbtype;
 import org.aider.pmsi2sql.dbtypes.pmsifiledbtype;
+import org.aider.pmsi2sql.dbtypes.pmsifkdbtype;
 import org.aider.pmsi2sql.dbtypes.pmsiindexdbtype;
 
 /**
@@ -37,16 +38,15 @@ public class PmsiInsertion extends pmsilinetype {
 		MyFileName.setValue(myFileName);
 		addChamp(MyFileName);
 
-		pmsifiledbtype MyFile = new pmsifiledbtype("Fichier", PmsiStandardDbTypeEnum.FILE, 0, "NOT NULL INITIALLY DEFERRED", "");
+		pmsifiledbtype MyFile = new pmsifiledbtype("Fichier", PmsiStandardDbTypeEnum.FILE, 0, "NOT NULL", "");
 		MyFile.setValue(myFileName);
 		addChamp(MyFile);
 
-		pmsifiledbtype MyStatus = new pmsifiledbtype("Status", PmsiStandardDbTypeEnum.NUMERIC, 1, "NOT NULL INITIALLY DEFERRED", "");
-		MyStatus.setValue("");
-		addChamp(MyStatus);
-		pmsifiledbtype myLog = new pmsifiledbtype("Log", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL INITIALLY DEFERRED", "");
-		myLog.setValue("");
-		addChamp(myLog);
+		pmsidbinternaldbtype MyIdResult = new pmsidbinternaldbtype("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGINT, 0);
+		MyIdResult.setValue("0");
+		addChamp(MyIdResult);
+		pmsifkdbtype MyIdResultFK = new pmsifkdbtype("pmsiinsertion_pmsiinsertionresultid_fk", "pmsiinsertionresult");
+		MyIdResultFK.addForeignChamp("pmsiinsertionresultid", "pmsiinsertionresultid");
+		addChamp(MyIdResultFK);
 	}
-	
 }
