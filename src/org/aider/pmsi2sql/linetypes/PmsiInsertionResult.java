@@ -15,7 +15,7 @@ public class PmsiInsertionResult extends pmsilinetype {
 	/**
 	 * Constructeur
 	 */
-	public PmsiInsertionResult(String myFileName) {
+	public PmsiInsertionResult(String myStatusString, String myLogString) {
 		super("pmsiinsertionresult");
 				
 		pmsidbinternaldbtype MyIdHeader = new pmsidbinternaldbtype("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGSERIAL, 0, "NOT NULL");
@@ -27,10 +27,10 @@ public class PmsiInsertionResult extends pmsilinetype {
 		addChamp(MyIdheaderIndex);
 
 		pmsifiledbtype MyStatus = new pmsifiledbtype("Status", PmsiStandardDbTypeEnum.NUMERIC, 1, "NOT NULL", "");
-		MyStatus.setValue("");
+		MyStatus.setValue(myStatusString);
 		addChamp(MyStatus);
 		pmsifiledbtype myLog = new pmsifiledbtype("Log", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL", "");
-		myLog.setValue("");
+		myLog.setValue(myLogString);
 		addChamp(myLog);
 	}
 	

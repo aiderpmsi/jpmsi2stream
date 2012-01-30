@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.aider.pmsi2sql.linetypes.PmsiInsertion;
+import org.aider.pmsi2sql.linetypes.PmsiInsertionResult;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -66,11 +67,6 @@ public class pmsi2sql {
             	List<FileType> fileTypes = new ArrayList<FileType>();
             	Collections.addAll(fileTypes, FileType.RSF, FileType.RSS);
             	
-            	// Stockage du début du message de compte-rendu dans la base de données :
-            	PreparedStatement myps = myConn.prepareStatement("UPDATE pmsiinsertion SET status = ?, log = ? " +
-            			"WHERE pmsiinsertionid = currval('pmsiinsertion_pmsiinsertionid_seq');");
-        		myps.setBigDecimal(1, new BigDecimal(0));
-
         		// On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
         		// Le premier qui réussit est considéré comme le type de fichier auquel on à faire
         		Iterator<FileType> fileTypesit = fileTypes.iterator();
@@ -86,19 +82,31 @@ public class pmsi2sql {
         			pmsiErrors = (e.getMessage() == null ? "" : e.getMessage());
         		}
 
+        		// Définition de l'état de retour de la lecture du fichier : 1 = ok, 0 = fichier non inséré correctement
+        		BigDecimal myStatus = new BigDecimal(0);
             	switch(fileResult) {
             	case RSS:
             		pmsiErrors =  "Fichier de Type RSS correctement inséré";
-            		myps.setBigDecimal(1, new BigDecimal(1));
+            		myStatus = new BigDecimal(1);
             		break;
             	case RSF:
             		pmsiErrors =  "Fichier de Type RSF correctement inséré";
-            		myps.setBigDecimal(1, new BigDecimal(1));
+            		myStatus = new BigDecimal(1);
             		break;
             	default:
             	}
-            	myps.setString(2, pmsiErrors);
-            	myps.execute();
+
+            	// Stockage du résultat de l'insertion :
+            	PmsiInsertionResult myInsertResult = new PmsiInsertionResult(myStatus.toString(), pmsiErrors);
+            	myInsertResult.insertSQLLine(myConn);
+            	
+            	// Création du lien entre pmsiinsertion et pmsiinsertionresult
+            	PreparedStatement myps = myConn.prepareStatement("UPDATE pmsiinsertion SET pmsiinsertionresultid = " +
+            			"currval('pmsiinsertionresult_pmsiinsertionresultid_seq') " +
+            			"WHERE pmsiinsertionid = currval('pmsiinsertion_pmsiinsertionid_seq');");
+        		myps.execute();
+        		
+        		// Validation de la transaction
             	myConn.commit();
         		System.out.println("Done!\n");
         } catch (CmdLineException e) {
