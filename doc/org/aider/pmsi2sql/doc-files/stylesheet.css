@@ -49,3 +49,7 @@ ol.niveau3 li {font-size: 115%}
 ol.niveau3 li:before {
    content: counter(Point_liste_niveau1) "." counter(Point_liste_niveau2) "." counter(Point_liste_niveau3) ". ";
    counter-increment:Point_liste_niveau3;}
+ol.standard {}
+ol.standard li {font-size: 100%}
+ol.standard li:before {
+	content: "";}
