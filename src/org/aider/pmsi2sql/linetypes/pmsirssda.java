@@ -24,7 +24,7 @@ public class pmsirssda extends pmsilinetype {
 		pmsidbinternaldbtype MyIdMain = new pmsidbinternaldbtype("idmain", PmsiStandardDbTypeEnum.BIGINT, 0);
 		MyIdMain.setValue("currval('rssmain_idmain_seq')");
 		addChamp(MyIdMain);
-		pmsifkdbtype MyIdmainFK = new pmsifkdbtype("RSSDA_idmain_fk", "RSSMain");
+		pmsifkdbtype MyIdmainFK = new pmsifkdbtype("RSSDA_idmain_fk", "RSSMain", "DEFERRABLE INITIALLY DEFERRED");
 		MyIdmainFK.addForeignChamp("idmain", "idmain");
 		addChamp(MyIdmainFK);
 

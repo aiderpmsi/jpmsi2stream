@@ -24,7 +24,7 @@ public class pmsirssmain extends pmsilinetype {
 		pmsidbinternaldbtype MyIdHeader = new pmsidbinternaldbtype("idheader", PmsiStandardDbTypeEnum.BIGINT, 0);
 		MyIdHeader.setValue("currval('rssheader_idheader_seq')");
 		addChamp(MyIdHeader);
-		pmsifkdbtype MyIdHeaderFK = new pmsifkdbtype("RSSMain_idheader_fk", "RSSHeader");
+		pmsifkdbtype MyIdHeaderFK = new pmsifkdbtype("RSSMain_idheader_fk", "RSSHeader", "DEFERRABLE INITIALLY DEFERRED");
 		MyIdHeaderFK.addForeignChamp("idheader", "idheader");
 		addChamp(MyIdHeaderFK);
 

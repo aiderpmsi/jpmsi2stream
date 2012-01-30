@@ -24,7 +24,7 @@ public class pmsirsfa extends pmsilinetype {
 		pmsidbinternaldbtype MyIdHeader = new pmsidbinternaldbtype("rsfheaderid", PmsiStandardDbTypeEnum.BIGINT, 0);
 		MyIdHeader.setValue("currval('rsfheader_rsfheaderid_seq')");
 		addChamp(MyIdHeader);
-		pmsifkdbtype MyIdHeaderFK = new pmsifkdbtype("RSFA_rsfheaderid_fk", "RSFHeader");
+		pmsifkdbtype MyIdHeaderFK = new pmsifkdbtype("RSFA_rsfheaderid_fk", "RSFHeader", "DEFERRABLE INITIALLY DEFERRED");
 		MyIdHeaderFK.addForeignChamp("rsfheaderid", "rsfheaderid");
 		addChamp(MyIdHeaderFK);
 		

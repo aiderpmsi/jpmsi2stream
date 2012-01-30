@@ -45,7 +45,7 @@ public class PmsiInsertion extends pmsilinetype {
 		pmsidbinternaldbtype MyIdResult = new pmsidbinternaldbtype("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGINT, 0);
 		MyIdResult.setValue("0");
 		addChamp(MyIdResult);
-		pmsifkdbtype MyIdResultFK = new pmsifkdbtype("pmsiinsertion_pmsiinsertionresultid_fk", "pmsiinsertionresult");
+		pmsifkdbtype MyIdResultFK = new pmsifkdbtype("pmsiinsertion_pmsiinsertionresultid_fk", "pmsiinsertionresult", "DEFERRABLE INITIALLY DEFERRED");
 		MyIdResultFK.addForeignChamp("pmsiinsertionresultid", "pmsiinsertionresultid");
 		addChamp(MyIdResultFK);
 	}

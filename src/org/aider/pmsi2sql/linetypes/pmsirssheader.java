@@ -29,7 +29,7 @@ public class pmsirssheader extends pmsilinetype {
 		pmsidbinternaldbtype MyIdInsertion = new pmsidbinternaldbtype("pmsiinsertionid", PmsiStandardDbTypeEnum.BIGINT, 0);
 		MyIdInsertion.setValue("currval('pmsiinsertion_pmsiinsertionid_seq')");
 		addChamp(MyIdInsertion);
-		pmsifkdbtype MyIdInsertionFK = new pmsifkdbtype("RSSHeader_pmsiinsertionid_fk", "pmsiinsertion");
+		pmsifkdbtype MyIdInsertionFK = new pmsifkdbtype("RSSHeader_pmsiinsertionid_fk", "pmsiinsertion", "DEFERRABLE INITIALLY DEFERRED");
 		MyIdInsertionFK.addForeignChamp("pmsiinsertionid", "pmsiinsertionid");
 		addChamp(MyIdInsertionFK);
 
