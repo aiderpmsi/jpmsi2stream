@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 /**
  * Cette classe permet de définir un champ de la base de données dont la source
  * provient d'un fichier source pmsi grâce au regex associé
- * 
  * @author delabre
  *
  */
@@ -25,29 +24,29 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	
 	/**
 	 * Constructeur
-	 * @param MyNomChamp Nom du champ dans la base de données
-	 * @param MySQLType Type de donnée dans la db
-	 * @param MySize Taille de la donnée dans la db
+	 * @param myNomChamp Nom du champ dans la base de données
+	 * @param mySQLType Type de donnée dans la db
+	 * @param mySize Taille de la donnée dans la db
 	 * @param myConstrain Contrainte du champ SQL
-	 * @param Myregex Regex capturant la chaine de caractère associée.
+	 * @param myregex Regex capturant la chaine de caractère associée.
 	 */
-	public pmsifiledbtype(String MyNomChamp, PmsiStandardDbTypeEnum MySQLType,
-			int MySize, String myConstrain, String Myregex) {
-		super(MyNomChamp, MySQLType, MySize, myConstrain);
-		regex = Myregex;
+	public pmsifiledbtype(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
+			int mySize, String myConstrain, String myregex) {
+		super(myNomChamp, mySQLType, mySize, myConstrain);
+		regex = myregex;
 	}
 
 	/**
 	 * Constructeur sans contrainte de champ SQL
-	 * @param MyNomChamp
-	 * @param MySQLType
-	 * @param MySize
-	 * @param Myregex
+	 * @param myNomChamp
+	 * @param mySQLType
+	 * @param mySize
+	 * @param myregex
 	 */
-	public pmsifiledbtype(String MyNomChamp, PmsiStandardDbTypeEnum MySQLType,
-			int MySize, String Myregex) {
-		super(MyNomChamp, MySQLType, MySize, "");
-		regex = Myregex;
+	public pmsifiledbtype(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
+			int mySize, String myregex) {
+		super(myNomChamp, mySQLType, mySize, "");
+		regex = myregex;
 	}
 
 	/**
@@ -66,9 +65,9 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	 * <li> DATE : transformée de DDMMYYYY en YYYY-MM-DD ou NULL si valeur ne correspondant pas à DDMMYYYY</li>
 	 * <li> Autres : les espaces sont enleves avant et après, et si il ne reste rien, transformés en null 
 	 * </ul>
-	 * @param MyValue Valeur à associer à ce champ
+	 * @param myValue Valeur à associer à ce champ
 	 */
-	public void setValue(String MyValue) {
+	public void setValue(String myValue) {
 		// Suppression des espaces si on a une valeur non textuelle
 		switch (getSqlType()) {
 		case VARCHAR:
@@ -77,7 +76,7 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 		case FILE:
 			break;
 		default:
-			MyValue = MyValue.trim();
+			myValue = myValue.trim();
 		}
 		// Une valeur non textuelle vide est transformée en NULL
 		switch(getSqlType()) {
@@ -89,15 +88,15 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 		case DATE:
 			if (datePattern == null)
 				datePattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})");
-			Matcher m = datePattern.matcher(MyValue);
+			Matcher m = datePattern.matcher(myValue);
 			if (m.matches()) {
-				MyValue = m.group(3) + "-" + m.group(2) + "-" + m.group(1);
+				myValue = m.group(3) + "-" + m.group(2) + "-" + m.group(1);
 			}
 		default:
-			if (MyValue.length() == 0)
-				MyValue = null;
+			if (myValue.length() == 0)
+				myValue = null;
 		}
-		super.setValue(MyValue);
+		super.setValue(myValue);
 	}
 	
 }
