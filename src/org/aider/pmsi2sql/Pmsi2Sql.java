@@ -21,7 +21,7 @@ import org.kohsuke.args4j.CmdLineParser;
  * @author delabre
  *
  */
-public class pmsi2sql {
+public class Pmsi2Sql {
 
 	/**
 	 * Enumération permettant d'indiquer quel lecteur a réussi à réaliser la lecture du fichier

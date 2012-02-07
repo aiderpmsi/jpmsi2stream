@@ -14,7 +14,7 @@ import org.kohsuke.args4j.CmdLineParser;
  * @author delabre
  *
  */
-public class pmsi2sqlcreate {
+public class Pmsi2SqlCreate {
 
 	/**
 	 * Fonction principale du programme pmsi2sqlcreate

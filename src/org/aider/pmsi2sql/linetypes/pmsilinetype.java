@@ -13,7 +13,7 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.aider.pmsi2sql.dbtypes.pmsidbinternaldbtype;
-import org.aider.pmsi2sql.dbtypes.pmsidbtype;
+import org.aider.pmsi2sql.dbtypes.PmsiElement;
 import org.aider.pmsi2sql.dbtypes.pmsifiledbtype;
 import org.aider.pmsi2sql.dbtypes.pmsifkdbtype;
 import org.aider.pmsi2sql.dbtypes.pmsiindexdbtype;
@@ -21,8 +21,8 @@ import org.aider.pmsi2sql.dbtypes.pmsistandarddbtype;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Type général de ligne pmsi, permettant d'associer plusieurs {@link pmsidbtype}.
- * Ces différents {@link pmsidbtype} correspondent en fait à 
+ * Type général de ligne pmsi, permettant d'associer plusieurs {@link PmsiElement}.
+ * Ces différents {@link PmsiElement} correspondent en fait à 
  * à insérer dans une même table de base de données
  * @author delabre
  *
@@ -37,7 +37,7 @@ public abstract class pmsilinetype {
 	/**
 	 * Liste des éléments de la base de données (champs, index, foreign key)
 	 */
-	private Vector<pmsidbtype> champs;
+	private Vector<PmsiElement> champs;
 	
 	/**
 	 * Stocke le regex pour pattern matching de manière à ne le compiler qu'une fois
@@ -51,15 +51,15 @@ public abstract class pmsilinetype {
 	 * @param MyNom String Nom de la base de données associée
 	 */
 	public pmsilinetype(String MyNom) {
-		champs = new Vector<pmsidbtype>();
+		champs = new Vector<PmsiElement>();
 		nom = MyNom;
 	}
 	
 	/**
 	 * Ajoute un type sql dans la base de données
-	 * @param MyChamp {@link pmsidbtype} type sql
+	 * @param MyChamp {@link PmsiElement} type sql
 	 */
-	public void addChamp(pmsidbtype MyChamp) {
+	public void addChamp(PmsiElement MyChamp) {
 		champs.add(MyChamp);
 	}
 	
@@ -77,10 +77,10 @@ public abstract class pmsilinetype {
 	public String getSQLTable() {
 		Vector<String> MySQLChunks = new Vector<String>();
 		
-		Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+		Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 
 		while (MyEnumTypes.hasMoreElements()) {
-			pmsidbtype MyElt = MyEnumTypes.nextElement();
+			PmsiElement MyElt = MyEnumTypes.nextElement();
 			if (MyElt instanceof pmsistandarddbtype) {
 				pmsistandarddbtype MyNElt = (pmsistandarddbtype) MyElt;
 				MySQLChunks.add(MyNElt.getSQL());
@@ -96,10 +96,10 @@ public abstract class pmsilinetype {
 	public String getSQLIndex() {
 		String MyRe = new String();
 		
-		Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+		Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 
 		while (MyEnumTypes.hasMoreElements()) {
-			pmsidbtype MyElt = MyEnumTypes.nextElement();
+			PmsiElement MyElt = MyEnumTypes.nextElement();
 			if (MyElt instanceof pmsiindexdbtype) {
 				pmsiindexdbtype MyNElt = (pmsiindexdbtype) MyElt;
 				MyRe = MyRe.concat(MyNElt.getSQL(getNom()));
@@ -115,10 +115,10 @@ public abstract class pmsilinetype {
 	public String getSQLFK() {
 		String MyRe = new String();
 		
-		Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+		Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 
 		while (MyEnumTypes.hasMoreElements()) {
-			pmsidbtype MyElt = MyEnumTypes.nextElement();
+			PmsiElement MyElt = MyEnumTypes.nextElement();
 			if (MyElt instanceof pmsifkdbtype) {
 				pmsifkdbtype MyNElt = (pmsifkdbtype) MyElt;
 				MyRe = MyRe.concat(MyNElt.getSQL(getNom()));
@@ -136,10 +136,10 @@ public abstract class pmsilinetype {
 		} else {
 			String MyRe = new String();
 		
-			Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+			Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 
 			while (MyEnumTypes.hasMoreElements()) {
-				pmsidbtype MyElt = MyEnumTypes.nextElement();
+				PmsiElement MyElt = MyEnumTypes.nextElement();
 				if (MyElt instanceof pmsifiledbtype) {
 					pmsifiledbtype MyNElt = (pmsifiledbtype) MyElt;
 					MyRe = MyRe.concat(MyNElt.getRegex());
@@ -154,11 +154,11 @@ public abstract class pmsilinetype {
 	 * Choisit les valeurs des éléments récupérés dans le fichier lu
 	 */
 	public void setValues(Vector<String> MyValues) {
-		Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+		Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 		Iterator<String> MyValue = MyValues.iterator();
 
 		while (MyEnumTypes.hasMoreElements()) {
-			pmsidbtype MyElt = MyEnumTypes.nextElement();
+			PmsiElement MyElt = MyEnumTypes.nextElement();
 			if (MyElt instanceof pmsifiledbtype) {
 				MyElt.setValue(MyValue.next());
 			}
@@ -166,10 +166,10 @@ public abstract class pmsilinetype {
 	}
 	
 	public String getValue(String MyElementName) {
-		Enumeration<pmsidbtype> MyEnumTypes = champs.elements();
+		Enumeration<PmsiElement> MyEnumTypes = champs.elements();
 		
 		while(MyEnumTypes.hasMoreElements()) {
-			pmsidbtype MyElt = MyEnumTypes.nextElement();
+			PmsiElement MyElt = MyEnumTypes.nextElement();
 			if (MyElt.getNomChamp().equals(MyElementName))
 				return MyElt.getValue();
 		}
@@ -190,10 +190,10 @@ public abstract class pmsilinetype {
 		Vector<String> MySQLDBTypes = new Vector<String>();
 		Vector<String> MySQLDBValues = new Vector<String>();
 
-		Iterator<pmsidbtype> MyDBTypes = champs.iterator();
+		Iterator<PmsiElement> MyDBTypes = champs.iterator();
 		
 		while (MyDBTypes.hasNext()) {
-			pmsidbtype MyElt = MyDBTypes.next();
+			PmsiElement MyElt = MyDBTypes.next();
 			if (MyElt instanceof pmsifiledbtype) {
 				MySQLFileTypes.add(MyElt.getNomChamp());
 				MySQLFileInterrogations.add("?");
@@ -216,7 +216,7 @@ public abstract class pmsilinetype {
 		MyDBTypes = champs.iterator();
 		int MyI = 1;
 		while (MyDBTypes.hasNext()) {
-			pmsidbtype MyElt = MyDBTypes.next();
+			PmsiElement MyElt = MyDBTypes.next();
 			if (MyElt instanceof pmsifiledbtype) {
 				pmsifiledbtype MyEltb = (pmsifiledbtype) MyElt;
 				if (MyEltb.getValue() == null)

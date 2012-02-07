@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
  * @author delabre
  *
  */
-public class pmsifkdbtype extends pmsidbtype {
+public class pmsifkdbtype extends PmsiElement {
 
 	/**
 	 * Table de destination

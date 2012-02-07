@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
  * @author delabre
  *
  */
-public class pmsiindexdbtype extends pmsidbtype {
+public class pmsiindexdbtype extends PmsiElement {
 
 	public static final int INDEX_SIMPLE = 0;
 	public static final int INDEX_PK = 1;

@@ -6,7 +6,7 @@ package org.aider.pmsi2sql.dbtypes;
  * @author delabre
  *
  */
-public abstract class pmsistandarddbtype extends pmsidbtype {
+public abstract class pmsistandarddbtype extends PmsiElement {
 
 	/**
 	 * Type de champ SQL défini par cette classe.

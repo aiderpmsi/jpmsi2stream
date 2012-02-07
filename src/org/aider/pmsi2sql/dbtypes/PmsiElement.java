@@ -4,10 +4,17 @@ package org.aider.pmsi2sql.dbtypes;
  * Classe parente de tous les types de données permettant de faire les liens entre fichier
  * de pmsi et base de données. N'est pas utilisée directement.
  * Une liste de ces classes sont créées dans un objet de type pmsilinetype pour
- * définir le lien entre une ligne pmsi et sa persistance dans la base de données 
+ * définir le lien entre une ligne pmsi et sa persistance dans la base de données.
+ * Un élément peut être :
+ * <ul>
+ * <li>Un champ à lire dans un fichier</li>
+ * <li>Un compteur (ligne, ...) avec un compteur</li>
+ * <li>Un index</li>
+ * <li>Une clef étrangère</li>
+ * </ul> 
  * @author delabre
  */
-public abstract class pmsidbtype {
+public abstract class PmsiElement {
 	
 	/**
 	 * Nom du champ associé dans la base de données
@@ -23,7 +30,7 @@ public abstract class pmsidbtype {
 	 * Constructeur
 	 * @param MyNomChamp Nom du champ dans la base de données
 	 */
-	public pmsidbtype(String MyNomChamp) {
+	public PmsiElement(String MyNomChamp) {
 		nomchamp = MyNomChamp;
 	}
 	
