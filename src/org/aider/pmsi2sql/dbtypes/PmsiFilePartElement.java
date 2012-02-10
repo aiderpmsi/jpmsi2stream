@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @author delabre
  *
  */
-public class pmsifiledbtype extends pmsistandarddbtype {
+public class PmsiFilePartElement extends PmsiStandardElement {
 
 	/**
 	 * Chaine de caractère correspondant au regex permettant de capturer
@@ -30,7 +30,7 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	 * @param myConstrain Contrainte du champ SQL
 	 * @param myregex Regex capturant la chaine de caractère associée.
 	 */
-	public pmsifiledbtype(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
+	public PmsiFilePartElement(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
 			int mySize, String myConstrain, String myregex) {
 		super(myNomChamp, mySQLType, mySize, myConstrain);
 		regex = myregex;
@@ -43,7 +43,7 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	 * @param mySize
 	 * @param myregex
 	 */
-	public pmsifiledbtype(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
+	public PmsiFilePartElement(String myNomChamp, PmsiStandardDbTypeEnum mySQLType,
 			int mySize, String myregex) {
 		super(myNomChamp, mySQLType, mySize, "");
 		regex = myregex;
@@ -53,7 +53,7 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	 * Renvoie le regex du champ
 	 * @return {@link String} Regex
 	 */
-	public String getRegex() {
+	public String GetRegex() {
 		return regex;
 	}
 	
@@ -67,7 +67,7 @@ public class pmsifiledbtype extends pmsistandarddbtype {
 	 * </ul>
 	 * @param myValue Valeur à associer à ce champ
 	 */
-	public void setValue(String myValue) {
+	public void SetValue(String myValue) {
 		// Suppression des espaces si on a une valeur non textuelle
 		switch (getSqlType()) {
 		case VARCHAR:

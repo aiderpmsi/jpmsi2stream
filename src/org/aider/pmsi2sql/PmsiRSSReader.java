@@ -6,12 +6,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.aider.pmsi2sql.linetypes.pmsilinetype;
-import org.aider.pmsi2sql.linetypes.pmsirssacte;
-import org.aider.pmsi2sql.linetypes.pmsirssda;
-import org.aider.pmsi2sql.linetypes.pmsirssdad;
-import org.aider.pmsi2sql.linetypes.pmsirssheader;
-import org.aider.pmsi2sql.linetypes.pmsirssmain;
+import org.aider.pmsi2sql.linetypes.PmsiLineType;
+import org.aider.pmsi2sql.linetypes.PmsiRssActe;
+import org.aider.pmsi2sql.linetypes.PmsiRssDa;
+import org.aider.pmsi2sql.linetypes.PmsiRssDad;
+import org.aider.pmsi2sql.linetypes.PmsiRssHeader;
+import org.aider.pmsi2sql.linetypes.PmsiRssMain;
 
 /**
  * Classe étendant la classe abstraite de PmsiReader et permettant de lire un
@@ -123,11 +123,11 @@ public class PmsiRSSReader extends PmsiReader {
 		super(MyReader, myConn);
 
 		// Indication des différents types de ligne que l'on peut rencontrer
-		addLineType(STATE_RSS_HEADER, new pmsirssheader());
-		addLineType(STATE_RSS_MAIN, new pmsirssmain());
-		addLineType(STATE_RSS_DA, new pmsirssda());
-		addLineType(STATE_RSS_DAD, new pmsirssdad());
-		addLineType(STATE_RSS_ACTE, new pmsirssacte());
+		addLineType(STATE_RSS_HEADER, new PmsiRssHeader());
+		addLineType(STATE_RSS_MAIN, new PmsiRssMain());
+		addLineType(STATE_RSS_DA, new PmsiRssDa());
+		addLineType(STATE_RSS_DAD, new PmsiRssDad());
+		addLineType(STATE_RSS_ACTE, new PmsiRssActe());
 		
 		// Définition des états et des signaux de la machine à états
 		addTransition(SIGNAL_START, STATE_READY, STATE_RSS_HEADER);
@@ -150,7 +150,7 @@ public class PmsiRSSReader extends PmsiReader {
 		// Liste permettant d'informer la fonction parseLine des différentes lignes que l'on peut rencontrer
 		Vector<Integer> MyV = new Vector<Integer>();
 		// Objet récupérant le type de ligne est les informations contenues dans un ligne lue
-		pmsilinetype MyMatch;
+		PmsiLineType MyMatch;
 		switch(getState()) {
 		case STATE_READY:
 			changeState(SIGNAL_START);

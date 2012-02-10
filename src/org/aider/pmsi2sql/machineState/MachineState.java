@@ -2,7 +2,7 @@ package org.aider.pmsi2sql.machineState;
 
 import java.util.HashMap;
 
-public abstract class machineState {
+public abstract class MachineState {
 
 	/**
 	 * L'état de départ est un int égal à 0
@@ -27,7 +27,7 @@ public abstract class machineState {
 	 * Constructeur. La machine est initialisée avec un entier correspondant
 	 * à START
 	 */
-	public machineState() {
+	public MachineState() {
 		statesTable = new HashMap<Integer, HashMap<Integer,Integer>>();
 		etatActuel = STATE_READY;
 	}

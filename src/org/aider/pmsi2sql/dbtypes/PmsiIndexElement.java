@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
  * @author delabre
  *
  */
-public class pmsiindexdbtype extends PmsiElement {
+public class PmsiIndexElement extends PmsiElement {
 
 	public static final int INDEX_SIMPLE = 0;
 	public static final int INDEX_PK = 1;
@@ -32,7 +32,7 @@ public class pmsiindexdbtype extends PmsiElement {
 	 * @param MyNomChamp String Nom du champ créé
 	 * @param MyIndexType int Type d'index (voir {@link indextype})
 	 */
-	public pmsiindexdbtype(String MyNomChamp,
+	public PmsiIndexElement(String MyNomChamp,
 			int MyIndexType) {
 		super(MyNomChamp);
 		indextype = MyIndexType;

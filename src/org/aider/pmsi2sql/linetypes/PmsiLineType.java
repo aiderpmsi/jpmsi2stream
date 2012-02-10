@@ -12,12 +12,12 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import org.aider.pmsi2sql.dbtypes.pmsidbinternaldbtype;
+import org.aider.pmsi2sql.dbtypes.PmsiInternalElement;
 import org.aider.pmsi2sql.dbtypes.PmsiElement;
-import org.aider.pmsi2sql.dbtypes.pmsifiledbtype;
-import org.aider.pmsi2sql.dbtypes.pmsifkdbtype;
-import org.aider.pmsi2sql.dbtypes.pmsiindexdbtype;
-import org.aider.pmsi2sql.dbtypes.pmsistandarddbtype;
+import org.aider.pmsi2sql.dbtypes.PmsiFilePartElement;
+import org.aider.pmsi2sql.dbtypes.PmsiFkElement;
+import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
+import org.aider.pmsi2sql.dbtypes.PmsiStandardElement;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
  * @author delabre
  *
  */
-public abstract class pmsilinetype {
+public abstract class PmsiLineType {
 
 	/**
 	 * Nom de la table de la base de donnnées
@@ -50,7 +50,7 @@ public abstract class pmsilinetype {
 	 * Constructeur
 	 * @param MyNom String Nom de la base de données associée
 	 */
-	public pmsilinetype(String MyNom) {
+	public PmsiLineType(String MyNom) {
 		champs = new Vector<PmsiElement>();
 		nom = MyNom;
 	}
@@ -81,8 +81,8 @@ public abstract class pmsilinetype {
 
 		while (MyEnumTypes.hasMoreElements()) {
 			PmsiElement MyElt = MyEnumTypes.nextElement();
-			if (MyElt instanceof pmsistandarddbtype) {
-				pmsistandarddbtype MyNElt = (pmsistandarddbtype) MyElt;
+			if (MyElt instanceof PmsiStandardElement) {
+				PmsiStandardElement MyNElt = (PmsiStandardElement) MyElt;
 				MySQLChunks.add(MyNElt.getSQL());
 			}
 		}
@@ -100,8 +100,8 @@ public abstract class pmsilinetype {
 
 		while (MyEnumTypes.hasMoreElements()) {
 			PmsiElement MyElt = MyEnumTypes.nextElement();
-			if (MyElt instanceof pmsiindexdbtype) {
-				pmsiindexdbtype MyNElt = (pmsiindexdbtype) MyElt;
+			if (MyElt instanceof PmsiIndexElement) {
+				PmsiIndexElement MyNElt = (PmsiIndexElement) MyElt;
 				MyRe = MyRe.concat(MyNElt.getSQL(getNom()));
 			}
 		}
@@ -119,8 +119,8 @@ public abstract class pmsilinetype {
 
 		while (MyEnumTypes.hasMoreElements()) {
 			PmsiElement MyElt = MyEnumTypes.nextElement();
-			if (MyElt instanceof pmsifkdbtype) {
-				pmsifkdbtype MyNElt = (pmsifkdbtype) MyElt;
+			if (MyElt instanceof PmsiFkElement) {
+				PmsiFkElement MyNElt = (PmsiFkElement) MyElt;
 				MyRe = MyRe.concat(MyNElt.getSQL(getNom()));
 			}
 		}
@@ -140,9 +140,9 @@ public abstract class pmsilinetype {
 
 			while (MyEnumTypes.hasMoreElements()) {
 				PmsiElement MyElt = MyEnumTypes.nextElement();
-				if (MyElt instanceof pmsifiledbtype) {
-					pmsifiledbtype MyNElt = (pmsifiledbtype) MyElt;
-					MyRe = MyRe.concat(MyNElt.getRegex());
+				if (MyElt instanceof PmsiFilePartElement) {
+					PmsiFilePartElement MyNElt = (PmsiFilePartElement) MyElt;
+					MyRe = MyRe.concat(MyNElt.GetRegex());
 				}
 			}
 			regexPattern = Pattern.compile("^" + MyRe);
@@ -159,7 +159,7 @@ public abstract class pmsilinetype {
 
 		while (MyEnumTypes.hasMoreElements()) {
 			PmsiElement MyElt = MyEnumTypes.nextElement();
-			if (MyElt instanceof pmsifiledbtype) {
+			if (MyElt instanceof PmsiFilePartElement) {
 				MyElt.setValue(MyValue.next());
 			}
 		}
@@ -178,7 +178,7 @@ public abstract class pmsilinetype {
 	
 	/**
 	 * Insère les différentes valeurs contenues dans les {@link pmsifiletype} et les
-	 * {@link pmsidbinternaldbtype} dans la table correspondants
+	 * {@link PmsiInternalElement} dans la table correspondants
 	 * @param Myconnection Connection à la base de données
 	 * @throws SQLException
 	 * @throws FileNotFoundException
@@ -194,10 +194,10 @@ public abstract class pmsilinetype {
 		
 		while (MyDBTypes.hasNext()) {
 			PmsiElement MyElt = MyDBTypes.next();
-			if (MyElt instanceof pmsifiledbtype) {
+			if (MyElt instanceof PmsiFilePartElement) {
 				MySQLFileTypes.add(MyElt.getNomChamp());
 				MySQLFileInterrogations.add("?");
-			} else if (MyElt instanceof pmsidbinternaldbtype) {
+			} else if (MyElt instanceof PmsiInternalElement) {
 				MySQLDBTypes.add(MyElt.getNomChamp());
 				MySQLDBValues.add(MyElt.getValue());
 			}
@@ -217,8 +217,8 @@ public abstract class pmsilinetype {
 		int MyI = 1;
 		while (MyDBTypes.hasNext()) {
 			PmsiElement MyElt = MyDBTypes.next();
-			if (MyElt instanceof pmsifiledbtype) {
-				pmsifiledbtype MyEltb = (pmsifiledbtype) MyElt;
+			if (MyElt instanceof PmsiFilePartElement) {
+				PmsiFilePartElement MyEltb = (PmsiFilePartElement) MyElt;
 				if (MyEltb.getValue() == null)
 					InsertSQLStatement.setObject(MyI, null);
 				else {

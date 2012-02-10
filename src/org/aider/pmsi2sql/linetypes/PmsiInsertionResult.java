@@ -1,16 +1,16 @@
 package org.aider.pmsi2sql.linetypes;
 
 import org.aider.pmsi2sql.dbtypes.PmsiStandardDbTypeEnum;
-import org.aider.pmsi2sql.dbtypes.pmsidbinternaldbtype;
-import org.aider.pmsi2sql.dbtypes.pmsifiledbtype;
-import org.aider.pmsi2sql.dbtypes.pmsiindexdbtype;
+import org.aider.pmsi2sql.dbtypes.PmsiInternalElement;
+import org.aider.pmsi2sql.dbtypes.PmsiFilePartElement;
+import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
 
 /**
  * Stocke le statut d'une insertion de fichier pmsi 
  * @author delabre
  *
  */
-public class PmsiInsertionResult extends pmsilinetype {
+public class PmsiInsertionResult extends PmsiLineType {
 
 	/**
 	 * Constructeur
@@ -18,19 +18,19 @@ public class PmsiInsertionResult extends pmsilinetype {
 	public PmsiInsertionResult(String myStatusString, String myLogString) {
 		super("pmsiinsertionresult");
 				
-		pmsidbinternaldbtype MyIdHeader = new pmsidbinternaldbtype("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGSERIAL, 0, "NOT NULL");
+		PmsiInternalElement MyIdHeader = new PmsiInternalElement("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGSERIAL, 0, "NOT NULL");
 		MyIdHeader.setValue("nextval('pmsiinsertionresult_pmsiinsertionresultid_seq')");
 		addChamp(MyIdHeader);
 
-		pmsiindexdbtype MyIdheaderIndex = new pmsiindexdbtype("pmsiinsertionresult_pmsiinsertionresultidpidx", pmsiindexdbtype.INDEX_PK);
+		PmsiIndexElement MyIdheaderIndex = new PmsiIndexElement("pmsiinsertionresult_pmsiinsertionresultidpidx", PmsiIndexElement.INDEX_PK);
 		MyIdheaderIndex.addIndex("pmsiinsertionresultid");
 		addChamp(MyIdheaderIndex);
 
-		pmsifiledbtype MyStatus = new pmsifiledbtype("Status", PmsiStandardDbTypeEnum.NUMERIC, 1, "NOT NULL", "");
-		MyStatus.setValue(myStatusString);
+		PmsiFilePartElement MyStatus = new PmsiFilePartElement("Status", PmsiStandardDbTypeEnum.NUMERIC, 1, "NOT NULL", "");
+		MyStatus.SetValue(myStatusString);
 		addChamp(MyStatus);
-		pmsifiledbtype myLog = new pmsifiledbtype("Log", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL", "");
-		myLog.setValue(myLogString);
+		PmsiFilePartElement myLog = new PmsiFilePartElement("Log", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL", "");
+		myLog.SetValue(myLogString);
 		addChamp(myLog);
 	}
 	

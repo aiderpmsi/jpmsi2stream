@@ -6,13 +6,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.aider.pmsi2sql.linetypes.pmsilinetype;
-import org.aider.pmsi2sql.linetypes.pmsirsfa;
-import org.aider.pmsi2sql.linetypes.pmsirsfb;
-import org.aider.pmsi2sql.linetypes.pmsirsfc;
-import org.aider.pmsi2sql.linetypes.pmsirsfh;
-import org.aider.pmsi2sql.linetypes.pmsirsfheader;
-import org.aider.pmsi2sql.linetypes.pmsirsfm;
+import org.aider.pmsi2sql.linetypes.PmsiLineType;
+import org.aider.pmsi2sql.linetypes.PmsiRsfa;
+import org.aider.pmsi2sql.linetypes.PmsiRsfb;
+import org.aider.pmsi2sql.linetypes.PmsiRsfc;
+import org.aider.pmsi2sql.linetypes.PmsiRsfh;
+import org.aider.pmsi2sql.linetypes.PmsiRsfHeader;
+import org.aider.pmsi2sql.linetypes.PmsiRsfm;
 
 /**
  * Classe étendant la classe abstraite de PmsiReader et permettant de lire un
@@ -96,12 +96,12 @@ public class PmsiRSFReader extends PmsiReader {
 		super(MyReader, myConn);
 
 		// Indication des différents types de ligne que l'on peut rencontrer
-		addLineType(RSFHEADER, new pmsirsfheader());
-		addLineType(RSFA, new pmsirsfa());
-		addLineType(RSFB, new pmsirsfb());
-		addLineType(RSFC, new pmsirsfc());
-		addLineType(RSFH, new pmsirsfh());
-		addLineType(RSFM, new pmsirsfm());
+		addLineType(RSFHEADER, new PmsiRsfHeader());
+		addLineType(RSFA, new PmsiRsfa());
+		addLineType(RSFB, new PmsiRsfb());
+		addLineType(RSFC, new PmsiRsfc());
+		addLineType(RSFH, new PmsiRsfh());
+		addLineType(RSFM, new PmsiRsfm());
 		
 		// Définition des états et des signaux de la machine à états
 		addTransition(SIGNAL_START, STATE_READY, STATE_RSF_HEADER);
@@ -120,7 +120,7 @@ public class PmsiRSFReader extends PmsiReader {
 		// Liste permettant d'informer la fonction parseLine des différentes lignes que l'on peut rencontrer
 		Vector<Integer> MyV = new Vector<Integer>();
 		// Objet récupérant le type de ligne est les informations contenues dans un ligne lue
-		pmsilinetype MyMatch;
+		PmsiLineType MyMatch;
 		switch(getState()) {
 		case STATE_READY:
 			changeState(SIGNAL_START);

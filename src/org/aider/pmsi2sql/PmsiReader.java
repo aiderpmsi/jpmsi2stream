@@ -12,8 +12,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aider.pmsi2sql.linetypes.pmsilinetype;
-import org.aider.pmsi2sql.machineState.machineState;
+import org.aider.pmsi2sql.linetypes.PmsiLineType;
+import org.aider.pmsi2sql.machineState.MachineState;
 
 /**
  * Classe de base permettant deux opérations :
@@ -26,7 +26,7 @@ import org.aider.pmsi2sql.machineState.machineState;
  * @author delabre
  *
  */
-public abstract class PmsiReader extends machineState {
+public abstract class PmsiReader extends MachineState {
 
 	/**
 	 * Lecteur du fichier permettant de lire des lignes.Attention, la fin de ligne est définie
@@ -48,7 +48,7 @@ public abstract class PmsiReader extends machineState {
 	/**
 	 * Table de hachage des types de lignes gérées par ce lecteur de fichier PMSI
 	 */
-	private HashMap<Integer, pmsilinetype> linesTypes;
+	private HashMap<Integer, PmsiLineType> linesTypes;
 	
 	/**
 	 * Stocke la connexion à la base de données
@@ -72,7 +72,7 @@ public abstract class PmsiReader extends machineState {
 		// Initialisation de la lecture du fichier à importer
 		pmsiReader = new BufferedReader(MyReader);
 		// Initialisation de la table de hachage des types de lignes gérées par ce lecteur de fichier PMSI
-		linesTypes = new HashMap<Integer, pmsilinetype>();
+		linesTypes = new HashMap<Integer, PmsiLineType>();
 		
 		// Initialisation du connecteur à la base de données
 		sqlConn = myConn;
@@ -130,7 +130,7 @@ public abstract class PmsiReader extends machineState {
 	 * @param MyLineType Permet d'identifier de manière unique le type de ligne à lire
 	 * @param MyLine Définitions de la ligne à lire
 	 */
-	public void addLineType(int MyLineType, pmsilinetype MyLine) {
+	public void addLineType(int MyLineType, PmsiLineType MyLine) {
 		linesTypes.put(MyLineType, MyLine);
 	}
 	
@@ -140,7 +140,7 @@ public abstract class PmsiReader extends machineState {
 	 * @param MyLineTypes Types de lignes que l'on est susceptible de lire à ce moment
 	 * @return la ligne lue, avec les données récupérées dans les différents 
 	 */
-	public pmsilinetype parseLine(Vector<Integer> MyLineTypes) {
+	public PmsiLineType parseLine(Vector<Integer> MyLineTypes) {
 		Iterator<Integer> it = MyLineTypes.iterator();
 		while (it.hasNext()) {
 			int MyIndex = it.next();

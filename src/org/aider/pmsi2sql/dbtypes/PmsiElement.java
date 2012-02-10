@@ -28,10 +28,10 @@ public abstract class PmsiElement {
 
 	/**
 	 * Constructeur
-	 * @param MyNomChamp Nom du champ dans la base de données
+	 * @param myNomChamp Nom du champ dans la base de données
 	 */
-	public PmsiElement(String MyNomChamp) {
-		nomchamp = MyNomChamp;
+	public PmsiElement(String myNomChamp) {
+		nomchamp = myNomChamp;
 	}
 	
 	/**
@@ -44,10 +44,10 @@ public abstract class PmsiElement {
 	
 	/**
 	 * Stocke une valeur dans ce champ
-	 * @param MyValue Valeur à stocker dans ce champ
+	 * @param myValue Valeur à stocker dans ce champ
 	 */
-	public void setValue(String MyValue) {
-		value = MyValue;
+	public void setValue(String myValue) {
+		value = myValue;
 	}
 	
 	/**

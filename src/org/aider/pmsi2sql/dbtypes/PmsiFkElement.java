@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
  * @author delabre
  *
  */
-public class pmsifkdbtype extends PmsiElement {
+public class PmsiFkElement extends PmsiElement {
 
 	/**
 	 * Table de destination
@@ -33,13 +33,13 @@ public class pmsifkdbtype extends PmsiElement {
 	
 	/**
 	 * Constructeur
-	 * @param MyNomChamp String Nom de la clef étrangère
-	 * @param MyDestination Table de destination de la clef étrangère
+	 * @param myNomChamp String Nom de la clef étrangère
+	 * @param myDestination Table de destination de la clef étrangère
 	 * @param myConstrain type de contrainte associée (INITIALLY DEFERRED, ...)
 	 */
-	public pmsifkdbtype(String MyNomChamp, String MyDestination, String myConstrain) {
-		super(MyNomChamp);
-		destination = MyDestination;
+	public PmsiFkElement(String myNomChamp, String myDestination, String myConstrain) {
+		super(myNomChamp);
+		destination = myDestination;
 		destNames = new Vector<String>();
 		sourceNames = new Vector<String>();
 		constrain = myConstrain;
@@ -47,12 +47,12 @@ public class pmsifkdbtype extends PmsiElement {
 	
 	/**
 	 * Rajoute un champ de destination pour la clef étrangère
-	 * @param MySourceChamp String Nom du champ source
-	 * @param MyDestChamp String Nom du champ destination
+	 * @param mySourceChamp String Nom du champ source
+	 * @param myDestChamp String Nom du champ destination
 	 */
-	public void addForeignChamp(String MySourceChamp, String MyDestChamp) {
-		destNames.add(MyDestChamp);
-		sourceNames.add(MySourceChamp);
+	public void addForeignChamp(String mySourceChamp, String myDestChamp) {
+		destNames.add(myDestChamp);
+		sourceNames.add(mySourceChamp);
 	}
 	
 	/**
@@ -78,8 +78,8 @@ public class pmsifkdbtype extends PmsiElement {
 		return sourceNames;
 	}
 	
-	public String getSQL(String MyTableRef) {
-		return "ALTER TABLE " + MyTableRef + " ADD CONSTRAINT " +
+	public String getSQL(String myTableRef) {
+		return "ALTER TABLE " + myTableRef + " ADD CONSTRAINT " +
 				getNomChamp() + " FOREIGN KEY (" +
 				StringUtils.join(sourceNames.iterator(), ", ") + ") REFERENCES " +
 				destination + "(" + StringUtils.join(destNames.iterator(), ", ") +

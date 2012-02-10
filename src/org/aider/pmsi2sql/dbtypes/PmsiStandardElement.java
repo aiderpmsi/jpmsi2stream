@@ -6,7 +6,7 @@ package org.aider.pmsi2sql.dbtypes;
  * @author delabre
  *
  */
-public abstract class pmsistandarddbtype extends PmsiElement {
+public abstract class PmsiStandardElement extends PmsiElement {
 
 	/**
 	 * Type de champ SQL défini par cette classe.
@@ -27,28 +27,28 @@ public abstract class pmsistandarddbtype extends PmsiElement {
 	
 	/**
 	 * Constructeur
-	 * @param MyNomChamp String Nom du champ
-	 * @param MySQLType Type du champ 
-	 * @param MySize int Taille du champ
+	 * @param myNomChamp String Nom du champ
+	 * @param mySQLType Type du champ 
+	 * @param mySize int Taille du champ
 	 * @param myConstrain Constrainte SQL
 	 */
-	public pmsistandarddbtype(String MyNomChamp, PmsiStandardDbTypeEnum MySQLType, int MySize, String myConstrain) {
-		super(MyNomChamp);
-		sqlType = MySQLType;
-		Size = MySize;
+	public PmsiStandardElement(String myNomChamp, PmsiStandardDbTypeEnum mySQLType, int mySize, String myConstrain) {
+		super(myNomChamp);
+		sqlType = mySQLType;
+		Size = mySize;
 		constrain = myConstrain;
 	}
 	
 	/**
 	 * Constructeur avec absence de contraintes SQL
-	 * @param MyNomChamp
-	 * @param MySQLType
-	 * @param MySize
+	 * @param myNomChamp
+	 * @param mySQLType
+	 * @param mySize
 	 */
-	public pmsistandarddbtype(String MyNomChamp, PmsiStandardDbTypeEnum MySQLType, int MySize) {
-		super(MyNomChamp);
-		sqlType = MySQLType;
-		Size = MySize;
+	public PmsiStandardElement(String myNomChamp, PmsiStandardDbTypeEnum mySQLType, int mySize) {
+		super(myNomChamp);
+		sqlType = mySQLType;
+		Size = mySize;
 		constrain = "";
 	}
 	
@@ -73,41 +73,41 @@ public abstract class pmsistandarddbtype extends PmsiElement {
 	 * @return {@link String} Instruction SQL
 	 */
 	public String getSQL() {
-		String MyRet = getNomChamp() + " ";
+		String myRet = getNomChamp() + " ";
 		switch (getSqlType()) {
 			case TIMESTAMP:
-				MyRet = MyRet.concat("TIMESTAMP WITH TIME ZONE");
+				myRet = myRet.concat("TIMESTAMP WITH TIME ZONE");
 				break;
 			case TEXT:
-				MyRet = MyRet.concat("TEXT");
+				myRet = myRet.concat("TEXT");
 				break;
 			case FILE:
-				MyRet = MyRet.concat("BYTEA");
+				myRet = myRet.concat("BYTEA");
 				break;
 			case BIGSERIAL:
-				MyRet = MyRet.concat("BIGSERIAL");
+				myRet = myRet.concat("BIGSERIAL");
 				break;
 			case INT:
-				MyRet = MyRet.concat("INT");
+				myRet = myRet.concat("INT");
 				break;
 			case BIGINT:
-				MyRet = MyRet.concat("BIGINT");
+				myRet = myRet.concat("BIGINT");
 				break;
 			case CHAR:
-				MyRet = MyRet.concat("CHAR(" + Integer.toString(getSize()) + ")");
+				myRet = myRet.concat("CHAR(" + Integer.toString(getSize()) + ")");
 				break;
 			case DATE:
-				MyRet = MyRet.concat("DATE");
+				myRet = myRet.concat("DATE");
 				break;
 			case NUMERIC:
-				MyRet = MyRet.concat("NUMERIC(" + Integer.toString(getSize()) + ")");
+				myRet = myRet.concat("NUMERIC(" + Integer.toString(getSize()) + ")");
 				break;
 			case VARCHAR:
-				MyRet = MyRet.concat("VARCHAR(" + Integer.toString(getSize()) + ")");
+				myRet = myRet.concat("VARCHAR(" + Integer.toString(getSize()) + ")");
 				break;
 			default:
 				break;
 			}
-			return MyRet + " " + constrain;
+			return myRet + " " + constrain;
 		}
 	}

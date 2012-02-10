@@ -1,7 +1,7 @@
 package org.aider.pmsi2sql.dbtypes;
 
 /**
- * Types utilisés dans la classe {@link pmsistandarddbtype} pour définir
+ * Types utilisés dans la classe {@link PmsiStandardElement} pour définir
  * le type de champ associé à ce nom de champ
  * @author delabre
  *
