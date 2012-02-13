@@ -33,13 +33,6 @@ public class PmsiRssHeader extends PmsiLineType {
 		MyIdInsertionFK.addForeignChamp("pmsiinsertionid", "pmsiinsertionid");
 		addChamp(MyIdInsertionFK);
 
-		PmsiInternalElement MyDateNow = new PmsiInternalElement("DateAjout", PmsiStandardDbTypeEnum.TIMESTAMP, 0);
-		MyDateNow.setValue("NOW()");
-		addChamp(MyDateNow);
-		PmsiIndexElement MyDateNowIndex = new PmsiIndexElement("RSSHeader_DateAjout_idx", PmsiIndexElement.INDEX_SIMPLE);
-		MyDateNowIndex.addIndex("DateAjout");
-		addChamp(MyDateNowIndex);
- 
 		PmsiInternalElement MyLineCounter = new PmsiInternalElement("Line", PmsiStandardDbTypeEnum.INT, 0);
 		MyLineCounter.setValue("currval('line_counter')");
 		addChamp(MyLineCounter);
