@@ -14,11 +14,11 @@ public class PmsiRssMain extends PmsiLineType {
 	public PmsiRssMain() {
 		super("RSSMain");
 
-		PmsiInternalElement MyIdMain =new PmsiInternalElement("idmain", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
-		MyIdMain.setValue("nextval('rssmain_idmain_seq')");
+		PmsiInternalElement MyIdMain =new PmsiInternalElement("rssmainid", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
+		MyIdMain.setValue("nextval('rssmain_rssmainid_seq')");
 		addChamp(MyIdMain);
-		PmsiIndexElement MyIdmainIndex = new PmsiIndexElement("RSSMain_idmain_pidx", PmsiIndexElement.INDEX_PK);
-		MyIdmainIndex.addIndex("idmain");
+		PmsiIndexElement MyIdmainIndex = new PmsiIndexElement("RSSMain_rssmainid_pidx", PmsiIndexElement.INDEX_PK);
+		MyIdmainIndex.addIndex("rssmainid");
 		addChamp(MyIdmainIndex);
 		
 		PmsiInternalElement MyIdHeader = new PmsiInternalElement("rssheaderid", PmsiStandardDbTypeEnum.BIGINT, 0);
@@ -50,8 +50,8 @@ public class PmsiRssMain extends PmsiLineType {
 		PmsiIndexElement MyNumRSSIndex = new PmsiIndexElement("RSSMain_NumRSS_idx", PmsiIndexElement.INDEX_SIMPLE);
 		MyNumRSSIndex.addIndex("NumRSS");
 		addChamp(MyNumRSSIndex);
-		PmsiIndexElement MyNumRSSIdheaderUnique = new PmsiIndexElement("RSSMain_idmain_NumRSS_uidx", PmsiIndexElement.INDEX_UNIQUE);
-		MyNumRSSIdheaderUnique.addIndex("idmain");
+		PmsiIndexElement MyNumRSSIdheaderUnique = new PmsiIndexElement("RSSMain_rssmainid_NumRSS_uidx", PmsiIndexElement.INDEX_UNIQUE);
+		MyNumRSSIdheaderUnique.addIndex("rssmainid");
 		MyNumRSSIdheaderUnique.addIndex("NumRSS");
 		addChamp(MyNumRSSIdheaderUnique);
 		

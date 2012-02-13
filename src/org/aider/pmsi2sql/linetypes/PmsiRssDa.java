@@ -21,11 +21,11 @@ public class PmsiRssDa extends PmsiLineType {
 		MyIdrssDaIndex.addIndex("idrssda");
 		addChamp(MyIdrssDaIndex);
 
-		PmsiInternalElement MyIdMain = new PmsiInternalElement("idmain", PmsiStandardDbTypeEnum.BIGINT, 0);
-		MyIdMain.setValue("currval('rssmain_idmain_seq')");
+		PmsiInternalElement MyIdMain = new PmsiInternalElement("rssmainid", PmsiStandardDbTypeEnum.BIGINT, 0);
+		MyIdMain.setValue("currval('rssmain_rssmainid_seq')");
 		addChamp(MyIdMain);
-		PmsiFkElement MyIdmainFK = new PmsiFkElement("RSSDA_idmain_fk", "RSSMain", "DEFERRABLE INITIALLY DEFERRED");
-		MyIdmainFK.addForeignChamp("idmain", "idmain");
+		PmsiFkElement MyIdmainFK = new PmsiFkElement("RSSDA_rssmainid_fk", "RSSMain", "DEFERRABLE INITIALLY DEFERRED");
+		MyIdmainFK.addForeignChamp("rssmainid", "rssmainid");
 		addChamp(MyIdmainFK);
 
 		addChamp(new PmsiFilePartElement("DA", PmsiStandardDbTypeEnum.VARCHAR, 8, "(.{8})"));
