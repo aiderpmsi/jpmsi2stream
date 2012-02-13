@@ -19,11 +19,11 @@ public class PmsiRssHeader extends PmsiLineType {
 	public PmsiRssHeader() {
 		super("RSSHeader");
 				
-		PmsiInternalElement MyIdHeader = new PmsiInternalElement("idheader", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
-		MyIdHeader.setValue("nextval('rssheader_idheader_seq')");
+		PmsiInternalElement MyIdHeader = new PmsiInternalElement("rssheaderid", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
+		MyIdHeader.setValue("nextval('rssheader_rssheaderid_seq')");
 		addChamp(MyIdHeader);
-		PmsiIndexElement MyIdheaderIndex = new PmsiIndexElement("RSSHeader_idheader_pidx", PmsiIndexElement.INDEX_PK);
-		MyIdheaderIndex.addIndex("idheader");
+		PmsiIndexElement MyIdheaderIndex = new PmsiIndexElement("RSSHeader_rssheaderid_pidx", PmsiIndexElement.INDEX_PK);
+		MyIdheaderIndex.addIndex("rssheaderid");
 		addChamp(MyIdheaderIndex);
 
 		PmsiInternalElement MyIdInsertion = new PmsiInternalElement("pmsiinsertionid", PmsiStandardDbTypeEnum.BIGINT, 0);

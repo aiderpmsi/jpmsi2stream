@@ -21,9 +21,9 @@ import org.aider.pmsi2sql.dbtypes.PmsiStandardElement;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Type général de ligne pmsi, permettant d'associer plusieurs {@link PmsiElement}.
- * Ces différents {@link PmsiElement} correspondent en fait à 
- * à insérer dans une même table de base de données
+ * Défini l'architecture pour créer des patrons de lignes pmsi en associant des
+ * {@link PmsiElement} à la suite, le tout définissant une suite de caractères à attrapper
+ * permettant au final de lire des lignes ou des parties de lignes des fichiers pmsi.
  * @author delabre
  *
  */
@@ -48,19 +48,19 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Constructeur
-	 * @param MyNom String Nom de la base de données associée
+	 * @param myNom String Nom de la base de données associée
 	 */
-	public PmsiLineType(String MyNom) {
+	public PmsiLineType(String myNom) {
 		champs = new Vector<PmsiElement>();
-		nom = MyNom;
+		nom = myNom;
 	}
 	
 	/**
 	 * Ajoute un type sql dans la base de données
 	 * @param MyChamp {@link PmsiElement} type sql
 	 */
-	public void addChamp(PmsiElement MyChamp) {
-		champs.add(MyChamp);
+	public void addChamp(PmsiElement myChamp) {
+		champs.add(myChamp);
 	}
 	
 	/**
@@ -73,6 +73,7 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Retourne l'instruction SQL nécessaire pour créer les tables
+	 * @return String Instruction SQL nécessaire pour créer la table, sans liens ni index.
 	 */
 	public String getSQLTable() {
 		Vector<String> MySQLChunks = new Vector<String>();
@@ -92,6 +93,7 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Retourne l'instruction sql nécessaire pour créer les index
+	 * @return String Instruction SQL nécessaire pour créer les index dans la table 
 	 */ 
 	public String getSQLIndex() {
 		String MyRe = new String();
@@ -111,6 +113,7 @@ public abstract class PmsiLineType {
 	/**
 	 * Retourne les instructions nécessaires pour créer les
 	 * clefs étrangères 
+	 * @return {@link String} Instruction SQL nécessaire pour créer les clefs étrangères.
 	 */
 	public String getSQLFK() {
 		String MyRe = new String();
@@ -129,6 +132,7 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Retourne la chaine regex pour attraper les infos de la ligne
+	 * @return {@link Pattern} Regex permettant d'attraper la ligne ou la partie de ligne correspondant à ce patron 
 	 */
 	public Pattern getRegex() {
 		if (regexPattern != null) {

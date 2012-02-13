@@ -21,11 +21,11 @@ public class PmsiRssMain extends PmsiLineType {
 		MyIdmainIndex.addIndex("idmain");
 		addChamp(MyIdmainIndex);
 		
-		PmsiInternalElement MyIdHeader = new PmsiInternalElement("idheader", PmsiStandardDbTypeEnum.BIGINT, 0);
-		MyIdHeader.setValue("currval('rssheader_idheader_seq')");
+		PmsiInternalElement MyIdHeader = new PmsiInternalElement("rssheaderid", PmsiStandardDbTypeEnum.BIGINT, 0);
+		MyIdHeader.setValue("currval('rssheader_rssheaderid_seq')");
 		addChamp(MyIdHeader);
-		PmsiFkElement MyIdHeaderFK = new PmsiFkElement("RSSMain_idheader_fk", "RSSHeader", "DEFERRABLE INITIALLY DEFERRED");
-		MyIdHeaderFK.addForeignChamp("idheader", "idheader");
+		PmsiFkElement MyIdHeaderFK = new PmsiFkElement("RSSMain_rssheaderid_fk", "RSSHeader", "DEFERRABLE INITIALLY DEFERRED");
+		MyIdHeaderFK.addForeignChamp("rssheaderid", "rssheaderid");
 		addChamp(MyIdHeaderFK);
 
 		PmsiInternalElement MyLineCounter = new PmsiInternalElement("Line", PmsiStandardDbTypeEnum.INT, 0);

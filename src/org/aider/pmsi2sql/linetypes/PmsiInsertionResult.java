@@ -14,6 +14,8 @@ public class PmsiInsertionResult extends PmsiLineType {
 
 	/**
 	 * Constructeur
+	 * @param myStatusString chaine de caractères à stocker dans le statut de l'insertino (réussi / échoué)
+	 * @param myLogString log de l'insertion
 	 */
 	public PmsiInsertionResult(String myStatusString, String myLogString) {
 		super("pmsiinsertionresult");

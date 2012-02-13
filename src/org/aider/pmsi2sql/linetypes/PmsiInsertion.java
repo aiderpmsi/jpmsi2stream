@@ -15,6 +15,7 @@ public class PmsiInsertion extends PmsiLineType {
 
 	/**
 	 * Constructeur
+	 * @param myFileName nom du fichier à partir duquel ce rss est lu
 	 */
 	public PmsiInsertion(String myFileName) {
 		super("pmsiinsertion");
