@@ -11,18 +11,18 @@ public class PmsiRssActe extends PmsiLineType {
 	public PmsiRssActe() {
 		super("RSSActe");
 				
-		PmsiInternalElement MyId = new PmsiInternalElement("idrssacte", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
-		MyId.setValue("nextval('rssacte_idrssacte_seq')");
+		PmsiInternalElement MyId = new PmsiInternalElement("rssacteid", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
+		MyId.setValue("nextval('rssacte_rssacteid_seq')");
 		addChamp(MyId);
-		PmsiIndexElement MyIdrssDadIndex = new PmsiIndexElement("RSSActe_idrssacte_pidx", PmsiIndexElement.INDEX_PK);
-		MyIdrssDadIndex.addIndex("idrssacte");
+		PmsiIndexElement MyIdrssDadIndex = new PmsiIndexElement("RSSActe_rssacteid_pidx", PmsiIndexElement.INDEX_PK);
+		MyIdrssDadIndex.addIndex("rssacteid");
 		addChamp(MyIdrssDadIndex);
 
-		PmsiInternalElement MyIdMain = new PmsiInternalElement("idmain", PmsiStandardDbTypeEnum.BIGINT, 0);
-		MyIdMain.setValue("currval('rssmain_idmain_seq')");
+		PmsiInternalElement MyIdMain = new PmsiInternalElement("rssmainid", PmsiStandardDbTypeEnum.BIGINT, 0);
+		MyIdMain.setValue("currval('rssmain_rssmainid_seq')");
 		addChamp(MyIdMain);
-		PmsiFkElement MyIdmainFK = new PmsiFkElement("RSSActe_idmain_fk", "RSSMain", "DEFERRABLE INITIALLY DEFERRED");
-		MyIdmainFK.addForeignChamp("idmain", "idmain");
+		PmsiFkElement MyIdmainFK = new PmsiFkElement("RSSActe_rssmainid_fk", "RSSMain", "DEFERRABLE INITIALLY DEFERRED");
+		MyIdmainFK.addForeignChamp("rssmainid", "rssmainid");
 		addChamp(MyIdmainFK);
 
 		addChamp(new PmsiFilePartElement("DateRealisation", PmsiStandardDbTypeEnum.DATE, 0, "(\\d{8})"));

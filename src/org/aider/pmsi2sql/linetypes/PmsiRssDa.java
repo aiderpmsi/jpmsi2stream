@@ -14,11 +14,11 @@ public class PmsiRssDa extends PmsiLineType {
 	public PmsiRssDa() {
 		super("RSSDA");
 				
-		PmsiInternalElement MyId = new PmsiInternalElement("idrssda", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
-		MyId.setValue("nextval('rssda_idrssda_seq')");
+		PmsiInternalElement MyId = new PmsiInternalElement("rssdaid", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
+		MyId.setValue("nextval('rssda_rssdaid_seq')");
 		addChamp(MyId);
-		PmsiIndexElement MyIdrssDaIndex = new PmsiIndexElement("RSSDA_idrssda_pidx", PmsiIndexElement.INDEX_PK);
-		MyIdrssDaIndex.addIndex("idrssda");
+		PmsiIndexElement MyIdrssDaIndex = new PmsiIndexElement("RSSDA_rssdaid_pidx", PmsiIndexElement.INDEX_PK);
+		MyIdrssDaIndex.addIndex("rssdaid");
 		addChamp(MyIdrssDaIndex);
 
 		PmsiInternalElement MyIdMain = new PmsiInternalElement("rssmainid", PmsiStandardDbTypeEnum.BIGINT, 0);
