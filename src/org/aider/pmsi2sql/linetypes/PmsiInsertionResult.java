@@ -29,10 +29,10 @@ public class PmsiInsertionResult extends PmsiLineType {
 		addChamp(MyIdheaderIndex);
 
 		PmsiFilePartElement MyStatus = new PmsiFilePartElement("Status", PmsiStandardDbTypeEnum.NUMERIC, 1, "NOT NULL", "");
-		MyStatus.SetValue(myStatusString);
+		MyStatus.setValue(myStatusString);
 		addChamp(MyStatus);
 		PmsiFilePartElement myLog = new PmsiFilePartElement("Log", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL", "");
-		myLog.SetValue(myLogString);
+		myLog.setValue(myLogString);
 		addChamp(myLog);
 	}
 	

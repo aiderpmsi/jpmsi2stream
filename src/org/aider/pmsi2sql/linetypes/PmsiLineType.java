@@ -146,7 +146,7 @@ public abstract class PmsiLineType {
 				PmsiElement MyElt = MyEnumTypes.nextElement();
 				if (MyElt instanceof PmsiFilePartElement) {
 					PmsiFilePartElement MyNElt = (PmsiFilePartElement) MyElt;
-					MyRe = MyRe.concat(MyNElt.GetRegex());
+					MyRe = MyRe.concat(MyNElt.getRegex());
 				}
 			}
 			regexPattern = Pattern.compile("^" + MyRe);

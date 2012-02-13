@@ -53,7 +53,7 @@ public class PmsiFilePartElement extends PmsiStandardElement {
 	 * Renvoie le regex du champ
 	 * @return {@link String} Regex
 	 */
-	public String GetRegex() {
+	public String getRegex() {
 		return regex;
 	}
 	
@@ -67,7 +67,7 @@ public class PmsiFilePartElement extends PmsiStandardElement {
 	 * </ul>
 	 * @param myValue Valeur à associer à ce champ
 	 */
-	public void SetValue(String myValue) {
+	public void setValue(String myValue) {
 		// Suppression des espaces si on a une valeur non textuelle
 		switch (getSqlType()) {
 		case VARCHAR:

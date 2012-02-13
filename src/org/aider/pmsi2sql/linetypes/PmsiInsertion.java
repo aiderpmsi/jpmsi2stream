@@ -36,11 +36,11 @@ public class PmsiInsertion extends PmsiLineType {
 		addChamp(MyDateNowIndex);
 
 		PmsiFilePartElement MyFileName = new PmsiFilePartElement("NomFichier", PmsiStandardDbTypeEnum.TEXT, 0, "NOT NULL", "");
-		MyFileName.SetValue(myFileName);
+		MyFileName.setValue(myFileName);
 		addChamp(MyFileName);
 
 		PmsiFilePartElement MyFile = new PmsiFilePartElement("Fichier", PmsiStandardDbTypeEnum.FILE, 0, "NOT NULL", "");
-		MyFile.SetValue(myFileName);
+		MyFile.setValue(myFileName);
 		addChamp(MyFile);
 
 		PmsiInternalElement MyIdResult = new PmsiInternalElement("pmsiinsertionresultid", PmsiStandardDbTypeEnum.BIGINT, 0);
