@@ -162,7 +162,10 @@ C:\Documents and Settings\delabre\Mes documents>java -jar jpmsi2sql.jar -h<br/>
 
 <h2> Schéma de la base de données </h2>
 <img src="doc-files/pmsi2sql.png" alt="schéma de la base de données"/>
-
+Attention, il y a une limite de normalisation : pmsiinsertionid est un indicateur unique dans
+les tables rsfheader et rssheader, et devrait pouvoir remplacer rssheaderid et rsfheaderid, mais
+pour simplifier les tables, ce n'est pas le cas, on peut utiliser l'un ou l'autre comme clef unique selon
+les besoins de la requête
 <h2>Related Documentation</h2>
 
 <h2> License </h2>

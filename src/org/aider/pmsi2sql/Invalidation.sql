@@ -11,144 +11,142 @@ CREATE TABLE PMSIInsertionInvalidation
 );
 
 /*
- * Recherche pour chaque FINESS la liste des derniers rsf insérés valide.
+ * Fonction F_PMSIInsertion_Invalidation :
+ * Liste l'état d'invalidation des fichiers pmsi insérés
+ * à une date donnée
  */
-CREATE OR REPLACE VIEW V_Actual_RSFHeader
-AS
-SELECT MAX(F.rsfheaderid) AS rsfheaderid
-  FROM RSFHeader F
-  LEFT OUTER JOIN (-- Liste des RSF invalidés, permet de les éliminer
-    SELECT F.rsfheaderid
-    FROM rsfheader F
-    INNER JOIN pmsiinsertion INS ON
-        F.pmsiinsertionid = INS.pmsiinsertionid
-    INNER JOIN pmsiinsertioninvalidation VAL ON
-        INS.pmsiinsertionid = VAL.pmsiinsertionid
-    INNER JOIN (-- Récupéraion du dernier état d'invalidation par rsf
-        SELECT MAX(VAL.pmsiinsertioninvalidationid) AS pmsiinsertioninvalidationid
-        FROM rsfheader F
-        INNER JOIN pmsiinsertion INS ON
-            F.pmsiinsertionid = INS.pmsiinsertionid
-        INNER JOIN pmsiinsertioninvalidation VAL ON
-            INS.pmsiinsertionid = VAL.pmsiinsertionid
-        GROUP BY F.rsfheaderid) InvalEtat ON
-        VAL.pmsiinsertioninvalidationid = InvalEtat.pmsiinsertioninvalidationid
-    WHERE VAL.Invalidation = true) RSFInval ON
-    F.rsfheaderid = RSFInval.rsfheaderid
-  -- On ne garde que les RSF qui n'ont pas d'état d'invalidation
-  WHERE RSFInval.rsfheaderid IS NULL
-  GROUP BY F.FINESS, F.DateFin;
-
-/*
- * Liste des rsf utilises à une date
- */
-CREATE OR REPLACE FUNCTION V_Date_RSFHeader(TIMESTAMP)
+CREATE OR REPLACE FUNCTION F_PMSIInsertion_Invalidation(TIMESTAMP)
 RETURNS SETOF record AS
 $BODY$
-SELECT MAX(F.rsfheaderid) AS rsfheaderid
-  FROM RSFHeader F
-  INNER JOIN pmsiinsertion INS ON
+-- Liste des insertions de pmsi avec un indicateur pour savoir si il a été invalidé
+SELECT INS.pmsiinsertionid, COALESCE(INV.invalidation, false) AS Invalide
+FROM pmsiinsertion INS
+LEFT OUTER JOIN (
+  SELECT INV.pmsiinsertionid, INV.pmsiinsertioninvalidationid, INV.invalidation
+  FROM pmsiinsertioninvalidation INV
+  INNER JOIN (
+    SELECT INV.pmsiinsertionid, MAX(INV.pmsiinsertioninvalidationid) AS pmsiinsertioninvalidationid
+    FROM pmsiinsertioninvalidation INV
+    WHERE INV.dateinvalidation < $1
+    GROUP BY INV.pmsiinsertionid) INV2 ON
+      INV.pmsiinsertionid = INV2.pmsiinsertionid AND
+      INV.pmsiinsertioninvalidationid = INV2.pmsiinsertioninvalidationid) INV ON
+    INS.pmsiinsertionid = INV.pmsiinsertionid
+  WHERE INS.dateajout < $1
+$BODY$
+  LANGUAGE 'sql' VOLATILE;
+
+/*
+ * Fonction F_RSFHeader_Actifs :
+ * Liste les RSF actifs (derniers insérés non invalidés)
+ */
+CREATE OR REPLACE FUNCTION F_RSFHeader_Actifs(TIMESTAMP)
+RETURNS SETOF record AS
+$BODY$
+SELECT F.rsfheaderid
+FROM rsfheader F
+INNER JOIN (-- sélection du fichier pmsi inséré en dernier pour les rsf, groupé par finess et par date de fin
+  SELECT
+    MAX(INS.pmsiinsertionid) AS pmsiinsertionid
+  FROM rsfheader F
+  INNER JOIN (-- sélection des pmsiinsertionid qui ne sont pas invalidés à la date donnée
+    SELECT INS.pmsiinsertionid
+    FROM F_PMSIInsertion_Invalidation(CAST($1 AS TIMESTAMP)) AS
+      INS (pmsiinsertionid BIGINT, invalide BOOLEAN)
+    WHERE INS.invalide = false) INS ON
+      F.pmsiinsertionid = INS.pmsiinsertionid
+  GROUP BY F.finess, F.datefin) INS ON
     F.pmsiinsertionid = INS.pmsiinsertionid
-  LEFT OUTER JOIN (-- Liste des RSF invalidés, permet de les éliminer
-    SELECT F.rsfheaderid
-    FROM rsfheader F
-    INNER JOIN pmsiinsertion INS ON
-        F.pmsiinsertionid = INS.pmsiinsertionid
-    INNER JOIN pmsiinsertioninvalidation VAL ON
-        INS.pmsiinsertionid = VAL.pmsiinsertionid
-    INNER JOIN (-- Récupéraion du dernier état d'invalidation par rsf
-        SELECT MAX(VAL.pmsiinsertioninvalidationid) AS pmsiinsertioninvalidationid
-        FROM rsfheader F
-        INNER JOIN pmsiinsertion INS ON
-            F.pmsiinsertionid = INS.pmsiinsertionid
-        INNER JOIN pmsiinsertioninvalidation VAL ON
-            INS.pmsiinsertionid = VAL.pmsiinsertionid
-        WHERE INS.dateajout < $1
-        GROUP BY F.rsfheaderid) InvalEtat ON
-        VAL.pmsiinsertioninvalidationid = InvalEtat.pmsiinsertioninvalidationid
-    WHERE VAL.Invalidation = true) RSFInval ON
-    F.rsfheaderid = RSFInval.rsfheaderid
-  -- On ne garde que les RSF qui n'ont pas d'état d'invalidation
-  WHERE RSFInval.rsfheaderid IS NULL AND
-    INS.dateajout < $1
-  GROUP BY F.FINESS, F.DateFin;
 $BODY$
   LANGUAGE 'sql' VOLATILE;
-
- /*
- * Table RSSInvalidation, permet de garder la trace des RSS invalidés
- */
-CREATE OR REPLACE VIEW V_Actual_RSSHeader
-AS
-SELECT MAX(S.rssheaderid) AS rssheaderid
-  FROM RSSHeader S
-  LEFT OUTER JOIN (-- Liste des RSF invalidés, permet de les éliminer
-    SELECT S.rssheaderid
-    FROM rssheader S
-    INNER JOIN pmsiinsertion INS ON
-        S.pmsiinsertionid = INS.pmsiinsertionid
-    INNER JOIN pmsiinsertioninvalidation VAL ON
-        INS.pmsiinsertionid = VAL.pmsiinsertionid
-    INNER JOIN (-- Récupéraion du dernier état d'invalidation par rsf
-        SELECT MAX(VAL.pmsiinsertioninvalidationid) AS pmsiinsertioninvalidationid
-        FROM rssheader S
-        INNER JOIN pmsiinsertion INS ON
-            S.pmsiinsertionid = INS.pmsiinsertionid
-        INNER JOIN pmsiinsertioninvalidation VAL ON
-            INS.pmsiinsertionid = VAL.pmsiinsertionid
-        GROUP BY S.rssheaderid) InvalEtat ON
-        VAL.pmsiinsertioninvalidationid = InvalEtat.pmsiinsertioninvalidationid
-    WHERE VAL.Invalidation = true) RSSInval ON
-    S.rssheaderid = RSSInval.rssheaderid
-  -- On ne garde que les RSF qui n'ont pas d'état d'invalidation
-  WHERE RSSInval.rssheaderid IS NULL
-  GROUP BY S.FINESS, S.FinPeriode;
-  
 
 /*
- * Liste des RSS existants à une date, avec leur état d'utilisation et d'invalidation
+ * Fonction F_RSFHeader_Valides :
+ * Liste les rsf valides à une date donnée
  */
-CREATE OR REPLACE FUNCTION V_Admin_RSSHeader_getValides(TIMESTAMP)
+CREATE OR REPLACE FUNCTION F_RSFHeader_Valides(TIMESTAMP)
 RETURNS SETOF record AS
 $BODY$
-SELECT
-  r.idheader,
-  ReferValides.idheader IS NOT NULL AS Utilise,
-  RSSInvalides.idheader IS NOT NULL AS Invalide
-FROM RSSHeader r
--- Recherche de l'été actuel ou non du RSS
-LEFT JOIN (
-  SELECT MAX(R.idheader) AS idheader
-  FROM RSSHeader R
-  LEFT OUTER JOIN (
-   -- récupération des RSS invalidés.
-   SELECT H.idheader
-   FROM RSSInvalidation H
-   JOIN (-- Récupération de la dernière date d'un état d'invalidation par RSS
-	 SELECT G.idheader, MAX(G.idInvalidation) AS idInvalidation
-         FROM RSSInvalidation G
-		 WHERE DateInvalidation < $1
-         GROUP BY G.idheader) DernierEtatValidationRSS ON
-      H.idInvalidation = DernierEtatValidationRSS.idInvalidation
-    WHERE H.Invalidation = true) RSSInvalides ON
-   R.idheader = RSSInvalides.idheader
-  -- On ne garde que les RSS qui n'ont pas été dévalidés
-  WHERE RSSInvalides.idheader IS NULL
-  GROUP BY R.FINESS, R.FinPeriode) ReferValides ON
- r.idheader = ReferValides.idheader
-LEFT JOIN (
-  -- récupération des RSS invalidés.
-   SELECT H.idheader
-   FROM RSSInvalidation H
-   JOIN (-- Récupération de la dernière date d'un état d'invalidation par RSS
-         SELECT G.idheader, MAX(G.idInvalidation) AS idInvalidation
-         FROM RSSInvalidation G
-		 WHERE DateInvalidation < $1
-         GROUP BY G.idheader) DernierEtatValidationRSS ON
-      H.idInvalidation = DernierEtatValidationRSS.idInvalidation
-    WHERE H.Invalidation = true) RSSInvalides ON
-   r.idheader = RSSInvalides.idheader
-WHERE r.DateAjout < $1;
+SELECT F.rsfheaderid
+FROM rsfheader F
+INNER JOIN (-- sélection de l'état d'invalidation des fichiers PMSI à une date donnée
+  SELECT INS.pmsiinsertionid
+  FROM F_PMSIInsertion_Invalidation(CAST($1 AS TIMESTAMP)) AS
+    INS (pmsiinsertionid BIGINT, invalide BOOLEAN)
+  WHERE INS.invalide = false) INS ON
+    F.pmsiinsertionid = INS.pmsiinsertionid
 $BODY$
   LANGUAGE 'sql' VOLATILE;
 
+/*
+ * Fonction F_RSFHeader :
+ * Liste des rsf existants à une date donnée
+ */
+CREATE OR REPLACE FUNCTION F_RSFHeader(TIMESTAMP)
+RETURNS SETOF record AS
+$BODY$
+SELECT F.rsfheaderid
+FROM rsfheader F
+INNER JOIN pmsiinsertion INS ON
+  F.pmsiinsertionid = INS.pmsiinsertionid
+WHERE INS.dateajout < $1
+$BODY$
+  LANGUAGE 'sql' VOLATILE;
+
+/*
+ * Fonction F_RSSHeader_Actifs :
+ * Liste les RSS actifs (derniers insérés non invalidés)
+ */
+CREATE OR REPLACE FUNCTION F_RSSHeader_Actifs(TIMESTAMP)
+RETURNS SETOF record AS
+$BODY$
+SELECT F.rssheaderid
+FROM rssheader F
+INNER JOIN (-- sélection du fichier pmsi inséré en dernier pour les rss, groupé par finess et par date de fin
+  SELECT
+    MAX(INS.pmsiinsertionid) AS pmsiinsertionid
+  FROM rssheader F
+  INNER JOIN (-- sélection des pmsiinsertionid qui ne sont pas invalidés à la date donnée
+    SELECT INS.pmsiinsertionid
+    FROM F_PMSIInsertion_Invalidation(CAST($1 AS TIMESTAMP)) AS
+      INS (pmsiinsertionid BIGINT, invalide BOOLEAN)
+    WHERE INS.invalide = false) INS ON
+      F.pmsiinsertionid = INS.pmsiinsertionid
+  GROUP BY F.finess, F.finperiode) INS ON
+    F.pmsiinsertionid = INS.pmsiinsertionid
+$BODY$
+  LANGUAGE 'sql' VOLATILE;
+
+/*
+ * Fonction F_RSSHeader_Valides :
+ * Liste les rss valides à une date donnée
+ */
+CREATE OR REPLACE FUNCTION F_RSSHeader_Valides(TIMESTAMP)
+RETURNS SETOF record AS
+$BODY$
+SELECT F.rssheaderid
+FROM rssheader F
+INNER JOIN (-- sélection de l'état d'invalidation des fichiers PMSI à une date donnée
+  SELECT INS.pmsiinsertionid
+  FROM F_PMSIInsertion_Invalidation(CAST($1 AS TIMESTAMP)) AS
+    INS (pmsiinsertionid BIGINT, invalide BOOLEAN)
+  WHERE INS.invalide = false) INS ON
+    F.pmsiinsertionid = INS.pmsiinsertionid
+$BODY$
+  LANGUAGE 'sql' VOLATILE;
+
+/*
+ * Fonction F_RSSHeader :
+ * Liste des rss existants à une date donnée
+ */
+CREATE OR REPLACE FUNCTION F_RSSHeader(TIMESTAMP)
+RETURNS SETOF record AS
+$BODY$
+SELECT F.rssheaderid
+FROM rssheader F
+INNER JOIN pmsiinsertion INS ON
+  F.pmsiinsertionid = INS.pmsiinsertionid
+WHERE INS.dateajout < $1
+$BODY$
+  LANGUAGE 'sql' VOLATILE;
+  
