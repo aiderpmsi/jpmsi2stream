@@ -18,7 +18,7 @@ import org.kohsuke.args4j.CmdLineParser;
 /**
  * Entrée du programme permettant d'insérer un fichier pmsi dans la base de données adéquate. Contient
  * la fonction main de pmsi2sql
- * @author delabre
+ * @author delabre 
  *
  */
 public class Pmsi2Sql {
