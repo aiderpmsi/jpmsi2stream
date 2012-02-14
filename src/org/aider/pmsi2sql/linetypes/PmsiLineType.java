@@ -57,7 +57,7 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Ajoute un type sql dans la base de données
-	 * @param MyChamp {@link PmsiElement} type sql
+	 * @param myChamp {@link PmsiElement} type sql
 	 */
 	public void addChamp(PmsiElement myChamp) {
 		champs.add(myChamp);
@@ -181,7 +181,7 @@ public abstract class PmsiLineType {
 	}
 	
 	/**
-	 * Insère les différentes valeurs contenues dans les {@link pmsifiletype} et les
+	 * Insère les différentes valeurs contenues dans les {@link PmsiFilePartElement} et les
 	 * {@link PmsiInternalElement} dans la table correspondants
 	 * @param Myconnection Connection à la base de données
 	 * @throws SQLException

@@ -48,7 +48,7 @@ public abstract class MachineState {
 	/**
 	 * Modification de l'état de la machine selon le signal donné
 	 * @param Mysignal
-	 * @return
+	 * @return Le nouvel état de la machine à états
 	 */
 	public int changeState(int Mysignal) {
 		etatActuel = statesTable.get(Mysignal).get(etatActuel);

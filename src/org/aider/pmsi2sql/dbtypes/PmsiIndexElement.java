@@ -30,7 +30,7 @@ public class PmsiIndexElement extends PmsiElement {
 	/**
 	 * Constructeur
 	 * @param MyNomChamp String Nom du champ créé
-	 * @param MyIndexType int Type d'index (voir {@link indextype})
+	 * @param MyIndexType int Type d'index
 	 */
 	public PmsiIndexElement(String MyNomChamp,
 			int MyIndexType) {
@@ -49,7 +49,7 @@ public class PmsiIndexElement extends PmsiElement {
 	
 	/**
 	 * Récupération du type d'index créé
-	 * @return int (voir {@link indextype})
+	 * @return int Le type d'index
 	 */
 	public int getIndexType() {
 		return indextype;
@@ -65,7 +65,7 @@ public class PmsiIndexElement extends PmsiElement {
 	
 	/**
 	 * Renvoie l'instruction pour créer l'index
-	 * @return
+	 * @return L'instruction SQL pour créer l'index
 	 */
 	public String getSQL(String MyTableRef) {
 		switch(getIndexType()) {
