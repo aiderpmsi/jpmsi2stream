@@ -155,7 +155,7 @@ public class Pmsi2Sql {
 		} catch (PmsiFileNotReadable e) {
 			// Impossible à lire ce fichier avec ce lecteur
 			// Insertion du message de cette erreur à la suite des messages précédents.
-			pmsiErrors = pmsiErrors.concat(e.getMessage() + "\n");
+			pmsiErrors = pmsiErrors.concat(e.getMessage() + "\n\n");
 			// Retour à l'état sql précédant l'appel à la lecture du fichier de type PMSI
 			myConn.rollback(mySavePoint);
 			// Indication que le lecteur n'a pu lire le fichier pmsi

@@ -163,7 +163,7 @@ public class PmsiRSFReader extends PmsiReader {
 			}
 			break;
 		case STATE_EMPTY_FILE:
-			throw new PmsiFileNotReadable("Lecteur RSS : ", new IOException("Fichier vide"));
+			throw new PmsiFileNotReadable("Lecteur RSF : ", new IOException("Fichier vide"));
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
