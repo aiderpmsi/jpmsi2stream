@@ -88,7 +88,7 @@ public abstract class PmsiReader extends MachineState {
 	public void run() throws Exception {
 		// Création et initialisation du compteur de lignes
 		sqlConn.createStatement().execute(
-				"CREATE TEMPORARY SEQUENCE line_counter START WITH 0;" +
+				"CREATE TEMPORARY SEQUENCE line_counter START WITH 0 MINVALUE 0;" +
 				"SELECT nextval('line_counter');\n");
 		super.run();
 		sqlConn.createStatement().execute("DROP SEQUENCE line_counter;");

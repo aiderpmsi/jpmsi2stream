@@ -65,7 +65,7 @@ public class Pmsi2Sql {
             	FileType fileResult = FileType.FALSE;
             	// Liste des types de fichiers pmsi pouvant être lus
             	List<FileType> fileTypes = new ArrayList<FileType>();
-            	Collections.addAll(fileTypes, FileType.RSF, FileType.RSS);
+            	Collections.addAll(fileTypes, FileType.RSF, FileType.RSS, FileType.RSF2012);
             	
         		// On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
         		// Le premier qui réussit est considéré comme le type de fichier auquel on à faire
