@@ -30,7 +30,7 @@ public class Pmsi2Sql {
 	 *
 	 */
 	public enum FileType {
-		FALSE, RSS, RSF;
+		FALSE, RSS, RSF, RSF2012;
 	}
 	
 	/**
@@ -93,6 +93,10 @@ public class Pmsi2Sql {
             		pmsiErrors =  "Fichier de Type RSF correctement inséré";
             		myStatus = new BigDecimal(1);
             		break;
+            	case RSF2012:
+            		pmsiErrors =  "Fichier de Type RSF2012 correctement inséré";
+            		myStatus = new BigDecimal(1);
+            		break;
             	default:
             	}
 
@@ -144,6 +148,9 @@ public class Pmsi2Sql {
 				break;
 			case RSF:
 				r = new PmsiRSFReader(new FileReader(options.getPmsiFile()), myConn);
+				break;
+			case RSF2012:
+				r = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), myConn);
 				break;
 			}
 

@@ -10,7 +10,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
- * Permet de définirdes options et de renvoyer la connexion à la base de données Postgresql
+ * Permet de défini rdes options et de renvoyer la connexion à la base de données Postgresql
  * selon les arguments fournis. Les options suivantes sont définies :
  * <ul>
  * <li>Aide</li>

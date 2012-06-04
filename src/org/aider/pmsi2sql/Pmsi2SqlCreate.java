@@ -2,6 +2,8 @@ package org.aider.pmsi2sql;
 
 import java.io.StringReader;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 
 import org.aider.pmsi2sql.linetypes.PmsiInsertion;
 import org.aider.pmsi2sql.linetypes.PmsiInsertionResult;
@@ -55,7 +57,7 @@ public class Pmsi2SqlCreate {
         } else if (options.isVersion()){
         	// L'affichage de la version a été demandé
     		parser.setUsageWidth(80);
-            System.out.println("Version : 0.1.3");
+            System.out.println("Version : 12.0");
             // sortie du programme
             return;
         }
@@ -65,16 +67,30 @@ public class Pmsi2SqlCreate {
        	
        	// Création de la table qui trace le résultat des tentatives d'insertion de fichiers pmsi
        	PmsiInsertionResult myInsertionResultTable = new PmsiInsertionResult("", "");
-       	myConn.createStatement().execute(myInsertionResultTable.getSQLTable());
-    	myConn.createStatement().execute(myInsertionResultTable.getSQLIndex());
-    	myConn.createStatement().execute(myInsertionResultTable.getSQLFK());
-       	
        	// Création de la table qui trace les tentatives d'insertion de fichiers pmsi
     	PmsiInsertion myInsertionTable = new PmsiInsertion("");
-    	myConn.createStatement().execute(myInsertionTable.getSQLTable());
-    	myConn.createStatement().execute(myInsertionTable.getSQLIndex());
-    	myConn.createStatement().execute(myInsertionTable.getSQLFK());
+    	Savepoint point = myConn.setSavepoint();
     	
+    	try {
+       		myConn.createStatement().execute(myInsertionResultTable.getSQLTable());
+       		myConn.createStatement().execute(myInsertionResultTable.getSQLIndex());
+       		myConn.createStatement().execute(myInsertionResultTable.getSQLFK());
+
+	    	myConn.createStatement().execute(myInsertionTable.getSQLTable());
+	    	myConn.createStatement().execute(myInsertionTable.getSQLIndex());
+	    	myConn.createStatement().execute(myInsertionTable.getSQLFK());
+    	} catch (SQLException e) {
+    		if (e.getSQLState().equals("42P16") || e.getSQLState().equals("42P07") ||
+    				e.getSQLState().equals("42710")) {
+    			// La structure a déjà été créée, on retourne au savepoint et
+				// on continue
+    			myConn.rollback(point);
+    		} else {
+				System.out.println(e.getSQLState());
+				throw e;
+			}
+
+    	}
     	// Création des tables permettant de stocker les RSS
     	PmsiRSSReader r = new PmsiRSSReader(new StringReader(""), myConn);
     	r.createTables();
@@ -86,6 +102,12 @@ public class Pmsi2SqlCreate {
 		f.createTables();
 		f.createIndexes();
 		f.createKF();
+
+		// Création des tables permettant de stocker les RSF2012
+		PmsiRSF2012Reader f2012 = new PmsiRSF2012Reader(new StringReader(""), myConn);
+		f2012.createTables();
+		f2012.createIndexes();
+		f2012.createKF();
 		
 		//Fermeture de la connexion à la base de données
 		myConn.commit();

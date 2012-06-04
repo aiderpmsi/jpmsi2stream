@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -170,7 +171,21 @@ public abstract class PmsiReader extends MachineState {
 		Iterator<Integer> u = t.iterator();
 		
 		while(u.hasNext()) {
-			sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLTable());
+			Savepoint point = sqlConn.setSavepoint();
+			try {
+				sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLTable());
+			} catch (SQLException e ) {
+				if (e.getSQLState().equals("42P07")) {
+					// La structure a déjà été créée, on retourne au savepoint et
+					// on continue
+					sqlConn.rollback(point);
+				} else {
+					System.out.println(e.getSQLState());
+					throw e;
+				}
+			} finally {
+				sqlConn.releaseSavepoint(point);
+			}
 		}
 	}
 	
@@ -184,7 +199,21 @@ public abstract class PmsiReader extends MachineState {
 		Iterator<Integer> u = t.iterator();
 		
 		while(u.hasNext()) {
-			sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLIndex());
+			Savepoint point = sqlConn.setSavepoint();
+			try {
+				sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLIndex());
+			} catch (SQLException e ) {
+				if (e.getSQLState().equals("42P16") || e.getSQLState().equals("42P07")) {
+					// La structure a déjà été créée, on retourne au savepoint et
+					// on continue
+					sqlConn.rollback(point);
+				} else {
+					System.out.println(e.getSQLState());
+					throw e;
+				}
+			} finally {
+				sqlConn.releaseSavepoint(point);
+			}
 		}
 	}
 	
@@ -197,7 +226,21 @@ public abstract class PmsiReader extends MachineState {
 		Iterator<Integer> u = t.iterator();
 		
 		while(u.hasNext()) {
-			sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLFK());
+			Savepoint point = sqlConn.setSavepoint();
+			try {
+				sqlConn.createStatement().execute(linesTypes.get(u.next()).getSQLFK());
+			} catch (SQLException e ) {
+				if (e.getSQLState().equals("42710")) {
+					// La structure a déjà été créée, on retourne au savepoint et
+					// on continue
+					sqlConn.rollback(point);
+				} else {
+					System.out.println(e.getSQLState());
+					throw e;
+				}
+			} finally {
+				sqlConn.releaseSavepoint(point);
+			}
 		}
 	}
 	
