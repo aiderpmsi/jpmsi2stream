@@ -1,41 +1,41 @@
 package org.aider.pmsi2sql.dbtypes;
 
 /**
- * Classe parente de tous les types de données permettant de faire les liens entre fichier
- * de pmsi et base de données. N'est pas utilisée directement.
- * Une liste de ces classes sont créées dans un objet de type pmsilinetype pour
- * définir le lien entre une ligne pmsi et sa persistance dans la base de données.
- * Un élément peut être :
+ * Classe parente de tous les types de donnï¿½es permettant de faire les liens entre fichier
+ * de pmsi et base de donnï¿½es. N'est pas utilisï¿½e directement.
+ * Une liste de ces classes sont crï¿½ï¿½es dans un objet de type pmsilinetype pour
+ * dï¿½finir le lien entre une ligne pmsi et sa persistance dans la base de donnï¿½es.
+ * Un ï¿½lï¿½ment peut ï¿½tre :
  * <ul>
- * <li>Un champ à lire dans un fichier</li>
+ * <li>Un champ Ã  lire dans un fichier</li>
  * <li>Un compteur (ligne, ...) avec un compteur</li>
  * <li>Un index</li>
- * <li>Une clef étrangère</li>
+ * <li>Une clef Ã©trangÃ¨re</li>
  * </ul> 
  * @author delabre
  */
 public abstract class PmsiElement {
 	
 	/**
-	 * Nom du champ associé dans la base de données
+	 * Nom du champ associÃ© dans la base de donnï¿½es
 	 */
 	private String nomchamp;
 	
 	/**
-	 * Valeur associée à ce champ
+	 * Valeur associï¿½e ï¿½ ce champ
 	 */
 	private String value;
 
 	/**
 	 * Constructeur
-	 * @param myNomChamp Nom du champ dans la base de données
+	 * @param myNomChamp Nom du champ dans la base de donnï¿½es
 	 */
 	public PmsiElement(String myNomChamp) {
 		nomchamp = myNomChamp;
 	}
 	
 	/**
-	 * Récupération du nom du champ associé dans la base de données
+	 * Rï¿½cupï¿½ration du nom du champ associï¿½ dans la base de donnï¿½es
 	 * @return {@link String} nom du champ
 	 */
 	public String getNomChamp() {
@@ -44,14 +44,14 @@ public abstract class PmsiElement {
 	
 	/**
 	 * Stocke une valeur dans ce champ
-	 * @param myValue Valeur à stocker dans ce champ
+	 * @param myValue Valeur ï¿½ stocker dans ce champ
 	 */
 	public void setValue(String myValue) {
 		value = myValue;
 	}
 	
 	/**
-	 * Retourne la valeur stockée dans ce champ
+	 * Retourne la valeur stockï¿½e dans ce champ
 	 * @return {@link String} Valeur
 	 */
 	public String getValue() {

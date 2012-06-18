@@ -15,7 +15,7 @@ public class PmsiRsfa2012 extends PmsiLineType {
 		super("RSFA2012");
 
 		PmsiInternalElement MyIdMain =new PmsiInternalElement("rsfa2012id", PmsiStandardDbTypeEnum.BIGSERIAL, 0);
-		MyIdMain.setValue("nextval('rsfa2012_rsfa2012id_seq')");
+		MyIdMain.setValue("nextval('rsfa_rsfaid_seq')");
 		addChamp(MyIdMain);
 		PmsiIndexElement MyIdmainIndex = new PmsiIndexElement("RSFA2012_rsfa2012id_pidx", PmsiIndexElement.INDEX_PK);
 		MyIdmainIndex.addIndex("rsfa2012id");
