@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.aider.pmsi2sql.linetypes.PmsiRsfb;
 import org.aider.pmsi2sql.linetypes.PmsiRsfc;
 import org.aider.pmsi2sql.linetypes.PmsiRsfh;
 import org.aider.pmsi2sql.linetypes.PmsiRsfHeader;
@@ -22,6 +21,7 @@ import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009b;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.reader.PmsiRSS116Reader.EnumSignal;
 import aider.org.pmsi.reader.PmsiRSS116Reader.EnumState;
