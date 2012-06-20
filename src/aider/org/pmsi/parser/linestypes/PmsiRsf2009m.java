@@ -18,6 +18,8 @@ public class PmsiRsf2009m extends PmsiLineType {
 		"NumDent13", "NumDent14", "NumDent15", "NumDent16"
 	};
 
+	private static final String name = "RsfM";
+
 	private String[] content = new String[names.length];
 
 	public Pattern getPattern() {
@@ -28,6 +30,10 @@ public class PmsiRsf2009m extends PmsiLineType {
 		return names;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}

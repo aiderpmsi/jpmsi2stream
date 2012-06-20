@@ -14,6 +14,8 @@ public class PmsiRsf2012l extends PmsiLineType {
 		"QuantiteActe4", "CodeActe4", "DateActe5", "QuantiteActe5", "CodeActe5"
 	};
 
+	private static final String name = "RsfL";
+
 	private String[] content = new String[names.length];
 
 	public Pattern getPattern() {
@@ -24,6 +26,10 @@ public class PmsiRsf2012l extends PmsiLineType {
 		return names;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}

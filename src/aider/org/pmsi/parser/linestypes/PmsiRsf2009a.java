@@ -15,6 +15,8 @@ public class PmsiRsf2009a extends PmsiLineType {
 		"TotalFactureHonoraire", "TotalRemboursableAMOHonoraire", "TotalParticipationAvantOC",
 		"TotalRemboursableOCPH", "TotalRemboursableOCHonoraire", "TotalFacturePH", "EtatLiquidation"
 	};
+	
+	private static final String name = "RsfA";
 
 	private String[] content = new String[names.length];
 
@@ -24,6 +26,10 @@ public class PmsiRsf2009a extends PmsiLineType {
 	
 	public String[] getNames() {
 		return names;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public void setContent(int index, String content) {

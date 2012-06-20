@@ -15,6 +15,8 @@ public class PmsiRsf2009b extends PmsiLineType {
 		"MontantTotalDepense", "MontantRemboursableOCPH", "NumGHS", "MontantNOEMIE", "OperationNOEMIE"
 	};
 
+	private static final String name = "RsfB";
+	
 	private String[] content = new String[names.length];
 
 	public Pattern getPattern() {
@@ -23,6 +25,10 @@ public class PmsiRsf2009b extends PmsiLineType {
 	
 	public String[] getNames() {
 		return names;
+	}
+		
+	public String getName() {
+		return name;
 	}
 	
 	public void setContent(int index, String content) {

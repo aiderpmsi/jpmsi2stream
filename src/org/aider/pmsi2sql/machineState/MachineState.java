@@ -44,9 +44,11 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	 * @return Le nouvel état de la machine à états
 	 */
 	public EnumState changeState(EnumSignal signal) {
-		stateActual = transitionsTable.get(signal).get(signal);
-		if (stateActual == null)
-			throw new RuntimeException ("Signal indétermié dans l'état actuel de la machine à états");
+		EnumState newState = transitionsTable.get(signal).get(stateActual);
+		if (newState == null)
+			throw new RuntimeException ("Signal " + signal.toString() + " indéterminé dans l'état actuel " + stateActual.toString() + " de la machine à états");
+		else
+			stateActual = newState; 
 		return stateActual;
 	}
 	

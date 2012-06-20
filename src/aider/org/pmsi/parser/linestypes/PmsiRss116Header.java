@@ -17,6 +17,8 @@ public class PmsiRss116Header extends PmsiLineType {
 		"NbRSS", "PremierRSS", "DernierRSS", "DernierEnvoiTrimestre"
 	};
 	
+	private static final String name = "RssHeader";
+
 	private String[] content = new String[names.length];
 
 	public Pattern getPattern() {
@@ -27,6 +29,10 @@ public class PmsiRss116Header extends PmsiLineType {
 		return names;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}

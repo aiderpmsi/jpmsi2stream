@@ -10,6 +10,8 @@ public class PmsiRss116Dad extends PmsiLineType {
 		"DAD"
 	};
 	
+	private static final String name = "RssDad";
+
 	private String[] content = new String[names.length];
 
 	public Pattern getPattern() {
@@ -20,6 +22,10 @@ public class PmsiRss116Dad extends PmsiLineType {
 		return names;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}
