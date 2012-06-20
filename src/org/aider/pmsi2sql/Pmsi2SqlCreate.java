@@ -11,7 +11,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 /**
- * Classe principale du programme pmsi2sqlcreate qui permet de créer les
+ * Classe principale du programme pmsi2sqlcreate qui permet de crï¿½er les
  * tables pour utiliser l'application pmsi2sql
  * @author delabre
  *
@@ -25,7 +25,7 @@ public class Pmsi2SqlCreate {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		// Définition des arguments fournis au programme
+		// Dï¿½finition des arguments fournis au programme
 		Pmsi2SqlBaseOptions options = new Pmsi2SqlBaseOptions();
         CmdLineParser parser = new CmdLineParser(options);
 
@@ -34,7 +34,7 @@ public class Pmsi2SqlCreate {
         	parser.parseArgument(args);
         } catch (CmdLineException e) {
         	// Au moins un argument requis est manquant
-        	// Si on a appelé l'aide ou le numéro de version, il est normal qu'un argument manque,
+        	// Si on a appelï¿½ l'aide ou le numï¿½ro de version, il est normal qu'un argument manque,
         	// Sinon on affiche le message indiquant les arguments possibles ainsi que l'argument
         	// manquant
         	if(!options.isHelp() && !options.isVersion()) {
@@ -46,28 +46,28 @@ public class Pmsi2SqlCreate {
             }
         }
 
-        // La ligne de commande a bien été lue, ou bien mal mais parceque l'argument 'help' ou
-        // 'version' a été indiqué
+        // La ligne de commande a bien ï¿½tï¿½ lue, ou bien mal mais parceque l'argument 'help' ou
+        // 'version' a ï¿½tï¿½ indiquï¿½
     	if(options.isHelp()){
-    		// L'affichage de l'aide a été demandée
+    		// L'affichage de l'aide a ï¿½tï¿½ demandï¿½e
     		parser.setUsageWidth(80);
             parser.printUsage(System.out);
             // Sortie du programme
             return;
         } else if (options.isVersion()){
-        	// L'affichage de la version a été demandé
+        	// L'affichage de la version a ï¿½tï¿½ demandï¿½
     		parser.setUsageWidth(80);
             System.out.println("Version : 12.0");
             // sortie du programme
             return;
         }
 
-    	// Connexion à la base de données selon les arguments de la ligne de commande
+    	// Connexion ï¿½ la base de donnï¿½es selon les arguments de la ligne de commande
        	Connection myConn = options.getNewSqlConnection();
        	
-       	// Création de la table qui trace le résultat des tentatives d'insertion de fichiers pmsi
+       	// Crï¿½ation de la table qui trace le rï¿½sultat des tentatives d'insertion de fichiers pmsi
        	PmsiInsertionResult myInsertionResultTable = new PmsiInsertionResult("", "");
-       	// Création de la table qui trace les tentatives d'insertion de fichiers pmsi
+       	// Crï¿½ation de la table qui trace les tentatives d'insertion de fichiers pmsi
     	PmsiInsertion myInsertionTable = new PmsiInsertion("");
     	Savepoint point = myConn.setSavepoint();
     	
@@ -82,7 +82,7 @@ public class Pmsi2SqlCreate {
     	} catch (SQLException e) {
     		if (e.getSQLState().equals("42P16") || e.getSQLState().equals("42P07") ||
     				e.getSQLState().equals("42710")) {
-    			// La structure a déjà été créée, on retourne au savepoint et
+    			// La structure a dï¿½jï¿½ ï¿½tï¿½ crï¿½ï¿½e, on retourne au savepoint et
 				// on continue
     			myConn.rollback(point);
     		} else {
@@ -91,29 +91,29 @@ public class Pmsi2SqlCreate {
 			}
 
     	}
-    	// Création des tables permettant de stocker les RSS
-    	PmsiRSSReader r = new PmsiRSSReader(new StringReader(""), myConn);
+    	// Crï¿½ation des tables permettant de stocker les RSS
+    	PmsiRSS116Reader r = new PmsiRSS116Reader(new StringReader(""), myConn);
     	r.createTables();
     	r.createIndexes();
     	r.createKF();
     	
-    	// Création des tables permettant de stocker les RSF
+    	// Crï¿½ation des tables permettant de stocker les RSF
 		PmsiRSFReader f = new PmsiRSFReader(new StringReader(""), myConn);
 		f.createTables();
 		f.createIndexes();
 		f.createKF();
 
-		// Création des tables permettant de stocker les RSF2012
+		// Crï¿½ation des tables permettant de stocker les RSF2012
 		PmsiRSF2012Reader f2012 = new PmsiRSF2012Reader(new StringReader(""), myConn);
 		f2012.createTables();
 		f2012.createIndexes();
 		f2012.createKF();
 		
-		//Fermeture de la connexion à la base de données
+		//Fermeture de la connexion ï¿½ la base de donnï¿½es
 		myConn.commit();
     	myConn.close();
 
-    	// Affichage de la réussite du programme
+    	// Affichage de la rï¿½ussite du programme
         System.out.println("pmsi2sqlcreate successfully finished!");
 	}
 }

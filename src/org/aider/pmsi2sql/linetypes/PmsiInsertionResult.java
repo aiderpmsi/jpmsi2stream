@@ -5,6 +5,8 @@ import org.aider.pmsi2sql.dbtypes.PmsiInternalElement;
 import org.aider.pmsi2sql.dbtypes.PmsiFilePartElement;
 import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
 
+import aider.org.pmsi.parser.PmsiLineType;
+
 /**
  * Stocke le statut d'une insertion de fichier pmsi 
  * @author delabre
@@ -14,7 +16,7 @@ public class PmsiInsertionResult extends PmsiLineType {
 
 	/**
 	 * Constructeur
-	 * @param myStatusString chaine de caractères à stocker dans le statut de l'insertino (réussi / échoué)
+	 * @param myStatusString chaine de caractï¿½res ï¿½ stocker dans le statut de l'insertino (rï¿½ussi / ï¿½chouï¿½)
 	 * @param myLogString log de l'insertion
 	 */
 	public PmsiInsertionResult(String myStatusString, String myLogString) {

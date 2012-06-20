@@ -6,8 +6,10 @@ import org.aider.pmsi2sql.dbtypes.PmsiFilePartElement;
 import org.aider.pmsi2sql.dbtypes.PmsiFkElement;
 import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
 
+import aider.org.pmsi.parser.PmsiLineType;
+
 /**
- * Capture l'entête d'un fichier pmsi RSS
+ * Capture l'entï¿½te d'un fichier pmsi RSS
  * @author delabre
  *
  */

@@ -2,74 +2,75 @@ package org.aider.pmsi2sql.machineState;
 
 import java.util.HashMap;
 
-public abstract class MachineState {
+public abstract class MachineState<EnumState, EnumSignal> {
+
+	private EnumState stateFinished;
+	
+	/**
+	 * La table de changement d'Ã©tat associe un signal
+	 * Ã  un chamgement d'Ã©tat Ã  partir d'un Ã©tat initial :
+	 */
+	HashMap<EnumSignal, HashMap<EnumState, EnumState>> transitionsTable =
+			new HashMap<EnumSignal, HashMap<EnumState,EnumState>>();
+	
+	/**
+	 * Indicateur dÃ©finissant l'Ã©tat actuel
+	 */
+	private EnumState stateActual;
+	
+	protected MachineState() {}
+	
+	public MachineState(EnumState stateReady, EnumState stateFinished) {
+		this.stateActual = stateReady;
+		this.stateFinished = stateFinished;
+	}
+	
+	/**
+	 * Insertion d'une transition entre signal, Ã©tat initial et Ã©tat final
+	 * @param signal
+	 * @param stateInitial
+	 * @param stateFinal
+	 */
+	public void addTransition(EnumSignal signal, EnumState stateInitial, EnumState stateFinal) {
+		if (!transitionsTable.containsKey(signal)) {
+			transitionsTable.put(signal, new HashMap<EnumState, EnumState>());
+		}
+		transitionsTable.get(signal).put(stateInitial, stateFinal);
+	}
 
 	/**
-	 * L'état de départ est un int égal à 0
+	 * Modification de l'Ã©tat de la machine selon le signal donnÃ©
+	 * @param signal
+	 * @return Le nouvel Ã©tat de la machine Ã  Ã©tats
 	 */
-	public static final int STATE_READY = 0;
-	public static final int STATE_FINISHED = -1;
-	
-	/**
-	 * La table de changement d'état associe un signal
-	 * à un chamgement d'état à partir d'un état vers un autre : 
-	 * Le premier integer est le signal, le deuxième l'état initial
-	 * et le troisième l'état final
-	 */
-	HashMap<Integer, HashMap<Integer, Integer>> statesTable;
-	
-	/**
-	 * Indicateur définissant l'état actuel
-	 */
-	Integer etatActuel;
-	
-	/**
-	 * Constructeur. La machine est initialisée avec un entier correspondant
-	 * à START
-	 */
-	public MachineState() {
-		statesTable = new HashMap<Integer, HashMap<Integer,Integer>>();
-		etatActuel = STATE_READY;
+	public EnumState changeState(EnumSignal signal) {
+		stateActual = transitionsTable.get(signal).get(signal);
+		if (stateActual == null)
+			throw new RuntimeException ("Signal indÃ©termiÃ© dans l'Ã©tat actuel de la machine Ã  Ã©tats");
+		return stateActual;
 	}
 	
 	/**
-	 * Insertion d'une transition entre signal, état initial et état filan
-	 * @param MySignal
-	 * @param MyInitialState
-	 * @param MyFinalState
-	 */
-	public void addTransition(int MySignal, int MyInitialState, int MyFinalState) {
-		if (!statesTable.containsKey(MySignal)) {
-			statesTable.put(MySignal, new HashMap<Integer, Integer>());
-		}
-		statesTable.get(MySignal).put(MyInitialState, MyFinalState);
-	}
-	
-	/**
-	 * Modification de l'état de la machine selon le signal donné
-	 * @param Mysignal
-	 * @return Le nouvel état de la machine à états
-	 */
-	public int changeState(int Mysignal) {
-		etatActuel = statesTable.get(Mysignal).get(etatActuel);
-		if (etatActuel == null)
-			throw new RuntimeException ("Signal indéterminé dans l'état actuel de la machine à états");
-		return etatActuel;
-	}
-	
-	/**
-	 * Retourne l'état de la machine
+	 * Retourne l'Ã©tat de la machine
 	 * @return Etat de la machine
 	 */
-	public int getState() {
-		return etatActuel;
+	public EnumState getState() {
+		return stateActual;
 	}
 	
+	/**
+	 * Lancement de la machine Ã  Ã©tats
+	 * @throws Exception
+	 */
 	public void run() throws Exception{
-		while (etatActuel != STATE_FINISHED) {
+		while (stateActual != stateFinished) {
 			process();
 		}
 	}
 	
+	/**
+	 * MÃ©thode Ã  implÃ©menter pour lancer la machine Ã  Ã©tats
+	 * @throws Exception
+	 */
 	public abstract void process() throws Exception;
 }

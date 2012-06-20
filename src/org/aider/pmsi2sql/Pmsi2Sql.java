@@ -15,8 +15,10 @@ import org.aider.pmsi2sql.linetypes.PmsiInsertionResult;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.pmsi.parser.PmsiReader;
+
 /**
- * Entrée du programme permettant d'insérer un fichier pmsi dans la base de données adéquate. Contient
+ * Entrï¿½e du programme permettant d'insï¿½rer un fichier pmsi dans la base de donnï¿½es adï¿½quate. Contient
  * la fonction main de pmsi2sql
  * @author delabre 
  *
@@ -24,7 +26,7 @@ import org.kohsuke.args4j.CmdLineParser;
 public class Pmsi2Sql {
 
 	/**
-	 * Enumération permettant d'indiquer quel lecteur a réussi à réaliser la lecture du fichier
+	 * Enumï¿½ration permettant d'indiquer quel lecteur a rï¿½ussi ï¿½ rï¿½aliser la lecture du fichier
 	 * pmis (et donc de quel type de format le fichier est
 	 * @author delabre
 	 *
@@ -34,7 +36,7 @@ public class Pmsi2Sql {
 	}
 	
 	/**
-	 * Chaine de caractère stockant les erreurs des
+	 * Chaine de caractï¿½re stockant les erreurs des
 	 * lecteurs de fichiers de PMSI
 	 */
 	public static String pmsiErrors = "";
@@ -46,7 +48,7 @@ public class Pmsi2Sql {
 	 */
 	public static void main(String[] args) throws Exception  {
 		
-		// Définition des arguments fournis au programme
+		// Dï¿½finition des arguments fournis au programme
 		Pmsi2SqlMainOptions options = new Pmsi2SqlMainOptions();
         CmdLineParser parser = new CmdLineParser(options);
 
@@ -54,21 +56,21 @@ public class Pmsi2Sql {
         try {
             parser.parseArgument(args);
 
-            	// Création de la connection à la base de données :
+            	// Crï¿½ation de la connection ï¿½ la base de donnï¿½es :
             	Connection myConn = options.getNewSqlConnection();
             	// Insertion du fichier en binaire dans la table des fichiers (pmsiinsertion)
             	PmsiInsertion myInsert = new PmsiInsertion(options.getPmsiFile().getPath());
-            	// Sauvegarde de l'état
+            	// Sauvegarde de l'ï¿½tat
             	myInsert.insertSQLLine(myConn);
             	
-            	// Indicateur permettant de définir quel type de fichier pmsi a pu être lu
+            	// Indicateur permettant de dï¿½finir quel type de fichier pmsi a pu ï¿½tre lu
             	FileType fileResult = FileType.FALSE;
-            	// Liste des types de fichiers pmsi pouvant être lus
+            	// Liste des types de fichiers pmsi pouvant ï¿½tre lus
             	List<FileType> fileTypes = new ArrayList<FileType>();
             	Collections.addAll(fileTypes, FileType.RSF, FileType.RSS, FileType.RSF2012);
             	
-        		// On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
-        		// Le premier qui réussit est considéré comme le type de fichier auquel on à faire
+        		// On essaye de lire le fichier pmsi donnï¿½ avec tous les lecteurs dont on dispose,
+        		// Le premier qui rï¿½ussit est considï¿½rï¿½ comme le type de fichier auquel on ï¿½ faire
         		Iterator<FileType> fileTypesit = fileTypes.iterator();
         		boolean mycontinue = true;
         		try {
@@ -82,29 +84,29 @@ public class Pmsi2Sql {
         			pmsiErrors = (e.getMessage() == null ? "" : e.getMessage());
         		}
 
-        		// Définition de l'état de retour de la lecture du fichier : 1 = ok, 0 = fichier non inséré correctement
+        		// Dï¿½finition de l'ï¿½tat de retour de la lecture du fichier : 1 = ok, 0 = fichier non insï¿½rï¿½ correctement
         		BigDecimal myStatus = new BigDecimal(0);
             	switch(fileResult) {
             	case RSS:
-            		pmsiErrors =  "Fichier de Type RSS correctement inséré";
+            		pmsiErrors =  "Fichier de Type RSS correctement insï¿½rï¿½";
             		myStatus = new BigDecimal(1);
             		break;
             	case RSF:
-            		pmsiErrors =  "Fichier de Type RSF correctement inséré";
+            		pmsiErrors =  "Fichier de Type RSF correctement insï¿½rï¿½";
             		myStatus = new BigDecimal(1);
             		break;
             	case RSF2012:
-            		pmsiErrors =  "Fichier de Type RSF2012 correctement inséré";
+            		pmsiErrors =  "Fichier de Type RSF2012 correctement insï¿½rï¿½";
             		myStatus = new BigDecimal(1);
             		break;
             	default:
             	}
 
-            	// Stockage du résultat de l'insertion :
+            	// Stockage du rï¿½sultat de l'insertion :
             	PmsiInsertionResult myInsertResult = new PmsiInsertionResult(myStatus.toString(), pmsiErrors);
             	myInsertResult.insertSQLLine(myConn);
             	
-            	// Création du lien entre pmsiinsertion et pmsiinsertionresult
+            	// Crï¿½ation du lien entre pmsiinsertion et pmsiinsertionresult
             	PreparedStatement myps = myConn.prepareStatement("UPDATE pmsiinsertion SET pmsiinsertionresultid = " +
             			"currval('pmsiinsertionresult_pmsiinsertionresultid_seq') " +
             			"WHERE pmsiinsertionid = currval('pmsiinsertion_pmsiinsertionid_seq');");
@@ -128,23 +130,23 @@ public class Pmsi2Sql {
 	
 	/**
 	 * Lecture du fichier PMSI 
-	 * @param options Options du programme (en particulier le fichier à insérer)
-	 * @param myConn Connexion à la base de données
-	 * @param myType Type de fichier à insérer
-	 * @return {@link FileType#FALSE} si le fichier n'a pas pu être lu, sinon un autre type de {@link FileType}
-	 *   correspondant au type de fichier lu si le fichier a pu être lu
+	 * @param options Options du programme (en particulier le fichier ï¿½ insï¿½rer)
+	 * @param myConn Connexion ï¿½ la base de donnï¿½es
+	 * @param myType Type de fichier ï¿½ insï¿½rer
+	 * @return {@link FileType#FALSE} si le fichier n'a pas pu ï¿½tre lu, sinon un autre type de {@link FileType}
+	 *   correspondant au type de fichier lu si le fichier a pu ï¿½tre lu
 	 * @throws Exception
 	 */
 	public static FileType ReadPMSI(Pmsi2SqlMainOptions options, Connection myConn, FileType myType) throws Exception {
-		// Sauvegarde de l'état de la base de données avant tentative d'insertion de données
-		// pour revenir à ce point s'il y a une erreur
+		// Sauvegarde de l'ï¿½tat de la base de donnï¿½es avant tentative d'insertion de donnï¿½es
+		// pour revenir ï¿½ ce point s'il y a une erreur
 		Savepoint mySavePoint = myConn.setSavepoint();
 		try {
-			// Définition du type de lecteur selon myType
+			// Dï¿½finition du type de lecteur selon myType
 			PmsiReader r = null;
 			switch(myType) {
 			case RSS:
-				r = new PmsiRSSReader(new FileReader(options.getPmsiFile()), myConn);
+				r = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), myConn);
 				break;
 			case RSF:
 				r = new PmsiRSFReader(new FileReader(options.getPmsiFile()), myConn);
@@ -154,21 +156,21 @@ public class Pmsi2Sql {
 				break;
 			}
 
-			// Lecture du fichier par mise en route de la machine à états
+			// Lecture du fichier par mise en route de la machine ï¿½ ï¿½tats
         	r.run();
 			
-        	// Arrivé ici, le fichier a pu être lu, on retourne le type de fichier inséré
+        	// Arrivï¿½ ici, le fichier a pu ï¿½tre lu, on retourne le type de fichier insï¿½rï¿½
         	return myType;
 		} catch (PmsiFileNotReadable e) {
-			// Impossible à lire ce fichier avec ce lecteur
-			// Insertion du message de cette erreur à la suite des messages précédents.
+			// Impossible ï¿½ lire ce fichier avec ce lecteur
+			// Insertion du message de cette erreur ï¿½ la suite des messages prï¿½cï¿½dents.
 			pmsiErrors = pmsiErrors.concat(e.getMessage() + "\n\n");
-			// Retour à l'état sql précédant l'appel à la lecture du fichier de type PMSI
+			// Retour ï¿½ l'ï¿½tat sql prï¿½cï¿½dant l'appel ï¿½ la lecture du fichier de type PMSI
 			myConn.rollback(mySavePoint);
 			// Indication que le lecteur n'a pu lire le fichier pmsi
 			return FileType.FALSE;
 		} catch (Exception myE) {
-			// Toutes les autres erreurs correspondent à des problèmes qu'on ne peut résoudre ici
+			// Toutes les autres erreurs correspondent ï¿½ des problï¿½mes qu'on ne peut rï¿½soudre ici
 			myConn.rollback(mySavePoint);
 			throw myE;
 		}
