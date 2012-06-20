@@ -2,29 +2,16 @@ package aider.org.pmsi.reader;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Vector;
-
-import org.aider.pmsi2sql.linetypes.PmsiRsfc;
-import org.aider.pmsi2sql.linetypes.PmsiRsfh;
-import org.aider.pmsi2sql.linetypes.PmsiRsfHeader;
-import org.aider.pmsi2sql.linetypes.PmsiRsfm;
-import org.aider.pmsi2sql.linetypes.PmsiRssActe;
-import org.aider.pmsi2sql.linetypes.PmsiRssDa;
-import org.aider.pmsi2sql.linetypes.PmsiRssDad;
-import org.aider.pmsi2sql.linetypes.PmsiRssMain;
-
-
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009b;
-import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
-import aider.org.pmsi.reader.PmsiRSS116Reader.EnumSignal;
-import aider.org.pmsi.reader.PmsiRSS116Reader.EnumState;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009c;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009h;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
 
 /**
  * Définition de la lecture d'un RSF version 2009
