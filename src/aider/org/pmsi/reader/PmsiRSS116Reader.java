@@ -3,15 +3,15 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.aider.pmsi2sql.linetypes.PmsiRssActe;
-import org.aider.pmsi2sql.linetypes.PmsiRssDa;
-import org.aider.pmsi2sql.linetypes.PmsiRssDad;
-import org.aider.pmsi2sql.linetypes.PmsiRssMain;
 
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
+import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
+import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
+import aider.org.pmsi.parser.linestypes.PmsiRss116Dad;
+import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
 
 
@@ -64,10 +64,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRss116Header());
-		addLineType(EnumState.WAIT_RSS_MAIN, new PmsiRssMain());
-		addLineType(EnumState.WAIT_RSS_DA, new PmsiRssDa());
-		addLineType(EnumState.WAIT_RSS_DAD, new PmsiRssDad());
-		addLineType(EnumState.WAIT_RSS_ACTE, new PmsiRssActe());
+		addLineType(EnumState.WAIT_RSS_MAIN, new PmsiRss116Main());
+		addLineType(EnumState.WAIT_RSS_DA, new PmsiRss116Da());
+		addLineType(EnumState.WAIT_RSS_DAD, new PmsiRss116Dad());
+		addLineType(EnumState.WAIT_RSS_ACTE, new PmsiRss116Acte());
 		
 		// Définition des états et des signaux de la machine à états
 		addTransition(EnumSignal.SIGNAL_START, EnumState.STATE_READY, EnumState.WAIT_RSS_HEADER);

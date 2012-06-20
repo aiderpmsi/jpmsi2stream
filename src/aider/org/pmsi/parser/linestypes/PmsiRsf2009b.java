@@ -3,7 +3,6 @@ package aider.org.pmsi.parser.linestypes;
 import java.util.regex.Pattern;
 
 public class PmsiRsf2009b extends PmsiLineType {
-
 	
 	private static final Pattern pattern = Pattern.compile("^(B)(\\d{9})(.{20})(.{13})(.{2})(.{3})(.{9})(.{2})(.{3})(.{8})(.{8})" +
 			"(.{5})(.{3})(.{1})(.{5})(.{1})(.{5})(.{7})(.{8})(.{3})(.{8})(.{8})(.{7})(.{4})(.{8})(.{3})");
