@@ -1,6 +1,7 @@
-package aider.org.pmsi.parser;
+package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
+
 
 /**
  * Capture l'entête d'un fichier pmsi RSS

@@ -1,4 +1,4 @@
-package aider.org.pmsi.parser;
+package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 

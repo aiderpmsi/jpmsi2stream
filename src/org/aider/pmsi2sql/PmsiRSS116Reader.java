@@ -2,18 +2,13 @@ package org.aider.pmsi2sql;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Vector;
-
 import org.aider.pmsi2sql.linetypes.PmsiRssActe;
 import org.aider.pmsi2sql.linetypes.PmsiRssDa;
 import org.aider.pmsi2sql.linetypes.PmsiRssDad;
 import org.aider.pmsi2sql.linetypes.PmsiRssMain;
 
-import aider.org.pmsi.parser.PmsiLineType;
-import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.PmsiRssHeader;
+import aider.org.pmsi.parser.linestypes.PmsiLineType;
+import aider.org.pmsi.parser.linestypes.PmsiRssHeader;
 
 /**
  * Classe étendant la classe abstraite de PmsiReader et permettant de lire un

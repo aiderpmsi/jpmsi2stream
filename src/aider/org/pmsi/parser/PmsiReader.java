@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import org.aider.pmsi2sql.machineState.MachineState;
 import org.apache.commons.lang.ObjectUtils.Null;
 
+import aider.org.pmsi.parser.linestypes.PmsiLineType;
+
 
 public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal> {
 
@@ -118,7 +120,8 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 					lineType.setContent(i, match.group(i + 1));
 				}
 				// Suppression du match de la ligne
-				
+				toParse = toParse.substring(match.end());
+
 				// Renvoi de l'objet correspondant à la ligne lue
 				return lineType;
 			}
