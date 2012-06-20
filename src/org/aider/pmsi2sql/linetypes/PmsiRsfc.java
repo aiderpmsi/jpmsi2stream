@@ -8,6 +8,8 @@ import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
 
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
+
+
 public class PmsiRsfc extends PmsiLineType {
 
 	/**

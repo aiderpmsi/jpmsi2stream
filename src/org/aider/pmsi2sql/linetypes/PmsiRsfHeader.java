@@ -8,6 +8,8 @@ import org.aider.pmsi2sql.dbtypes.PmsiIndexElement;
 
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
+
+
 /**
  * Capture l'ent�te d'un fichier pmsi RSS
  * @author delabre

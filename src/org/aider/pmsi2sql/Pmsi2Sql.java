@@ -16,6 +16,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.reader.PmsiRSF2009Reader;
+import aider.org.pmsi.reader.PmsiRSS116Reader;
 
 /**
  * Entr�e du programme permettant d'ins�rer un fichier pmsi dans la base de donn�es ad�quate. Contient
@@ -149,7 +151,7 @@ public class Pmsi2Sql {
 				r = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), myConn);
 				break;
 			case RSF:
-				r = new PmsiRSFReader(new FileReader(options.getPmsiFile()), myConn);
+				r = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()), myConn);
 				break;
 			case RSF2012:
 				r = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), myConn);

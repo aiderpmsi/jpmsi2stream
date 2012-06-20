@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * @author delabre
  *
  */
-public class PmsiRssHeader extends PmsiLineType {
+public class PmsiRss116Header extends PmsiLineType {
 
 	private static final Pattern pattern = Pattern.compile("^(\\d{9})(\\d{3})(.{2})(\\d{8})(\\d{8})(\\d{6})(\\d{6})(\\d{7})(\\d{7})(.{1})");
 			

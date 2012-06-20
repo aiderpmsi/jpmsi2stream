@@ -1,14 +1,19 @@
-package org.aider.pmsi2sql;
+package aider.org.pmsi.reader;
 
 import java.io.IOException;
 import java.io.Reader;
+
+import org.aider.pmsi2sql.PmsiFileNotInserable;
+import org.aider.pmsi2sql.PmsiFileNotReadable;
 import org.aider.pmsi2sql.linetypes.PmsiRssActe;
 import org.aider.pmsi2sql.linetypes.PmsiRssDa;
 import org.aider.pmsi2sql.linetypes.PmsiRssDad;
 import org.aider.pmsi2sql.linetypes.PmsiRssMain;
 
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
-import aider.org.pmsi.parser.linestypes.PmsiRssHeader;
+import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
+
+
 
 /**
  * Classe étendant la classe abstraite de PmsiReader et permettant de lire un
@@ -19,18 +24,20 @@ import aider.org.pmsi.parser.linestypes.PmsiRssHeader;
 public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS116Reader.EnumState, PmsiRSS116Reader.EnumSignal> {
 
 	public enum EnumState {
-		STATE_READY, STATE_EOF, STATE_FINISHED,
-		WAIT_RSS_HEADER, WAIT_RSS_MAIN, WAIT_RSS_DA, WAIT_RSS_DAD,
-		WAIT_RSS_ACTE, WAIT_RSS_FIN_LIGNE, STATE_EMPTY_FILE}
+		STATE_READY, STATE_FINISHED,
+		WAIT_RSS_HEADER, WAIT_RSS_HEADER_ENDLINE,
+		WAIT_RSS_MAIN, WAIT_RSS_DA, WAIT_RSS_DAD,
+		WAIT_RSS_ACTE, WAIT_RSS_ENDLINE, STATE_EMPTY_FILE}
 	
 	public enum EnumSignal {
-		SIGNAL_START, // STATE_READY -> STATE_RSS_HEADER
-		SIGNAL_RSS_END_HEADER, // STATE_RSS_HEADER -> STATE_RSS_MAIN
-		SIGNAL_RSS_END_MAIN, // STATE_RSS_MAIN -> STATE_RSS_DA
-		SIGNAL_RSS_END_DA, // STATE_RSS_DA -> STATE_RSS_DAD
-		SIGNAL_RSS_END_DAD, // STATE_RSS_DAD -> STATE_RSS_ACTE
-		SIGNAL_RSS_END_ACTE, // STATE_RSS_ACTE -> STATE_RSS_FIN_LIGNE
-		SIGNAL_RSS_NEWLINE, //TATE_RSS_FIN_LIGNE -> STATE_RSS_MAIN
+		SIGNAL_START, // STATE_READY -> WAIT_RSS_HEADER
+		SIGNAL_RSS_END_HEADER, // WAIT_RSS_HEADER -> WAIT_RSS_HEADER_ENDLINE
+		SIGNAL_RSS_HEADER_NEWLINE, // WAIT_RSS_HEADER_ENDLINE -> WAIT_RSS_MAIN
+		SIGNAL_RSS_END_MAIN, // WAIT_RSS_MAIN -> WAIT_RSS_DA
+		SIGNAL_RSS_END_DA, // WAIT_RSS_DA -> WAIT_RSS_DAD
+		SIGNAL_RSS_END_DAD, // WAIT_RSS_DAD -> WAIT_RSS_ACTE
+		SIGNAL_RSS_END_ACTE, // WAIT_RSS_ACTE -> WAIT_RSS_FIN_LIGNE
+		SIGNAL_RSS_NEWLINE, // WAIT_RSS_FIN_LIGNE -> WAIT_RSS_MAIN
 		SIGNAL_EOF
 	}
 	
@@ -50,12 +57,13 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	
 	/**
 	 * Constructeur d'un lecteur de fichier rss
+	 * @param reader
 	 */
 	public PmsiRSS116Reader(Reader reader) {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
-		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRssHeader());
+		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRss116Header());
 		addLineType(EnumState.WAIT_RSS_MAIN, new PmsiRssMain());
 		addLineType(EnumState.WAIT_RSS_DA, new PmsiRssDa());
 		addLineType(EnumState.WAIT_RSS_DAD, new PmsiRssDad());
@@ -64,12 +72,13 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		// Définition des états et des signaux de la machine à états
 		addTransition(EnumSignal.SIGNAL_START, EnumState.STATE_READY, EnumState.WAIT_RSS_HEADER);
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_HEADER, EnumState.STATE_EMPTY_FILE);
-		addTransition(EnumSignal.SIGNAL_RSS_END_HEADER, EnumState.WAIT_RSS_HEADER, EnumState.WAIT_RSS_MAIN);
+		addTransition(EnumSignal.SIGNAL_RSS_END_HEADER, EnumState.WAIT_RSS_HEADER, EnumState.WAIT_RSS_HEADER_ENDLINE);
+		addTransition(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE, EnumState.WAIT_RSS_HEADER_ENDLINE, EnumState.WAIT_RSS_MAIN);
 		addTransition(EnumSignal.SIGNAL_RSS_END_MAIN, EnumState.WAIT_RSS_MAIN, EnumState.WAIT_RSS_DA);
 		addTransition(EnumSignal.SIGNAL_RSS_END_DA, EnumState.WAIT_RSS_DA, EnumState.WAIT_RSS_DAD);
 		addTransition(EnumSignal.SIGNAL_RSS_END_DAD, EnumState.WAIT_RSS_DAD, EnumState.WAIT_RSS_ACTE);
-		addTransition(EnumSignal.SIGNAL_RSS_END_ACTE, EnumState.WAIT_RSS_ACTE, EnumState.WAIT_RSS_FIN_LIGNE);
-		addTransition(EnumSignal.SIGNAL_RSS_NEWLINE, EnumState.WAIT_RSS_FIN_LIGNE, EnumState.WAIT_RSS_MAIN);
+		addTransition(EnumSignal.SIGNAL_RSS_END_ACTE, EnumState.WAIT_RSS_ACTE, EnumState.WAIT_RSS_ENDLINE);
+		addTransition(EnumSignal.SIGNAL_RSS_NEWLINE, EnumState.WAIT_RSS_ENDLINE, EnumState.WAIT_RSS_MAIN);
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_MAIN, EnumState.STATE_FINISHED);
 	}
 			
@@ -92,7 +101,6 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			if (matchLine != null) {
 				System.out.println(matchLine.getContent());
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
-				readNewLine();
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSS 116 : Entête du fichier non trouvée");
 			break;
@@ -140,10 +148,20 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 					throw new PmsiFileNotInserable("Lecteur RSS : Actes non trouvés dans ligne RSS");
 			}
 			break;
-		case WAIT_RSS_FIN_LIGNE:
+		case WAIT_RSS_ENDLINE:
+			// On vérifie qu'il ne reste rien
+			if (getLineSize() != 0)
+				throw new PmsiFileNotReadable("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_RSS_NEWLINE);
 			readNewLine();
 			break;
+		case WAIT_RSS_HEADER_ENDLINE:
+			// On vérifie qu'il ne reste rien
+			if (getLineSize() != 0)
+				throw new PmsiFileNotReadable("trop de caractères dans la ligne");
+			changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
+			readNewLine();
+			break;			
 		case STATE_EMPTY_FILE:
 			throw new PmsiFileNotReadable("Lecteur RSS : ", new IOException("Fichier vide"));
 		default:

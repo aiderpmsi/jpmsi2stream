@@ -15,6 +15,8 @@ import org.apache.commons.lang.ObjectUtils.Null;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 
+
+
 public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal> {
 
 	/**
@@ -82,11 +84,11 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	}
 	
 	/**
-	 * Retourne la ligne actuelle
+	 * Retourne la taille de la ligne actuelle
 	 * @return Ligne actuelle
 	 */
-	private String getLine() {
-		return toParse;
+	public final int getLineSize() {
+		return toParse.length();
 	}
 	
 	/**
@@ -112,7 +114,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 		for (PmsiLineType lineType : linesTypes.get(getState())) {
 			// Récupération du type de ligne (paut être réutilisé)
 			Pattern pattern = lineType.getPattern();
-			Matcher match = pattern.matcher(getLine());
+			Matcher match = pattern.matcher(toParse);
 
 			// On a une ligne qui correspond
 			if (match.matches()) {

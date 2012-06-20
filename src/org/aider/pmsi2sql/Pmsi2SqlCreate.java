@@ -10,6 +10,9 @@ import org.aider.pmsi2sql.linetypes.PmsiInsertionResult;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.pmsi.reader.PmsiRSF2009Reader;
+import aider.org.pmsi.reader.PmsiRSS116Reader;
+
 /**
  * Classe principale du programme pmsi2sqlcreate qui permet de cr�er les
  * tables pour utiliser l'application pmsi2sql
@@ -98,7 +101,7 @@ public class Pmsi2SqlCreate {
     	r.createKF();
     	
     	// Cr�ation des tables permettant de stocker les RSF
-		PmsiRSFReader f = new PmsiRSFReader(new StringReader(""), myConn);
+		PmsiRSF2009Reader f = new PmsiRSF2009Reader(new StringReader(""), myConn);
 		f.createTables();
 		f.createIndexes();
 		f.createKF();
