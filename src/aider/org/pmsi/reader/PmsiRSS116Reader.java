@@ -3,13 +3,13 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.aider.pmsi2sql.PmsiFileNotInserable;
-import org.aider.pmsi2sql.PmsiFileNotReadable;
 import org.aider.pmsi2sql.linetypes.PmsiRssActe;
 import org.aider.pmsi2sql.linetypes.PmsiRssDa;
 import org.aider.pmsi2sql.linetypes.PmsiRssDad;
 import org.aider.pmsi2sql.linetypes.PmsiRssMain;
 
+import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
+import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 

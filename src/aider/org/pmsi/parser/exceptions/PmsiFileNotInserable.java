@@ -1,9 +1,9 @@
-package org.aider.pmsi2sql;
+package aider.org.pmsi.parser.exceptions;
 
 import java.util.concurrent.ExecutionException;
 
 /**
- * Classe d'exception indiquant une impossibilité à rendre persistant le
+ * Classe d'exception indiquant une impossibilitï¿½ ï¿½ rendre persistant le
  * fichier PMSI. Ceci indique que le fichier n'est pas valide dans le fond (contenu)
  * @author delabre
  *
@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class PmsiFileNotInserable extends ExecutionException {
 
 	/**
-	 * Numéro de série 
+	 * Numï¿½ro de sï¿½rie 
 	 */
 	private static final long serialVersionUID = 7233844278355609158L;
 

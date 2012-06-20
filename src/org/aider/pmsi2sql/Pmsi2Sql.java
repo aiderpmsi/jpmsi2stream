@@ -16,6 +16,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
+import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.reader.PmsiRSF2009Reader;
 import aider.org.pmsi.reader.PmsiRSS116Reader;
 
