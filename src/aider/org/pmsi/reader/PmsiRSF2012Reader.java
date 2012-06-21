@@ -1,9 +1,9 @@
 package aider.org.pmsi.reader;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
 import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
@@ -38,8 +38,8 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 * Constructeur
 	 * @param reader
 	 */
-	public PmsiRSF2012Reader(Reader reader) {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
+	public PmsiRSF2012Reader(Reader reader, OutputStream outStream) {
+		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());
@@ -61,10 +61,9 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws PmsiFileNotInserable si une erreur empêchant l'insertion de de fichier comme un fichier
-	 *   de type RSF est survenue 
+	 * @throws Exception 
 	 */
-	public void process() throws PmsiFileNotReadable, PmsiFileNotInserable {
+	public void process() throws Exception {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
@@ -103,7 +102,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	/**
 	 * Fonction exécutée lorsque la fin du flux est rencontrée
 	 */
-	public void EndOfFile() throws Exception {
+	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 	

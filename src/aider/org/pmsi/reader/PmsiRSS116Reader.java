@@ -1,6 +1,7 @@
 package aider.org.pmsi.reader;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
 
 
@@ -59,8 +60,8 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
 	 */
-	public PmsiRSS116Reader(Reader reader) {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
+	public PmsiRSS116Reader(Reader reader, OutputStream outStream) {
+		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRss116Header());
@@ -84,10 +85,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws PmsiFileNotInserable si une erreur empêchant l'insertion de de fichier comme un fichier
-	 *   de type RSS est survenue 
+	 * @throws Exception 
 	 */
-	public void process() throws PmsiFileNotReadable, PmsiFileNotInserable {
+	public void process() throws Exception {
 		PmsiLineType matchLine = null;
 		
 		switch(getState()) {
@@ -172,7 +172,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Fonction exécutée lorsque la fin du flux est rencontrée
 	 */
-	public void EndOfFile() throws Exception {
+	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 

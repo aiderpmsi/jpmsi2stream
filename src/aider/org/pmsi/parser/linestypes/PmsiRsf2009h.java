@@ -2,7 +2,6 @@ package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 
-
 public class PmsiRsf2009h extends PmsiLineType {
 
 	private static final Pattern pattern = Pattern.compile("^(H)(\\d{9})(.{20})(.{13})(.{2})(.{3})(.{9})(.{8})(.{7})(.{5})(.{7})" +

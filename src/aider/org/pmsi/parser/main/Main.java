@@ -105,13 +105,13 @@ public class Main {
 		// Choix du reader
 		switch(type) {
 			case RSS116:
-				reader = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()));
+				reader = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), System.out);
 				break;
 			case RSF2009:
-				reader = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()));
+				reader = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()), System.out);
 				break;
 			case RSF2012:
-				reader = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()));
+				reader = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), System.out);
 				break;
 			}
 

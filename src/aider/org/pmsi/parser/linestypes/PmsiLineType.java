@@ -19,6 +19,8 @@ public abstract class PmsiLineType {
 	
 	public abstract String[] getNames();
 	
+	public abstract String getName();
+	
 	public abstract void setContent(int index, String content);
 	
 	public abstract String[] getContent();

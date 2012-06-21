@@ -2,6 +2,7 @@ package aider.org.pmsi.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aider.pmsi2sql.machineState.MachineState;
 import org.apache.commons.lang.ObjectUtils.Null;
 
+import aider.org.machinestate.MachineState;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 
@@ -25,16 +26,14 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private BufferedReader reader;
 	
-	/**
-	 * Définition de l'état de fin de fichier
-	 */
-	private EnumSignal signalEof;
 	
 	/**
 	 * Stocke la dernière ligne extraite du {@link PmsiReader#pmsiReader) permettant
 	 * de la traiter et de la comparer avec les lignes que l'on recherche 
 	 */
 	private String toParse;
+	
+	protected OutputStream outStream;
 	
 	/**
 	 * Table de hachage des types de lignes gérées par ce lecteur de fichier PMSI
@@ -53,17 +52,17 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	public PmsiReader(
 			Reader reader,
+			OutputStream outStream,
 			EnumState stateReady,
-			EnumState stateFinished,
-			EnumSignal signalEof) {
+			EnumState stateFinished) {
 		// Initialisation de la machine à états
 		super(stateReady, stateFinished);
 
 		// Initialisation de la lecture du fichier à importer
 		this.reader = new BufferedReader(reader);
 		
-		// Définition du signal eof
-		this.signalEof = signalEof;
+		// Flux sur lequel écrire
+		this.outStream = outStream;
 	}
 	
 	/**
@@ -71,7 +70,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * par les données de la ligne suivante
 	 * @throws Exception
 	 */
-	public void readNewLine() {
+	public void readNewLine() throws Exception {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
@@ -80,7 +79,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 		}
 		
 		if (toParse == null)
-			changeState(signalEof);
+			endOfFile();
 	}
 	
 	/**
@@ -144,5 +143,5 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	abstract public void EndOfFile() throws Exception;
+	abstract public void endOfFile() throws Exception;
 }

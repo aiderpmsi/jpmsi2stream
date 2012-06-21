@@ -1,4 +1,4 @@
-package org.aider.pmsi2sql.machineState;
+package aider.org.machinestate;
 
 import java.util.HashMap;
 
