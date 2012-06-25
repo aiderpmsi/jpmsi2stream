@@ -7,6 +7,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
@@ -55,6 +56,9 @@ public class Main {
 		// Définition des arguments fournis au programme
 		MainOptions options = new MainOptions();
         CmdLineParser parser = new CmdLineParser(options);
+        
+        // Définition de la config de la connexion à la base de données
+        DTOPmsiReaderFactory dtoPmsiReaderFactory = new DTOPmsiReaderFactory();
 
         // Lecture des arguments
         try {
@@ -73,12 +77,12 @@ public class Main {
             	return;
             }
         }
-            
+        
         // On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
         // Le premier qui réussit est considéré comme le bon
         for (FileType fileTypeEntry : listTypes) {
         	try {
-        		if (readPMSI(options, fileTypeEntry) == true) {
+        		if (readPMSI(options, fileTypeEntry, dtoPmsiReaderFactory) == true) {
         			break;
         		}
             } catch (Throwable e) {
@@ -97,26 +101,31 @@ public class Main {
 	 * @param options Options du programme (en particulier le fichier à insérer)
 	 * @param myType Type de fichier à insérer
 	 * @return true si le fichier a pu être inséré, false sinon
-	 * @throws Exception
+	 * @throws Exception 
 	 */
-	public static boolean readPMSI(MainOptions options, FileType type) throws Exception {
+	public static boolean readPMSI(MainOptions options, FileType type, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws Exception {
 		PmsiReader<?, ?> reader = null;
 		
-		// Choix du reader
-		switch(type) {
-			case RSS116:
-				reader = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), System.out);
-				break;
-			case RSF2009:
-				reader = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()), System.out);
-				break;
-			case RSF2012:
-				reader = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), System.out);
-				break;
-			}
-
-		// Lecture du fichier par mise en route de la machine à états
-        reader.run();
+		try {
+			// Choix du reader
+			switch(type) {
+				case RSS116:
+					reader = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), System.out);
+					break;
+				case RSF2009:
+					reader = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()), System.out, dtoPmsiReaderFactory);
+					break;
+				case RSF2012:
+					reader = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), System.out);
+					break;
+				}
+	
+			// Lecture du fichier par mise en route de la machine à états
+	        reader.run();
+		} finally {
+			if (reader != null)
+				reader.close();
+		}
 			
         // Arrivé ici, le fichier a pu être lu, on retourne true
         return true;

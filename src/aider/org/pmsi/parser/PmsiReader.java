@@ -143,5 +143,12 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	abstract public void endOfFile() throws Exception;
+	public abstract void endOfFile() throws Exception;
+	
+	/**
+	 * Fonction permettant de libérer les ressources créées par cet objet
+	 * @throws Exception
+	 */
+	public abstract void close() throws Exception;
+
 }

@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.sleepycat.db.DatabaseException;
+import com.sleepycat.dbxml.XmlException;
 
 import aider.org.pmsi.dto.DTOPmsiLineType;
+import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -51,7 +51,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * @throws FileNotFoundException 
 	 * @throws DatabaseException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, OutputStream outStream) throws FileNotFoundException, DatabaseException {
+	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws FileNotFoundException, DatabaseException {
 		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -71,7 +71,8 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 		addTransition(EnumSignal.SIGNAL_RSF_END_LINES, EnumState.WAIT_RSF_LINES, EnumState.WAIT_ENDLINE);
 		addTransition(EnumSignal.SIGNAL_ENDLINE, EnumState.WAIT_ENDLINE, EnumState.WAIT_RSF_LINES);
 
-		dtoPmsiLineType = new DTOPmsiLineType();
+		// Récupération de la classe de transfert en base de données
+		dtoPmsiLineType = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
 	}
 	
 	/**
@@ -122,9 +123,10 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 */
 	public void endOfFile() throws Exception {
 		dtoPmsiLineType.end();
-		dtoPmsiLineType.printContent();
-		dtoPmsiLineType.close();
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
-
+	
+	public void close() throws XmlException {
+		dtoPmsiLineType.close();
+	}
 }

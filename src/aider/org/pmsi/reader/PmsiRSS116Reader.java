@@ -176,5 +176,11 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

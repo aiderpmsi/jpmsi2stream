@@ -105,5 +105,11 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
