@@ -10,6 +10,7 @@ import com.sleepycat.dbxml.XmlContainer;
 import com.sleepycat.dbxml.XmlContainerConfig;
 import com.sleepycat.dbxml.XmlDocument;
 import com.sleepycat.dbxml.XmlDocumentConfig;
+import com.sleepycat.dbxml.XmlEventReader;
 import com.sleepycat.dbxml.XmlEventWriter;
 import com.sleepycat.dbxml.XmlException;
 import com.sleepycat.dbxml.XmlManager;
@@ -136,9 +137,11 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	}
 	
 	protected void writeSimpleElement(String name, String[] attNames, String[] attContent) throws XmlException {
-		writer.writeStartElement(name, null, null, attNames.length, false);
+		writer.writeStartElement(name, null, null, 0, false);
 		for (int i = 0 ; i < attNames.length ; i++) {
-			writer.writeAttribute(attNames[i], null, null, attContent[i], true);
+			writer.writeStartElement(attNames[i], null, null, 0, false);
+			writer.writeText(XmlEventReader.Characters, attContent[i], attContent[i].length());
+			writer.writeEndElement(attNames[i], null, null);
 		}
 	}
 
