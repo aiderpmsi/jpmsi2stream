@@ -27,7 +27,11 @@ public class DTOPmsiReaderFactory {
 		envConfig.setInitializeCache(true);
 		envConfig.setInitializeLocking(true);
 	    envConfig.setInitializeLogging(true);
-	    envConfig.setTransactional(true);    
+	    envConfig.setTransactional(true);
+	    envConfig.setMaxLockers(100000);
+	    envConfig.setMaxLockObjects(100000);
+	    envConfig.setMaxLocks(100000);
+	    envConfig.setLogAutoRemove(true);
 		
 	    dbEnvironment = new Environment(new File(System.getProperty("user.dir") + File.separator + "db"), envConfig);
 
@@ -39,6 +43,7 @@ public class DTOPmsiReaderFactory {
 	    containerConf = new XmlContainerConfig();
 	    containerConf.setTransactional(true);
 	    containerConf.setAllowCreate(true);
+	    containerConf.setCompression(XmlContainerConfig.DEFAULT_COMPRESSSION);
 	}
 	
 	public DTOPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws FileNotFoundException, DatabaseException {

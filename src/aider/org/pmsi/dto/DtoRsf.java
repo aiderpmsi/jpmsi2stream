@@ -48,11 +48,7 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		xmlManager = new XmlManager(dbEnvironment, xmlManagerConfig);
 		xmlManager.setDefaultContainerType(XmlContainer.NodeContainer);
 		
-		XmlContainerConfig containerConf = new XmlContainerConfig();
-	    containerConf.setTransactional(true);
-	    containerConf.setAllowCreate(true);
-		
-		xmlContainer = xmlManager.openContainer("catalog.dbxml", containerConf);
+		xmlContainer = xmlManager.openContainer("catalog.dbxml", xmlContainerConfig);
 	}
 		
 	/**
