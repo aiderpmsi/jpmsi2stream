@@ -9,7 +9,7 @@ public interface DTOPmsiLineType {
 	
 	public void appendContent(PmsiLineType lineType);
 	
-	public void end();
+	public void end() throws InterruptedException, DriverException;
 	
 	public void close() throws DriverException;	
 }

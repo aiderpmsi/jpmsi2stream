@@ -48,9 +48,9 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * @param reader
 	 * @throws IOException 
 	 * @throws DriverException 
-	 * @throws DatabaseException 
+	 * @throws InterruptedException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException {
+	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
 		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer

@@ -1,12 +1,11 @@
 package aider.org.pmsi.dto;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Stack;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import ru.ispras.sedna.driver.DriverException;
@@ -30,22 +29,20 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	
 	protected String name;
 	
-	protected ReentrantLock mutex = new ReentrantLock();
+	protected Semaphore sem = new Semaphore(1);
 	
 	protected String datexml;
+	
+	protected String numDocument;
 	
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @param dbEnvironment
-	 * @param xmlManagerConfig
-	 * @param xmlContainerConfig
 	 * @throws DriverException 
 	 * @throws IOException 
-	 * @throws FileNotFoundException
-	 * @throws DatabaseException
+	 * @throws InterruptedException 
 	 */
-	public DtoRsf(SednaConnection connection) throws DriverException, IOException {
+	public DtoRsf(SednaConnection connection) throws DriverException, IOException, InterruptedException {
 		this.connection = connection;
 		connection.begin();
 		
@@ -59,9 +56,20 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		SednaSerializedResult pr = st.getSerializedResult();
 		datexml = pr.next();
 		
+		// Récupération du numéro d'insertion
+		st = connection.createStatement();
+		st.execute("update \n" +
+				"replace $l in fn:doc(\"PmsiDocIndice\", \"Pmsi\")/indice \n" +
+				"with <indice>{$l/text() + 1}</indice>");
+		
+		st = connection.createStatement();
+		st.execute("fn:doc(\"PmsiDocIndice\", \"Pmsi\")/indice/text()");
+		pr = st.getSerializedResult();
+		numDocument = pr.next();
+		
 		final DtoRsf dtoRsf = this;
-
-		mutex.lock();
+	
+		sem.acquire();
 		
 		new Thread(
 			    new Runnable(){
@@ -71,24 +79,20 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 			    	  } catch (Exception e) {
 			    		  if (e instanceof DriverException || e instanceof IOException) {
 			    			  e.printStackTrace();
-			    			  try {
-			    				  dtoRsf.connection.rollback();
-			    			  } catch (DriverException e1) {
-			    				  e1.printStackTrace();
-			    			  }
 			    		  }
 			    		  throw new RuntimeException(e);
 			    	  } finally {
-			    		  dtoRsf.mutex.unlock();
+			    		  dtoRsf.sem.release();
 			    	  }
 			      }
 			    }
 			  ).start();
+		
 	}
 		
 	private void storeInputStream() throws DriverException, IOException {
 		SednaStatement st = connection.createStatement();
-		st.loadDocument(in, null);
+		st.loadDocument(in, "pmsi-" + numDocument, "Pmsi");
 	}
 	
 	/**
@@ -98,8 +102,14 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	 * @throws DriverException 
 	 */
 	public void close() throws DriverException {
-		
-		connection.rollback();
+		try {
+			connection.rollback();
+		} catch (DriverException e) {
+			if (e.getErrorCode() == 411) {
+				// Do nothing
+			} else
+				throw e;
+		}
 	}
 	
 	/**
@@ -121,8 +131,10 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		
 	/**
 	 * Clôture de l'enregistrement du fichier dans la base de données
+	 * @throws InterruptedException 
+	 * @throws DriverException 
 	 */
-	public void end() {
+	public void end() throws InterruptedException, DriverException {
 		// Fermeture de tous les tags non fermés
 		while (!lastLine.empty()) {
 			out.println("</" + lastLine.pop().getName() + ">");
@@ -134,9 +146,10 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		out.close();
 		
 		// Wait for the insertion to finish
-		mutex.lock();
+		sem.acquire();
 	
-		// Commit the 
+		// Commit the modifications
+		connection.commit();
 	}
 
 	

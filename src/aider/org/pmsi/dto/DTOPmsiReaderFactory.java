@@ -21,7 +21,7 @@ public class DTOPmsiReaderFactory {
 				"PASSWORD");
 	}
 	
-	public DTOPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DriverException, IOException {
+	public DTOPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DriverException, IOException, InterruptedException {
 		if (reader instanceof PmsiRSF2009Reader) {
 			return new DtoRsf2009(connection);
 		}

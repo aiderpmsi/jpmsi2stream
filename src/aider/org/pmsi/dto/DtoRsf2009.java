@@ -18,15 +18,11 @@ public class DtoRsf2009 extends DtoRsf {
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @param dbEnvironment
-	 * @param xmlManagerConfig
-	 * @param xmlContainerConfig
-	 * @throws IOException 
 	 * @throws DriverException 
+	 * @throws InterruptedException 
 	 * @throws FileNotFoundException
-	 * @throws DatabaseException
 	 */
-	public DtoRsf2009(SednaConnection connection) throws DriverException, IOException {
+	public DtoRsf2009(SednaConnection connection) throws DriverException, IOException, InterruptedException {
 		super(connection);
 	}
 	
