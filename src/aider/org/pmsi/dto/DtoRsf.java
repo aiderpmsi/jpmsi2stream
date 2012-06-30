@@ -10,12 +10,15 @@ import com.sleepycat.dbxml.XmlContainer;
 import com.sleepycat.dbxml.XmlContainerConfig;
 import com.sleepycat.dbxml.XmlDocument;
 import com.sleepycat.dbxml.XmlDocumentConfig;
-import com.sleepycat.dbxml.XmlEventReader;
 import com.sleepycat.dbxml.XmlEventWriter;
 import com.sleepycat.dbxml.XmlException;
 import com.sleepycat.dbxml.XmlManager;
 import com.sleepycat.dbxml.XmlManagerConfig;
+import com.sleepycat.dbxml.XmlQueryContext;
+import com.sleepycat.dbxml.XmlQueryExpression;
+import com.sleepycat.dbxml.XmlResults;
 import com.sleepycat.dbxml.XmlTransaction;
+import com.sleepycat.dbxml.XmlValue;
 
 public abstract class DtoRsf implements DTOPmsiLineType {
 
@@ -88,6 +91,20 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		XmlDocumentConfig config = new XmlDocumentConfig();
 		config.setGenerateName(true);
 		
+		// Récupération de l'heure d'insertion
+		XmlQueryContext context = xmlManager.createQueryContext();
+		context.setEvaluationType(XmlQueryContext.Lazy);
+		
+		XmlQueryExpression qe = xmlManager.prepare(txn,
+				"current-dateTime()",
+				context);
+		XmlResults results = qe.execute(txn, context);
+		XmlValue value = results.next();
+		String dateTime = value.asString();
+		
+		results.delete();
+		qe.delete();
+		
 		// Création du writer de document
         writer = xmlContainer.putDocumentAsEventWriter(txn, document, config);
             
@@ -95,7 +112,8 @@ public abstract class DtoRsf implements DTOPmsiLineType {
         
         // Ecriture dans le xml
         writer.writeStartElement(name, null, null, 0, false);
-        writer.writeStartElement("content", null, null, 0, false);
+        writer.writeStartElement("content", null, null, 1, false);
+        writer.writeAttribute("insertionTimeStamp", null, null, dateTime, true);
 	}
 
 	/**
@@ -103,6 +121,14 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	 * @param lineType ligne avec les données à insérer
 	 */
 	public abstract void appendContent(PmsiLineType lineType) throws XmlException;
+	
+	/**
+	 * Vérification des contraintes
+	 */
+	public boolean validate() {
+		// Vérification du bon finess dans chaque sous-élément
+		
+	}
 	
 	/**
 	 * Clôture de l'enregistrement du fichier dans la base de données
@@ -137,11 +163,9 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	}
 	
 	protected void writeSimpleElement(String name, String[] attNames, String[] attContent) throws XmlException {
-		writer.writeStartElement(name, null, null, 0, false);
+		writer.writeStartElement(name, null, null, attNames.length, false);
 		for (int i = 0 ; i < attNames.length ; i++) {
-			writer.writeStartElement(attNames[i], null, null, 0, false);
-			writer.writeText(XmlEventReader.Characters, attContent[i], attContent[i].length());
-			writer.writeEndElement(attNames[i], null, null);
+			writer.writeAttribute(attNames[i], null, null, attContent[i], true);
 		}
 	}
 
