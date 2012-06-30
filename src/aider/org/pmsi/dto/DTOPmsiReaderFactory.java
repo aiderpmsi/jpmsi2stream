@@ -1,55 +1,37 @@
 package aider.org.pmsi.dto;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import com.sleepycat.db.DatabaseException;
-import com.sleepycat.db.Environment;
-import com.sleepycat.db.EnvironmentConfig;
-import com.sleepycat.dbxml.XmlContainerConfig;
-import com.sleepycat.dbxml.XmlManagerConfig;
+import ru.ispras.sedna.driver.DatabaseManager;
+import ru.ispras.sedna.driver.DriverException;
+import ru.ispras.sedna.driver.SednaConnection;
 
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.reader.PmsiRSF2009Reader;
 
 public class DTOPmsiReaderFactory {
 
-	private Environment dbEnvironment = null;
+	private SednaConnection connection = null;
 	
-	private XmlManagerConfig xmlManagerConfig = null;
-	
-	private XmlContainerConfig containerConf = null;
-	
-	public DTOPmsiReaderFactory() throws FileNotFoundException, DatabaseException {
-		// Choix de l'environnement de berkeley database
-		EnvironmentConfig envConfig = new EnvironmentConfig();
-		envConfig.setAllowCreate(true);
-		envConfig.setInitializeCache(true);
-		envConfig.setInitializeLocking(true);
-	    envConfig.setInitializeLogging(true);
-	    envConfig.setTransactional(true);
-	    envConfig.setMaxLockers(100000);
-	    envConfig.setMaxLockObjects(100000);
-	    envConfig.setMaxLocks(100000);
-	    envConfig.setLogAutoRemove(true);
-		
-	    dbEnvironment = new Environment(new File(System.getProperty("user.dir") + File.separator + "db"), envConfig);
-
-	    // Choix de la configuration de berkeley xml database
-	    xmlManagerConfig = new XmlManagerConfig();
-	    xmlManagerConfig.setAdoptEnvironment(true);
-	    
-	    // Choix de la configuration des containers
-	    containerConf = new XmlContainerConfig();
-	    containerConf.setTransactional(true);
-	    containerConf.setAllowCreate(true);
-	    containerConf.setCompression(XmlContainerConfig.DEFAULT_COMPRESSSION);
+	public DTOPmsiReaderFactory() throws DriverException {
+		connection = DatabaseManager.getConnection(
+				"localhost:5050",
+				"testdb",
+				"SYSTEM",
+				"PASSWORD");
 	}
 	
-	public DTOPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws FileNotFoundException, DatabaseException {
+	public DTOPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DriverException, IOException {
 		if (reader instanceof PmsiRSF2009Reader) {
-			return new DtoRsf2009(dbEnvironment, xmlManagerConfig, containerConf);
+			return new DtoRsf2009(connection);
 		}
 		return null;
+	}
+	
+	public void close() throws DriverException {
+		if (connection != null) {
+			connection.close();
+			connection = null;
+		}
 	}
 }

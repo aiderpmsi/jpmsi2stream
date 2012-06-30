@@ -1,12 +1,10 @@
 package aider.org.pmsi.reader;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 
-import com.sleepycat.db.DatabaseException;
-import com.sleepycat.dbxml.XmlException;
+import ru.ispras.sedna.driver.DriverException;
 
 import aider.org.pmsi.dto.DTOPmsiLineType;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
@@ -48,10 +46,11 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	/**
 	 * Constructeur
 	 * @param reader
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
+	 * @throws DriverException 
 	 * @throws DatabaseException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws FileNotFoundException, DatabaseException {
+	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException {
 		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -126,7 +125,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 	
-	public void close() throws XmlException {
+	public void close() throws DriverException {
 		dtoPmsiLineType.close();
 	}
 }
