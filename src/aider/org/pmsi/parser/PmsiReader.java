@@ -2,7 +2,6 @@ package aider.org.pmsi.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +31,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * de la traiter et de la comparer avec les lignes que l'on recherche 
 	 */
 	private String toParse;
-	
-	protected OutputStream outStream;
-	
+		
 	/**
 	 * Table de hachage des types de lignes gérées par ce lecteur de fichier PMSI
 	 */
@@ -52,7 +49,6 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	public PmsiReader(
 			Reader reader,
-			OutputStream outStream,
 			EnumState stateReady,
 			EnumState stateFinished) {
 		// Initialisation de la machine à états
@@ -60,9 +56,6 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 
 		// Initialisation de la lecture du fichier à importer
 		this.reader = new BufferedReader(reader);
-		
-		// Flux sur lequel écrire
-		this.outStream = outStream;
 	}
 	
 	/**

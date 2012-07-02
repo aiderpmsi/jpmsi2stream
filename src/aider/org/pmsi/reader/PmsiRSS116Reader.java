@@ -1,10 +1,13 @@
 package aider.org.pmsi.reader;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Reader;
 
+import ru.ispras.sedna.driver.DriverException;
 
+
+import aider.org.pmsi.dto.DTOPmsiLineType;
+import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -56,12 +59,19 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 */
 	int nbZARestants;
 	
+	private DTOPmsiLineType dtoPmsiLineType = null;
+
+	private static final String name = "RSS116"; 
+	
 	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 * @throws DriverException 
 	 */
-	public PmsiRSS116Reader(Reader reader, OutputStream outStream) {
-		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+	public PmsiRSS116Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRss116Header());
@@ -81,6 +91,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		addTransition(EnumSignal.SIGNAL_RSS_END_ACTE, EnumState.WAIT_RSS_ACTE, EnumState.WAIT_RSS_ENDLINE);
 		addTransition(EnumSignal.SIGNAL_RSS_NEWLINE, EnumState.WAIT_RSS_ENDLINE, EnumState.WAIT_RSS_MAIN);
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_MAIN, EnumState.STATE_FINISHED);
+
+		// Récupération de la classe de transfert en base de données
+		dtoPmsiLineType = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
 	}
 			
 	/**
@@ -93,13 +106,14 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		switch(getState()) {
 		case STATE_READY:
 			// L'état initial nous demande de lire un nouvelle ligne
+			dtoPmsiLineType.start(name);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSS_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				System.out.println(matchLine.getContent());
+				dtoPmsiLineType.appendContent(matchLine);
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSS 116 : Entête du fichier non trouvée");
@@ -107,7 +121,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		case WAIT_RSS_MAIN:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				System.out.println(matchLine.getContent());
+				dtoPmsiLineType.appendContent(matchLine);
 				nbDaRestants = Integer.parseInt(matchLine.getContent()[2]);
 				nbDaDRestants = Integer.parseInt(matchLine.getContent()[2]);
 				nbZARestants = Integer.parseInt(matchLine.getContent()[2]);
@@ -121,6 +135,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					dtoPmsiLineType.appendContent(matchLine);
 					nbDaRestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
@@ -132,6 +147,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					dtoPmsiLineType.appendContent(matchLine);
 					nbDaDRestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS : DAD non trouvés dans ligne RSS");
@@ -143,6 +159,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					dtoPmsiLineType.appendContent(matchLine);
 					nbZARestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS : Actes non trouvés dans ligne RSS");
@@ -173,13 +190,13 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 * Fonction exécutée lorsque la fin du flux est rencontrée
 	 */
 	public void endOfFile() throws Exception {
+		dtoPmsiLineType.end();
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
+		dtoPmsiLineType.close();
 	}
 
 	

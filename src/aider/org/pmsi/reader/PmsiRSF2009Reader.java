@@ -1,7 +1,6 @@
 package aider.org.pmsi.reader;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Reader;
 
 import ru.ispras.sedna.driver.DriverException;
@@ -50,8 +49,8 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * @throws DriverException 
 	 * @throws InterruptedException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, OutputStream outStream, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
-		super(reader, outStream, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+	public PmsiRSF2009Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());

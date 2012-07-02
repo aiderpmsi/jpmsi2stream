@@ -15,7 +15,7 @@ import ru.ispras.sedna.driver.SednaStatement;
 
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
-public abstract class DtoRsf implements DTOPmsiLineType {
+public abstract class DtoPmsi implements DTOPmsiLineType {
 
 	protected SednaConnection connection;
 	
@@ -42,7 +42,7 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
-	public DtoRsf(SednaConnection connection) throws DriverException, IOException, InterruptedException {
+	public DtoPmsi(SednaConnection connection) throws DriverException, IOException, InterruptedException {
 		this.connection = connection;
 		connection.begin();
 		
@@ -67,7 +67,7 @@ public abstract class DtoRsf implements DTOPmsiLineType {
 		pr = st.getSerializedResult();
 		numDocument = pr.next();
 		
-		final DtoRsf dtoRsf = this;
+		final DtoPmsi dtoRsf = this;
 	
 		sem.acquire();
 		
