@@ -16,6 +16,34 @@ public class PmsiRsf2009a extends PmsiLineType {
 		"TotalRemboursableOCPH", "TotalRemboursableOCHonoraire", "TotalFacturePH", "EtatLiquidation"
 	};
 	
+	private static final String[][] transforms = {
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{"(\\d{4})(\\d{2})(\\d{2})", "$3-$2-$1"},
+		{null, null},
+		{"(\\d{4})(\\d{2})(\\d{2})", "$3-$2-$1"},
+		{"(\\d{4})(\\d{2})(\\d{2})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null}
+	};
+	
 	private static final String name = "RsfA";
 
 	private String[] content = new String[names.length];
@@ -37,6 +65,14 @@ public class PmsiRsf2009a extends PmsiLineType {
 	}
 	
 	public String[] getContent() {
-		return content;
+		String[] modContent = new String[names.length];
+		for (int i = 0 ; i < names.length ; i++) {
+			if (transforms[i][0] == null)
+				modContent[i] = content[i];
+			else {
+				modContent[i] = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
+			}
+		}
+		return modContent;
 	}
 }

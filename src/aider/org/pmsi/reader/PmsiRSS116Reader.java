@@ -122,9 +122,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			matchLine = parseLine();
 			if (matchLine != null) {
 				dtoPmsiLineType.appendContent(matchLine);
-				nbDaRestants = Integer.parseInt(matchLine.getContent()[2]);
-				nbDaDRestants = Integer.parseInt(matchLine.getContent()[2]);
-				nbZARestants = Integer.parseInt(matchLine.getContent()[2]);
+				nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
+				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
+				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
 				changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSS 116 : Première partie de ligne RSS non trouv�e");
@@ -191,7 +191,6 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 */
 	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
-		dtoPmsiLineType.end();
 	}
 
 	public void finish() throws Exception {

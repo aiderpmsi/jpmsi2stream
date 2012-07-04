@@ -122,7 +122,6 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 */
 	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
-		dtoPmsiLineType.end();
 	}
 
 	public void finish() throws Exception {
@@ -131,7 +130,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 
 	@Override
 	public void close() throws Exception {
-		dtoPmsiLineType.close();		
+		dtoPmsiLineType.close();
 	}
 	
 }
