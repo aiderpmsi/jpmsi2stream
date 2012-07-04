@@ -39,18 +39,20 @@ let $items:=fn:collection("Pmsi")/(RSF2009 | RSF2012)[
   and content/RsfHeader/@Finess = "300007119"]
 return count($items)&
 
-// Recherche du dernier rsf inséré pour un mois particulier et par finess
+// Recherche du dernier rsf inséré par mois particulier et par finess
 let $items:=fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader
-for $l in distinct-values($items/@Finess)
-for $m in distinct-values($items/@DateFin)
-return <entry finess="{$l}" datefin="{$m}"/>&
+for $l in distinct-values($items/@Finess/string()),
+    $y in distinct-values($items/year-from-date(xs:date(@DateFin))),
+    $m in distinct-values($items/month-from-date(xs:date(@DateFin)))
+order by $y, $m, $l 
+return <entry finess="{$l}" monthfin="{$m}" yearfin="{$y}">
+{
+(for $item in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content[RsfHeader/@Finess = $l and
+                 RsfHeader/month-from-date(xs:date(@DateFin)) = $m and
+                 RsfHeader/year-from-date(xs:date(@DateFin)) = $y]
+order by $item/xs:dateTime(@insertionTimeStamp) descending
+return <entry>{$item/@insertionTimeStamp}</entry>)[1]
+}
+</entry>&
 
-let 
-    $l in month-from-dateTime($i/@insertionTimeStamp)
-return $i&
 
-
-for $i in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/month-from-dateTime(@insertionTimeStamp))
-return $i&
-
- 
