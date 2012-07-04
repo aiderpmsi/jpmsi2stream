@@ -120,11 +120,14 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * Fonction exécutée lorsque la fin du flux est rencontrée
 	 */
 	public void endOfFile() throws Exception {
+		changeState(EnumSignal.SIGNAL_EOF);
+	}
+
+	public void finish() throws Exception {
 		dtoPmsiLineType.end();
-		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 	
-	public void close() throws DriverException {
+	public void close() throws DriverException, InterruptedException {
 		dtoPmsiLineType.close();
 	}
 }

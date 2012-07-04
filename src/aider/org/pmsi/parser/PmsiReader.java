@@ -14,9 +14,6 @@ import org.apache.commons.lang.ObjectUtils.Null;
 import aider.org.machinestate.MachineState;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
-
-
-
 public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal> {
 
 	/**
@@ -137,6 +134,8 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws Exception 
 	 */
 	public abstract void endOfFile() throws Exception;
+	
+	public abstract void process() throws Exception;
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet

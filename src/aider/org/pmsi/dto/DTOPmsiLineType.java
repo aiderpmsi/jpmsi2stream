@@ -11,5 +11,5 @@ public interface DTOPmsiLineType {
 	
 	public void end() throws InterruptedException, DriverException;
 	
-	public void close() throws DriverException;	
+	public void close() throws DriverException, InterruptedException;	
 }

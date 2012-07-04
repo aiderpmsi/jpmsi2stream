@@ -19,11 +19,9 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 
 	protected SednaConnection connection;
 	
-	protected PipedInputStream in;
+	protected PipedInputStream in = null;
 	
-	protected PipedOutputStream pout;
-	
-	protected PrintStream out;
+	protected PrintStream out = null;
 	
 	protected Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
@@ -47,8 +45,7 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 		connection.begin();
 		
 		in = new PipedInputStream();
-		pout = new PipedOutputStream(in);
-		out = new PrintStream(pout, false, "UTF-8");
+		out = new PrintStream(new PipedOutputStream(in), false, "UTF-8");
 
 		// Récupération de l'heure d'insertion
 		SednaStatement st = connection.createStatement();
@@ -77,10 +74,12 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 			    	  try {
 			    		  dtoRsf.storeInputStream();
 			    	  } catch (Exception e) {
-			    		  if (e instanceof DriverException || e instanceof IOException) {
+			    		  if (e instanceof DriverException && ((DriverException) e).getErrorCode() == 168) {
+			    			  // Ne rien faire
+			    		  } else if (e instanceof DriverException ||e instanceof IOException) {
 			    			  e.printStackTrace();
+			    			  throw new RuntimeException(e);
 			    		  }
-			    		  throw new RuntimeException(e);
 			    	  } finally {
 			    		  dtoRsf.sem.release();
 			    	  }
@@ -100,9 +99,18 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 	 * Supprime toutes les données qui n'ont pas été validées
 	 * et libère toutes les ressources associées à cette connexion
 	 * @throws DriverException 
+	 * @throws InterruptedException 
 	 */
-	public void close() throws DriverException {
+	public void close() throws DriverException, InterruptedException {
 		try {
+			// Fermeture du flux si besoin
+			if (out != null) { 
+				out.close();
+				out = null;
+				
+				// Wait for the insertion to finish
+				sem.acquire();
+			}
 			connection.rollback();
 		} catch (DriverException e) {
 			if (e.getErrorCode() == 411) {
@@ -144,6 +152,7 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 		
         // End the document
 		out.close();
+		out = null;
 		
 		// Wait for the insertion to finish
 		sem.acquire();

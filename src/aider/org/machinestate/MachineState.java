@@ -64,10 +64,11 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	 * Lancement de la machine à états
 	 * @throws Exception
 	 */
-	public void run() throws Exception{
+	public void run() throws Exception {
 		while (stateActual != stateFinished) {
 			process();
 		}
+		finish();
 	}
 	
 	/**
@@ -75,4 +76,11 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	 * @throws Exception
 	 */
 	public abstract void process() throws Exception;
+	
+	/**
+	 * Méthode à implémenter pour réaliser une action à la fin du fonctionnement de
+	 * la machine à états
+	 * @throws Exception
+	 */
+	public abstract void finish() throws Exception;
 }

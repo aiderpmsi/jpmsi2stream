@@ -190,14 +190,16 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 * Fonction exécutée lorsque la fin du flux est rencontrée
 	 */
 	public void endOfFile() throws Exception {
-		dtoPmsiLineType.end();
 		changeState(EnumSignal.SIGNAL_EOF);		
+		dtoPmsiLineType.end();
+	}
+
+	public void finish() throws Exception {
+		dtoPmsiLineType.end();
 	}
 
 	@Override
 	public void close() throws Exception {
 		dtoPmsiLineType.close();
 	}
-
-	
 }

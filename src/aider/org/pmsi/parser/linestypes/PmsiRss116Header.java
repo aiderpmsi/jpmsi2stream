@@ -17,6 +17,19 @@ public class PmsiRss116Header extends PmsiLineType {
 		"NbRSS", "PremierRSS", "DernierRSS", "DernierEnvoiTrimestre"
 	};
 	
+	private static final String[][] transforms = {
+		{null, null},
+		{null, null},
+		{null, null},
+		{"(\\{4})(\\{2})(\\{2})", "$1-$2-$3"},
+		{"(\\{4})(\\{2})(\\{2})", "$1-$2-$3"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		};
+	
 	private static final String name = "RssHeader";
 
 	private String[] content = new String[names.length];
@@ -38,6 +51,14 @@ public class PmsiRss116Header extends PmsiLineType {
 	}
 	
 	public String[] getContent() {
-		return content;
+		String[] modContent = new String[names.length];
+		for (int i = 0 ; i < names.length ; i++) {
+			if (transforms[i][0] == null)
+				modContent[i] = content[i];
+			else {
+				modContent[i] = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
+			}
+		}
+		return modContent;
 	}
 }
