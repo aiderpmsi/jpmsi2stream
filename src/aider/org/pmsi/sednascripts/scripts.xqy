@@ -55,4 +55,43 @@ return <entry>{$item/@insertionTimeStamp}</entry>)[1]
 }
 </entry>&
 
+// Vérification que tous les Finess sont bien les mêmes dans un même rsf
+for $i in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content
+return <entry type="{$i/../name()}" insertionTimeStamp="{$i/@insertionTimeStamp/string()}">
+{
+  for $j in $i/RsfHeader
+  return <content datefin="{$j/@DateFin}" Finess="{$j/@Finess}">
+  {
+    for $k in ($j/*[@Finess = $j/@Finess] | $j/*/*[@Finess = $j/@Finess])
+    return
+    <error>
+      <name>{$k/name()}</name>
+      <numfacture>{$k/NumFacture/string()}</numfacture>
+    </error>
+  }
+  </content>
+}
+</entry>
+
+// Vérification que toutes les factures sont bien les mêmes dans un rsfa
+for $i in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content
+return <entry type="{$i/../name()}" insertionTimeStamp="{$i/@insertionTimeStamp/string()}">
+{
+  for $j in $i/RsfHeader
+  return <content datefin="{$j/@DateFin}" Finess="{$j/@Finess}">
+  {
+    for $k in $j/RsfA,
+        $l in $k/*[@NumFacture != $k/@NumFacture]
+    return
+    <error>
+      <name>{$l/name()}</name>
+      <numfacture>{$l/@NumFacture/string()}</numfacture>
+      <numparent>{$k/@NumFacture/string()}</numparent>
+    </error>
+  }
+  </content>
+}
+</entry>
+
+
 
