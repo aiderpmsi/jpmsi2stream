@@ -39,7 +39,8 @@ let $items:=fn:collection("Pmsi")/(RSF2009 | RSF2012)[
   and content/RsfHeader/@Finess = "300007119"]
 return count($items)&
 
-// Recherche du dernier rsf inséré par mois particulier et par finess
+
+// Recherche du dernier rsf inséré par mois particulier et par finess version avec [1]
 let $items:=fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader
 for $l in distinct-values($items/@Finess/string()),
     $y in distinct-values($items/year-from-date(xs:date(@DateFin))),
@@ -93,5 +94,23 @@ return <entry type="{$i/../name()}" insertionTimeStamp="{$i/@insertionTimeStamp/
 }
 </entry>
 
-
+(for $i in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader[
+         @Finess="340780600" and
+         year-from-date(xs:date(@DateFin)) = 2012 and
+         month-from-date(xs:date(@DateFin)) = 5]
+order by $i/../xs:dateTime(@insertionTimeStamp) descending
+return
+<entry insertion="{$i/../xs:dateTime(@insertionTimeStamp)}">
+{
+  for $k in $i/RsfA,
+      $l in $k/*[@NumFacture != $k/@NumFacture]
+  return
+  <error>
+    <name>{$l/name()}</name>
+    <numfacture>{$l/@NumFacture/string()}</numfacture>
+    <numparent>{$k/@NumFacture/string()}</numparent>
+  </error>
+}
+</entry>
+)[1]
 
