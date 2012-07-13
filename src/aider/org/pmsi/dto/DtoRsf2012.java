@@ -1,10 +1,11 @@
 package aider.org.pmsi.dto;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
-import ru.ispras.sedna.driver.DriverException;
-import ru.ispras.sedna.driver.SednaConnection;
+import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQException;
+
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -19,11 +20,13 @@ public class DtoRsf2012 extends DtoPmsi {
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @throws DriverException 
 	 * @throws InterruptedException 
-	 * @throws FileNotFoundException
+	 * @throws XQException 
+	 * @throws IOException 
+	 * @throws UnsupportedEncodingException 
+
 	 */
-	public DtoRsf2012(SednaConnection connection) throws DriverException, IOException, InterruptedException {
+	public DtoRsf2012(XQConnection connection) throws UnsupportedEncodingException, IOException, XQException, InterruptedException {
 		super(connection);
 	}
 	

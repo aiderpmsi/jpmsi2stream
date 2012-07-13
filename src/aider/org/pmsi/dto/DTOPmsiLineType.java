@@ -1,6 +1,7 @@
 package aider.org.pmsi.dto;
 
-import ru.ispras.sedna.driver.DriverException;
+import javax.xml.xquery.XQException;
+
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 public interface DTOPmsiLineType {
@@ -9,7 +10,7 @@ public interface DTOPmsiLineType {
 	
 	public void appendContent(PmsiLineType lineType);
 	
-	public void end() throws InterruptedException, DriverException;
+	public void end() throws InterruptedException, XQException;
 	
-	public void close() throws DriverException, InterruptedException;	
+	public void close() throws XQException, InterruptedException;
 }

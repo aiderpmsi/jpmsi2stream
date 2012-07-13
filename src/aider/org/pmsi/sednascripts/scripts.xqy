@@ -56,6 +56,23 @@ return <entry>{$item/@insertionTimeStamp}</entry>)[1]
 }
 </entry>&
 
+// Recherche du dernier rsf inséré par mois particulier et par finess version avec max
+for $l in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader/@Finess/string()),
+    $y in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader/[@Finess = $l])
+
+    $y in distinct-values($l/year-from-date(xs:date(@DateFin))),
+    $m in distinct-values($items/month-from-date(xs:date(@DateFin)))
+order by $y, $m, $l 
+return <entry finess="{$l}" monthfin="{$m}" yearfin="{$y}">
+{
+(for $item in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content[RsfHeader/@Finess = $l and
+                 RsfHeader/month-from-date(xs:date(@DateFin)) = $m and
+                 RsfHeader/year-from-date(xs:date(@DateFin)) = $y]
+order by $item/xs:dateTime(@insertionTimeStamp) descending
+return <entry>{$item/@insertionTimeStamp}</entry>)[1]
+}
+</entry>&
+
 // Vérification que tous les Finess sont bien les mêmes dans un même rsf
 for $i in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content
 return <entry type="{$i/../name()}" insertionTimeStamp="{$i/@insertionTimeStamp/string()}">

@@ -2,8 +2,9 @@ package aider.org.pmsi.reader;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
-import ru.ispras.sedna.driver.DriverException;
+import javax.xml.xquery.XQException;
 
 import aider.org.pmsi.dto.DTOPmsiLineType;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
@@ -46,10 +47,11 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 * Constructeur
 	 * @param reader
 	 * @throws InterruptedException 
+	 * @throws XQException 
 	 * @throws IOException 
-	 * @throws DriverException 
+	 * @throws UnsupportedEncodingException 
 	 */
-	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
+	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws UnsupportedEncodingException, IOException, XQException, InterruptedException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer

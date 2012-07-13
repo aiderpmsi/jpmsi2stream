@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="sedna-xqj-1.0.0.jar"/>
 	<classpathentry kind="lib" path="xqjapi.jar"/>
 	<classpathentry kind="lib" path="commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="xqj2-0.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
