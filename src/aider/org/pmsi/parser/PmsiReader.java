@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.ObjectUtils.Null;
-
 import aider.org.machinestate.MachineState;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 

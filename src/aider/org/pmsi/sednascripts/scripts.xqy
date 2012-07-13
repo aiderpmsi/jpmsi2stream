@@ -56,12 +56,16 @@ return <entry>{$item/@insertionTimeStamp}</entry>)[1]
 }
 </entry>&
 
-// Recherche du dernier rsf inséré par mois particulier et par finess version avec max
+// Etant donné un mois et une année, Recherche du dernier rsf inséré par finess
 for $l in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader/@Finess/string()),
-    $y in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader/[@Finess = $l])
+    $y in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader[@Finess = $l]/year-from-date(@DateFin)),
+    $m in distinct-values(fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader[@Finess = $l and year-from-date(@DateFin) = $y]/month-from-date(@DateFin))
+  for $items in fn:collection("Pmsi")/(RSF2009 | RSF2012)/content/RsfHeader[@Finess = $l and year-from-date(@DateFin) = $y and month-from-date(@DateFin)]
+  order by 
+return <l f = "{$l}" y = "{$y}" m = "{$m}" dada = "{$items/../@insertionTimeStamp}"/>
 
-    $y in distinct-values($l/year-from-date(xs:date(@DateFin))),
-    $m in distinct-values($items/month-from-date(xs:date(@DateFin)))
+for $y in distinct-values($l/year-from-date(xs:date(@DateFin))),
+    $m in distinct-values($items/)
 order by $y, $m, $l 
 return <entry finess="{$l}" monthfin="{$m}" yearfin="{$y}">
 {
