@@ -7,7 +7,7 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Dad;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
-public class DtoRss116 extends DtoPmsi {
+public class DtoRss116 extends DtoPmsiImpl {
 
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
@@ -24,31 +24,29 @@ public class DtoRss116 extends DtoPmsi {
 	 * @throws DtoPmsiException 
 	 */
 	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException  {
-		try {
-			if (lineType instanceof PmsiRss116Header) {
-				// Ecriture de la ligne header sans la fermer (va contenir les rss)
-				writeSimpleElement(lineType);
-				// Prise en compte de l'ouverture de la ligne
-				lastLine.add(lineType);
-			} else if (lineType instanceof PmsiRss116Main) {
-				// Si un rss main est ouvert, il faut le fermer
-				if (lastLine.lastElement() instanceof PmsiRss116Main) {
-					lastLine.pop().getName();
-					xmlWriter.writeEndElement();
-				}
-				// ouverture du rss main
-				writeSimpleElement(lineType);
-				// Prise en compte de l'ouverture de ligne
-				lastLine.add(lineType);
-			} else if (lineType instanceof PmsiRss116Acte || lineType instanceof PmsiRss116Da ||
-					lineType instanceof PmsiRss116Dad) {
-				// Ouverture de la ligne
-				writeSimpleElement(lineType);
-				// fermeture de la ligne
-				xmlWriter.writeEndElement();
+		// Lecture des données du header
+		if (lineType instanceof PmsiRss116Header) {
+			// Ecriture de la ligne header sans la fermer (va contenir les rss)
+			super.writeLineElement(lineType);
+		}
+		
+		// Lecture d'un RSS Main
+		else if (lineType instanceof PmsiRss116Main) {
+			// Si un rss main est ouvert, il faut le fermer
+			if (getLastLine() instanceof PmsiRss116Main) {
+				super.writeEndElement();
 			}
-		} catch (Exception e) {
-			throw new DtoPmsiException(e);
+			// ouverture du rss main
+			super.writeLineElement(lineType);
+		}
+		
+		// Lecture d'autres données
+		else if (lineType instanceof PmsiRss116Acte || lineType instanceof PmsiRss116Da ||
+				lineType instanceof PmsiRss116Dad) {
+			// Ouverture de la ligne
+			super.writeLineElement(lineType);
+			// fermeture de la ligne
+			super.writeEndElement();
 		}
 	}
 }

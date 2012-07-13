@@ -11,7 +11,7 @@ public class DTOPmsiReaderFactory {
 	public DTOPmsiReaderFactory() throws DriverException {
 	}
 	
-	public DtoPmsiLineType getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DtoPmsiException {
+	public DtoPmsi getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DtoPmsiException {
 		if (reader instanceof PmsiRSF2009Reader) {
 			return new DtoRsf2009();
 		} else if (reader instanceof PmsiRSF2012Reader) {

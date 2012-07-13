@@ -10,7 +10,7 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2009c;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009h;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
 
-public class DtoRsf2009 extends DtoPmsi {
+public class DtoRsf2009 extends DtoPmsiImpl {
 
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
@@ -28,31 +28,29 @@ public class DtoRsf2009 extends DtoPmsi {
 	 * @throws XMLStreamException 
 	 */
 	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException {
-		try {
-			if (lineType instanceof PmsiRsf2009Header) {
-				// Ecriture de la ligne header sans la fermer (va contenir les rsf)
-				writeSimpleElement(lineType);
-				// Prise en compte de l'ouverture de la ligne
-				lastLine.add(lineType);
-			} else if (lineType instanceof PmsiRsf2009a) {
-				// Si un rsfa est ouvert, il faut le fermer
-				if (lastLine.lastElement() instanceof PmsiRsf2009a) {
-					lastLine.pop();
-					xmlWriter.writeEndElement();
-				}
-				// ouverture du rsfa
-				writeSimpleElement(lineType);
-				// Prise en compte de l'ouverture de ligne
-				lastLine.add(lineType);
-			} else if (lineType instanceof PmsiRsf2009b || lineType instanceof PmsiRsf2009c ||
-					lineType instanceof PmsiRsf2009h || lineType instanceof PmsiRsf2009m) {
-				// Ouverture de la ligne
-				writeSimpleElement(lineType);
-				// fermeture de la ligne
-				xmlWriter.writeEndElement();
+		// Header
+		if (lineType instanceof PmsiRsf2009Header) {
+			// Ecriture de la ligne header sans la fermer (va contenir les rsf)
+			super.writeLineElement(lineType);
+		}
+		
+		// Ligne RSFA
+		else if (lineType instanceof PmsiRsf2009a) {
+			// Si un rsfa est ouvert, il faut d'abord le fermer
+			if (getLastLine() instanceof PmsiRsf2009a) {
+				super.writeEndElement();
 			}
-		} catch (Exception e) {
-			throw new DtoPmsiException(e);
+			// ouverture du nouveau rsfa
+			super.writeLineElement(lineType);
+		}
+		
+		// Autres lignes
+		else if (lineType instanceof PmsiRsf2009b || lineType instanceof PmsiRsf2009c ||
+				lineType instanceof PmsiRsf2009h || lineType instanceof PmsiRsf2009m) {
+			// Ouverture de la ligne
+			super.writeLineElement(lineType);
+			// fermeture de la ligne
+			super.writeEndElement();
 		}
 	}
 }

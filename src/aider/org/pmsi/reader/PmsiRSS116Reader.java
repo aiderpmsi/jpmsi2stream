@@ -3,7 +3,7 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.DtoPmsiLineType;
+import aider.org.pmsi.dto.DtoPmsi;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.dto.DtoPmsiException;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
@@ -57,7 +57,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 */
 	int nbZARestants;
 	
-	private DtoPmsiLineType dtoPmsiLineType = null;
+	private DtoPmsi dtoPmsiLineType = null;
 
 	private static final String name = "RSS116"; 
 	

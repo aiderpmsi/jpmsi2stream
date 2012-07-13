@@ -3,7 +3,7 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.DtoPmsiLineType;
+import aider.org.pmsi.dto.DtoPmsi;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.dto.DtoPmsiException;
 import aider.org.pmsi.parser.PmsiReader;
@@ -37,7 +37,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		SIGNAL_EOF
 	}
 	
-	private DtoPmsiLineType dtoPmsiLineType = null;
+	private DtoPmsi dtoPmsiLineType = null;
 
 	private static final String name = "RSF2012"; 
 	
