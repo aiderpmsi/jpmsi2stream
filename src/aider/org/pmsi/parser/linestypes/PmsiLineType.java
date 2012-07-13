@@ -3,9 +3,12 @@ package aider.org.pmsi.parser.linestypes;
 import java.util.regex.Pattern;
 
 /**
- * Défini l'architecture pour créer des patrons de lignes pmsi en associant des
- * {@link PmsiElement} à la suite, le tout définissant une suite de caractères à attrapper
- * permettant au final de lire des lignes ou des parties de lignes des fichiers pmsi.
+ * Défini l'architecture pour créer des patrons de lignes pmsi avec :
+ * <ul>
+ *  <li>Les noms des éléments</li>
+ *  <li>Les regex des éléments</li>
+ *  <li>Les contenus des éléments</li>
+ * </ul>
  * @author delabre
  *
  */
@@ -19,13 +22,13 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Retourne la liste des noms des éléments de cette ligne
-	 * @return
+	 * @return liste de chaines de caractères
 	 */
 	public abstract String[] getNames();
 	
 	/**
 	 * Retourne le nom d'identification de la classe
-	 * @return
+	 * @return nom
 	 */
 	public abstract String getName();
 	
@@ -38,7 +41,7 @@ public abstract class PmsiLineType {
 	
 	/**
 	 * Récupère la liste des contenus de cet élément pmsi
-	 * @return
+	 * @return liste des contenus
 	 */
 	public abstract String[] getContent();
 }

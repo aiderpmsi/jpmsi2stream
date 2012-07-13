@@ -1,1 +1,6 @@
-org.aider.pmsi2sql.dbtypes
+aider.org.machinestate
+aider.org.pmsi.dto
+aider.org.pmsi.parser
+aider.org.pmsi.parser.exceptions
+aider.org.pmsi.parser.linestypes
+aider.org.pmsi.parser.main

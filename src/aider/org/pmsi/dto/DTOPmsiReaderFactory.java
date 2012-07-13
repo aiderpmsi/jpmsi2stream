@@ -23,7 +23,7 @@ public class DTOPmsiReaderFactory {
 	/**
 	 * Crée un objet de tranfert de données et le renvoie
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
-	 * @return
+	 * @return L'objet de transfert de donné adapté
 	 * @throws DtoPmsiException
 	 */
 	public DtoPmsi getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DtoPmsiException {

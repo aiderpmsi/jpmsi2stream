@@ -45,7 +45,6 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * @param reader Flux à lire.
 	 * @param stateReady
 	 * @param stateFinished
-	 * @param stateEof
 	 */
 	public PmsiReader(
 			Reader reader,
@@ -85,8 +84,8 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	
 	/**
 	 * Ajout d'un type de ligne à parser
-	 * @param lineId état permettant de 
-	 * @param MyLine Définitions de la ligne à lire
+	 * @param state état permettant de lire la ligne
+	 * @param pmsiLine Définitions de la ligne à lire
 	 */
 	public void addLineType(EnumState state, PmsiLineType pmsiLine) {
 		if (linesTypes.get(state) == null)
@@ -98,7 +97,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	/**
 	 * Tentative de recherche de correspondance entre la ligne actuellement lue
 	 * et les types de ligne que l'on peut rechercher
-	 * @return la ligne lue, avec les données récupérées dans le contenu ou {@link Null} si pas de lecture possible 
+	 * @return la ligne lue, avec les données récupérées dans le contenu ou <code>null</code> si pas de lecture possible 
 	 */
 	public PmsiLineType parseLine() {
 		if (linesTypes.get(getState()) == null)

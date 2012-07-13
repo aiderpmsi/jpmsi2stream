@@ -52,7 +52,7 @@ public interface DtoPmsi {
 	
 	/**
 	 * Renvoie la dernière ligne insérée
-	 * @return
+	 * @return objet de la dernière ligne insérée
 	 * @throws DtoPmsiException
 	 */
 	public PmsiLineType getLastLine() throws DtoPmsiException;

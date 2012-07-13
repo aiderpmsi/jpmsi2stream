@@ -102,7 +102,8 @@ public class Main {
 	/**
 	 * Lecture du fichier PMSI 
 	 * @param options Options du programme (en particulier le fichier à insérer)
-	 * @param myType Type de fichier à insérer
+	 * @param type Type de fichier à insérer
+	 * @param dtoPmsiReaderFactory Fabrique d'objets de sérialisation
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */

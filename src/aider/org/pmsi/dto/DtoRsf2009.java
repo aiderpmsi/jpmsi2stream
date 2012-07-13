@@ -1,7 +1,5 @@
 package aider.org.pmsi.dto;
 
-import javax.xml.stream.XMLStreamException;
-
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
@@ -31,7 +29,6 @@ public class DtoRsf2009 extends DtoPmsiImpl {
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
 	 * @throws DtoPmsiException 
-	 * @throws XMLStreamException 
 	 */
 	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException {
 		// Header
