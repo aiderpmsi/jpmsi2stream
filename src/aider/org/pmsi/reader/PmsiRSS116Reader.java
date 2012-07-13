@@ -2,9 +2,9 @@ package aider.org.pmsi.reader;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
-import javax.xml.xquery.XQException;
+import ru.ispras.sedna.driver.DriverException;
+
 
 import aider.org.pmsi.dto.DTOPmsiLineType;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
@@ -67,11 +67,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
 	 * @throws InterruptedException 
-	 * @throws XQException 
 	 * @throws IOException 
-	 * @throws UnsupportedEncodingException 
+	 * @throws DriverException 
 	 */
-	public PmsiRSS116Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws UnsupportedEncodingException, IOException, XQException, InterruptedException {
+	public PmsiRSS116Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer

@@ -4,26 +4,20 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 import java.util.concurrent.Semaphore;
 
-import javax.xml.namespace.QName;
-import javax.xml.xquery.XQConnection;
-import javax.xml.xquery.XQConstants;
-import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQExpression;
-import javax.xml.xquery.XQPreparedExpression;
-import javax.xml.xquery.XQResultSequence;
-import javax.xml.xquery.XQStaticContext;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import ru.ispras.sedna.driver.DriverException;
+import ru.ispras.sedna.driver.SednaConnection;
+import ru.ispras.sedna.driver.SednaSerializedResult;
+import ru.ispras.sedna.driver.SednaStatement;
+
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 public abstract class DtoPmsi implements DTOPmsiLineType {
 
-	protected XQConnection connection;
+	protected SednaConnection connection;
 	
 	protected PipedInputStream in = null;
 	
@@ -42,41 +36,33 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
+	 * @throws DriverException 
 	 * @throws IOException 
-	 * @throws UnsupportedEncodingException 
-	 * @throws XQException 
 	 * @throws InterruptedException 
 	 */
-	public DtoPmsi(XQConnection connection) throws UnsupportedEncodingException, IOException, XQException, InterruptedException {
+	public DtoPmsi(SednaConnection connection) throws DriverException, IOException, InterruptedException {
 		this.connection = connection;
+		connection.begin();
 		
 		in = new PipedInputStream();
 		out = new PrintStream(new PipedOutputStream(in), false, "UTF-8");
 
 		// Récupération de l'heure d'insertion
-		XQPreparedExpression xqpe =
-		connection.prepareExpression("current-dateTime()");
-		XQResultSequence rs = xqpe.executeQuery();
-		rs.next();
-		datexml = rs.getItemAsString(null);
-		rs.close();
-		xqpe.close();
+		SednaStatement st = connection.createStatement();
+		st.execute("current-dateTime()");
+		SednaSerializedResult pr = st.getSerializedResult();
+		datexml = pr.next();
 		
-		// Récupération du numéro d'insertion après l'avoir incrémenté
-		connection.createExpression().executeCommand(
-				"update \n" +
+		// Récupération du numéro d'insertion
+		st = connection.createStatement();
+		st.execute("update \n" +
 				"replace $l in fn:doc(\"PmsiDocIndice\", \"Pmsi\")/indice \n" +
 				"with <indice>{$l/text() + 1}</indice>");
 		
-		xqpe = connection.prepareExpression("fn:doc(\"PmsiDocIndice\", \"Pmsi\")/indice/text()");
-		rs = xqpe.executeQuery();
-		rs.next();
-		numDocument = "pmsi-" + rs.getNode().getTextContent();
-		rs.close();
-		xqpe.close();
-
-		// Création du document nommé selon numDocument
-		connection.createExpression().executeCommand("CREATE DOCUMENT \"" + numDocument + "\" IN COLLECTION \"Pmsi\"");
+		st = connection.createStatement();
+		st.execute("fn:doc(\"PmsiDocIndice\", \"Pmsi\")/indice/text()");
+		pr = st.getSerializedResult();
+		numDocument = pr.next();
 		
 		final DtoPmsi dtoRsf = this;
 	
@@ -86,7 +72,7 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 			    new Runnable(){
 			      public void run() {
 			    	  try {
-			    		  dtoRsf.storeInputStream(numDocument);
+			    		  dtoRsf.storeInputStream();
 			    	  } catch (Exception e) {
 			    		  if (e instanceof DriverException && ((DriverException) e).getErrorCode() == 168) {
 			    			  // Ne rien faire
@@ -103,24 +89,20 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 		
 	}
 		
-	private void storeInputStream(String numDocument) throws XQException {
-		// Propriété deferred, permet de ne pas lire tout le stream d'un coup
-		XQStaticContext properties = connection.getStaticContext();
-		properties.setBindingMode(XQConstants.BINDING_MODE_DEFERRED);
-		XQExpression xqe = connection.createExpression(properties);
-		xqe.bindDocument(new QName("xml"), in, null, null);
-		xqe.executeCommand(
-				"UPDATE \n" +
-				"insert $xml into fn:doc(\"" + numDocument + "\", \"Pmsi\")");
+	private void storeInputStream() throws DriverException, IOException {
+		SednaStatement st = connection.createStatement();
+		st.loadDocument(in, "pmsi-" + numDocument, "Pmsi");
 	}
 	
 	/**
 	 * Fermeture de la connexion à la base de données :
 	 * Supprime toutes les données qui n'ont pas été validées
 	 * et libère toutes les ressources associées à cette connexion
-	 * @throws XQException 
+	 * @throws DriverException 
+	 * @throws InterruptedException 
 	 */
-	public void close() throws XQException, InterruptedException {
+	public void close() throws DriverException, InterruptedException {
+		try {
 			// Fermeture du flux si besoin
 			if (out != null) { 
 				out.close();
@@ -130,6 +112,12 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 				sem.acquire();
 			}
 			connection.rollback();
+		} catch (DriverException e) {
+			if (e.getErrorCode() == 411) {
+				// Do nothing
+			} else
+				throw e;
+		}
 	}
 	
 	/**
@@ -154,7 +142,7 @@ public abstract class DtoPmsi implements DTOPmsiLineType {
 	 * @throws InterruptedException 
 	 * @throws DriverException 
 	 */
-	public void end() throws InterruptedException, XQException {
+	public void end() throws InterruptedException, DriverException {
 		// Fermeture de tous les tags non fermés
 		while (!lastLine.empty()) {
 			out.println("</" + lastLine.pop().getName() + ">");
