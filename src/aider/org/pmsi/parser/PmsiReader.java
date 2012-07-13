@@ -11,6 +11,13 @@ import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
+/**
+ * Classe de base de parseur pmsi.
+ * @author delabre
+ *
+ * @param <EnumState>
+ * @param <EnumSignal>
+ */
 public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal> {
 
 	/**
@@ -18,7 +25,6 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * dans @link {@link BufferedReader#readLine()}
 	 */
 	private BufferedReader reader;
-	
 	
 	/**
 	 * Stocke la dernière ligne extraite du {@link PmsiReader#pmsiReader) permettant
@@ -132,6 +138,10 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	public abstract void endOfFile() throws Exception;
 	
+	/**
+	 * Fonction à appeler pour réaliser le travail de cette classe
+	 * @throws Exception
+	 */
 	public abstract void process() throws Exception;
 	
 	/**

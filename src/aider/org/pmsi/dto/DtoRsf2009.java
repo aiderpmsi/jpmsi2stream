@@ -2,6 +2,7 @@ package aider.org.pmsi.dto;
 
 import javax.xml.stream.XMLStreamException;
 
+import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
@@ -10,6 +11,11 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2009c;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009h;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
 
+/**
+ * Objet de transfert de données pour un {@link PmsiRSF2009Reader}
+ * @author delabre
+ *
+ */
 public class DtoRsf2009 extends DtoPmsiImpl {
 
 	/**

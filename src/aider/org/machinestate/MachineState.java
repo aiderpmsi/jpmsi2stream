@@ -2,8 +2,20 @@ package aider.org.machinestate;
 
 import java.util.HashMap;
 
+/**
+ * Machine à états avec transitions par signaux
+ * Template pouvant être utilisée avec toutes sortes de signaux et états
+ * à partir du moment où ils sont comparables
+ * @author delabre
+ *
+ * @param <EnumState>
+ * @param <EnumSignal>
+ */
 public abstract class MachineState<EnumState, EnumSignal> {
 
+	/**
+	 * Définition de l'état où la machine doit d'arrêter
+	 */
 	private EnumState stateFinished;
 	
 	/**
@@ -18,8 +30,18 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	 */
 	private EnumState stateActual;
 	
+	/**
+	 * Interdiction de construire une machine à états sans définir l'état initial
+	 * et létat final
+	 */
 	protected MachineState() {}
 	
+	/**
+	 * Création de la machine à états avec la définition de l'état initial et
+	 * l'état final
+	 * @param stateReady
+	 * @param stateFinished
+	 */
 	public MachineState(EnumState stateReady, EnumState stateFinished) {
 		this.stateActual = stateReady;
 		this.stateFinished = stateFinished;

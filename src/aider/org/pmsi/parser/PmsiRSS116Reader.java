@@ -1,4 +1,4 @@
-package aider.org.pmsi.reader;
+package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,12 +25,22 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
  */
 public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS116Reader.EnumState, PmsiRSS116Reader.EnumSignal> {
 
+	/**
+	 * Liste des états de la machine à états
+	 * @author delabre
+	 *
+	 */
 	public enum EnumState {
 		STATE_READY, STATE_FINISHED,
 		WAIT_RSS_HEADER, WAIT_RSS_HEADER_ENDLINE,
 		WAIT_RSS_MAIN, WAIT_RSS_DA, WAIT_RSS_DAD,
 		WAIT_RSS_ACTE, WAIT_RSS_ENDLINE, STATE_EMPTY_FILE}
 	
+	/**
+	 * Liste des signaux
+	 * @author delabre
+	 *
+	 */
 	public enum EnumSignal {
 		SIGNAL_START, // STATE_READY -> WAIT_RSS_HEADER
 		SIGNAL_RSS_END_HEADER, // WAIT_RSS_HEADER -> WAIT_RSS_HEADER_ENDLINE
@@ -46,19 +56,26 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Nombre de diagnostics associés restant à lire
 	 */
-	int nbDaRestants;
+	private int nbDaRestants;
 	
 	/**
 	 * Nombre de diagnostics associés documentaires à lire
 	 */
-	int nbDaDRestants;
+	private int nbDaDRestants;
+	
 	/**
 	 * Nombre d'actes restant à lire
 	 */
-	int nbZARestants;
+	private int nbZARestants;
 	
+	/**
+	 * Objet de transfert de données
+	 */
 	private DtoPmsi dtoPmsiLineType = null;
 
+	/**
+	 * Nom identifiant la classe
+	 */
 	private static final String name = "RSS116"; 
 	
 	/**
@@ -182,13 +199,12 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		}
 	}
 
-	/**
-	 * Fonction exécutée lorsque la fin du flux est rencontrée
-	 */
+	@Override
 	public void endOfFile() throws Exception {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
+	@Override
 	public void finish() throws Exception {
 		dtoPmsiLineType.writeEndDocument();
 	}

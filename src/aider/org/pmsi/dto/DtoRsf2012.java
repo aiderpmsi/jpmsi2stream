@@ -1,5 +1,6 @@
 package aider.org.pmsi.dto;
 
+import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -9,6 +10,11 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2012h;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012l;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012m;
 
+/**
+ * Objet de transfert de données pour un objet de type {@link PmsiRSF2012Reader}
+ * @author delabre
+ *
+ */
 public class DtoRsf2012 extends DtoPmsiImpl {
 
 	/**

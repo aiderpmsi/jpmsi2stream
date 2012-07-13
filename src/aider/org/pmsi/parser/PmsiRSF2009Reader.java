@@ -1,4 +1,4 @@
-package aider.org.pmsi.reader;
+package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -6,29 +6,38 @@ import java.io.Reader;
 import aider.org.pmsi.dto.DtoPmsi;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
 import aider.org.pmsi.dto.DtoPmsiException;
-import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012b;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012c;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012h;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012l;
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012m;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009b;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009c;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009h;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
+
 
 /**
  * Définition de la lecture d'un RSF version 2009
  * @author delabre
  *
  */
-public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, PmsiRSF2012Reader.EnumSignal> {
+public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, PmsiRSF2009Reader.EnumSignal> {
 
+	/**
+	 * Liste des états de la machine à états
+	 * @author delabre
+	 *
+	 */
 	public enum EnumState {
 		STATE_READY, STATE_FINISHED, STATE_EMPTY_FILE,
 		WAIT_RSF_HEADER, WAIT_RSF_LINES, WAIT_ENDLINE
 	}
 	
+	/**
+	 * Liste des signaux
+	 * @author delabre
+	 *
+	 */
 	public enum EnumSignal {
 		SIGNAL_START, // STATE_READY -> WAIT_RSS_HEADER
 		SIGNAL_RSF_END_HEADER, // WAIT_RSF_HEADER -> WAIT_RSF_LINES
@@ -37,27 +46,31 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		SIGNAL_EOF
 	}
 	
+	/**
+	 * Nom identifiant cette classe de PmsiReader
+	 */
+	private static final String name = "RSF2009";
+	
+	/**
+	 * Objet de transfert de données
+	 */
 	private DtoPmsi dtoPmsiLineType = null;
-
-	private static final String name = "RSF2012"; 
 	
 	/**
 	 * Constructeur
 	 * @param reader
 	 * @throws DtoPmsiException 
-
 	 */
-	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DtoPmsiException {
+	public PmsiRSF2009Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DtoPmsiException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
-		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2012Header());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012a());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012b());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012c());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012h());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012m());
-		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2012l());
+		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());
+		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2009a());
+		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2009b());
+		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2009c());
+		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2009h());
+		addLineType(EnumState.WAIT_RSF_LINES, new PmsiRsf2009m());
 
 		// Définition des états et des signaux de la machine à états
 		addTransition(EnumSignal.SIGNAL_START, EnumState.STATE_READY, EnumState.WAIT_RSF_HEADER);
@@ -67,7 +80,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		addTransition(EnumSignal.SIGNAL_RSF_END_HEADER, EnumState.WAIT_RSF_HEADER, EnumState.WAIT_ENDLINE);
 		addTransition(EnumSignal.SIGNAL_RSF_END_LINES, EnumState.WAIT_RSF_LINES, EnumState.WAIT_ENDLINE);
 		addTransition(EnumSignal.SIGNAL_ENDLINE, EnumState.WAIT_ENDLINE, EnumState.WAIT_RSF_LINES);
-		
+
 		// Récupération de la classe de transfert en base de données
 		dtoPmsiLineType = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
 	}
@@ -115,20 +128,18 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		}
 	}
 
-	/**
-	 * Fonction exécutée lorsque la fin du flux est rencontrée
-	 */
+	@Override
 	public void endOfFile() throws Exception {
-		changeState(EnumSignal.SIGNAL_EOF);		
-	}
-
-	public void finish() throws Exception {
-		dtoPmsiLineType.writeEndDocument();
+		changeState(EnumSignal.SIGNAL_EOF);
 	}
 
 	@Override
-	public void close() throws DtoPmsiException {
-		dtoPmsiLineType.close();
+	public void finish() throws Exception {
+		dtoPmsiLineType.writeEndDocument();
 	}
 	
+	@Override
+	public void close() throws DtoPmsiException  {
+		dtoPmsiLineType.close();
+	}
 }

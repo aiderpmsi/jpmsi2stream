@@ -8,12 +8,12 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
+import aider.org.pmsi.parser.PmsiRSF2009Reader;
+import aider.org.pmsi.parser.PmsiRSF2012Reader;
+import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
-import aider.org.pmsi.reader.PmsiRSF2009Reader;
-import aider.org.pmsi.reader.PmsiRSF2012Reader;
-import aider.org.pmsi.reader.PmsiRSS116Reader;
 
 /**
  * Entrée du programme permettant de lire un fichier pmsi et de le transformer en xml

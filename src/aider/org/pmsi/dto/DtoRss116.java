@@ -1,5 +1,6 @@
 package aider.org.pmsi.dto;
 
+import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
@@ -7,6 +8,11 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Dad;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
+/**
+ * Objet de transfert de données pour un objet de type {@link PmsiRSS116Reader}
+ * @author delabre
+ *
+ */
 public class DtoRss116 extends DtoPmsiImpl {
 
 	/**
