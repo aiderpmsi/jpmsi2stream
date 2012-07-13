@@ -1,10 +1,5 @@
 package aider.org.pmsi.dto;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import ru.ispras.sedna.driver.DriverException;
-import ru.ispras.sedna.driver.SednaConnection;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -19,40 +14,44 @@ public class DtoRsf2012 extends DtoPmsi {
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @throws DriverException 
-	 * @throws InterruptedException 
-	 * @throws FileNotFoundException
+	 * @throws DtoPmsiException 
 	 */
-	public DtoRsf2012(SednaConnection connection) throws DriverException, IOException, InterruptedException {
-		super(connection);
+	public DtoRsf2012() throws DtoPmsiException {
+		super();
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
+	 * @throws DtoPmsiException 
 	 */
-	public void appendContent(PmsiLineType lineType)  {
-		if (lineType instanceof PmsiRsf2012Header) {
-			// Ecriture de la ligne header sans la fermer (va contenir les rsf)
-			writeSimpleElement(lineType);
-			// Prise en compte de l'ouverture de la ligne
-			lastLine.add(lineType);
-		} else if (lineType instanceof PmsiRsf2012a) {
-			// Si un rsfa est ouvert, il faut le fermer
-			if (lastLine.lastElement() instanceof PmsiRsf2012a) {
-				out.println("</" + lastLine.pop().getName() + ">");
+	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException  {
+		try {
+			if (lineType instanceof PmsiRsf2012Header) {
+				// Ecriture de la ligne header sans la fermer (va contenir les rsf)
+				writeSimpleElement(lineType);
+				// Prise en compte de l'ouverture de la ligne
+				lastLine.add(lineType);
+			} else if (lineType instanceof PmsiRsf2012a) {
+				// Si un rsfa est ouvert, il faut le fermer
+				if (lastLine.lastElement() instanceof PmsiRsf2012a) {
+					lastLine.pop();
+					xmlWriter.writeEndElement();
+				}
+				// ouverture du rsfa
+				writeSimpleElement(lineType);
+				// Prise en compte de l'ouverture de ligne
+				lastLine.add(lineType);
+			} else if (lineType instanceof PmsiRsf2012b || lineType instanceof PmsiRsf2012c ||
+					lineType instanceof PmsiRsf2012h || lineType instanceof PmsiRsf2012m ||
+					lineType instanceof PmsiRsf2012l) {
+				// Ouverture de la ligne
+				writeSimpleElement(lineType);
+				// fermeture de la ligne
+				xmlWriter.writeEndElement();
 			}
-			// ouverture du rsfa
-			writeSimpleElement(lineType);
-			// Prise en compte de l'ouverture de ligne
-			lastLine.add(lineType);
-		} else if (lineType instanceof PmsiRsf2012b || lineType instanceof PmsiRsf2012c ||
-				lineType instanceof PmsiRsf2012h || lineType instanceof PmsiRsf2012m ||
-				lineType instanceof PmsiRsf2012l) {
-			// Ouverture de la ligne
-			writeSimpleElement(lineType);
-			// fermeture de la ligne
-			out.println("</" + lineType.getName() + ">");
+		} catch (Exception e) {
+			throw new DtoPmsiException(e);
 		}
 	}
 }

@@ -3,10 +3,9 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import ru.ispras.sedna.driver.DriverException;
-
-import aider.org.pmsi.dto.DTOPmsiLineType;
+import aider.org.pmsi.dto.DtoPmsiLineType;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
+import aider.org.pmsi.dto.DtoPmsiException;
 import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -38,18 +37,17 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		SIGNAL_EOF
 	}
 	
-	private DTOPmsiLineType dtoPmsiLineType = null;
+	private DtoPmsiLineType dtoPmsiLineType = null;
 
 	private static final String name = "RSF2012"; 
 	
 	/**
 	 * Constructeur
 	 * @param reader
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 * @throws DriverException 
+	 * @throws DtoPmsiException 
+
 	 */
-	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
+	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DtoPmsiException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -83,14 +81,14 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 
 		switch(getState()) {
 		case STATE_READY:
-			dtoPmsiLineType.start(name);
+			dtoPmsiLineType.writeStartDocument(name);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSF_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.appendContent(matchLine);
+				dtoPmsiLineType.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSF : Entête du fichier non trouvée");
@@ -98,7 +96,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		case WAIT_RSF_LINES:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.appendContent(matchLine);
+				dtoPmsiLineType.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSF : Ligne non reconnue");
@@ -125,11 +123,11 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	}
 
 	public void finish() throws Exception {
-		dtoPmsiLineType.end();
+		dtoPmsiLineType.writeEndDocument();
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws DtoPmsiException {
 		dtoPmsiLineType.close();
 	}
 	

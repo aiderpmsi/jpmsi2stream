@@ -3,11 +3,9 @@ package aider.org.pmsi.reader;
 import java.io.IOException;
 import java.io.Reader;
 
-import ru.ispras.sedna.driver.DriverException;
-
-
-import aider.org.pmsi.dto.DTOPmsiLineType;
+import aider.org.pmsi.dto.DtoPmsiLineType;
 import aider.org.pmsi.dto.DTOPmsiReaderFactory;
+import aider.org.pmsi.dto.DtoPmsiException;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -59,18 +57,16 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 */
 	int nbZARestants;
 	
-	private DTOPmsiLineType dtoPmsiLineType = null;
+	private DtoPmsiLineType dtoPmsiLineType = null;
 
 	private static final String name = "RSS116"; 
 	
 	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 * @throws DriverException 
+	 * @throws DtoPmsiException 
 	 */
-	public PmsiRSS116Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DriverException, IOException, InterruptedException {
+	public PmsiRSS116Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DtoPmsiException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -106,14 +102,14 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		switch(getState()) {
 		case STATE_READY:
 			// L'état initial nous demande de lire un nouvelle ligne
-			dtoPmsiLineType.start(name);
+			dtoPmsiLineType.writeStartDocument(name);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSS_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.appendContent(matchLine);
+				dtoPmsiLineType.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
 			} else
 				throw new PmsiFileNotReadable("Lecteur RSS 116 : Entête du fichier non trouvée");
@@ -121,7 +117,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		case WAIT_RSS_MAIN:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.appendContent(matchLine);
+				dtoPmsiLineType.writeLineElement(matchLine);
 				nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
 				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
 				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
@@ -135,7 +131,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					dtoPmsiLineType.appendContent(matchLine);
+					dtoPmsiLineType.writeLineElement(matchLine);
 					nbDaRestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
@@ -147,7 +143,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					dtoPmsiLineType.appendContent(matchLine);
+					dtoPmsiLineType.writeLineElement(matchLine);
 					nbDaDRestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS : DAD non trouvés dans ligne RSS");
@@ -159,7 +155,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					dtoPmsiLineType.appendContent(matchLine);
+					dtoPmsiLineType.writeLineElement(matchLine);
 					nbZARestants -= 1;
 				} else
 					throw new PmsiFileNotInserable("Lecteur RSS : Actes non trouvés dans ligne RSS");
@@ -194,11 +190,11 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	}
 
 	public void finish() throws Exception {
-		dtoPmsiLineType.end();
+		dtoPmsiLineType.writeEndDocument();
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws DtoPmsiException {
 		dtoPmsiLineType.close();
 	}
 }
