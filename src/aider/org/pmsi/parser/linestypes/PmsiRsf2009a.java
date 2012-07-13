@@ -2,6 +2,11 @@ package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 
+/**
+ * Définition d'une ligne A de RSF version 2009
+ * @author delabre
+ *
+ */
 public class PmsiRsf2009a extends PmsiLineType {
 
 	private static final Pattern pattern = Pattern.compile("^(A)(\\d{9})(.{20})(.{1})(.{1})(.{13})(.{2})(.{3})(.{9})(.{1})(.{2})(.{2})(.{1})" +
@@ -51,22 +56,27 @@ public class PmsiRsf2009a extends PmsiLineType {
 
 	private String[] content = new String[names.length];
 
+	@Override
 	public Pattern getPattern() {
 		return pattern;
 	}
 	
+	@Override
 	public String[] getNames() {
 		return names;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}
 	
+	@Override
 	public String[] getContent() {
 		String[] modContent = new String[names.length];
 		for (int i = 0 ; i < names.length ; i++) {

@@ -31,6 +31,9 @@ public class Main {
 		RSS116, RSF2009, RSF2012;
 	}
 	
+	/**
+	 * Liste des fichiers que l'on peut lire
+	 */
 	public static List<FileType> listTypes = new ArrayList<Main.FileType>() {
 		private static final long serialVersionUID = -4594379149065725315L;
 		{

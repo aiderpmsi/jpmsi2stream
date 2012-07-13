@@ -2,7 +2,6 @@ package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 
-
 /**
  * Capture l'entête d'un fichier pmsi RSS
  * @author delabre
@@ -34,22 +33,27 @@ public class PmsiRss116Header extends PmsiLineType {
 
 	private String[] content = new String[names.length];
 
+	@Override
 	public Pattern getPattern() {
 		return pattern;
 	}
 	
+	@Override
 	public String[] getNames() {
 		return names;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}
 	
+	@Override
 	public String[] getContent() {
 		String[] modContent = new String[names.length];
 		for (int i = 0 ; i < names.length ; i++) {

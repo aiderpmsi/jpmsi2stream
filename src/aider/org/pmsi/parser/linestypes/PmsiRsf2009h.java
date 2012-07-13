@@ -2,6 +2,11 @@ package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 
+/**
+ * Définition d'une ligne H de RSF version 2009
+ * @author delabre
+ *
+ */
 public class PmsiRsf2009h extends PmsiLineType {
 
 	private static final Pattern pattern = Pattern.compile("^(H)(\\d{9})(.{20})(.{13})(.{2})(.{3})(.{9})(.{8})(.{7})(.{5})(.{7})" +
@@ -17,22 +22,27 @@ public class PmsiRsf2009h extends PmsiLineType {
 
 	private String[] content = new String[names.length];
 
+	@Override
 	public Pattern getPattern() {
 		return pattern;
 	}
 	
+	@Override
 	public String[] getNames() {
 		return names;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setContent(int index, String content) {
 		this.content[index] = content;
 	}
 	
+	@Override
 	public String[] getContent() {
 		return content;
 	}

@@ -2,6 +2,11 @@ package aider.org.pmsi.parser.linestypes;
 
 import java.util.regex.Pattern;
 
+/**
+ * Définition de la partie principale d'un RSS 116
+ * @author delabre
+ *
+ */
 public class PmsiRss116Main extends PmsiLineType {
 
 	private static final Pattern pattern = Pattern.compile("^(.{2})(.{2})(.{4})(.{1})(116)(.{3})(.{9})(016)(.{20})(.{20})(.{10})" +

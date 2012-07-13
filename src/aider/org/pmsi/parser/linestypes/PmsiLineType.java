@@ -17,11 +17,28 @@ public abstract class PmsiLineType {
 	 */
 	public abstract Pattern getPattern() ;
 	
+	/**
+	 * Retourne la liste des noms des éléments de cette ligne
+	 * @return
+	 */
 	public abstract String[] getNames();
 	
+	/**
+	 * Retourne le nom d'identification de la classe
+	 * @return
+	 */
 	public abstract String getName();
 	
+	/**
+	 * Définit la valeur <code>content</code> au paramètre à la position <code>index</code>
+	 * @param index
+	 * @param content
+	 */
 	public abstract void setContent(int index, String content);
 	
+	/**
+	 * Récupère la liste des contenus de cet élément pmsi
+	 * @return
+	 */
 	public abstract String[] getContent();
 }

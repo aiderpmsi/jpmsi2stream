@@ -3,7 +3,7 @@ package aider.org.pmsi.parser.exceptions;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Classe d'exception indiquant une impossibilit� � lire le
+ * Classe d'exception indiquant une impossibilité à lire le
  * fichier PMSI. Ceci indique que le fichier n'est pas valide dans la forme (contenant),
  * probablement parceque ce lecteur ne prend pas en charge ce format.
  * @author delabre
@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 public class PmsiFileNotReadable extends ExecutionException {
 
 	/**
-	 * Num�ro de s�rie
+	 * Numéro de série
 	 */
 	private static final long serialVersionUID = -5315118463220885515L;
 
