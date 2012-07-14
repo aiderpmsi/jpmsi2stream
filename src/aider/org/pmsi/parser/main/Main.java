@@ -7,7 +7,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.DTOPmsiReaderFactory;
+import aider.org.pmsi.dto.DtoPmsiFactory;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
@@ -61,7 +61,7 @@ public class Main {
         CmdLineParser parser = new CmdLineParser(options);
         
         // Définition de la config de la connexion à la base de données
-        DTOPmsiReaderFactory dtoPmsiReaderFactory = new DTOPmsiReaderFactory();
+        DtoPmsiFactory dtoPmsiReaderFactory = new DtoPmsiFactory();
 
         // Lecture des arguments
         try {
@@ -107,7 +107,7 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(MainOptions options, FileType type, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws Exception {
+	public static boolean readPMSI(MainOptions options, FileType type, DtoPmsiFactory dtoPmsiReaderFactory) throws Exception {
 		PmsiReader<?, ?> reader = null;
 		
 		try {

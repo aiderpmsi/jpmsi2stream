@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 import aider.org.pmsi.dto.DtoPmsi;
-import aider.org.pmsi.dto.DTOPmsiReaderFactory;
+import aider.org.pmsi.dto.DtoPmsiFactory;
 import aider.org.pmsi.dto.DtoPmsiException;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -61,7 +61,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 * @throws DtoPmsiException 
 
 	 */
-	public PmsiRSF2012Reader(Reader reader, DTOPmsiReaderFactory dtoPmsiReaderFactory) throws DtoPmsiException {
+	public PmsiRSF2012Reader(Reader reader, DtoPmsiFactory dtoPmsiReaderFactory) throws DtoPmsiException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer

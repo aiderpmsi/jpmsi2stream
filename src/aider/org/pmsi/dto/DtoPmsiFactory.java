@@ -11,13 +11,13 @@ import aider.org.pmsi.parser.PmsiReader;
  * @author delabre
  *
  */
-public class DTOPmsiReaderFactory {
+public class DtoPmsiFactory {
 	
 	/**
 	 * Constructeur par défaut, ne fait rien
 	 * @throws DriverException
 	 */
-	public DTOPmsiReaderFactory() throws DriverException {
+	public DtoPmsiFactory() throws DriverException {
 	}
 	
 	/**
