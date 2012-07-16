@@ -8,7 +8,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -160,7 +160,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
 	 * @throws PmsiPipedIOException si l'insertion s'est mal déroulée
 	 */
-	public void close() throws PmsiPipedIOException, PmsiFileNotInserable {
+	public void close() throws PmsiPipedIOException {
 		try {
 			// Fermeture des flux si besoin
 			if (xmlWriter != null) {
@@ -177,9 +177,11 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 			
 			// On regarde si l'insertion des données a bien fonctionné
 			if (inPipedReader.getStatus() == false)
-				throw new PmsiFileNotInserable("ecriture impossible", inPipedReader.getTerminalException());
+				throw new PmsiPipedIOException("ecriture impossible", inPipedReader.getTerminalException());
 		} catch (Exception e) {
 			throw new PmsiPipedIOException(e);
+		} finally {
+			inPipedReader.close();
 		}
 	}
 

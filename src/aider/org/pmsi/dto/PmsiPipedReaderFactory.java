@@ -2,6 +2,7 @@ package aider.org.pmsi.dto;
 
 import ru.ispras.sedna.driver.DriverException;
 import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
  * Classe créant le dto adapté à chaque PmsiReader

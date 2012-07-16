@@ -5,9 +5,8 @@ import java.io.Reader;
 
 import aider.org.pmsi.dto.PmsiPipedWriter;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
-import aider.org.pmsi.dto.PmsiPipedIOException;
-import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
-import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
+import aider.org.pmsi.parser.exceptions.PmsiIOException;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009b;
@@ -55,7 +54,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	/**
 	 * Objet de transfert de données
 	 */
-	private PmsiPipedWriter dtoPmsiLineType = null;
+	private PmsiPipedWriter pmsiPipedWriter = null;
 	
 	/**
 	 * Constructeur
@@ -83,64 +82,66 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 		addTransition(EnumSignal.SIGNAL_ENDLINE, EnumState.WAIT_ENDLINE, EnumState.WAIT_RSF_LINES);
 
 		// Récupération de la classe de transfert en base de données
-		dtoPmsiLineType = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
+		pmsiPipedWriter = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
 	}
 	
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws Exception 
+	 * @throws PmsiPipedIOException 
+	 * @throws IOException 
+	 * @throws PmsiFileNotReadable 
 	 */
-	public void process() throws Exception {
+	public void process() throws PmsiPipedIOException, PmsiIOException {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
 		case STATE_READY:
-			dtoPmsiLineType.writeStartDocument(name, new String[0], new String[0]);
+			pmsiPipedWriter.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSF_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.writeLineElement(matchLine);
+				pmsiPipedWriter.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else
-				throw new PmsiFileNotReadable("Lecteur RSF : Entête du fichier non trouvée");
+				throw new PmsiIOException("Lecteur RSF : Entête du fichier non trouvée");
 			break;
 		case WAIT_RSF_LINES:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				dtoPmsiLineType.writeLineElement(matchLine);
+				pmsiPipedWriter.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else
-				throw new PmsiFileNotReadable("Lecteur RSF : Ligne non reconnue");
+				throw new PmsiIOException("Lecteur RSF : Ligne non reconnue");
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw new PmsiFileNotReadable("trop de caractères dans la ligne");
+				throw new PmsiIOException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			throw new PmsiFileNotReadable("Lecteur RSF : ", new IOException("Fichier vide"));
+			throw new PmsiIOException("Lecteur RSF : Fichier vide");
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
 	}
 
 	@Override
-	public void endOfFile() throws Exception {
+	public void endOfFile() throws PmsiIOException {
 		changeState(EnumSignal.SIGNAL_EOF);
 	}
 
 	@Override
 	public void finish() throws Exception {
-		dtoPmsiLineType.writeEndDocument();
+		pmsiPipedWriter.writeEndDocument();
 	}
 	
 	@Override
-	public void close() throws PmsiPipedIOException, PmsiFileNotInserable  {
-		dtoPmsiLineType.close();
+	public void close() throws PmsiPipedIOException {
+		pmsiPipedWriter.close();
 	}
 }

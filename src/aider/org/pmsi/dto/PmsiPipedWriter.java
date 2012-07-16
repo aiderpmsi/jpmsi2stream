@@ -1,6 +1,6 @@
 package aider.org.pmsi.dto;
 
-import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -48,9 +48,8 @@ public interface PmsiPipedWriter {
 	/**
 	 * Ferme les objets de flux utilisés, libère les resources utilisées
 	 * @throws PmsiPipedIOException
-	 * @throws PmsiFileNotInserable 
 	 */
-	public void close() throws PmsiPipedIOException, PmsiFileNotInserable;
+	public void close() throws PmsiPipedIOException;
 	
 	/**
 	 * Renvoie la dernière ligne insérée

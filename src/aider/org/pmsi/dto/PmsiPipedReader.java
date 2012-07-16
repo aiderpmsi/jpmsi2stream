@@ -3,6 +3,8 @@ package aider.org.pmsi.dto;
 import java.io.PipedInputStream;
 import java.util.concurrent.Semaphore;
 
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+
 /**
  * Classe permettant de lire le flux écrit par le thread principal pour l'écrire où il
  * elle le veut

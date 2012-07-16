@@ -1,6 +1,7 @@
 package aider.org.pmsi.dto;
 
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;

@@ -1,4 +1,4 @@
-package aider.org.pmsi.dto;
+package aider.org.pmsi.parser.exceptions;
 
 /**
  * Exceptions levées lors de l'utilisation de DtoPmsi
@@ -12,7 +12,7 @@ public class PmsiPipedIOException extends Exception {
 	/**
 	 * Numéro de série autogénéré
 	 */
-	private static final long serialVersionUID = -5876923561804105709L;
+	private static final long serialVersionUID = -1896810737119225957L;
 
 	public PmsiPipedIOException() {
 	}

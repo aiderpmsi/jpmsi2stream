@@ -5,6 +5,7 @@ import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
  * Classe créant le dto adapté à chaque PmsiReader

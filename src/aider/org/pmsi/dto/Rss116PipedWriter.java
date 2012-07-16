@@ -1,6 +1,7 @@
 package aider.org.pmsi.dto;
 
 import aider.org.pmsi.parser.PmsiRSS116Reader;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;

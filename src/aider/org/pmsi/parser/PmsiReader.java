@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
+import aider.org.pmsi.parser.exceptions.PmsiIOException;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -62,12 +64,11 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * par les données de la ligne suivante
 	 * @throws Exception
 	 */
-	public void readNewLine() throws Exception {
+	public void readNewLine() throws PmsiIOException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
-			// Normalement, à ce niveau, pmsiReader doit pouvoir �tre lu
-			throw new RuntimeException(e);
+			throw new PmsiIOException(e);
 		}
 		
 		if (toParse == null)
@@ -135,18 +136,20 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	public abstract void endOfFile() throws Exception;
+	public abstract void endOfFile() throws PmsiIOException;
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe
-	 * @throws Exception
+	 * @throws PmsiPipedIOException
+	 * @throws PmsiIOException
 	 */
-	public abstract void process() throws Exception;
+	public abstract void process() throws PmsiPipedIOException, PmsiIOException;
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet
+	 * @throws PmsiPipedIOException 
 	 * @throws Exception
 	 */
-	public abstract void close() throws Exception;
+	public abstract void close() throws PmsiPipedIOException;
 
 }

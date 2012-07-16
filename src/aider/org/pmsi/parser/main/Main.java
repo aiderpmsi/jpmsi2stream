@@ -1,6 +1,8 @@
 package aider.org.pmsi.parser.main;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +15,8 @@ import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
-import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
+import aider.org.pmsi.parser.exceptions.PmsiIOException;
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
  * Entrée du programme permettant de lire un fichier pmsi et de le transformer en xml
@@ -86,11 +88,11 @@ public class Main {
         // Le premier qui réussit est considéré comme le bon
         for (FileType fileTypeEntry : listTypes) {
         	try {
-        		if (readPMSI(options, fileTypeEntry, dtoPmsiReaderFactory) == true) {
+        		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry, dtoPmsiReaderFactory) == true) {
         			break;
         		}
             } catch (Throwable e) {
-            	if (e instanceof PmsiFileNotReadable || e instanceof PmsiFileNotInserable) {
+            	if (e instanceof PmsiPipedIOException || e instanceof PmsiIOException) {
             		pmsiErrors += (e.getMessage() == null ? "" : e.getMessage());
             	} else
             		throw e;
@@ -108,31 +110,48 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(MainOptions options, FileType type, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws Exception {
+	public static boolean readPMSI(InputStream in, FileType type, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws Exception {
 		PmsiReader<?, ?> reader = null;
 		
 		try {
 			// Choix du reader
 			switch(type) {
 				case RSS116:
-					reader = new PmsiRSS116Reader(new FileReader(options.getPmsiFile()), dtoPmsiReaderFactory);
+					reader = new PmsiRSS116Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
 					break;
 				case RSF2009:
-					reader = new PmsiRSF2009Reader(new FileReader(options.getPmsiFile()), dtoPmsiReaderFactory);
+					reader = new PmsiRSF2009Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
 					break;
 				case RSF2012:
-					reader = new PmsiRSF2012Reader(new FileReader(options.getPmsiFile()), dtoPmsiReaderFactory);
+					reader = new PmsiRSF2012Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
 					break;
 				}
 	
 			// Lecture du fichier par mise en route de la machine à états
 	        reader.run();
-		} finally {
+		} catch (Exception e) {
+			// Si on arrive ici, c'est qu'il existe une erreur qui interdit la transformation
+			// du pmsi en xml
+			// Les 2 seules erreurs qui peuvent arriver ici sont :
+			// - PmsiIOException (Lecture impossible)
+			// - PmsiPipedIOException (ecriture impossible)
+			// Ce sont les erreurs les plus importantes, peu importe dans ce cas si la
+			// fermeture du reader échoue
+			try {
+				reader.close();
+			} catch (PmsiPipedIOException ignore) {}
+			throw e;
+		}
+		
+		finally {
 			if (reader != null)
 				reader.close();
 		}
 			
-        // Arrivé ici, le fichier a pu être lu, on retourne true
+        // Arrivé ici, le fichier a pu être lu, on ferme le reader
+		reader.close();
+
+		// Si tout s'est bien passé, le fichier a pu être lu correctment!
         return true;
 	}
 }

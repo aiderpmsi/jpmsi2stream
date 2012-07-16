@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.util.concurrent.Semaphore;
 
+import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+
 /**
  * Classe permettant de lire le flux écrit par le thread principal pour l'écrire où il
  * elle le veut
@@ -63,11 +65,26 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 		return status;
 	}
 	
+	/**
+	 * Permet de définir le statut (réussi ou échoué) de l'écriture du reader
+	 * @param status
+	 */
+	protected void setStatus(boolean status) {
+		this.status = status;
+	}
+	
 	@Override
 	public Exception getTerminalException() {
 		return exception;
 	}
 
+	/**
+	 * Permet de définir l'exception terminale d'écriture des données du reader
+	 */
+	protected void setTerminalException(Exception e) {
+		exception = e;
+	}
+	
 	@Override
 	public void run() {
 		try {
