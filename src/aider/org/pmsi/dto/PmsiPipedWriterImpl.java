@@ -8,6 +8,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -52,6 +53,8 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 					inPipedReader.getPipedInputStream()), false, "UTF-8");
 			xmlWriter = XMLOutputFactory.newInstance().
 					createXMLStreamWriter(out);
+			// Lancement du lecteur
+			inPipedReader.start();
 		} catch (Exception e) {
 			throw new PmsiPipedIOException(e);
 		}
@@ -153,10 +156,11 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	}
 
 	/**
-	 * Libère toutes les ressources associées à ce dto
-	 * @throws PmsiPipedIOException 
+	 * Libère toutes les ressources associées à ce writer
+	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
+	 * @throws PmsiPipedIOException si l'insertion s'est mal déroulée
 	 */
-	public void close() throws PmsiPipedIOException{
+	public void close() throws PmsiPipedIOException, PmsiFileNotInserable {
 		try {
 			// Fermeture des flux si besoin
 			if (xmlWriter != null) {
@@ -173,7 +177,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 			
 			// On regarde si l'insertion des données a bien fonctionné
 			if (inPipedReader.getStatus() == false)
-				throw new Exception(inPipedReader.getTerminalException());
+				throw new PmsiFileNotInserable("ecriture impossible", inPipedReader.getTerminalException());
 		} catch (Exception e) {
 			throw new PmsiPipedIOException(e);
 		}

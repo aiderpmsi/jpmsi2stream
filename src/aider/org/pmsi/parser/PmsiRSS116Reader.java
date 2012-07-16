@@ -210,7 +210,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	}
 
 	@Override
-	public void close() throws PmsiPipedIOException {
+	public void close() throws PmsiPipedIOException, PmsiFileNotInserable {
 		dtoPmsiLineType.close();
 	}
 }

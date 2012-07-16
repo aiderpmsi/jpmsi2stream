@@ -6,6 +6,7 @@ import java.io.Reader;
 import aider.org.pmsi.dto.PmsiPipedWriter;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
 import aider.org.pmsi.dto.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
@@ -140,7 +141,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	}
 
 	@Override
-	public void close() throws PmsiPipedIOException {
+	public void close() throws PmsiPipedIOException, PmsiFileNotInserable {
 		dtoPmsiLineType.close();
 	}
 	

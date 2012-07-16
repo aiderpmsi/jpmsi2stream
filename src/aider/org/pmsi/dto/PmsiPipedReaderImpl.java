@@ -41,6 +41,11 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	public PmsiPipedReaderImpl() throws PmsiPipedIOException {
 		in = new PipedInputStream(); 
 		sem = new Semaphore(1);
+		try {
+			sem.acquire();
+		} catch (InterruptedException e) {
+			throw new PmsiPipedIOException(e);
+		}
 	}
 	
 	@Override
