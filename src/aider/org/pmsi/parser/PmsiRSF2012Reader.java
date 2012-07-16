@@ -83,7 +83,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 		addTransition(EnumSignal.SIGNAL_ENDLINE, EnumState.WAIT_ENDLINE, EnumState.WAIT_RSF_LINES);
 		
 		// Récupération de la classe de transfert en base de données
-		pmsiPipedWriter = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
+		pmsiPipedWriter = dtoPmsiReaderFactory.getPmsiPipedWriter(this);
 	}
 	
 	/**

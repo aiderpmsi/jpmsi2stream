@@ -51,6 +51,7 @@ public abstract class PmsiPipedReader extends Thread {
 	
 	/**
 	 * Libère l'ensemble des resources liées à cette classe
+	 * @throws PmsiPipedIOException
 	 */
 	public abstract void close() throws PmsiPipedIOException;
 }

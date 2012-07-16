@@ -10,15 +10,14 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
 /**
- * Objet de transfert de données pour un objet de type {@link PmsiRSS116Reader}
+ * Writer {@link PmsiPipedWriterImpl} pour {@link PmsiRSS116Reader}
  * @author delabre
  *
  */
 public class Rss116PipedWriter extends PmsiPipedWriterImpl {
 
 	/**
-	 * Construction de la connexion à la base de données à partir des configurations
-	 * données
+	 * Construction du Writer avec son reader associé
 	 * @throws PmsiPipedIOException 
 	 */
 	public Rss116PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {

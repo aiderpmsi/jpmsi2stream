@@ -12,17 +12,16 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
- * Implémente l'interface DtoPmsi pour transformer le flux pmsi en flux xml
+ * Implémente l'interface PmsiPipedWriter pour transformer le flux pmsi en flux xml
  * @author delabre
  *
  */
 public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	
 	/**
-	 * Classe définissant un inputreader et un thread pour en faire ce qu'il faut
-	 * avec comme sortie l'entrée de ce que l'on écrit dans cette classe
+	 * Classe définissant un inputreader et un thread (voir {@link PmsiPipedReader}
 	 */
-	private PmsiPipedReader inPipedReader;
+	private PmsiPipedReader pmsiPipedReader;
 	
 	/**
 	 * {@link OutputStream} dans lequel on lit pendant qu'un autre thread écrit
@@ -42,16 +41,17 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
 	/**
-	 * Construction.
+	 * Construction. Associe ce {@link PmsiPipedWriter} au {@link PmsiPipedReader} en argument
+	 * @param pmsiPipedReader
 	 * @throws PmsiPipedIOException 
 	 */
-	public PmsiPipedWriterImpl(PmsiPipedReader inPipedReader) throws PmsiPipedIOException {
+	public PmsiPipedWriterImpl(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
 		try {
-			this.inPipedReader = inPipedReader;
+			this.pmsiPipedReader = pmsiPipedReader;
 			
 			// Connection de ce writer et du reader:
 			PipedOutputStream pout = new PipedOutputStream();
-			inPipedReader.connect(pout);
+			pmsiPipedReader.connect(pout);
 			
 			// Création du PrintStream
 			out = new PrintStream(pout, false, "UTF-8");
@@ -61,7 +61,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 					createXMLStreamWriter(out);
 			
 			// Lancement du lecteur
-			inPipedReader.start();
+			pmsiPipedReader.start();
 		} catch (Exception e) {
 			throw new PmsiPipedIOException(e);
 		}
@@ -127,8 +127,11 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	
 	/**
 	 * Ouvre un élément en écrivant les attributs associés à la ligne pmsi dedans.
-	 * Attention, il n'est pas fermé automatiquement
-	 * @param lineType
+	 * Attention, il n'est pas fermé automatiquement, il faut le fermer dans un deuxième
+	 * temps avec {@link PmsiPipedWriter#writeEndElement()}
+	 * @param name Nom de l'élément
+	 * @param attNames Nom des attributs
+	 * @param attContent Valeur des attributs
 	 * @throws PmsiPipedIOException
 	 */
 	private void writeLineElement(String name, String[] attNames, String[] attContent) throws PmsiPipedIOException {
@@ -165,6 +168,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	/**
 	 * Libère toutes les ressources associées à ce writer
 	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
+	 * (c'est le moment où on attend le semaphore du {@link PmsiPipedReader}
 	 * @throws PmsiPipedIOException si l'insertion s'est mal déroulée
 	 */
 	public void close() throws PmsiPipedIOException {
@@ -180,15 +184,15 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 			}
 			
 			// On attend que PmsiPipedReader ait fini son boulot
-			inPipedReader.getSemaphore().acquire();
+			pmsiPipedReader.getSemaphore().acquire();
 			
 			// On regarde si l'insertion des données a bien fonctionné
-			if (inPipedReader.getStatus() == false)
-				throw new PmsiPipedIOException("ecriture impossible", inPipedReader.getTerminalException());
+			if (pmsiPipedReader.getStatus() == false)
+				throw new PmsiPipedIOException("ecriture impossible", pmsiPipedReader.getTerminalException());
 		} catch (Exception e) {
 			throw new PmsiPipedIOException(e);
 		} finally {
-			inPipedReader.close();
+			pmsiPipedReader.close();
 		}
 	}
 

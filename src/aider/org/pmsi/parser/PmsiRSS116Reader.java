@@ -105,7 +105,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_MAIN, EnumState.STATE_FINISHED);
 
 		// Récupération de la classe de transfert en base de données
-		pmsiPipedWriter = dtoPmsiReaderFactory.getDtoPmsiLineType(this);
+		pmsiPipedWriter = dtoPmsiReaderFactory.getPmsiPipedWriter(this);
 	}
 			
 	/**

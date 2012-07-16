@@ -1,9 +1,11 @@
 package aider.org.pmsi.parser.exceptions;
 
+import aider.org.pmsi.dto.PmsiPipedReader;
+import aider.org.pmsi.dto.PmsiPipedWriter;
+
 /**
- * Exceptions levées lors de l'utilisation de DtoPmsi
- * A noter, est plus utilisée pour encapsuler tous les autres types
- * d'erreurs que pour donner un type d'erreur particulier
+ * Exceptions levées lors de l'erreur d'écriture d'un fichier pmsi sérialisé, ou lors de l'erreur
+ * de lecture d'un fichier pmsi sérialisé par pipes ({@link PmsiPipedWriter} ou {@link PmsiPipedReader})
  * @author delabre
  *
  */
@@ -14,6 +16,7 @@ public class PmsiPipedIOException extends Exception {
 	 */
 	private static final long serialVersionUID = -1896810737119225957L;
 
+	
 	public PmsiPipedIOException() {
 	}
 

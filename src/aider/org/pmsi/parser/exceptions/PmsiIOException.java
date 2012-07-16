@@ -1,9 +1,10 @@
 package aider.org.pmsi.parser.exceptions;
 
+import aider.org.pmsi.parser.PmsiReader;
+
 /**
- * Exceptions levées lors de l'utilisation de DtoPmsi
- * A noter, est plus utilisée pour encapsuler tous les autres types
- * d'erreurs que pour donner un type d'erreur particulier
+ * Exception levée lors d'une erreur de lecture d'un fichier de pmsi (dans {@link PmsiReader} et
+ * les classes dérivées
  * @author delabre
  *
  */

@@ -12,15 +12,14 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2012l;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012m;
 
 /**
- * Objet de transfert de données pour un objet de type {@link PmsiRSF2012Reader}
+ * Writer {@link PmsiPipedWriterImpl} pour {@link PmsiRSF2012Reader}
  * @author delabre
  *
  */
 public class Rsf2012PipedWriter extends PmsiPipedWriterImpl {
 
 	/**
-	 * Construction de la connexion à la base de données à partir des configurations
-	 * données
+	 * Construction du Writer avec son reader associé
 	 * @throws PmsiPipedIOException 
 	 */
 	public Rsf2012PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {

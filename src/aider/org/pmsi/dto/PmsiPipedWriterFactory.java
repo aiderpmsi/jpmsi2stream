@@ -8,16 +8,22 @@ import aider.org.pmsi.parser.PmsiReader;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
- * Classe créant le dto adapté à chaque PmsiReader
+ * Classe créant le PipedWriter associé à chaque objet de type {@link PmsiReader}
  * @author delabre
  *
  */
 public class PmsiPipedWriterFactory {
-	
+
+	/**
+	 * Fabrique d'objets de type {@link PmsiPipedReader} utilisé dans cette classe
+	 */
 	private PmsiPipedReaderFactory pmsiPipedReaderFactory;
 	
 	/**
-	 * Constructeur par défaut, ne fait rien
+	 * Construit à partir de la définition d'une fabrique de {@link PmsiPipedReader}
+	 * l'objet.
+	 * @param pmsiPipedReaderFactory : la fabrique qui sera utilisée pour générer les
+	 *   {@link PmsiPipedReader} utilisés par les {@link PmsiPipedWriter}
 	 * @throws DriverException
 	 */
 	public PmsiPipedWriterFactory(PmsiPipedReaderFactory pmsiPipedReaderFactory) throws PmsiPipedIOException {
@@ -25,12 +31,12 @@ public class PmsiPipedWriterFactory {
 	}
 	
 	/**
-	 * Crée un objet de tranfert de données et le renvoie
+	 * Crée un {@link PmsiPipedWriter} adapté au reader {@link PmsiReader}
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
-	 * @return L'objet de transfert de donné adapté
+	 * @return L'écrivain adapté au type de fichier
 	 * @throws PmsiPipedIOException
 	 */
-	public PmsiPipedWriter getDtoPmsiLineType(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
+	public PmsiPipedWriter getPmsiPipedWriter(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
 		PmsiPipedReader pmsiPipedReader = pmsiPipedReaderFactory.getPmsiPipedReader(reader);
 		if (reader instanceof PmsiRSF2009Reader) {
 			return new Rsf2009PipedWriter(pmsiPipedReader);

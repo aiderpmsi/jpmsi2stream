@@ -9,8 +9,8 @@ import java.util.concurrent.Semaphore;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
- * Classe permettant de lire le flux écrit par le thread principal pour l'écrire où il
- * elle le veut
+ * Implémentation classique de l'interface {@link PmsiPipedReader}, écrit
+ * sur la sortie standard les données récupérées
  * @author delabre
  *
  */
@@ -22,23 +22,24 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	private Semaphore sem;
 	
 	/**
-	 * Flux dans lequel on lit le xml
+	 * Flux dans lequel on lit le xml (connecté à un {@link PipedOutputStream}
 	 */
 	private PipedInputStream in;
 	
 	/**
-	 * Caractérise l'état de succès de la lecture ou d'échec
+	 * Caractérise l'état de succès ou d'échec de l'utilisation du {@link PmsiPipedReader}
 	 */
 	private boolean status = false;
 	
 	/**
-	 * Stocke l'exception qui a fait échouer cette classe si existe
+	 * Stocke l'exception qui a fait échouer cette classe (si existe)
 	 */
-	private Exception exception;
+	private Exception exception = null;
 	
 	/**
-	 * Crée l'objet d'écriture du flux
-	 * lecture et écriture
+	 * Création du Reader. Un semaphore est bloqué lors de l'appel du constructeur
+	 * et débloqué uniquement lorsque le thread lancé par {@link PmsiPipedReaderImpl#start()}
+	 * est terminé
 	 * @throws PmsiPipedIOException
 	 */
 	public PmsiPipedReaderImpl() throws PmsiPipedIOException {
@@ -84,6 +85,7 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 
 	/**
 	 * Permet de définir l'exception terminale d'écriture des données du reader
+	 * @param e
 	 */
 	protected void setTerminalException(Exception e) {
 		exception = e;
@@ -103,7 +105,7 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	}
 	
 	/**
-	 * Ecrit les données de l'inputstream là où c'est nécessaire
+	 * Ecrit les données de l'inputstream sur la sortie standard
 	 * @throws PmsiPipedIOException 
 	 */
 	private void writeInputStream(InputStream input) throws PmsiPipedIOException {

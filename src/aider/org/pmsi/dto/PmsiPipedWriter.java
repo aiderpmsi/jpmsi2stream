@@ -4,8 +4,8 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
- * Interface de gestion de transfert de données.
- * A partir de ces 7 méthodes de classe, un fichier pmsi peut être sérialisé
+ * Interface d'écriture de xml. A partir de ces 7 méthodes, un fichier pmsi
+ * peut être sérialisé. 
  * @author delabre
  *
  */
@@ -14,6 +14,8 @@ public interface PmsiPipedWriter {
 	/**
 	 * Initialise le document et écrit l'entête
 	 * @param name nom de la première balise
+	 * @param attributes liste des noms des attributs
+	 * @param values liste des valeurs des attributs
 	 * @throws PmsiPipedIOException
 	 */
 	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiPipedIOException;
