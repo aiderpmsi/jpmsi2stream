@@ -108,7 +108,7 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	 * Ecrit les données de l'inputstream sur la sortie standard
 	 * @throws PmsiPipedIOException 
 	 */
-	private void writeInputStream(InputStream input) throws PmsiPipedIOException {
+	protected void writeInputStream(InputStream input) throws PmsiPipedIOException {
 		try {
 			byte buffer[] = new byte[512];
 			int size;
