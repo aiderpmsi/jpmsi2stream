@@ -10,7 +10,8 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
  * <ul>
  *  <li>étend {@link Thread} pour créer un processus distinct qui va lire le flux généré
  *  par {@link PmsiPipedWriter}</li>
- *  <li>réalise le stockage du flux (base de données sql, xml, fichier, ...)
+ *  <li>réalise le stockage du flux (base de données sql, xml, fichier, ...)</li>
+ * </ul>
  * @author delabre
  *
  */
@@ -25,7 +26,7 @@ public abstract class PmsiPipedReader extends Thread {
 	/**
 	 * Récupère le sémaphore utilisé par le {@link PmsiPipedReader}. Il est bloqué à la
 	 * création de la classe et débloqué lorsqu'il a fini de lire le flux du pipedwriter
-	 * @return
+	 * @return sémaphore utilisé pour attendre la fin du reader
 	 * @throws PmsiPipedIOException
 	 */
 	public abstract Semaphore getSemaphore() throws PmsiPipedIOException;
