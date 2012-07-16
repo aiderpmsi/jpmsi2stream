@@ -7,7 +7,8 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.DtoPmsiFactory;
+import aider.org.pmsi.dto.PmsiPipedReaderFactory;
+import aider.org.pmsi.dto.PmsiPipedWriterFactory;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
@@ -61,7 +62,7 @@ public class Main {
         CmdLineParser parser = new CmdLineParser(options);
         
         // Définition de la config de la connexion à la base de données
-        DtoPmsiFactory dtoPmsiReaderFactory = new DtoPmsiFactory();
+        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(new PmsiPipedReaderFactory());
 
         // Lecture des arguments
         try {
@@ -71,7 +72,7 @@ public class Main {
                 parser.printUsage(System.out);
                 return;
             } else if (options.isVersion()){
-                System.out.println("Version : 0.1.9");
+                System.out.println("Version : 0.0.2");
                 return;
             } else {
             	parser.setUsageWidth(80);
@@ -107,7 +108,7 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(MainOptions options, FileType type, DtoPmsiFactory dtoPmsiReaderFactory) throws Exception {
+	public static boolean readPMSI(MainOptions options, FileType type, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws Exception {
 		PmsiReader<?, ?> reader = null;
 		
 		try {

@@ -3,9 +3,9 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.DtoPmsi;
-import aider.org.pmsi.dto.DtoPmsiFactory;
-import aider.org.pmsi.dto.DtoPmsiException;
+import aider.org.pmsi.dto.PmsiPipedWriter;
+import aider.org.pmsi.dto.PmsiPipedWriterFactory;
+import aider.org.pmsi.dto.PmsiPipedIOException;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotInserable;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -71,7 +71,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Objet de transfert de données
 	 */
-	private DtoPmsi dtoPmsiLineType = null;
+	private PmsiPipedWriter dtoPmsiLineType = null;
 
 	/**
 	 * Nom identifiant la classe
@@ -81,9 +81,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 	 */
-	public PmsiRSS116Reader(Reader reader, DtoPmsiFactory dtoPmsiReaderFactory) throws DtoPmsiException {
+	public PmsiRSS116Reader(Reader reader, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws PmsiPipedIOException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -119,7 +119,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		switch(getState()) {
 		case STATE_READY:
 			// L'état initial nous demande de lire un nouvelle ligne
-			dtoPmsiLineType.writeStartDocument(name);
+			dtoPmsiLineType.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
@@ -210,7 +210,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	}
 
 	@Override
-	public void close() throws DtoPmsiException {
+	public void close() throws PmsiPipedIOException {
 		dtoPmsiLineType.close();
 	}
 }

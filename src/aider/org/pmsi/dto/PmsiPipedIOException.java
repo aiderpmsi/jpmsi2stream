@@ -7,25 +7,25 @@ package aider.org.pmsi.dto;
  * @author delabre
  *
  */
-public class DtoPmsiException extends Exception {
+public class PmsiPipedIOException extends Exception {
 
 	/**
 	 * Numéro de série autogénéré
 	 */
 	private static final long serialVersionUID = -5876923561804105709L;
 
-	public DtoPmsiException() {
+	public PmsiPipedIOException() {
 	}
 
-	public DtoPmsiException(String arg0) {
+	public PmsiPipedIOException(String arg0) {
 		super(arg0);
 	}
 
-	public DtoPmsiException(Throwable arg0) {
+	public PmsiPipedIOException(Throwable arg0) {
 		super(arg0);
 	}
 
-	public DtoPmsiException(String arg0, Throwable arg1) {
+	public PmsiPipedIOException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

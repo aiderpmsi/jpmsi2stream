@@ -13,23 +13,23 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
  * @author delabre
  *
  */
-public class DtoRss116 extends DtoPmsiImpl {
+public class Rss116PipedWriter extends PmsiPipedWriterImpl {
 
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 	 */
-	public DtoRss116() throws DtoPmsiException {
-		super();
+	public Rss116PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
+		super(pmsiPipedReader);
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException  {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiPipedIOException  {
 		// Lecture des données du header
 		if (lineType instanceof PmsiRss116Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rss)

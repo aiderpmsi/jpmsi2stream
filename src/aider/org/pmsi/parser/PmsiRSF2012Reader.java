@@ -3,9 +3,9 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.DtoPmsi;
-import aider.org.pmsi.dto.DtoPmsiFactory;
-import aider.org.pmsi.dto.DtoPmsiException;
+import aider.org.pmsi.dto.PmsiPipedWriter;
+import aider.org.pmsi.dto.PmsiPipedWriterFactory;
+import aider.org.pmsi.dto.PmsiPipedIOException;
 import aider.org.pmsi.parser.exceptions.PmsiFileNotReadable;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
@@ -48,7 +48,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	/**
 	 * Objet de transfert de données
 	 */
-	private DtoPmsi dtoPmsiLineType = null;
+	private PmsiPipedWriter dtoPmsiLineType = null;
 
 	/**
 	 * Nom identifiant le parseur
@@ -58,10 +58,10 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	/**
 	 * Constructeur
 	 * @param reader
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 
 	 */
-	public PmsiRSF2012Reader(Reader reader, DtoPmsiFactory dtoPmsiReaderFactory) throws DtoPmsiException {
+	public PmsiRSF2012Reader(Reader reader, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws PmsiPipedIOException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -95,7 +95,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 
 		switch(getState()) {
 		case STATE_READY:
-			dtoPmsiLineType.writeStartDocument(name);
+			dtoPmsiLineType.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
@@ -140,7 +140,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	}
 
 	@Override
-	public void close() throws DtoPmsiException {
+	public void close() throws PmsiPipedIOException {
 		dtoPmsiLineType.close();
 	}
 	

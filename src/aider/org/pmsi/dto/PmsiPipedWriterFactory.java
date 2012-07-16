@@ -11,28 +11,32 @@ import aider.org.pmsi.parser.PmsiReader;
  * @author delabre
  *
  */
-public class DtoPmsiFactory {
+public class PmsiPipedWriterFactory {
+	
+	private PmsiPipedReaderFactory pmsiPipedReaderFactory;
 	
 	/**
 	 * Constructeur par défaut, ne fait rien
 	 * @throws DriverException
 	 */
-	public DtoPmsiFactory() throws DtoPmsiException {
+	public PmsiPipedWriterFactory(PmsiPipedReaderFactory pmsiPipedReaderFactory) throws PmsiPipedIOException {
+		this.pmsiPipedReaderFactory = pmsiPipedReaderFactory;
 	}
 	
 	/**
 	 * Crée un objet de tranfert de données et le renvoie
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
 	 * @return L'objet de transfert de donné adapté
-	 * @throws DtoPmsiException
+	 * @throws PmsiPipedIOException
 	 */
-	public DtoPmsi getDtoPmsiLineType(PmsiReader<?, ?> reader) throws DtoPmsiException {
+	public PmsiPipedWriter getDtoPmsiLineType(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
+		PmsiPipedReader pmsiPipedReader = pmsiPipedReaderFactory.getPmsiPipedReader(reader);
 		if (reader instanceof PmsiRSF2009Reader) {
-			return new DtoRsf2009();
+			return new Rsf2009PipedWriter(pmsiPipedReader);
 		} else if (reader instanceof PmsiRSF2012Reader) {
-			return new DtoRsf2012();
+			return new Rsf2012PipedWriter(pmsiPipedReader);
 		} else if (reader instanceof PmsiRSS116Reader) {
-			return new DtoRss116();
+			return new Rss116PipedWriter(pmsiPipedReader);
 		}
 		return null;
 	}

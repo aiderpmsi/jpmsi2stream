@@ -14,23 +14,23 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
  * @author delabre
  *
  */
-public class DtoRsf2009 extends DtoPmsiImpl {
+public class Rsf2009PipedWriter extends PmsiPipedWriterImpl {
 
 	/**
 	 * Construction de la connexion à la base de données à partir des configurations
 	 * données
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 	 */
-	public DtoRsf2009() throws DtoPmsiException {
-		super();
+	public Rsf2009PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
+		super(pmsiPipedReader);
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws DtoPmsiException 
+	 * @throws PmsiPipedIOException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws DtoPmsiException {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiPipedIOException {
 		// Header
 		if (lineType instanceof PmsiRsf2009Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rsf)
