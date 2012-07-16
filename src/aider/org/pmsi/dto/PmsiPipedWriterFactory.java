@@ -1,6 +1,5 @@
 package aider.org.pmsi.dto;
 
-import ru.ispras.sedna.driver.DriverException;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;

@@ -29,13 +29,6 @@
 
   
   <dependencies>
-  <dependency>
-    <groupId>sedna</groupId>
-    <artifactId>sedna-sdk</artifactId>
-    <version>1.0</version>
-    <scope>system</scope>
-    <systemPath>${project.basedir}/lib/sedna-sdk-1.0.jar</systemPath>
-  </dependency>
   	<dependency>
   		<groupId>stax</groupId>
   		<artifactId>stax</artifactId>
