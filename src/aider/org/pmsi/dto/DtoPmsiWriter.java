@@ -99,7 +99,7 @@ public class DtoPmsiWriter extends Thread {
 	 * (peut être surchargé pour écrire dans une base de données)
 	 * @throws DtoPmsiException 
 	 */
-	private void writeInputStream(InputStream input) throws DtoPmsiException {
+	protected void writeInputStream(InputStream input) throws DtoPmsiException {
 		try {
 			byte buffer[] = new byte[512];
 			int size;
