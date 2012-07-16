@@ -3,6 +3,7 @@ package aider.org.pmsi.dto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.concurrent.Semaphore;
 
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
@@ -41,7 +42,6 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	 * @throws PmsiPipedIOException
 	 */
 	public PmsiPipedReaderImpl() throws PmsiPipedIOException {
-		in = new PipedInputStream(); 
 		sem = new Semaphore(1);
 		try {
 			sem.acquire();
@@ -56,8 +56,12 @@ public class PmsiPipedReaderImpl extends PmsiPipedReader {
 	}
 	
 	@Override
-	public PipedInputStream getPipedInputStream() {
-		return in;
+	public void connect(PipedOutputStream out) throws PmsiPipedIOException  {
+		try {
+			in = new PipedInputStream(out);
+		} catch (IOException e) {
+			throw new PmsiPipedIOException(e);
+		}
 	}
 	
 	@Override

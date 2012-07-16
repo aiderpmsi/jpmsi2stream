@@ -48,11 +48,18 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	public PmsiPipedWriterImpl(PmsiPipedReader inPipedReader) throws PmsiPipedIOException {
 		try {
 			this.inPipedReader = inPipedReader;
-			// Création des readers et des writers
-			out = new PrintStream(new PipedOutputStream(
-					inPipedReader.getPipedInputStream()), false, "UTF-8");
+			
+			// Connection de ce writer et du reader:
+			PipedOutputStream pout = new PipedOutputStream();
+			inPipedReader.connect(pout);
+			
+			// Création du PrintStream
+			out = new PrintStream(pout, false, "UTF-8");
+			
+			// Création de l'écrivain de xml
 			xmlWriter = XMLOutputFactory.newInstance().
 					createXMLStreamWriter(out);
+			
 			// Lancement du lecteur
 			inPipedReader.start();
 		} catch (Exception e) {
