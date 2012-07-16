@@ -142,11 +142,6 @@ public class Main {
 			} catch (PmsiPipedIOException ignore) {}
 			throw e;
 		}
-		
-		finally {
-			if (reader != null)
-				reader.close();
-		}
 			
         // Arrivé ici, le fichier a pu être lu, on ferme le reader
 		reader.close();
