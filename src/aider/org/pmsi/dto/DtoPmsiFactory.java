@@ -17,7 +17,7 @@ public class DtoPmsiFactory {
 	 * Constructeur par défaut, ne fait rien
 	 * @throws DriverException
 	 */
-	public DtoPmsiFactory() throws DriverException {
+	public DtoPmsiFactory() throws DtoPmsiException {
 	}
 	
 	/**

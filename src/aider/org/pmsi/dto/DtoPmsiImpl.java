@@ -54,7 +54,7 @@ public abstract class DtoPmsiImpl implements DtoPmsi {
 	/**
 	 * Thread qui écrira les données xml à partir d'un inputstream dans un container
 	 */
-	private DtoPmsiWriter threadWriter;
+	protected DtoPmsiWriter threadWriter;
 	
 	/**
 	 * Construction.
@@ -69,11 +69,21 @@ public abstract class DtoPmsiImpl implements DtoPmsi {
 					createXMLStreamWriter(out);
 
 			// Création du thread d'écriture des données issues de cette classe
-			threadWriter = new DtoPmsiWriter(sem, in);
-			threadWriter.start();
+			createThreadWriter();
+			threadWriter.setSemaphore(sem);
+			threadWriter.setInputStream(in);
 		} catch (Exception e) {
 			throw new DtoPmsiException(e);
 		}
+	}
+	
+	/**
+	 * Méthode permettant de lancer le thread lisant les données que la classe
+	 * principale écrit pour les rediriger là où il faut.
+	 * @throws DtoPmsiException
+	 */
+	private void createThreadWriter() throws DtoPmsiException {
+		threadWriter = new DtoPmsiWriter();
 	}
 	
 	/**
@@ -202,5 +212,5 @@ public abstract class DtoPmsiImpl implements DtoPmsi {
 	 */
 	public PmsiLineType getLastLine() throws DtoPmsiException {
 		return lastLine.peek();
-	}	
+	}
 }

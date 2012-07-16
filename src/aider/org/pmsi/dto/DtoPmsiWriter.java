@@ -33,15 +33,21 @@ public class DtoPmsiWriter extends Thread {
 	private Exception exception;
 	
 	/**
-	 * Crée l'objet d'écriture du flux in, avec le semaphore sem permettant de synchroniser
+	 * Crée l'objet d'écriture du flux
 	 * lecture et écriture
-	 * @param sem
-	 * @param in
-	 * @throws DtoPmsiException 
+
+	 * @throws DtoPmsiException
 	 */
-	public DtoPmsiWriter(Semaphore sem, InputStream in) throws DtoPmsiException {
+	public DtoPmsiWriter() throws DtoPmsiException {
+	}
+	
+	/**
+	 * Définit le sémaphore à partager entre le lecteur et l'écrivain
+	 * @param sem
+	 * @throws DtoPmsiException
+	 */
+	public void setSemaphore(Semaphore sem) throws DtoPmsiException {
 		this.sem = sem;
-		this.in = in;
 		// On bloque le sémaphore ici. Il sera débloqué uniquement lorsque l'écriture de DtoPmsiWriter
 		// aura été terminée. Comme on cherchera à le bloquer lorsqu'on aura fini la
 		// lecture dans la classe DtoPmsiImpl, on ne pourra fermer les flux que lorsque le dtoPmsiWriter aura fini
@@ -53,11 +59,20 @@ public class DtoPmsiWriter extends Thread {
 	}
 	
 	/**
+	 * Définit le flux qui recevra les données qui pourront être lues pour
+	 * être renvoyées à une méthode qui attend un inputstream.
+	 * @param in
+	 */
+	public void setInputStream(InputStream in) {
+		this.in = in;
+	}
+	
+	/**
 	 * Méthode de fonctionnement du thread
 	 */
 	public void run() {
 		try {
-			writeInputStream();
+			writeInputStream(in);
 			status = true;
 		} catch (DtoPmsiException e) {
 			status = false;
@@ -84,7 +99,7 @@ public class DtoPmsiWriter extends Thread {
 	 * (peut être surchargé pour écrire dans une base de données)
 	 * @throws DtoPmsiException 
 	 */
-	private void writeInputStream() throws DtoPmsiException {
+	private void writeInputStream(InputStream input) throws DtoPmsiException {
 		try {
 			byte buffer[] = new byte[512];
 			int size;
