@@ -48,6 +48,14 @@ public class PmsiPipedWriterFactory {
 	}
 	
 	/**
+	 * Retourne le readerfactory disponible dans cete classe
+	 * @return 
+	 */
+	protected PmsiPipedReaderFactory getPmsiPipedReaderFactory() {
+		return pmsiPipedReaderFactory;
+	}
+	
+	/**
 	 * Libère les resource associées à cette fabrique
 	 */
 	public void close() {
