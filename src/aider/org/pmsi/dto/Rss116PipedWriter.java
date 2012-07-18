@@ -20,7 +20,7 @@ public class Rss116PipedWriter extends PmsiPipedWriterImpl {
 	 * Construction du Writer avec son reader associé
 	 * @throws PmsiPipedIOException 
 	 */
-	public Rss116PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
+	public Rss116PipedWriter(PmsiThreadedPipedReader pmsiPipedReader) throws PmsiPipedIOException {
 		super(pmsiPipedReader);
 	}
 	

@@ -16,12 +16,12 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @author delabre
  *
  */
-public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
+public abstract class PmsiPipedWriterImpl implements PmsiThreadedPipedWriter {
 	
 	/**
-	 * Classe définissant un inputreader et un thread (voir {@link PmsiPipedReader}
+	 * Classe définissant un inputreader et un thread (voir {@link PmsiThreadedPipedReader}
 	 */
-	private PmsiPipedReader pmsiPipedReader;
+	private PmsiThreadedPipedReader pmsiPipedReader;
 	
 	/**
 	 * {@link OutputStream} dans lequel on lit pendant qu'un autre thread écrit
@@ -41,11 +41,11 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
 	/**
-	 * Construction. Associe ce {@link PmsiPipedWriter} au {@link PmsiPipedReader} en argument
+	 * Construction. Associe ce {@link PmsiThreadedPipedWriter} au {@link PmsiThreadedPipedReader} en argument
 	 * @param pmsiPipedReader
 	 * @throws PmsiPipedIOException 
 	 */
-	public PmsiPipedWriterImpl(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
+	public PmsiPipedWriterImpl(PmsiThreadedPipedReader pmsiPipedReader) throws PmsiPipedIOException {
 		try {
 			this.pmsiPipedReader = pmsiPipedReader;
 			
@@ -128,7 +128,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	/**
 	 * Ouvre un élément en écrivant les attributs associés à la ligne pmsi dedans.
 	 * Attention, il n'est pas fermé automatiquement, il faut le fermer dans un deuxième
-	 * temps avec {@link PmsiPipedWriter#writeEndElement()}
+	 * temps avec {@link PmsiThreadedPipedWriter#writeEndElement()}
 	 * @param name Nom de l'élément
 	 * @param attNames Nom des attributs
 	 * @param attContent Valeur des attributs
@@ -168,7 +168,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	/**
 	 * Libère toutes les ressources associées à ce writer
 	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
-	 * (c'est le moment où on attend le semaphore du {@link PmsiPipedReader}
+	 * (c'est le moment où on attend le semaphore du {@link PmsiThreadedPipedReader}
 	 * @throws PmsiPipedIOException si l'insertion s'est mal déroulée
 	 */
 	public void close() throws PmsiPipedIOException {

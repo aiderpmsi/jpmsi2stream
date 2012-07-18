@@ -14,29 +14,29 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 public class PmsiPipedWriterFactory {
 
 	/**
-	 * Fabrique d'objets de type {@link PmsiPipedReader} utilisé dans cette classe
+	 * Fabrique d'objets de type {@link PmsiThreadedPipedReader} utilisé dans cette classe
 	 */
-	private PmsiPipedReaderFactory pmsiPipedReaderFactory;
+	private PmsiThreadedPipedReaderFactory pmsiPipedReaderFactory;
 	
 	/**
-	 * Construit à partir de la définition d'une fabrique de {@link PmsiPipedReader}
+	 * Construit à partir de la définition d'une fabrique de {@link PmsiThreadedPipedReader}
 	 * l'objet.
 	 * @param pmsiPipedReaderFactory : la fabrique qui sera utilisée pour générer les
-	 *   {@link PmsiPipedReader} utilisés par les {@link PmsiPipedWriter}
+	 *   {@link PmsiThreadedPipedReader} utilisés par les {@link PmsiThreadedPipedWriter}
 	 * @throws DriverException
 	 */
-	public PmsiPipedWriterFactory(PmsiPipedReaderFactory pmsiPipedReaderFactory) throws PmsiPipedIOException {
+	public PmsiPipedWriterFactory(PmsiThreadedPipedReaderFactory pmsiPipedReaderFactory) throws PmsiPipedIOException {
 		this.pmsiPipedReaderFactory = pmsiPipedReaderFactory;
 	}
 	
 	/**
-	 * Crée un {@link PmsiPipedWriter} adapté au reader {@link PmsiReader}
+	 * Crée un {@link PmsiThreadedPipedWriter} adapté au reader {@link PmsiReader}
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
 	 * @return L'écrivain adapté au type de fichier
 	 * @throws PmsiPipedIOException
 	 */
-	public PmsiPipedWriter getPmsiPipedWriter(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
-		PmsiPipedReader pmsiPipedReader = pmsiPipedReaderFactory.getPmsiPipedReader(reader);
+	public PmsiThreadedPipedWriter getPmsiPipedWriter(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
+		PmsiThreadedPipedReader pmsiPipedReader = pmsiPipedReaderFactory.getPmsiPipedReader(reader);
 		if (reader instanceof PmsiRSF2009Reader) {
 			return new Rsf2009PipedWriter(pmsiPipedReader);
 		} else if (reader instanceof PmsiRSF2012Reader) {
@@ -51,7 +51,7 @@ public class PmsiPipedWriterFactory {
 	 * Retourne le readerfactory disponible dans cete classe
 	 * @return 
 	 */
-	protected PmsiPipedReaderFactory getPmsiPipedReaderFactory() {
+	protected PmsiThreadedPipedReaderFactory getPmsiPipedReaderFactory() {
 		return pmsiPipedReaderFactory;
 	}
 	

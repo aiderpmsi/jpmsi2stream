@@ -5,13 +5,20 @@
 </head>
 <body>
 
+<p>
 Package gérant l'écriture des données xml dans un pipedwiter
 Les données sont ensuite récupérées par un pipedreader qui en fait ce qu'il veut.
+</p>
 
-
+<p>
 Le schéma est le suivant :
+<br/>
+aider.org.pmsi.parser.PmsiReader &#8658;
+aider.org.pmsi.dto.PmsiPipedWriter &#8658;
+aider.org.pmsi.dto.PmsiThreadedPipedReader &#8658;
+aider.org.pmsi.dto.PmsiDto
+</p>
 
-aider.org.pmsi.parser.PmsiReader =} aider.org.pmsi.dto.PmsiPipedWriter =} aider.org.pmsi.dto.PmsiPipedReader
 </body>
 </html>
 

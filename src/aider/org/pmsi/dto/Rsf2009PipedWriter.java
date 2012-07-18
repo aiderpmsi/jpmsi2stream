@@ -21,7 +21,7 @@ public class Rsf2009PipedWriter extends PmsiPipedWriterImpl {
 	 * Construction du Writer avec son reader associé
 	 * @throws PmsiPipedIOException 
 	 */
-	public Rsf2009PipedWriter(PmsiPipedReader pmsiPipedReader) throws PmsiPipedIOException {
+	public Rsf2009PipedWriter(PmsiThreadedPipedReader pmsiPipedReader) throws PmsiPipedIOException {
 		super(pmsiPipedReader);
 	}
 	

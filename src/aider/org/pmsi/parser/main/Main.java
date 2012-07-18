@@ -9,7 +9,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.PmsiPipedReaderFactory;
+import aider.org.pmsi.dto.PmsiThreadedPipedReaderFactory;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
@@ -64,7 +64,7 @@ public class Main {
         CmdLineParser parser = new CmdLineParser(options);
         
         // Définition de la config de la connexion à la base de données
-        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(new PmsiPipedReaderFactory());
+        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(new PmsiThreadedPipedReaderFactory());
 
         // Lecture des arguments
         try {
