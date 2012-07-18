@@ -1,11 +1,11 @@
 package aider.org.pmsi.parser.exceptions;
 
 import aider.org.pmsi.dto.PmsiThreadedPipedReader;
-import aider.org.pmsi.dto.PmsiThreadedPipedWriter;
+import aider.org.pmsi.dto.PmsiPipedWriter;
 
 /**
  * Exceptions levées lors de l'erreur d'écriture d'un fichier pmsi sérialisé, ou lors de l'erreur
- * de lecture d'un fichier pmsi sérialisé par pipes ({@link PmsiThreadedPipedWriter} ou {@link PmsiThreadedPipedReader})
+ * de lecture d'un fichier pmsi sérialisé par pipes ({@link PmsiPipedWriter} ou {@link PmsiThreadedPipedReader})
  * @author delabre
  *
  */

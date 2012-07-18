@@ -9,7 +9,7 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @author delabre
  *
  */
-public interface PmsiThreadedPipedWriter {
+public interface PmsiPipedWriter {
 
 	/**
 	 * Initialise le document et écrit l'entête

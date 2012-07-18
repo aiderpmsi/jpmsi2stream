@@ -3,7 +3,7 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.PmsiThreadedPipedWriter;
+import aider.org.pmsi.dto.PmsiPipedWriter;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
 import aider.org.pmsi.parser.exceptions.PmsiIOException;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
@@ -48,7 +48,7 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	/**
 	 * Objet de transfert de données
 	 */
-	private PmsiThreadedPipedWriter pmsiPipedWriter = null;
+	private PmsiPipedWriter pmsiPipedWriter = null;
 
 	/**
 	 * Nom identifiant le parseur

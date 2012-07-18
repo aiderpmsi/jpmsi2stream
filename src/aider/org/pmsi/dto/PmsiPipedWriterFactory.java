@@ -22,7 +22,7 @@ public class PmsiPipedWriterFactory {
 	 * Construit à partir de la définition d'une fabrique de {@link PmsiThreadedPipedReader}
 	 * l'objet.
 	 * @param pmsiPipedReaderFactory : la fabrique qui sera utilisée pour générer les
-	 *   {@link PmsiThreadedPipedReader} utilisés par les {@link PmsiThreadedPipedWriter}
+	 *   {@link PmsiThreadedPipedReader} utilisés par les {@link PmsiPipedWriter}
 	 * @throws DriverException
 	 */
 	public PmsiPipedWriterFactory(PmsiThreadedPipedReaderFactory pmsiPipedReaderFactory) throws PmsiPipedIOException {
@@ -30,12 +30,12 @@ public class PmsiPipedWriterFactory {
 	}
 	
 	/**
-	 * Crée un {@link PmsiThreadedPipedWriter} adapté au reader {@link PmsiReader}
+	 * Crée un {@link PmsiPipedWriter} adapté au reader {@link PmsiReader}
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
 	 * @return L'écrivain adapté au type de fichier
 	 * @throws PmsiPipedIOException
 	 */
-	public PmsiThreadedPipedWriter getPmsiPipedWriter(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
+	public PmsiPipedWriter getPmsiPipedWriter(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
 		PmsiThreadedPipedReader pmsiPipedReader = pmsiPipedReaderFactory.getPmsiPipedReader(reader);
 		if (reader instanceof PmsiRSF2009Reader) {
 			return new Rsf2009PipedWriter(pmsiPipedReader);

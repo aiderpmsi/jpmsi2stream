@@ -16,7 +16,7 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @author delabre
  *
  */
-public abstract class PmsiPipedWriterImpl implements PmsiThreadedPipedWriter {
+public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	
 	/**
 	 * Classe définissant un inputreader et un thread (voir {@link PmsiThreadedPipedReader}
@@ -41,7 +41,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiThreadedPipedWriter {
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
 	/**
-	 * Construction. Associe ce {@link PmsiThreadedPipedWriter} au {@link PmsiThreadedPipedReader} en argument
+	 * Construction. Associe ce {@link PmsiPipedWriter} au {@link PmsiThreadedPipedReader} en argument
 	 * @param pmsiPipedReader
 	 * @throws PmsiPipedIOException 
 	 */
@@ -128,7 +128,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiThreadedPipedWriter {
 	/**
 	 * Ouvre un élément en écrivant les attributs associés à la ligne pmsi dedans.
 	 * Attention, il n'est pas fermé automatiquement, il faut le fermer dans un deuxième
-	 * temps avec {@link PmsiThreadedPipedWriter#writeEndElement()}
+	 * temps avec {@link PmsiPipedWriter#writeEndElement()}
 	 * @param name Nom de l'élément
 	 * @param attNames Nom des attributs
 	 * @param attContent Valeur des attributs

@@ -10,7 +10,7 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
  * Classe avec 2 fonctions :
  * <ul>
  *  <li>étend {@link Thread} pour créer un processus distinct qui va lire le flux généré
- *  par {@link PmsiThreadedPipedWriter}</li>
+ *  par {@link PmsiPipedWriter}</li>
  *  <li>réalise le stockage du flux (base de données sql, xml, fichier, ...) grâce au
  *  {@link PmsiDto} donné en construction</li>
  * </ul>
