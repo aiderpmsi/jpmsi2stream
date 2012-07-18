@@ -1,5 +1,6 @@
 package aider.org.pmsi.dto;
 
+import java.io.OutputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.Semaphore;
 
@@ -13,6 +14,17 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
  *  <li>réalise le stockage du flux (base de données sql, xml, fichier, ...) grâce au
  *  {@link PmsiDto} donné en construction</li>
  * </ul>
+ * Il faut donc :
+ * <ol>
+ *  <li>Créer la classe avec le constructeur pour lier le {@link PmsiDto} associé</li>
+ *  <li>Connecter le {@link PmsiThreadedPipedReader} avec un {@link OutputStream} par
+ *  {@link PmsiThreadedPipedReader#connect(PipedOutputStream)}</li>
+ *  <li>Lancer le {@link PmsiThreadedPipedReader} avec {@link PmsiThreadedPipedReader#start()}
+ *  <li>Ecrire sur le {@link OutputStream} les données nécessaires puis le fermer</li>
+ *  <li>Attendre que le semaphore {@link PmsiThreadedPipedReader#getSemaphore()} soit débloqué,
+ *  indiquant que le management de l'{@link OutputStream} est fini</li>
+ *  <li>Finir par libérer les resources de cet objet : {@link PmsiThreadedPipedReader#close()}</li>
+ * </ol>
  * @author delabre
  *
  */
