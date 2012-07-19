@@ -1,5 +1,7 @@
 package aider.org.pmsi.dto;
 
+import java.util.HashMap;
+
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
@@ -59,4 +61,8 @@ public interface PmsiPipedWriter {
 	 * @throws PmsiPipedIOException
 	 */
 	public PmsiLineType getLastLine() throws PmsiPipedIOException;
+	
+	public boolean getStatus();
+	
+	public HashMap<PmsiDtoReportError, Object> getReport();
 }

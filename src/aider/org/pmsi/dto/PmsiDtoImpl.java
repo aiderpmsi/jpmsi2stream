@@ -1,11 +1,18 @@
 package aider.org.pmsi.dto;
 
 import java.io.InputStream;
+import java.util.HashMap;
 
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 public class PmsiDtoImpl implements PmsiDto {
-		
+	
+	PmsiDtoReport pmsiDtoReport;
+	
+	public PmsiDtoImpl(PmsiDtoReport pmsiDtoReport) {
+		this.pmsiDtoReport = pmsiDtoReport;
+	}
+	
 	public void writePmsi(InputStream input) throws PmsiPipedIOException {
 		try {
 			byte buffer[] = new byte[512];
@@ -23,6 +30,16 @@ public class PmsiDtoImpl implements PmsiDto {
 	
 	public void close() throws PmsiPipedIOException {
 		// Do nothing
+	}
+
+	@Override
+	public HashMap<PmsiDtoReportError, Object> getReport() {
+		return pmsiDtoReport.getReport();
+	}
+
+	@Override
+	public boolean getStatus() {
+		return getStatus();
 	}
 	
 }

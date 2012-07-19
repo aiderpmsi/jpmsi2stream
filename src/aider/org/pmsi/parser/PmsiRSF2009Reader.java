@@ -2,9 +2,12 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 
+import aider.org.pmsi.dto.PmsiDtoReportError;
 import aider.org.pmsi.dto.PmsiPipedWriter;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
+import aider.org.pmsi.dto.PmsiDtoReportError.Origin;
 import aider.org.pmsi.parser.exceptions.PmsiIOException;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -57,11 +60,16 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	private PmsiPipedWriter pmsiPipedWriter = null;
 	
 	/**
+	 * Garde la dernière erreur lancée
+	 */
+	private Exception exception = null;
+	
+	/**
 	 * Constructeur
 	 * @param reader
 	 * @throws PmsiPipedIOException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws PmsiPipedIOException {
+	public PmsiRSF2009Reader(Reader reader, PmsiPipedWriterFactory pmsiPipedWriterFactory) throws PmsiPipedIOException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -82,7 +90,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 		addTransition(EnumSignal.SIGNAL_ENDLINE, EnumState.WAIT_ENDLINE, EnumState.WAIT_RSF_LINES);
 
 		// Récupération de la classe de transfert en base de données
-		pmsiPipedWriter = dtoPmsiReaderFactory.getPmsiPipedWriter(this);
+		pmsiPipedWriter = pmsiPipedWriterFactory.getPmsiPipedWriter(this);
 	}
 	
 	/**
@@ -105,16 +113,20 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 			if (matchLine != null) {
 				pmsiPipedWriter.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
-			} else
-				throw new PmsiIOException("Lecteur RSF : Entête du fichier non trouvée");
+			} else {
+				exception = new PmsiIOException("Lecteur RSF : Entête du fichier non trouvée");
+				throw (PmsiIOException) exception;
+			}
 			break;
 		case WAIT_RSF_LINES:
 			matchLine = parseLine();
 			if (matchLine != null) {
 				pmsiPipedWriter.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
-			} else
-				throw new PmsiIOException("Lecteur RSF : Ligne non reconnue");
+			} else {
+				exception = new PmsiIOException("Lecteur RSF : Ligne non reconnue");
+				throw (PmsiIOException) exception;
+			}
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
@@ -124,9 +136,11 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			throw new PmsiIOException("Lecteur RSF : Fichier vide");
+			exception = new PmsiIOException("Lecteur RSF : Fichier vide");
+			throw (PmsiIOException) exception;
 		default:
-			throw new RuntimeException("Cas non prévu par la machine à états");
+			exception = new RuntimeException("Cas non prévu par la machine à états");
+			throw (RuntimeException) exception;
 		}
 	}
 
@@ -143,5 +157,25 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	@Override
 	public void close() throws PmsiPipedIOException {
 		pmsiPipedWriter.close();
+	}
+
+	@Override
+	public boolean getStatus() {
+		if (exception != null || getState() != EnumState.STATE_FINISHED)
+			return false;
+		else
+			return true;
+	}
+
+	@Override
+	public HashMap<PmsiDtoReportError, Object> getReport() {
+		HashMap<PmsiDtoReportError, Object> report = pmsiPipedWriter.getReport();
+		if (exception != null) {
+			PmsiDtoReportError err = new PmsiDtoReportError();
+			err.setOrigin(Origin.PMSI_PARSER);
+			err.setName("TerminalException");
+			report.put(err, exception);
+		}
+		return report;
 	}
 }

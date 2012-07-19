@@ -2,6 +2,7 @@ package aider.org.pmsi.dto;
 
 import java.io.OutputStream;
 import java.io.PipedOutputStream;
+import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
@@ -57,11 +58,7 @@ public abstract class PmsiThreadedPipedReader extends Thread {
 	 */
 	public abstract boolean getStatus();
 	
-	/**
-	 * Récupère l'erreur qui a terminé le thread si le thread a été arrêté par une exception
-	 * @return l'erreur, ou null si aucune
-	 */
-	public abstract Exception getTerminalException();
+	public abstract HashMap<PmsiDtoReportError, Object> getReport();
 	
 	/**
 	 * Libère l'ensemble des resources liées à cette classe

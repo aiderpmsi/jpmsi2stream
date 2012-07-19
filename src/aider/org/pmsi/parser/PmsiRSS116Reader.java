@@ -2,9 +2,12 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 
+import aider.org.pmsi.dto.PmsiDtoReportError;
 import aider.org.pmsi.dto.PmsiPipedWriter;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
+import aider.org.pmsi.dto.PmsiDtoReportError.Origin;
 import aider.org.pmsi.parser.exceptions.PmsiIOException;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -77,12 +80,14 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 */
 	private static final String name = "RSS116"; 
 	
+	private Exception exception = null;
+	
 	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
 	 * @throws PmsiPipedIOException 
 	 */
-	public PmsiRSS116Reader(Reader reader, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws PmsiPipedIOException {
+	public PmsiRSS116Reader(Reader reader, PmsiPipedWriterFactory pmsiPipedWriterFactory) throws PmsiPipedIOException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -105,7 +110,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_MAIN, EnumState.STATE_FINISHED);
 
 		// Récupération de la classe de transfert en base de données
-		pmsiPipedWriter = dtoPmsiReaderFactory.getPmsiPipedWriter(this);
+		pmsiPipedWriter = pmsiPipedWriterFactory.getPmsiPipedWriter(this);
 	}
 			
 	/**
@@ -129,8 +134,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			if (matchLine != null) {
 				pmsiPipedWriter.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
-			} else
-				throw new PmsiIOException("Lecteur RSS 116 : Entête du fichier non trouvée");
+			} else {
+				exception = new PmsiIOException("Lecteur RSS 116 : Entête du fichier non trouvée");
+				throw (PmsiIOException) exception;
+			}
 			break;
 		case WAIT_RSS_MAIN:
 			matchLine = parseLine();
@@ -140,8 +147,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
 				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
 				changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
-			} else
-				throw new PmsiIOException("Lecteur RSS 116 : Première partie de ligne RSS non trouv�e");
+			} else {
+				exception = new PmsiIOException("Lecteur RSS 116 : Première partie de ligne RSS non trouvée");
+				throw (PmsiIOException) exception;
+			}
 			break;
 		case WAIT_RSS_DA:
 			if (nbDaRestants == 0)
@@ -151,8 +160,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 				if (matchLine != null) {
 					pmsiPipedWriter.writeLineElement(matchLine);
 					nbDaRestants -= 1;
-				} else
-					throw new PmsiIOException("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
+				} else {
+					exception = new PmsiIOException("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
+					throw (PmsiIOException) exception;
+				}
 			}
 			break;
 		case WAIT_RSS_DAD:
@@ -163,8 +174,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 				if (matchLine != null) {
 					pmsiPipedWriter.writeLineElement(matchLine);
 					nbDaDRestants -= 1;
-				} else
-					throw new PmsiIOException("Lecteur RSS : DAD non trouvés dans ligne RSS");
+				} else {
+					exception = new PmsiIOException("Lecteur RSS : DAD non trouvés dans ligne RSS");
+					throw (PmsiIOException) exception;
+				}
 			}
 			break;
 		case WAIT_RSS_ACTE:
@@ -175,8 +188,10 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 				if (matchLine != null) {
 					pmsiPipedWriter.writeLineElement(matchLine);
 					nbZARestants -= 1;
-				} else
-					throw new PmsiIOException("Lecteur RSS : Actes non trouvés dans ligne RSS");
+				} else {
+					exception = new PmsiIOException("Lecteur RSS : Actes non trouvés dans ligne RSS");
+					throw (PmsiIOException) exception;
+				}
 			}
 			break;
 		case WAIT_RSS_ENDLINE:
@@ -188,15 +203,19 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			break;
 		case WAIT_RSS_HEADER_ENDLINE:
 			// On vérifie qu'il ne reste rien
-			if (getLineSize() != 0)
-				throw new PmsiIOException("trop de caractères dans la ligne");
+			if (getLineSize() != 0) {
+				exception = new PmsiIOException("trop de caractères dans la ligne");
+				throw (PmsiIOException) exception;
+			}
 			changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
 			readNewLine();
 			break;			
 		case STATE_EMPTY_FILE:
-			throw new PmsiIOException("Lecteur RSS : ", new IOException("Fichier vide"));
+			exception = new PmsiIOException("Lecteur RSS : Fichier vide");
+			throw (PmsiIOException) exception;
 		default:
-			throw new RuntimeException("Cas non prévu par la machine à états");
+			exception = new RuntimeException("Cas non prévu par la machine à états");
+			throw (RuntimeException) exception;
 		}
 	}
 
@@ -213,5 +232,25 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	@Override
 	public void close() throws PmsiPipedIOException {
 		pmsiPipedWriter.close();
+	}
+	
+	@Override
+	public boolean getStatus() {
+		if (exception != null || getState() != EnumState.STATE_FINISHED)
+			return false;
+		else
+			return true;
+	}
+
+	@Override
+	public HashMap<PmsiDtoReportError, Object> getReport() {
+		HashMap<PmsiDtoReportError, Object> report = pmsiPipedWriter.getReport();
+		if (exception != null) {
+			PmsiDtoReportError err = new PmsiDtoReportError();
+			err.setOrigin(Origin.PMSI_PARSER);
+			err.setName("TerminalException");
+			report.put(err, exception);
+		}
+		return report;
 	}
 }

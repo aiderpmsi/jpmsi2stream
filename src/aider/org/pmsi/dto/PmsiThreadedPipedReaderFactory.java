@@ -12,6 +12,12 @@ import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
  */
 public class PmsiThreadedPipedReaderFactory {
 	
+	private PmsiDtoFactory pmsiDtoFactory;
+	
+	public PmsiThreadedPipedReaderFactory(PmsiDtoFactory pmsiDtoFactory) {
+		this.pmsiDtoFactory = pmsiDtoFactory;
+	}
+	
 	/**
 	 * Crée un objet de tranfert de données et le renvoie
 	 * @param reader le lecteur de pmsi ayant besoin de cet objet
@@ -19,7 +25,8 @@ public class PmsiThreadedPipedReaderFactory {
 	 * @throws PmsiPipedIOException
 	 */
 	public PmsiThreadedPipedReader getPmsiPipedReader(PmsiReader<?, ?> reader) throws PmsiPipedIOException {
-		return new PmsiThreadedPipedReaderImpl(new PmsiDtoImpl());
+		PmsiDto pmsiDtoImpl = pmsiDtoFactory.getPmsiDto(reader);
+		return new PmsiThreadedPipedReaderImpl(pmsiDtoImpl);
 	}
 	
 	/**

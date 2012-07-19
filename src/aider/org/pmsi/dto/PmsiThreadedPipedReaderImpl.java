@@ -3,8 +3,10 @@ package aider.org.pmsi.dto;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
+import aider.org.pmsi.dto.PmsiDtoReportError.Origin;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 
 /**
@@ -24,11 +26,6 @@ public class PmsiThreadedPipedReaderImpl extends PmsiThreadedPipedReader {
 	 * Flux dans lequel on lit le xml (connecté à un {@link PipedOutputStream}
 	 */
 	private PipedInputStream in;
-	
-	/**
-	 * Caractérise l'état de succès ou d'échec de l'utilisation du {@link PmsiThreadedPipedReader}
-	 */
-	private boolean status = false;
 	
 	/**
 	 * Stocke l'exception qui a fait échouer cette classe (si existe)
@@ -72,37 +69,17 @@ public class PmsiThreadedPipedReaderImpl extends PmsiThreadedPipedReader {
 	
 	@Override
 	public boolean getStatus() {
-		return status;
-	}
-	
-	/**
-	 * Permet de définir le statut (réussi ou échoué) de l'écriture du reader
-	 * @param status
-	 */
-	protected void setStatus(boolean status) {
-		this.status = status;
-	}
-	
-	@Override
-	public Exception getTerminalException() {
-		return exception;
-	}
-
-	/**
-	 * Permet de définir l'exception terminale d'écriture des données du reader
-	 * @param e
-	 */
-	protected void setTerminalException(Exception e) {
-		exception = e;
+		if (sem.availablePermits() == 0 || exception != null)
+			return false;
+		else
+			return pmsiDto.getStatus();
 	}
 	
 	@Override
 	public void run() {
 		try {
 			pmsiDto.writePmsi(in);
-			status = true;
 		} catch (PmsiPipedIOException e) {
-			status = false;
 			exception = e;
 		} finally {
 			sem.release();
@@ -115,7 +92,20 @@ public class PmsiThreadedPipedReaderImpl extends PmsiThreadedPipedReader {
 			pmsiDto.close();
 			in.close();
 		} catch (IOException e) {
-			throw new PmsiPipedIOException(e);
+			exception = new PmsiPipedIOException(e);
+			throw (PmsiPipedIOException) exception;
 		}
+	}
+
+	@Override
+	public HashMap<PmsiDtoReportError, Object> getReport() {
+		HashMap<PmsiDtoReportError, Object> report = pmsiDto.getReport();
+		if (exception != null) {
+			PmsiDtoReportError err = new PmsiDtoReportError();
+			err.setOrigin(Origin.PMSI_READER);
+			err.setName("TerminalException");
+			report.put(err, exception);
+		}
+		return report;
 	}
 }

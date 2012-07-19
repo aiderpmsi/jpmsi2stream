@@ -4,11 +4,15 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.pmsi.dto.PmsiDtoFactory;
+import aider.org.pmsi.dto.PmsiDtoReportError;
+import aider.org.pmsi.dto.PmsiDtoReportFactory;
 import aider.org.pmsi.dto.PmsiThreadedPipedReaderFactory;
 import aider.org.pmsi.dto.PmsiPipedWriterFactory;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
@@ -63,8 +67,17 @@ public class Main {
 		MainOptions options = new MainOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
-        // Définition de la config de la connexion à la base de données
-        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(new PmsiThreadedPipedReaderFactory());
+        // Définition de la fabrique d'objet de rapport de l'envoi des données dans le système récepteur
+        PmsiDtoReportFactory reportFactory = new PmsiDtoReportFactory();
+        
+        // Définition de la fabrique de Transfert de données entre le Reader et le système récepteur
+        PmsiDtoFactory dtoFactory = new PmsiDtoFactory(reportFactory);
+        
+        // Définition de la fabrique de Reader de pmsi
+        PmsiThreadedPipedReaderFactory pipedReaderFactory = new PmsiThreadedPipedReaderFactory(dtoFactory);
+        
+        // Définition de la fabrique de Writer de pmsi
+        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(pipedReaderFactory);
 
         // Lecture des arguments
         try {
@@ -112,41 +125,37 @@ public class Main {
 	 */
 	public static boolean readPMSI(InputStream in, FileType type, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws Exception {
 		PmsiReader<?, ?> reader = null;
+		// Choix du reader
+		switch(type) {
+			case RSS116:
+				reader = new PmsiRSS116Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
+				break;
+			case RSF2009:
+				reader = new PmsiRSF2009Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
+				break;
+			case RSF2012:
+				reader = new PmsiRSF2012Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
+				break;
+			}
 		
 		try {
-			// Choix du reader
-			switch(type) {
-				case RSS116:
-					reader = new PmsiRSS116Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-					break;
-				case RSF2009:
-					reader = new PmsiRSF2009Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-					break;
-				case RSF2012:
-					reader = new PmsiRSF2012Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-					break;
-				}
-	
 			// Lecture du fichier par mise en route de la machine à états
-	        reader.run();
-		} catch (Exception e) {
-			// Si on arrive ici, c'est qu'il existe une erreur qui interdit la transformation
-			// du pmsi en xml
-			// Les 2 seules erreurs qui peuvent arriver ici sont :
-			// - PmsiIOException (Lecture impossible)
-			// - PmsiPipedIOException (ecriture impossible)
-			// Ce sont les erreurs les plus importantes, peu importe dans ce cas si la
-			// fermeture du reader échoue
-			try {
-				reader.close();
-			} catch (PmsiPipedIOException ignore) {}
-			throw e;
-		}
-			
-        // Arrivé ici, le fichier a pu être lu, on ferme le reader
-		reader.close();
-
-		// Si tout s'est bien passé, le fichier a pu être lu correctment!
-        return true;
+			reader.run();
+		} catch (Exception ignore) {}
+        
+		try {
+	        // Fermeture des données de connection externes :
+	        reader.close();
+		} catch (Exception ignore) {}
+        
+        // Ecriture des erreurs éventuelles d'insertion :
+        HashMap<PmsiDtoReportError, Object> errors = reader.getReport();
+        for (PmsiDtoReportError key : errors.keySet()) {
+        	System.out.println(key.getOrigin().toString() + " : " + key.getName());
+        	System.out.println(errors.get(key));
+        }
+        
+        // Retour du satut d'insertion ou non :
+        return reader.getStatus();
 	}
 }

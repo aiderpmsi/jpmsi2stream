@@ -3,11 +3,13 @@ package aider.org.pmsi.dto;
 import java.io.OutputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Stack;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import aider.org.pmsi.dto.PmsiDtoReportError.Origin;
 import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
@@ -16,7 +18,7 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @author delabre
  *
  */
-public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
+public class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	
 	/**
 	 * Classe définissant un inputreader et un thread (voir {@link PmsiThreadedPipedReader}
@@ -41,6 +43,11 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
 	/**
+	 * Contient la dernière exception lancée par une des méthodes
+	 */
+	private Exception exception;
+	
+	/**
 	 * Construction. Associe ce {@link PmsiPipedWriter} au {@link PmsiThreadedPipedReader} en argument
 	 * @param pmsiPipedReader
 	 * @throws PmsiPipedIOException 
@@ -63,6 +70,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 			// Lancement du lecteur
 			pmsiPipedReader.start();
 		} catch (Exception e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -80,6 +88,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 				xmlWriter.writeAttribute(attributes[i], values[i]);
 			}
 		} catch (Exception e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -93,6 +102,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 		try {
 			xmlWriter.writeStartElement(name);
 		} catch (Exception e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -109,6 +119,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 				lastLine.pop();
 			xmlWriter.writeEndElement();
 		} catch (Exception e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -141,6 +152,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 				xmlWriter.writeAttribute(attNames[i], attContent[i]);
 			}
 		} catch (Exception e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -161,6 +173,7 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
 		} catch (XMLStreamException e) {
+			reportException(e);
 			throw new PmsiPipedIOException(e);
 		}
 	}
@@ -173,26 +186,30 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	 */
 	public void close() throws PmsiPipedIOException {
 		try {
-			// Fermeture des flux si besoin
-			if (xmlWriter != null) {
-				xmlWriter.close();
-				xmlWriter = null;
+			try {
+				// Fermeture des flux si besoin
+				if (xmlWriter != null) {
+					xmlWriter.close();
+					xmlWriter = null;
+				}
+				if (out != null) { 
+					out.close();
+					out = null;
+				}
+				
+				// On attend que PmsiPipedReader ait fini son boulot
+				pmsiPipedReader.getSemaphore().acquire();
+				
+			} catch (XMLStreamException e) {
+				throw new PmsiPipedIOException(e);
+			} catch (InterruptedException e) {
+				throw new PmsiPipedIOException(e);
+			} finally {
+				pmsiPipedReader.close();
 			}
-			if (out != null) { 
-				out.close();
-				out = null;
-			}
-			
-			// On attend que PmsiPipedReader ait fini son boulot
-			pmsiPipedReader.getSemaphore().acquire();
-			
-			// On regarde si l'insertion des données a bien fonctionné
-			if (pmsiPipedReader.getStatus() == false)
-				throw new PmsiPipedIOException("ecriture impossible", pmsiPipedReader.getTerminalException());
-		} catch (Exception e) {
-			throw new PmsiPipedIOException(e);
-		} finally {
-			pmsiPipedReader.close();
+		} catch (PmsiPipedIOException e) {
+			reportException(e);
+			throw e;
 		}
 	}
 
@@ -202,5 +219,29 @@ public abstract class PmsiPipedWriterImpl implements PmsiPipedWriter {
 	 */
 	public PmsiLineType getLastLine() throws PmsiPipedIOException {
 		return lastLine.peek();
+	}
+	
+	protected void reportException(Exception e) {
+		this.exception = e;
+	}
+
+	@Override
+	public boolean getStatus() {
+		if (exception != null)
+			return false;
+		else
+			return pmsiPipedReader.getStatus();
+	}
+
+	@Override
+	public HashMap<PmsiDtoReportError, Object> getReport() {
+		HashMap<PmsiDtoReportError, Object> report = pmsiPipedReader.getReport();
+		if (exception != null) {
+			PmsiDtoReportError err = new PmsiDtoReportError();
+			err.setOrigin(Origin.PMSI_READER);
+			err.setName("TerminalException");
+			report.put(err, exception);
+		}
+		return report;
 	}
 }
