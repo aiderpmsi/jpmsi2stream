@@ -2,6 +2,7 @@ package aider.org.pmsi.writer;
 
 import java.io.OutputStream;
 
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -23,8 +24,8 @@ public class Rsf2009Writer extends PmsiWriterImpl {
 	 * Construction du Writer avec son reader associé
 	 * @throws PmsiIOWriterException 
 	 */
-	public Rsf2009Writer(OutputStream outputStream) throws PmsiIOWriterException {
-		super(outputStream, "UTF-8");
+	public Rsf2009Writer(OutputStream outputStream, InsertionReport report) throws PmsiIOWriterException {
+		super(outputStream, "UTF-8", report);
 	}
 	
 	/**

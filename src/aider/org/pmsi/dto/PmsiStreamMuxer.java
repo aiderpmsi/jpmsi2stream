@@ -10,7 +10,10 @@ public class PmsiStreamMuxer {
 	
 	private PipedOutputStream outputStream;
 	
-	public PmsiStreamMuxer() throws IOException {
+	private InsertionReport report;
+	
+	public PmsiStreamMuxer(InsertionReport report) throws IOException {
+		this.report = report;
 		inputStream = new PipedInputStream();
 		outputStream = new PipedOutputStream(inputStream);
 	}
@@ -40,7 +43,8 @@ public class PmsiStreamMuxer {
 			outputStream.close();
 		if (inputStream != null)
 			inputStream.close();
-		
+
+		report.setMuxerSuccess(true);
 		inputStream = null;
 		outputStream = null;
 	}

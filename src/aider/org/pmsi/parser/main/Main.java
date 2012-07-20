@@ -9,6 +9,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.dto.PmsiStreamMuxer;
 import aider.org.pmsi.dto.PmsiStreamRunner;
 import aider.org.pmsi.dto.PmsiThread;
@@ -86,13 +87,16 @@ public class Main {
             }
         }
         
+        // Rapport d'insertion
+        InsertionReport report = null;
         // On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
         // Le premier qui réussit est considéré comme le bon
         for (FileType fileTypeEntry : listTypes) {
         	try {
-        		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry) == true) {
-        			break;
-        		}
+        		// Création du rapport d'insertion
+        		report = new InsertionReport();
+        		readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry, report);
+        		break;
             } catch (Throwable e) {
             	if (e instanceof PmsiIOWriterException || e instanceof PmsiIOReaderException) {
             		pmsiErrors += (e.getMessage() == null ? "" : e.getMessage());
@@ -112,7 +116,7 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
+	public static boolean readPMSI(InputStream in, FileType type, InsertionReport report) throws Exception {
 		// Reader et writer
 		PmsiReader<?, ?> reader = null;
 		PmsiWriter writer = null;
@@ -124,26 +128,26 @@ public class Main {
 		
 		try {
 			// Création du transformateur de outputstream en inputstream
-			muxer = new PmsiStreamMuxer();
+			muxer = new PmsiStreamMuxer(report);
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream());
+			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream(), report);
 			// Création du thread du lecteur de inputstream
-			thread = new PmsiThread(runner);
+			thread = new PmsiThread(runner, report);
 			
 			// Choix du reader et du writer et connection au muxer
 			switch(type) {
 				case RSS116:
-					writer = new Rss116Writer(muxer.getOutputStream());
-					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer);
+					writer = new Rss116Writer(muxer.getOutputStream(), report);
+					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer, report);
 					break;
 				case RSF2009:
-					writer = new Rsf2009Writer(muxer.getOutputStream());
-					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer);
+					writer = new Rsf2009Writer(muxer.getOutputStream(), report);
+					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer, report);
 					break;
 				case RSF2012:
-					writer = new Rsf2012Writer(muxer.getOutputStream());
-					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer);
+					writer = new Rsf2012Writer(muxer.getOutputStream(), report);
+					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer, report);
 					break;
 				}
 			

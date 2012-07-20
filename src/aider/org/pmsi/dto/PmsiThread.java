@@ -12,8 +12,11 @@ public class PmsiThread extends Thread {
 	
 	private Semaphore semaphore = new Semaphore(1);
 	
-	public PmsiThread(PmsiRunnable runnable) {
+	InsertionReport report;
+	
+	public PmsiThread(PmsiRunnable runnable, InsertionReport report) {
 		this.runnable = runnable;
+		this.report = report;
 		try {
 			semaphore.acquire();
 		} catch (InterruptedException ignore) {
@@ -25,6 +28,7 @@ public class PmsiThread extends Thread {
 	public void run() {
 		try {
 			runnable.run();
+			report.setThreadSucess(true);
 		} catch (Exception e) {
 			exceptions.add(e);
 		} finally {

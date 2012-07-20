@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
 import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -39,7 +40,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private HashMap<EnumState, List<PmsiLineType>> linesTypes = new HashMap<EnumState, List<PmsiLineType>>();
 
-	protected PmsiReader() { }
+	private InsertionReport report;
 	
 	/**
 	 * Constructeur de la classe permettant de lire un fichier PMSI à partir d'un flux
@@ -51,10 +52,13 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	public PmsiReader(
 			Reader reader,
 			EnumState stateReady,
-			EnumState stateFinished) {
+			EnumState stateFinished,
+			InsertionReport report) {
 		// Initialisation de la machine à états
 		super(stateReady, stateFinished);
 
+		this.report = report;
+		
 		// Initialisation de la lecture du fichier à importer
 		this.reader = new BufferedReader(reader);
 	}
@@ -137,6 +141,11 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws Exception 
 	 */
 	public abstract void endOfFile() throws PmsiIOReaderException;
+	
+	public void run() throws Exception {
+		super.run();
+		report.setReaderSuccess(true);
+	}
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe

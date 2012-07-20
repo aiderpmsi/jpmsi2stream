@@ -6,8 +6,11 @@ public class PmsiStreamRunner implements PmsiRunnable {
 
 	private InputStream inputStream;
 	
-	public PmsiStreamRunner(InputStream inputStream) {
+	private InsertionReport report;
+	
+	public PmsiStreamRunner(InputStream inputStream, InsertionReport report) {
 		this.inputStream = inputStream;
+		this.report = report;
 	}
 	
 	@Override
@@ -20,6 +23,7 @@ public class PmsiStreamRunner implements PmsiRunnable {
 			if (Thread.currentThread().isInterrupted())
 				throw new InterruptedException("Thread interrompu");
 		}
+		report.setReaderSuccess(true);
 	}
 
 }

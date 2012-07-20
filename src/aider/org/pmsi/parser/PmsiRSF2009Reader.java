@@ -3,6 +3,7 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
 import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -54,19 +55,14 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * Objet de transfert de données
 	 */
 	private PmsiWriter writer = null;
-	
-	/**
-	 * Garde la dernière erreur lancée
-	 */
-	private Exception exception = null;
-	
+		
 	/**
 	 * Constructeur
 	 * @param reader
 	 * @throws PmsiIOWriterException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, PmsiWriter pmsiPipedWriter) throws PmsiIOWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+	public PmsiRSF2009Reader(Reader reader, PmsiWriter pmsiPipedWriter, InsertionReport report) throws PmsiIOWriterException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, report);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());
@@ -110,8 +106,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				exception = new PmsiIOReaderException("Lecteur RSF : Entête du fichier non trouvée");
-				throw (PmsiIOReaderException) exception;
+				throw new PmsiIOReaderException("Lecteur RSF : Entête du fichier non trouvée");
 			}
 			break;
 		case WAIT_RSF_LINES:
@@ -120,8 +115,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				exception = new PmsiIOReaderException("Lecteur RSF : Ligne non reconnue");
-				throw (PmsiIOReaderException) exception;
+				throw new PmsiIOReaderException("Lecteur RSF : Ligne non reconnue");
 			}
 			break;
 		case WAIT_ENDLINE:
@@ -132,11 +126,9 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			exception = new PmsiIOReaderException("Lecteur RSF : Fichier vide");
-			throw (PmsiIOReaderException) exception;
+			throw new PmsiIOReaderException("Lecteur RSF : Fichier vide");
 		default:
-			exception = new RuntimeException("Cas non prévu par la machine à états");
-			throw (RuntimeException) exception;
+			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
 	}
 
@@ -152,6 +144,5 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	
 	@Override
 	public void close() throws PmsiIOWriterException {
-		writer.close();
 	}
 }

@@ -6,6 +6,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
@@ -27,13 +28,16 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 */
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
+	private InsertionReport report;
+	
 	/**
 	 * Construction. Associe ce {@link PmsiWriter} au {@link PmsiThreadedPipedReader} en argument
 	 * @param pmsiPipedReader
 	 * @throws PmsiIOWriterException 
 	 */
-	public PmsiWriterImpl(OutputStream outputStream, String encoding) throws PmsiIOWriterException {
+	public PmsiWriterImpl(OutputStream outputStream, String encoding, InsertionReport report) throws PmsiIOWriterException {
 		try {
+			this.report = report;
 			// Création du writer de xml
 			xmlWriter = XMLOutputFactory.newInstance().
 					createXMLStreamWriter(outputStream, encoding);
@@ -135,6 +139,8 @@ public class PmsiWriterImpl implements PmsiWriter {
 			
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
+			
+			report.setWriterSuccess(true);
 		} catch (XMLStreamException e) {
 			throw new PmsiIOWriterException(e);
 		}

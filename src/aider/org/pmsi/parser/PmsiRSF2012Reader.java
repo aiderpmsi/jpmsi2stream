@@ -3,6 +3,7 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
+import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
 import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -62,8 +63,8 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 * @throws PmsiIOWriterException 
 
 	 */
-	public PmsiRSF2012Reader(Reader reader, PmsiWriter writer) throws PmsiIOWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+	public PmsiRSF2012Reader(Reader reader, PmsiWriter writer, InsertionReport report) throws PmsiIOWriterException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, report);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2012Header());
@@ -151,7 +152,6 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 
 	@Override
 	public void close() throws PmsiIOWriterException {
-		writer.close();
 	}
 
 }
