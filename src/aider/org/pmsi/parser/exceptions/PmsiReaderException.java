@@ -8,25 +8,25 @@ import aider.org.pmsi.parser.PmsiReader;
  * @author delabre
  *
  */
-public class PmsiIOReaderException extends Exception {
+public class PmsiReaderException extends PmsiException {
 
 	/**
 	 * Numéro de série autogénéré
 	 */
 	private static final long serialVersionUID = -5876923561804105709L;
 
-	public PmsiIOReaderException() {
+	public PmsiReaderException() {
 	}
 
-	public PmsiIOReaderException(String arg0) {
+	public PmsiReaderException(String arg0) {
 		super(arg0);
 	}
 
-	public PmsiIOReaderException(Throwable arg0) {
+	public PmsiReaderException(Throwable arg0) {
 		super(arg0);
 	}
 
-	public PmsiIOReaderException(String arg0, Throwable arg1) {
+	public PmsiReaderException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

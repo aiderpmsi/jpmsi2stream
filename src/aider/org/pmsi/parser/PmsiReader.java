@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
-import aider.org.pmsi.dto.InsertionReport;
-import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -40,7 +39,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private HashMap<EnumState, List<PmsiLineType>> linesTypes = new HashMap<EnumState, List<PmsiLineType>>();
 
-	private InsertionReport report;
+	protected PmsiReader() { }
 	
 	/**
 	 * Constructeur de la classe permettant de lire un fichier PMSI à partir d'un flux
@@ -52,13 +51,10 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	public PmsiReader(
 			Reader reader,
 			EnumState stateReady,
-			EnumState stateFinished,
-			InsertionReport report) {
+			EnumState stateFinished) {
 		// Initialisation de la machine à états
 		super(stateReady, stateFinished);
 
-		this.report = report;
-		
 		// Initialisation de la lecture du fichier à importer
 		this.reader = new BufferedReader(reader);
 	}
@@ -68,11 +64,11 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * par les données de la ligne suivante
 	 * @throws Exception
 	 */
-	public void readNewLine() throws PmsiIOReaderException {
+	public void readNewLine() throws PmsiReaderException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
-			throw new PmsiIOReaderException(e);
+			throw new PmsiReaderException(e);
 		}
 		
 		if (toParse == null)
@@ -140,25 +136,20 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	public abstract void endOfFile() throws PmsiIOReaderException;
-	
-	public void run() throws Exception {
-		super.run();
-		report.setReaderSuccess(true);
-	}
+	public abstract void endOfFile() throws PmsiReaderException;
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe
-	 * @throws PmsiIOWriterException
-	 * @throws PmsiIOReaderException
+	 * @throws PmsiWriterException
+	 * @throws PmsiReaderException
 	 */
-	public abstract void process() throws PmsiIOWriterException, PmsiIOReaderException;
+	public abstract void process() throws PmsiWriterException, PmsiReaderException;
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 * @throws Exception
 	 */
-	public abstract void close() throws PmsiIOWriterException;
+	public abstract void close() throws PmsiWriterException;
 
 }

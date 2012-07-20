@@ -8,7 +8,7 @@ import aider.org.pmsi.writer.PmsiWriter;
  * @author delabre
  *
  */
-public class PmsiIOWriterException extends Exception {
+public class PmsiWriterException extends PmsiException {
 
 	/**
 	 * Numéro de série autogénéré
@@ -16,18 +16,18 @@ public class PmsiIOWriterException extends Exception {
 	private static final long serialVersionUID = -1896810737119225957L;
 
 	
-	public PmsiIOWriterException() {
+	public PmsiWriterException() {
 	}
 
-	public PmsiIOWriterException(String arg0) {
+	public PmsiWriterException(String arg0) {
 		super(arg0);
 	}
 
-	public PmsiIOWriterException(Throwable arg0) {
+	public PmsiWriterException(Throwable arg0) {
 		super(arg0);
 	}
 
-	public PmsiIOWriterException(String arg0, Throwable arg1) {
+	public PmsiWriterException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

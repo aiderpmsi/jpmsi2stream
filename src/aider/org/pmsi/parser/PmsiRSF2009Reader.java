@@ -3,9 +3,8 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.InsertionReport;
-import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009b;
@@ -55,14 +54,14 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	 * Objet de transfert de données
 	 */
 	private PmsiWriter writer = null;
-		
+	
 	/**
 	 * Constructeur
 	 * @param reader
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public PmsiRSF2009Reader(Reader reader, PmsiWriter pmsiPipedWriter, InsertionReport report) throws PmsiIOWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, report);
+	public PmsiRSF2009Reader(Reader reader, PmsiWriter pmsiPipedWriter) throws PmsiWriterException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());
@@ -87,11 +86,11 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 * @throws IOException 
 	 * @throws PmsiFileNotReadable 
 	 */
-	public void process() throws PmsiIOWriterException, PmsiIOReaderException {
+	public void process() throws PmsiWriterException, PmsiReaderException {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
@@ -106,7 +105,8 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				throw new PmsiIOReaderException("Lecteur RSF : Entête du fichier non trouvée");
+				throw (PmsiReaderException) new PmsiReaderException("Entête du fichier non trouvée").
+						setXmlMessage("<rsf v=\"2009\"><parsingerror>Entête du fichier non trouvée</parsingerror></rsf>");
 			}
 			break;
 		case WAIT_RSF_LINES:
@@ -115,25 +115,29 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				throw new PmsiIOReaderException("Lecteur RSF : Ligne non reconnue");
+				throw (PmsiReaderException) new PmsiReaderException("Ligne non reconnue").
+					setXmlMessage("<rsf v=\"2009\"><parsingerror>Ligne non reconnue</parsingerror></rsf>");
+
 			}
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw new PmsiIOReaderException("trop de caractères dans la ligne");
+				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
+					setXmlMessage("<rsf v=\"2009\"><parsingerror>trop de caractères dans la ligne</parsingerror></rsf>");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			throw new PmsiIOReaderException("Lecteur RSF : Fichier vide");
+			throw (PmsiReaderException) new PmsiReaderException("Fichier vide").
+				setXmlMessage("<rsf v=\"2009\"><parsingerror>Fichier vide</parsingerror></rsf>");
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
 	}
 
 	@Override
-	public void endOfFile() throws PmsiIOReaderException {
+	public void endOfFile() throws PmsiReaderException {
 		changeState(EnumSignal.SIGNAL_EOF);
 	}
 
@@ -143,6 +147,7 @@ public class PmsiRSF2009Reader extends PmsiReader<PmsiRSF2009Reader.EnumState, P
 	}
 	
 	@Override
-	public void close() throws PmsiIOWriterException {
+	public void close() throws PmsiWriterException {
+		writer.close();
 	}
 }

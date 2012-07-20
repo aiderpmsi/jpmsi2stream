@@ -2,9 +2,8 @@ package aider.org.pmsi.writer;
 
 import java.io.OutputStream;
 
-import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009a;
@@ -22,18 +21,18 @@ public class Rsf2009Writer extends PmsiWriterImpl {
 
 	/**
 	 * Construction du Writer avec son reader associé
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public Rsf2009Writer(OutputStream outputStream, InsertionReport report) throws PmsiIOWriterException {
-		super(outputStream, "UTF-8", report);
+	public Rsf2009Writer(OutputStream outputStream) throws PmsiWriterException {
+		super(outputStream, "UTF-8");
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiIOWriterException {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException {
 		// Header
 		if (lineType instanceof PmsiRsf2009Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rsf)

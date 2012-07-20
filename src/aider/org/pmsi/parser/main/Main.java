@@ -9,7 +9,6 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.dto.PmsiStreamMuxer;
 import aider.org.pmsi.dto.PmsiStreamRunner;
 import aider.org.pmsi.dto.PmsiThread;
@@ -17,8 +16,7 @@ import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiReaderException;
 import aider.org.pmsi.writer.PmsiWriter;
 import aider.org.pmsi.writer.Rsf2009Writer;
 import aider.org.pmsi.writer.Rsf2012Writer;
@@ -69,6 +67,8 @@ public class Main {
 		MainOptions options = new MainOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
+        ArrayList<String> errorsList = new ArrayList<String>();
+        
         // Lecture des arguments
         try {
             parser.parseArgument(args);
@@ -87,24 +87,28 @@ public class Main {
             }
         }
         
-        // Rapport d'insertion
-        InsertionReport report = null;
         // On essaye de lire le fichier pmsi donné avec tous les lecteurs dont on dispose,
         // Le premier qui réussit est considéré comme le bon
         for (FileType fileTypeEntry : listTypes) {
         	try {
-        		// Création du rapport d'insertion
-        		report = new InsertionReport();
-        		readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry, report);
-        		break;
+        		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry) == true) {
+        			break;
+        		}
             } catch (Throwable e) {
-            	if (e instanceof PmsiIOWriterException || e instanceof PmsiIOReaderException) {
-            		pmsiErrors += (e.getMessage() == null ? "" : e.getMessage());
+            	// Si on a une erreur de Reader, c'est que le reader est pas le bon
+            	// Si c'est une autre erreur, c'est que le reader est bon, mais que l'insertino
+            	// des données après n'a pas marché.
+            	if (e instanceof PmsiReaderException) {
+            		errorsList.add(((PmsiReaderException) e).getXmlMessage());
             	} else
             		throw e;
             }
         }
 	
+        for (String hoho : errorsList) {
+        	System.out.println(hoho);
+        }
+        
         System.out.println("Done!\n");
 	}
 	
@@ -116,7 +120,7 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(InputStream in, FileType type, InsertionReport report) throws Exception {
+	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
 		// Reader et writer
 		PmsiReader<?, ?> reader = null;
 		PmsiWriter writer = null;
@@ -128,26 +132,26 @@ public class Main {
 		
 		try {
 			// Création du transformateur de outputstream en inputstream
-			muxer = new PmsiStreamMuxer(report);
+			muxer = new PmsiStreamMuxer();
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream(), report);
+			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream());
 			// Création du thread du lecteur de inputstream
-			thread = new PmsiThread(runner, report);
+			thread = new PmsiThread(runner);
 			
 			// Choix du reader et du writer et connection au muxer
 			switch(type) {
 				case RSS116:
-					writer = new Rss116Writer(muxer.getOutputStream(), report);
-					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer, report);
+					writer = new Rss116Writer(muxer.getOutputStream());
+					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
-					writer = new Rsf2009Writer(muxer.getOutputStream(), report);
-					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer, report);
+					writer = new Rsf2009Writer(muxer.getOutputStream());
+					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
-					writer = new Rsf2012Writer(muxer.getOutputStream(), report);
-					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer, report);
+					writer = new Rsf2012Writer(muxer.getOutputStream());
+					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer);
 					break;
 				}
 			

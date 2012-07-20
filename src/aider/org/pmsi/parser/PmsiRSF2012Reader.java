@@ -3,9 +3,8 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-import aider.org.pmsi.dto.InsertionReport;
-import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -55,16 +54,14 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	 */
 	private static final String name = "RSF2012"; 
 	
-	private Exception exception = null;
-	
 	/**
 	 * Constructeur
 	 * @param reader
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 
 	 */
-	public PmsiRSF2012Reader(Reader reader, PmsiWriter writer, InsertionReport report) throws PmsiIOWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, report);
+	public PmsiRSF2012Reader(Reader reader, PmsiWriter writer) throws PmsiWriterException {
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2012Header());
@@ -90,12 +87,12 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 * @throws IOException 
 	 * @throws PmsiFileNotReadable 
 	 * @throws Exception 
 	 */
-	public void process() throws PmsiIOWriterException, PmsiIOReaderException {
+	public void process() throws PmsiWriterException, PmsiReaderException {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
@@ -110,8 +107,8 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				exception = new PmsiIOReaderException("Lecteur RSF : Entête du fichier non trouvée");
-				throw (PmsiIOReaderException) exception;
+				throw (PmsiReaderException) new PmsiReaderException("Entête du fichier non trouvée").
+					setXmlMessage("<rsf v=\"2012\"><parsingerror>Entête du fichier non trouvée</parsingerror></rsf>");
 			}
 			break;
 		case WAIT_RSF_LINES:
@@ -120,28 +117,28 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				exception = new PmsiIOReaderException("Lecteur RSF : Ligne non reconnue");
-				throw (PmsiIOReaderException) exception;
+				throw (PmsiReaderException) new PmsiReaderException("Ligne non reconnue").
+					setXmlMessage("<rsf v=\"2012\"><parsingerror>Ligne non reconnue</parsingerror></rsf>");
 			}
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw new PmsiIOReaderException("trop de caractères dans la ligne");
+				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
+					setXmlMessage("<rsf v=\"2012\"><parsingerror>trop de caractères dans la ligne</parsingerror></rsf>");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			exception = new PmsiIOReaderException("Lecteur RSF : Fichier vide");
-			throw (PmsiIOReaderException) exception;
+			throw (PmsiReaderException) new PmsiReaderException("Fichier vide").
+				setXmlMessage("<rsf v=\"2012\"><parsingerror>Fichier vide</parsingerror></rsf>");
 		default:
-			exception = new RuntimeException("Cas non prévu par la machine à états");
-			throw (RuntimeException) exception;
+			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
 	}
 
 	@Override
-	public void endOfFile() throws PmsiIOReaderException {
+	public void endOfFile() throws PmsiReaderException {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
@@ -151,7 +148,8 @@ public class PmsiRSF2012Reader extends PmsiReader<PmsiRSF2012Reader.EnumState, P
 	}
 
 	@Override
-	public void close() throws PmsiIOWriterException {
+	public void close() throws PmsiWriterException {
+		writer.close();
 	}
 
 }

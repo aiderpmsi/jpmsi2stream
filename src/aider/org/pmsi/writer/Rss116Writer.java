@@ -2,9 +2,8 @@ package aider.org.pmsi.writer;
 
 import java.io.OutputStream;
 
-import aider.org.pmsi.dto.InsertionReport;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
@@ -21,18 +20,18 @@ public class Rss116Writer extends PmsiWriterImpl {
 
 	/**
 	 * Construction du Writer avec son reader associé
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public Rss116Writer(OutputStream outputStream, InsertionReport report) throws PmsiIOWriterException {
-		super(outputStream, "UTF-8", report);
+	public Rss116Writer(OutputStream outputStream) throws PmsiWriterException {
+		super(outputStream, "UTF-8");
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiIOWriterException  {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException  {
 		// Lecture des données du header
 		if (lineType instanceof PmsiRss116Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rss)

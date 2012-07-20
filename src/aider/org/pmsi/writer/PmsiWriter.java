@@ -1,6 +1,6 @@
 package aider.org.pmsi.writer;
 
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -16,47 +16,47 @@ public interface PmsiWriter {
 	 * @param name nom de la première balise
 	 * @param attributes liste des noms des attributs
 	 * @param values liste des valeurs des attributs
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiIOWriterException;
+	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiWriterException;
 	
 	/**
 	 * Crée un élément
 	 * @param name nom de l'élément
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeStartElement(String name) throws PmsiIOWriterException;
+	public void writeStartElement(String name) throws PmsiWriterException;
 	
 	/**
 	 * Clôt l'élément en cours
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeEndElement() throws PmsiIOWriterException;
+	public void writeEndElement() throws PmsiWriterException;
 
 	/**
 	 * Insère un élément avec les données d'une ligne. Attention, l'élément n'est pas fermé
 	 * par cette méthode
 	 * @param lineType
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeLineElement(PmsiLineType lineType)  throws PmsiIOWriterException;
+	public void writeLineElement(PmsiLineType lineType)  throws PmsiWriterException;
 	
 	/**
 	 * Cloture l'élément en cours
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeEndDocument() throws PmsiIOWriterException;
+	public void writeEndDocument() throws PmsiWriterException;
 	
 	/**
 	 * Ferme les objets de flux utilisés, libère les resources utilisées
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void close() throws PmsiIOWriterException;
+	public void close() throws PmsiWriterException;
 	
 	/**
 	 * Renvoie la dernière ligne insérée
 	 * @return objet de la dernière ligne insérée
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public PmsiLineType getLastLine() throws PmsiIOWriterException;
+	public PmsiLineType getLastLine() throws PmsiWriterException;
 }

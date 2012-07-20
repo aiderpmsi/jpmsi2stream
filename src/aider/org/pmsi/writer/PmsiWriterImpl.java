@@ -6,8 +6,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import aider.org.pmsi.dto.InsertionReport;
-import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -28,30 +27,27 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 */
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
-	private InsertionReport report;
-	
 	/**
 	 * Construction. Associe ce {@link PmsiWriter} au {@link PmsiThreadedPipedReader} en argument
 	 * @param pmsiPipedReader
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public PmsiWriterImpl(OutputStream outputStream, String encoding, InsertionReport report) throws PmsiIOWriterException {
+	public PmsiWriterImpl(OutputStream outputStream, String encoding) throws PmsiWriterException {
 		try {
-			this.report = report;
 			// Création du writer de xml
 			xmlWriter = XMLOutputFactory.newInstance().
 					createXMLStreamWriter(outputStream, encoding);
 		} catch (XMLStreamException e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 
 	/**
 	 * Ouvre le document
 	 * @param name Nom de la balise initiale
-	 * @throws PmsiIOWriterException 
+	 * @throws PmsiWriterException 
 	 */
-	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiIOWriterException {
+	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiWriterException {
 		try {
 			xmlWriter.writeStartDocument();
 			xmlWriter.writeStartElement(name);
@@ -59,28 +55,28 @@ public class PmsiWriterImpl implements PmsiWriter {
 				xmlWriter.writeAttribute(attributes[i], values[i]);
 			}
 		} catch (Exception e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 	
 	/**
 	 * Ecrit un nouvel élément
 	 * @param name nom de l'élément
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeStartElement(String name) throws PmsiIOWriterException {
+	public void writeStartElement(String name) throws PmsiWriterException {
 		try {
 			xmlWriter.writeStartElement(name);
 		} catch (Exception e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 
 	/**
 	 * Ferme l'élément en cours
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeEndElement() throws PmsiIOWriterException {
+	public void writeEndElement() throws PmsiWriterException {
 		try {
 			// On prend en compte la fermeture de la ligne (en donc la modification
 			// nécessaire de lastLine)
@@ -88,7 +84,7 @@ public class PmsiWriterImpl implements PmsiWriter {
 				lastLine.pop();
 			xmlWriter.writeEndElement();
 		} catch (Exception e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 
@@ -96,9 +92,9 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 * Ouvre un élément en écrivant les attributs associés à la ligne pmsi dedans.
 	 * Attention, il n'est pas fermé automatiquement
 	 * @param lineType
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiIOWriterException {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException {
 		// On prend en compte l'ajout de ce type de ligne
 		lastLine.add(lineType);
 		writeLineElement(lineType.getName(), lineType.getNames(), lineType.getContent());
@@ -111,24 +107,24 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 * @param name Nom de l'élément
 	 * @param attNames Nom des attributs
 	 * @param attContent Valeur des attributs
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	private void writeLineElement(String name, String[] attNames, String[] attContent) throws PmsiIOWriterException {
+	private void writeLineElement(String name, String[] attNames, String[] attContent) throws PmsiWriterException {
 		try {
 			xmlWriter.writeStartElement(name);
 			for (int i = 0 ; i < attNames.length ; i++) {
 				xmlWriter.writeAttribute(attNames[i], attContent[i]);
 			}
 		} catch (Exception e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 
 	/**
 	 * Ecrit la fin du document
-	 * @throws PmsiIOWriterException
+	 * @throws PmsiWriterException
 	 */
-	public void writeEndDocument() throws PmsiIOWriterException {
+	public void writeEndDocument() throws PmsiWriterException {
 		try {
 			// Fermeture de tous les tags non fermés
 			while (!lastLine.empty()) {
@@ -139,10 +135,8 @@ public class PmsiWriterImpl implements PmsiWriter {
 			
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
-			
-			report.setWriterSuccess(true);
 		} catch (XMLStreamException e) {
-			throw new PmsiIOWriterException(e);
+			throw new PmsiWriterException(e);
 		}
 	}
 
@@ -150,16 +144,16 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 * Libère toutes les ressources associées à ce writer
 	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
 	 * (c'est le moment où on attend le semaphore du {@link PmsiThreadedPipedReader}
-	 * @throws PmsiIOWriterException si l'insertion s'est mal déroulée
+	 * @throws PmsiWriterException si l'insertion s'est mal déroulée
 	 */
-	public void close() throws PmsiIOWriterException {
+	public void close() throws PmsiWriterException {
 		// Fermeture des flux créés dans cette classe si besoin
 		if (xmlWriter != null) {
 			try {
 				xmlWriter.close();
 				xmlWriter = null;
 			} catch (XMLStreamException e) {
-				throw new PmsiIOWriterException(e);
+				throw new PmsiWriterException(e);
 			}
 		}
 	}
@@ -168,7 +162,7 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 * Renvoie la dernière ligne insérée
 	 * @return La dernière ligne insérée
 	 */
-	public PmsiLineType getLastLine() throws PmsiIOWriterException {
+	public PmsiLineType getLastLine() throws PmsiWriterException {
 		return lastLine.peek();
 	}
 	

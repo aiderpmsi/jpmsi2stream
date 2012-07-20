@@ -4,19 +4,19 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
+import aider.org.pmsi.parser.exceptions.PmsiException;
+import aider.org.pmsi.parser.exceptions.PmsiRunnableException;
+
 public class PmsiThread extends Thread {
 
-	private Queue<Exception> exceptions = new LinkedList<Exception>();
+	private Queue<PmsiException> exceptions = new LinkedList<PmsiException>();
 
 	private PmsiRunnable runnable;
 	
 	private Semaphore semaphore = new Semaphore(1);
 	
-	InsertionReport report;
-	
-	public PmsiThread(PmsiRunnable runnable, InsertionReport report) {
+	public PmsiThread(PmsiRunnable runnable) {
 		this.runnable = runnable;
-		this.report = report;
 		try {
 			semaphore.acquire();
 		} catch (InterruptedException ignore) {
@@ -28,8 +28,7 @@ public class PmsiThread extends Thread {
 	public void run() {
 		try {
 			runnable.run();
-			report.setThreadSucess(true);
-		} catch (Exception e) {
+		} catch (PmsiRunnableException e) {
 			exceptions.add(e);
 		} finally {
 			semaphore.release();
