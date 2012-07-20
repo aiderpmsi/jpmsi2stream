@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
-import aider.org.pmsi.dto.PmsiDtoReportError;
-import aider.org.pmsi.parser.exceptions.PmsiIOException;
-import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
@@ -65,11 +64,11 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * par les données de la ligne suivante
 	 * @throws Exception
 	 */
-	public void readNewLine() throws PmsiIOException {
+	public void readNewLine() throws PmsiIOReaderException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
-			throw new PmsiIOException(e);
+			throw new PmsiIOReaderException(e);
 		}
 		
 		if (toParse == null)
@@ -137,32 +136,20 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	public abstract void endOfFile() throws PmsiIOException;
+	public abstract void endOfFile() throws PmsiIOReaderException;
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe
-	 * @throws PmsiPipedIOException
-	 * @throws PmsiIOException
+	 * @throws PmsiIOWriterException
+	 * @throws PmsiIOReaderException
 	 */
-	public abstract void process() throws PmsiPipedIOException, PmsiIOException;
-	
-	/**
-	 * Méthode rapportant la réussite ou l'échec de l'insertion du pmsi
-	 * @return
-	 */
-	public abstract boolean getStatus();
-	
-	/**
-	 * Méthode rapportant les erreurs rencontrées lors du parcours du fichier pmsi
-	 * @return
-	 */
-	public abstract HashMap<PmsiDtoReportError, Object> getReport();
+	public abstract void process() throws PmsiIOWriterException, PmsiIOReaderException;
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 * @throws Exception
 	 */
-	public abstract void close() throws PmsiPipedIOException;
+	public abstract void close() throws PmsiIOWriterException;
 
 }

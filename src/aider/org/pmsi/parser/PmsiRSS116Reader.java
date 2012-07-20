@@ -2,20 +2,15 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-
-import aider.org.pmsi.dto.PmsiDtoReportError;
-import aider.org.pmsi.dto.PmsiPipedWriter;
-import aider.org.pmsi.dto.PmsiPipedWriterFactory;
-import aider.org.pmsi.dto.PmsiDtoReportError.Origin;
-import aider.org.pmsi.parser.exceptions.PmsiIOException;
-import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Dad;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
+import aider.org.pmsi.writer.PmsiWriter;
 
 
 
@@ -73,7 +68,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Objet de transfert de données
 	 */
-	private PmsiPipedWriter pmsiPipedWriter = null;
+	private PmsiWriter writer = null;
 
 	/**
 	 * Nom identifiant la classe
@@ -85,9 +80,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 */
-	public PmsiRSS116Reader(Reader reader, PmsiPipedWriterFactory pmsiPipedWriterFactory) throws PmsiPipedIOException {
+	public PmsiRSS116Reader(Reader reader, PmsiWriter writer) throws PmsiIOWriterException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -110,46 +105,46 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 		addTransition(EnumSignal.SIGNAL_EOF, EnumState.WAIT_RSS_MAIN, EnumState.STATE_FINISHED);
 
 		// Récupération de la classe de transfert en base de données
-		pmsiPipedWriter = pmsiPipedWriterFactory.getPmsiPipedWriter(this);
+		this.writer = writer;
 	}
 			
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
-	 * @throws PmsiPipedIOException
+	 * @throws PmsiIOWriterException
 	 * @throws IOException
-	 * @throws PmsiIOException
+	 * @throws PmsiIOReaderException
 	 */
-	public void process() throws PmsiPipedIOException, PmsiIOException {
+	public void process() throws PmsiIOWriterException, PmsiIOReaderException {
 		PmsiLineType matchLine = null;
 		
 		switch(getState()) {
 		case STATE_READY:
 			// L'état initial nous demande de lire un nouvelle ligne
-			pmsiPipedWriter.writeStartDocument(name, new String[0], new String[0]);
+			writer.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSS_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				pmsiPipedWriter.writeLineElement(matchLine);
+				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
 			} else {
-				exception = new PmsiIOException("Lecteur RSS 116 : Entête du fichier non trouvée");
-				throw (PmsiIOException) exception;
+				exception = new PmsiIOReaderException("Lecteur RSS 116 : Entête du fichier non trouvée");
+				throw (PmsiIOReaderException) exception;
 			}
 			break;
 		case WAIT_RSS_MAIN:
 			matchLine = parseLine();
 			if (matchLine != null) {
-				pmsiPipedWriter.writeLineElement(matchLine);
+				writer.writeLineElement(matchLine);
 				nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
 				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
 				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
 				changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
 			} else {
-				exception = new PmsiIOException("Lecteur RSS 116 : Première partie de ligne RSS non trouvée");
-				throw (PmsiIOException) exception;
+				exception = new PmsiIOReaderException("Lecteur RSS 116 : Première partie de ligne RSS non trouvée");
+				throw (PmsiIOReaderException) exception;
 			}
 			break;
 		case WAIT_RSS_DA:
@@ -158,11 +153,11 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					pmsiPipedWriter.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine);
 					nbDaRestants -= 1;
 				} else {
-					exception = new PmsiIOException("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
-					throw (PmsiIOException) exception;
+					exception = new PmsiIOReaderException("Lecteur RSS 116 : DA non trouvés dans ligne RSS");
+					throw (PmsiIOReaderException) exception;
 				}
 			}
 			break;
@@ -172,11 +167,11 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					pmsiPipedWriter.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine);
 					nbDaDRestants -= 1;
 				} else {
-					exception = new PmsiIOException("Lecteur RSS : DAD non trouvés dans ligne RSS");
-					throw (PmsiIOException) exception;
+					exception = new PmsiIOReaderException("Lecteur RSS : DAD non trouvés dans ligne RSS");
+					throw (PmsiIOReaderException) exception;
 				}
 			}
 			break;
@@ -186,33 +181,33 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
-					pmsiPipedWriter.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine);
 					nbZARestants -= 1;
 				} else {
-					exception = new PmsiIOException("Lecteur RSS : Actes non trouvés dans ligne RSS");
-					throw (PmsiIOException) exception;
+					exception = new PmsiIOReaderException("Lecteur RSS : Actes non trouvés dans ligne RSS");
+					throw (PmsiIOReaderException) exception;
 				}
 			}
 			break;
 		case WAIT_RSS_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw new PmsiIOException("trop de caractères dans la ligne");
+				throw new PmsiIOReaderException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_RSS_NEWLINE);
 			readNewLine();
 			break;
 		case WAIT_RSS_HEADER_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0) {
-				exception = new PmsiIOException("trop de caractères dans la ligne");
-				throw (PmsiIOException) exception;
+				exception = new PmsiIOReaderException("trop de caractères dans la ligne");
+				throw (PmsiIOReaderException) exception;
 			}
 			changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
 			readNewLine();
 			break;			
 		case STATE_EMPTY_FILE:
-			exception = new PmsiIOException("Lecteur RSS : Fichier vide");
-			throw (PmsiIOException) exception;
+			exception = new PmsiIOReaderException("Lecteur RSS : Fichier vide");
+			throw (PmsiIOReaderException) exception;
 		default:
 			exception = new RuntimeException("Cas non prévu par la machine à états");
 			throw (RuntimeException) exception;
@@ -220,37 +215,18 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	}
 
 	@Override
-	public void endOfFile() throws PmsiIOException {
+	public void endOfFile() throws PmsiIOReaderException {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
 	@Override
 	public void finish() throws Exception {
-		pmsiPipedWriter.writeEndDocument();
+		writer.writeEndDocument();
 	}
 
 	@Override
-	public void close() throws PmsiPipedIOException {
-		pmsiPipedWriter.close();
-	}
-	
-	@Override
-	public boolean getStatus() {
-		if (exception != null || getState() != EnumState.STATE_FINISHED)
-			return false;
-		else
-			return true;
+	public void close() throws PmsiIOWriterException {
+		writer.close();
 	}
 
-	@Override
-	public HashMap<PmsiDtoReportError, Object> getReport() {
-		HashMap<PmsiDtoReportError, Object> report = pmsiPipedWriter.getReport();
-		if (exception != null) {
-			PmsiDtoReportError err = new PmsiDtoReportError();
-			err.setOrigin(Origin.PMSI_PARSER);
-			err.setName("TerminalException");
-			report.put(err, exception);
-		}
-		return report;
-	}
 }

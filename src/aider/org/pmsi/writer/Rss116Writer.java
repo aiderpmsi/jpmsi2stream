@@ -1,7 +1,9 @@
-package aider.org.pmsi.dto;
+package aider.org.pmsi.writer;
+
+import java.io.OutputStream;
 
 import aider.org.pmsi.parser.PmsiRSS116Reader;
-import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
@@ -10,26 +12,26 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
 /**
- * Writer {@link PmsiPipedWriterImpl} pour {@link PmsiRSS116Reader}
+ * Writer {@link PmsiWriterImpl} pour {@link PmsiRSS116Reader}
  * @author delabre
  *
  */
-public class Rss116PipedWriter extends PmsiPipedWriterImpl {
+public class Rss116Writer extends PmsiWriterImpl {
 
 	/**
 	 * Construction du Writer avec son reader associé
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 */
-	public Rss116PipedWriter(PmsiThreadedPipedReader pmsiPipedReader) throws PmsiPipedIOException {
-		super(pmsiPipedReader);
+	public Rss116Writer(OutputStream outputStream) throws PmsiIOWriterException {
+		super(outputStream, "UTF-8");
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiPipedIOException  {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiIOWriterException  {
 		// Lecture des données du header
 		if (lineType instanceof PmsiRss116Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rss)

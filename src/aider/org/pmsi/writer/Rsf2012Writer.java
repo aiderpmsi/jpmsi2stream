@@ -1,7 +1,9 @@
-package aider.org.pmsi.dto;
+package aider.org.pmsi.writer;
+
+import java.io.OutputStream;
 
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
-import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -12,26 +14,26 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2012l;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012m;
 
 /**
- * Writer {@link PmsiPipedWriterImpl} pour {@link PmsiRSF2012Reader}
+ * Writer {@link PmsiWriterImpl} pour {@link PmsiRSF2012Reader}
  * @author delabre
  *
  */
-public class Rsf2012PipedWriter extends PmsiPipedWriterImpl {
+public class Rsf2012Writer extends PmsiWriterImpl {
 
 	/**
 	 * Construction du Writer avec son reader associé
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 */
-	public Rsf2012PipedWriter(PmsiThreadedPipedReader pmsiPipedReader) throws PmsiPipedIOException {
-		super(pmsiPipedReader);
+	public Rsf2012Writer(OutputStream outputStream) throws PmsiIOWriterException {
+		super(outputStream, "UTF-8");
 	}
 	
 	/**
 	 * Ajoute des données liées à une ligne pmsi
 	 * @param lineType ligne avec les données à insérer
-	 * @throws PmsiPipedIOException 
+	 * @throws PmsiIOWriterException 
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiPipedIOException  {
+	public void writeLineElement(PmsiLineType lineType) throws PmsiIOWriterException  {
 		// Header
 		if (lineType instanceof PmsiRsf2012Header) {
 			// Ecriture de la ligne header sans la fermer (va contenir les rsf)

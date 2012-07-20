@@ -4,23 +4,24 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.PmsiDtoFactory;
-import aider.org.pmsi.dto.PmsiDtoReportError;
-import aider.org.pmsi.dto.PmsiDtoReportFactory;
-import aider.org.pmsi.dto.PmsiThreadedPipedReaderFactory;
-import aider.org.pmsi.dto.PmsiPipedWriterFactory;
+import aider.org.pmsi.dto.PmsiStreamMuxer;
+import aider.org.pmsi.dto.PmsiStreamRunner;
+import aider.org.pmsi.dto.PmsiThread;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.exceptions.PmsiIOException;
-import aider.org.pmsi.parser.exceptions.PmsiPipedIOException;
+import aider.org.pmsi.parser.exceptions.PmsiIOReaderException;
+import aider.org.pmsi.parser.exceptions.PmsiIOWriterException;
+import aider.org.pmsi.writer.PmsiWriter;
+import aider.org.pmsi.writer.Rsf2009Writer;
+import aider.org.pmsi.writer.Rsf2012Writer;
+import aider.org.pmsi.writer.Rss116Writer;
 
 /**
  * Entrée du programme permettant de lire un fichier pmsi et de le transformer en xml
@@ -67,18 +68,6 @@ public class Main {
 		MainOptions options = new MainOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
-        // Définition de la fabrique d'objet de rapport de l'envoi des données dans le système récepteur
-        PmsiDtoReportFactory reportFactory = new PmsiDtoReportFactory();
-        
-        // Définition de la fabrique de Transfert de données entre le Reader et le système récepteur
-        PmsiDtoFactory dtoFactory = new PmsiDtoFactory(reportFactory);
-        
-        // Définition de la fabrique de Reader de pmsi
-        PmsiThreadedPipedReaderFactory pipedReaderFactory = new PmsiThreadedPipedReaderFactory(dtoFactory);
-        
-        // Définition de la fabrique de Writer de pmsi
-        PmsiPipedWriterFactory dtoPmsiReaderFactory = new PmsiPipedWriterFactory(pipedReaderFactory);
-
         // Lecture des arguments
         try {
             parser.parseArgument(args);
@@ -101,11 +90,11 @@ public class Main {
         // Le premier qui réussit est considéré comme le bon
         for (FileType fileTypeEntry : listTypes) {
         	try {
-        		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry, dtoPmsiReaderFactory) == true) {
+        		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry) == true) {
         			break;
         		}
             } catch (Throwable e) {
-            	if (e instanceof PmsiPipedIOException || e instanceof PmsiIOException) {
+            	if (e instanceof PmsiIOWriterException || e instanceof PmsiIOReaderException) {
             		pmsiErrors += (e.getMessage() == null ? "" : e.getMessage());
             	} else
             		throw e;
@@ -123,39 +112,69 @@ public class Main {
 	 * @return true si le fichier a pu être inséré, false sinon
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(InputStream in, FileType type, PmsiPipedWriterFactory dtoPmsiReaderFactory) throws Exception {
+	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
+		// Reader et writer
 		PmsiReader<?, ?> reader = null;
-		// Choix du reader
-		switch(type) {
-			case RSS116:
-				reader = new PmsiRSS116Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-				break;
-			case RSF2009:
-				reader = new PmsiRSF2009Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-				break;
-			case RSF2012:
-				reader = new PmsiRSF2012Reader(new InputStreamReader(in), dtoPmsiReaderFactory);
-				break;
-			}
+		PmsiWriter writer = null;
+		PmsiStreamMuxer muxer = null;
+		// Thread du lecteur de writer
+		PmsiThread thread = null;
+		// exception du lecteur de writer
+		Exception exception;
 		
 		try {
+			// Création du transformateur de outputstream en inputstream
+			muxer = new PmsiStreamMuxer();
+			
+			// Création de lecteur de inputstream et conenction au muxer
+			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream());
+			// Création du thread du lecteur de inputstream
+			thread = new PmsiThread(runner);
+			
+			// Choix du reader et du writer et connection au muxer
+			switch(type) {
+				case RSS116:
+					writer = new Rss116Writer(muxer.getOutputStream());
+					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer);
+					break;
+				case RSF2009:
+					writer = new Rsf2009Writer(muxer.getOutputStream());
+					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer);
+					break;
+				case RSF2012:
+					writer = new Rsf2012Writer(muxer.getOutputStream());
+					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer);
+					break;
+				}
+			
+			// lancement du lecteur de muxer
+			thread.start();
+	
 			// Lecture du fichier par mise en route de la machine à états
 			reader.run();
-		} catch (Exception ignore) {}
-        
-		try {
-	        // Fermeture des données de connection externes :
-	        reader.close();
-		} catch (Exception ignore) {}
-        
-        // Ecriture des erreurs éventuelles d'insertion :
-        HashMap<PmsiDtoReportError, Object> errors = reader.getReport();
-        for (PmsiDtoReportError key : errors.keySet()) {
-        	System.out.println(key.getOrigin().toString() + " : " + key.getName());
-        	System.out.println(errors.get(key));
-        }
-        
-        // Retour du satut d'insertion ou non :
-        return reader.getStatus();
+			
+			// Fin de fichier evoyé au muxer
+			muxer.eof();
+	
+			// Attente que le lecteur de muxer ait fini
+			thread.waitEndOfProcess();
+						
+		} finally {
+			// Fermeture de resources
+			if (reader != null)
+				reader.close();
+			if (writer != null)
+				writer.close();
+			if (muxer != null)
+				muxer.close();
+		}
+
+		// Récupération d'une erreur éventuelle du lecteur de muxer
+		exception = thread.getTerminalException();
+		
+		if (exception != null)
+			throw exception;
+
+		return true;
 	}
 }
