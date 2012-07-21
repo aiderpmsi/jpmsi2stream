@@ -30,4 +30,7 @@ public class PmsiStreamRunner implements PmsiRunnable {
 		}
 	}
 
+	@Override
+	public void close() {
+	}
 }

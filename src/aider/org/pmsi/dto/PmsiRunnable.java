@@ -6,4 +6,5 @@ public interface PmsiRunnable {
 
 	public void run() throws PmsiRunnableException;
 	
+	public void close() throws PmsiRunnableException;
 }
