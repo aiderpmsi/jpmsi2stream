@@ -1,4 +1,4 @@
-package aider.org.pmsi.parser.main;
+package aider.org.pmsi.test.main;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -10,13 +10,12 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import aider.org.pmsi.dto.PmsiStreamMuxer;
-import aider.org.pmsi.dto.PmsiStreamRunner;
 import aider.org.pmsi.dto.PmsiThread;
+import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
 import aider.org.pmsi.parser.PmsiRSS116Reader;
 import aider.org.pmsi.parser.PmsiReader;
-import aider.org.pmsi.parser.exceptions.PmsiReaderException;
 import aider.org.pmsi.writer.PmsiWriter;
 import aider.org.pmsi.writer.Rsf2009Writer;
 import aider.org.pmsi.writer.Rsf2012Writer;
@@ -135,7 +134,7 @@ public class Main {
 			muxer = new PmsiStreamMuxer();
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiStreamRunner runner = new PmsiStreamRunner(muxer.getInputStream());
+			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream());
 			// Création du thread du lecteur de inputstream
 			thread = new PmsiThread(runner);
 			

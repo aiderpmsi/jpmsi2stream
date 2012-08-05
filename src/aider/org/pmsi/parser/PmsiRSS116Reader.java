@@ -2,8 +2,9 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
-import aider.org.pmsi.parser.exceptions.PmsiReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiWriterException;
+
+import aider.org.pmsi.exceptions.PmsiReaderException;
+import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;

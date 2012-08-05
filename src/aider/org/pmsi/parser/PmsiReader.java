@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
-import aider.org.pmsi.parser.exceptions.PmsiReaderException;
-import aider.org.pmsi.parser.exceptions.PmsiWriterException;
+import aider.org.pmsi.exceptions.PmsiReaderException;
+import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**

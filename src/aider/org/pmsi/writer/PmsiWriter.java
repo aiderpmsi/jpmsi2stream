@@ -1,6 +1,6 @@
 package aider.org.pmsi.writer;
 
-import aider.org.pmsi.parser.exceptions.PmsiWriterException;
+import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**

@@ -8,8 +8,8 @@ import java.util.HashMap;
  * à partir du moment où ils sont comparables
  * @author delabre
  *
- * @param <EnumState>
- * @param <EnumSignal>
+ * @param <EnumState> classe d'énumération des états
+ * @param <EnumSignal> classe d'énumération des signaux
  */
 public abstract class MachineState<EnumState, EnumSignal> {
 

@@ -2,8 +2,8 @@ package aider.org.pmsi.writer;
 
 import java.io.OutputStream;
 
+import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
-import aider.org.pmsi.parser.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;

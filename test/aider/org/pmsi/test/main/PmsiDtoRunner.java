@@ -1,20 +1,21 @@
-package aider.org.pmsi.dto;
+package aider.org.pmsi.test.main;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import aider.org.pmsi.parser.exceptions.PmsiRunnableException;
+import aider.org.pmsi.dto.PmsiDtoRunnable;
+import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
 
-public class PmsiStreamRunner implements PmsiRunnable {
+public class PmsiDtoRunner implements PmsiDtoRunnable {
 
 	private InputStream inputStream;
 	
-	public PmsiStreamRunner(InputStream inputStream) {
+	public PmsiDtoRunner(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
 	
 	@Override
-	public void run() throws PmsiRunnableException {
+	public void run() throws PmsiDtoRunnableException {
 		byte buffer[] = new byte[512];
 		int size;
 		
@@ -23,10 +24,10 @@ public class PmsiStreamRunner implements PmsiRunnable {
 				System.out.println(new String(buffer, 0, size));
 				// Vérification que le thread n'a pas été interrompu
 				if (Thread.currentThread().isInterrupted())
-					throw new PmsiRunnableException(new InterruptedException("Thread interrompu"));
+					throw new PmsiDtoRunnableException(new InterruptedException("Thread interrompu"));
 			}
 		} catch (IOException e) {
-			throw new PmsiRunnableException(e);
+			throw new PmsiDtoRunnableException(e);
 		}
 	}
 

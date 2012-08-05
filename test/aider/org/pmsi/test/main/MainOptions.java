@@ -1,4 +1,4 @@
-package aider.org.pmsi.parser.main;
+package aider.org.pmsi.test.main;
 
 import java.io.File;
 import java.util.List;
