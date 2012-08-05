@@ -28,8 +28,9 @@ public class PmsiWriterImpl implements PmsiWriter {
 	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
 	
 	/**
-	 * Construction. Associe ce {@link PmsiWriter} au {@link PmsiThreadedPipedReader} en argument
-	 * @param pmsiPipedReader
+	 * Construction, écrit sur le flux sortant fourni, avec l'encoding désiré
+	 * @param outputStream
+	 * @param encoding
 	 * @throws PmsiWriterException 
 	 */
 	public PmsiWriterImpl(OutputStream outputStream, String encoding) throws PmsiWriterException {
@@ -142,9 +143,7 @@ public class PmsiWriterImpl implements PmsiWriter {
 
 	/**
 	 * Libère toutes les ressources associées à ce writer
-	 * C'est uniquement à ce moment qu'on peut savoir si l'insertion s'est bien déroulée
-	 * (c'est le moment où on attend le semaphore du {@link PmsiThreadedPipedReader}
-	 * @throws PmsiWriterException si l'insertion s'est mal déroulée
+	 * @throws PmsiWriterException
 	 */
 	public void close() throws PmsiWriterException {
 		// Fermeture des flux créés dans cette classe si besoin

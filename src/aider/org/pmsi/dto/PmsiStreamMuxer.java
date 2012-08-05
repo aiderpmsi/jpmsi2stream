@@ -47,7 +47,7 @@ public class PmsiStreamMuxer {
 	
 	/**
 	 * Retourne le flux entrant
-	 * @return
+	 * @return le flux entrant
 	 */
 	public PipedInputStream getInputStream() {
 		return inputStream;
@@ -55,7 +55,7 @@ public class PmsiStreamMuxer {
 
 	/**
 	 * Retourne le flux sortant
-	 * @return
+	 * @return le flux sortant
 	 */
 	public PipedOutputStream getOutputStream() {
 		return outputStream;
@@ -78,7 +78,7 @@ public class PmsiStreamMuxer {
 	
 	/**
 	 * Teste l'état du flux sortant, et vérifie leur cohérence
-	 * @return
+	 * @return true si le flux sortant est ouvert, false sinon
 	 * @throws PmsiMuxerException si {@link PmsiStreamMuxer#inputStream} est fermé,
 	 *   mais que {@link PmsiStreamMuxer#outputStream} est ouvert.
 	 */

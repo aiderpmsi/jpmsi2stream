@@ -61,7 +61,7 @@ public class PmsiThread extends Thread {
 	
 	/**
 	 * Renvoie une éventuelle exception lancée lors de l'exécution de {@link PmsiThread#runnable}
-	 * @return
+	 * @return l'exception lancée, null si aucune exception n'a été lancée
 	 */
 	public PmsiException getTerminalException() {
 		return exception;

@@ -1,7 +1,7 @@
 aider.org.machinestate
 aider.org.pmsi.dto
+aider.org.pmsi.exceptions
 aider.org.pmsi.parser
-aider.org.pmsi.parser.exceptions
 aider.org.pmsi.parser.linestypes
-aider.org.pmsi.parser.main
+aider.org.pmsi.test.main
 aider.org.pmsi.writer

@@ -57,7 +57,7 @@ public abstract class PmsiException extends Exception {
 
 	/**
 	 * Définit le message xml de cette exception
-	 * @return
+	 * @return message xml
 	 */
 	public String getXmlMessage() {
 		return xmlMessage;
@@ -66,7 +66,7 @@ public abstract class PmsiException extends Exception {
 	/**
 	 * Retourne le message xml de cette exception
 	 * @param xmlMessage
-	 * @return
+	 * @return l'exception {@link PmsiException} actuelle (pour faire des set en cascade)
 	 */
 	public PmsiException setXmlMessage(String xmlMessage) {
 		this.xmlMessage = xmlMessage;
