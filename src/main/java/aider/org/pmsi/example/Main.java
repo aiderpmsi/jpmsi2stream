@@ -133,7 +133,7 @@ public class Main {
 			muxer = new PmsiStreamMuxer();
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream());
+			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream(), System.out);
 			// Création du thread du lecteur de inputstream
 			thread = new PmsiThread(runner);
 			

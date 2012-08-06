@@ -2,6 +2,8 @@ package aider.org.pmsi.example;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import aider.org.pmsi.dto.PmsiDtoRunnable;
 import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
@@ -10,8 +12,11 @@ public class PmsiDtoRunner implements PmsiDtoRunnable {
 
 	private InputStream inputStream;
 	
-	public PmsiDtoRunner(InputStream inputStream) {
+	private PrintStream outputStream;
+	
+	public PmsiDtoRunner(InputStream inputStream, OutputStream outputStream) {
 		this.inputStream = inputStream;
+		this.outputStream = new PrintStream(outputStream);
 	}
 	
 	@Override
@@ -21,7 +26,7 @@ public class PmsiDtoRunner implements PmsiDtoRunnable {
 		
 		try {
 			while ((size = inputStream.read(buffer)) != -1) {
-				System.out.println(new String(buffer, 0, size));
+				outputStream.println(new String(buffer, 0, size));
 				// Vérification que le thread n'a pas été interrompu
 				if (Thread.currentThread().isInterrupted())
 					throw new PmsiDtoRunnableException(new InterruptedException("Thread interrompu"));
