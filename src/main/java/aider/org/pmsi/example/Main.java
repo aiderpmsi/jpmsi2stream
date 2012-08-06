@@ -1,4 +1,4 @@
-package aider.org.pmsi.test.main;
+package aider.org.pmsi.example;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
