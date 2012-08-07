@@ -19,7 +19,7 @@ import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
 public interface PmsiDto {
 
 	/**
-	 * Réalise le travail de transfert entre {@link InputStream} du {@link PmsiStreamMuxer}
+	 * Réalise le travail de transfert entre {@link InputStream} du {@link InOutStream}
 	 * et container final de ce fichier pmsi transformé
 	 * @throws PmsiDtoRunnableException
 	 */

@@ -2,12 +2,11 @@ package aider.org.pmsi.exceptions;
 
 import java.io.OutputStream;
 
-import aider.org.pmsi.dto.PmsiStreamMuxer;
 import aider.org.pmsi.writer.PmsiWriter;
 
 /**
  * Exceptions levées lors de l'erreur d'écriture d'un fichier pmsi sérialisé
- * dans le {@link OutputStream} de la classe {@link PmsiStreamMuxer} par {@link PmsiWriter}
+ * dans le {@link OutputStream} de la classe {@link InOutStream} par {@link PmsiWriter}
  * @author delabre
  * @see PmsiWriter
  */

@@ -3,6 +3,8 @@ package aider.org.pmsi.example;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -13,7 +15,6 @@ import java.util.concurrent.Future;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.PmsiStreamMuxer;
 import aider.org.pmsi.dto.PmsiCallable;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.parser.PmsiRSF2009Parser;
@@ -126,7 +127,11 @@ public class MainExample {
 		// Reader et writer
 		PmsiParser<?, ?> reader = null;
 		PmsiWriter writer = null;
-		PmsiStreamMuxer muxer = null;
+		
+		// Flux input et output connectés
+		PipedInputStream inputStream = null;
+		PipedOutputStream outputStream = null;
+		
 		// Thread du lecteur de writer
 		PmsiCallable pmsiCallable = null;
 		// exception du lecteur de writer
@@ -138,25 +143,26 @@ public class MainExample {
 		
 		try {
 			// Création du transformateur de outputstream en inputstream
-			muxer = new PmsiStreamMuxer();
+			inputStream = new PipedInputStream();
+			outputStream = new PipedOutputStream(inputStream);
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiDtoExample runner = new PmsiDtoExample(muxer.getInputStream(), System.out);
+			PmsiDtoExample runner = new PmsiDtoExample(inputStream, System.out);
 			// Création du thread du lecteur de inputstream
 			pmsiCallable = new PmsiCallable(runner);
 			
 			// Choix du reader et du writer et connection au muxer
 			switch(type) {
 				case RSS116:
-					writer = new Rss116Writer(muxer.getOutputStream());
+					writer = new Rss116Writer(outputStream);
 					reader = new PmsiRSS116Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
-					writer = new Rsf2009Writer(muxer.getOutputStream());
+					writer = new Rsf2009Writer(outputStream);
 					reader = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
-					writer = new Rsf2012Writer(muxer.getOutputStream());
+					writer = new Rsf2012Writer(outputStream);
 					reader = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
 					break;
 				}
@@ -170,11 +176,16 @@ public class MainExample {
 			// Attente que le parseur ait fini
 			threadParserFuture.get();
 			
-			// Fin de fichier evoyé au muxer
-			muxer.eof();
+			// Fin de fichier envoyé au muxer
+			outputStream.close();
+			outputStream = null;
 	
 			// Attente que le lecteur de muxer ait fini
 			threadDtoFuture.get();
+			
+			// Fermeture de l'inputStream
+			inputStream.close();
+			inputStream = null;
 						
 		} catch (ExecutionException e) {
 			exception = (Exception) e.getCause();
@@ -186,8 +197,10 @@ public class MainExample {
 				reader.close();
 			if (writer != null)
 				writer.close();
-			if (muxer != null)
-				muxer.close();
+			if (outputStream != null)
+				outputStream.close();
+			if (inputStream != null)
+				inputStream.close();
 		}
 		
 		if (exception != null)
