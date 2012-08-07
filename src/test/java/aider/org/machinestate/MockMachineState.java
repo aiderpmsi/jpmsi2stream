@@ -30,4 +30,16 @@ public class MockMachineState extends
 		addTransition(EnumSignal.SIGNAL_FINISH, EnumState.STATE_MIDDLE, EnumState.STATE_FINISHED);
 	}
 
+	@Override
+	protected void process() throws MachineStateException {
+		switch (getState()) {
+		case STATE_READY:
+			changeState(EnumSignal.SIGNAL_START);
+			break;
+		case STATE_MIDDLE:
+			changeState(EnumSignal.SIGNAL_FINISH);
+			break;
+		}
+	}
+	
 }
