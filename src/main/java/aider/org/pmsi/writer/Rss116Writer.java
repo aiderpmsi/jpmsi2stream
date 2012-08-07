@@ -1,7 +1,5 @@
 package aider.org.pmsi.writer;
 
-import java.io.OutputStream;
-
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.PmsiRSS116Parser;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -12,18 +10,18 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
 /**
- * Writer {@link PmsiWriterImpl} pour {@link PmsiRSS116Parser}
+ * Writer {@link PmsiXmlPipedOutputStreamWriter} pour {@link PmsiRSS116Parser}
  * @author delabre
  *
  */
-public class Rss116Writer extends PmsiWriterImpl {
+public class Rss116Writer extends PmsiXmlPipedOutputStreamWriter {
 
 	/**
 	 * Construction du Writer avec son reader associé
 	 * @throws PmsiWriterException 
 	 */
-	public Rss116Writer(OutputStream outputStream) throws PmsiWriterException {
-		super(outputStream, "UTF-8");
+	public Rss116Writer() throws PmsiWriterException {
+		super("UTF-8");
 	}
 	
 	/**

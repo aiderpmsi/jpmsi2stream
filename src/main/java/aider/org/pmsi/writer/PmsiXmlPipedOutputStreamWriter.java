@@ -1,6 +1,7 @@
 package aider.org.pmsi.writer;
 
-import java.io.OutputStream;
+import java.io.IOException;
+import java.io.PipedOutputStream;
 import java.util.Stack;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -10,14 +11,21 @@ import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
 /**
- * Implémente l'interface PmsiPipedWriter pour transformer le flux pmsi en flux xml
+ * Implémente l'interface PmsiWriter
+ * Crée un {@link PipedOutputStream} dans lequel sont écrites les données xml
+ * pour transformer le flux pmsi en flux xml.
  * @author delabre
  *
  */
-public class PmsiWriterImpl implements PmsiWriter {
-		
+public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
+	
 	/**
-	 * Flux xml dans lequel on écrit le fichier final (repose sur {@link PmsiWriterImpl#out}
+	 * Flux pipedoutputstream dans lequel le fichier xml va être écrit
+	 */
+	PipedOutputStream outputStream = null;
+	
+	/**
+	 * Flux xml dans lequel on écrit le fichier final (repose sur {@link PmsiXmlPipedOutputStreamWriter#out}
 	 * Il faut faire attention à l'ordre de création et de destruction
 	 */
 	private XMLStreamWriter xmlWriter = null;
@@ -33,8 +41,10 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 * @param encoding
 	 * @throws PmsiWriterException 
 	 */
-	public PmsiWriterImpl(OutputStream outputStream, String encoding) throws PmsiWriterException {
+	public PmsiXmlPipedOutputStreamWriter(String encoding) throws PmsiWriterException {
 		try {
+			// Création du PipedOutputStream
+			outputStream = new PipedOutputStream();
 			// Création du writer de xml
 			xmlWriter = XMLOutputFactory.newInstance().
 					createXMLStreamWriter(outputStream, encoding);
@@ -136,7 +146,13 @@ public class PmsiWriterImpl implements PmsiWriter {
 			
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
+			
+			// Fermeture du flux
+			outputStream.close();
+			outputStream = null;
 		} catch (XMLStreamException e) {
+			throw new PmsiWriterException(e);
+		} catch (IOException e) {
 			throw new PmsiWriterException(e);
 		}
 	}
@@ -147,14 +163,21 @@ public class PmsiWriterImpl implements PmsiWriter {
 	 */
 	public void close() throws PmsiWriterException {
 		// Fermeture des flux créés dans cette classe si besoin
-		if (xmlWriter != null) {
-			try {
+		try {
+			if (xmlWriter != null) {
 				xmlWriter.close();
 				xmlWriter = null;
-			} catch (XMLStreamException e) {
-				throw new PmsiWriterException(e);
 			}
+			if (outputStream != null) {
+				outputStream.close();
+				outputStream = null;
+			}
+		} catch (XMLStreamException e) {
+			throw new PmsiWriterException(e);
+		} catch (IOException e) {
+			throw new PmsiWriterException(e);
 		}
+		
 	}
 
 	/**
@@ -164,5 +187,12 @@ public class PmsiWriterImpl implements PmsiWriter {
 	public PmsiLineType getLastLine() throws PmsiWriterException {
 		return lastLine.peek();
 	}
+
+	/**
+	 * Retourne le {@link PipedOutputStream} de cette classe dans lequel le writer écrit
+	 */
+	public PipedOutputStream getOutputStream() {
+		return outputStream;
+	}	
 	
 }

@@ -2,7 +2,7 @@ package aider.org.pmsi.dto;
 
 import java.io.InputStream;
 
-import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
+import aider.org.pmsi.exceptions.PmsiDtoException;
 
 /**
  * Interface à implémenter pour définir sa propre classe de transfert de données.
@@ -21,13 +21,13 @@ public interface PmsiDto {
 	/**
 	 * Réalise le travail de transfert entre {@link InputStream} du {@link InOutStream}
 	 * et container final de ce fichier pmsi transformé
-	 * @throws PmsiDtoRunnableException
+	 * @throws PmsiDtoException
 	 */
-	public void transfer() throws PmsiDtoRunnableException;
+	public void transfer() throws PmsiDtoException;
 	
 	/**
 	 * Libère les ressources créées dans cette classe
-	 * @throws PmsiDtoRunnableException
+	 * @throws PmsiDtoException
 	 */
-	public void close() throws PmsiDtoRunnableException;
+	public void close() throws PmsiDtoException;
 }

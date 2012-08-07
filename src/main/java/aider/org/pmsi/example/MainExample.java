@@ -21,6 +21,7 @@ import aider.org.pmsi.parser.PmsiRSF2012Parser;
 import aider.org.pmsi.parser.PmsiRSS116Parser;
 import aider.org.pmsi.parser.PmsiParser;
 import aider.org.pmsi.writer.PmsiWriter;
+import aider.org.pmsi.writer.PmsiXmlPipedOutputStreamWriter;
 import aider.org.pmsi.writer.Rsf2009Writer;
 import aider.org.pmsi.writer.Rsf2012Writer;
 import aider.org.pmsi.writer.Rss116Writer;
@@ -139,21 +140,19 @@ public class MainExample {
 		Future<String> threadDtoFuture = null;
 		Future<String> threadParserFuture = null;
 		
-		try {
-			outputStream = new PipedOutputStream();
-			
+		try {		
 			// Choix du parser et du writer
 			switch(type) {
 				case RSS116:
-					writer = new Rss116Writer(outputStream);
+					writer = new Rss116Writer();
 					reader = new PmsiRSS116Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
-					writer = new Rsf2009Writer(outputStream);
+					writer = new Rsf2009Writer();
 					reader = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
-					writer = new Rsf2012Writer(outputStream);
+					writer = new Rsf2012Writer();
 					reader = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
 					break;
 				}
@@ -161,7 +160,7 @@ public class MainExample {
 			// Création de la classe de transfert de données
 			// Et connection au flux de sortie du writer
 			PmsiDtoExample pmsiDto = new PmsiDtoExample(System.out);
-			outputStream.connect(pmsiDto.getPipedInputStream());
+			((PmsiXmlPipedOutputStreamWriter) writer).getOutputStream().connect(pmsiDto.getPipedInputStream());
 			
 			// Création du thread du lecteur de inputstream
 			pmsiCallable = new PmsiCallable(pmsiDto);
@@ -177,10 +176,6 @@ public class MainExample {
 			
 			// Fermeture de la classe de transfert de données
 			pmsiDto.close();
-			
-			// Fin de fichier envoyé au muxer
-			outputStream.close();
-			outputStream = null;
 	
 			// Attente que le lecteur de muxer ait fini
 			threadDtoFuture.get();

@@ -6,7 +6,7 @@ import java.io.PipedInputStream;
 import java.io.PrintStream;
 
 import aider.org.pmsi.dto.PmsiDto;
-import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
+import aider.org.pmsi.exceptions.PmsiDtoException;
 
 public class PmsiDtoExample implements PmsiDto {
 
@@ -24,7 +24,7 @@ public class PmsiDtoExample implements PmsiDto {
 	}
 	
 	@Override
-	public void transfer() throws PmsiDtoRunnableException {
+	public void transfer() throws PmsiDtoException {
 		byte buffer[] = new byte[512];
 		int size;
 		
@@ -33,19 +33,19 @@ public class PmsiDtoExample implements PmsiDto {
 				outputStream.println(new String(buffer, 0, size));
 				// Vérification que le thread n'a pas été interrompu
 				if (Thread.currentThread().isInterrupted())
-					throw new PmsiDtoRunnableException(new InterruptedException("Thread interrompu"));
+					throw new PmsiDtoException(new InterruptedException("Thread interrompu"));
 			}
 		} catch (IOException e) {
-			throw new PmsiDtoRunnableException(e);
+			throw new PmsiDtoException(e);
 		}
 	}
 
 	@Override
-	public void close() throws PmsiDtoRunnableException {
+	public void close() throws PmsiDtoException {
 		try {
 			inputStream.close();
 		} catch (IOException e) {
-			throw new PmsiDtoRunnableException(e);
+			throw new PmsiDtoException(e);
 		}
 	}
 }

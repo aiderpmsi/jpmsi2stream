@@ -1,7 +1,5 @@
 package aider.org.pmsi.writer;
 
-import java.io.OutputStream;
-
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.PmsiRSF2009Parser;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -13,18 +11,18 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2009h;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2009m;
 
 /**
- * Writer {@link PmsiWriterImpl} pour {@link PmsiRSF2009Parser}
+ * Writer {@link PmsiXmlPipedOutputStreamWriter} pour {@link PmsiRSF2009Parser}
  * @author delabre
  *
  */
-public class Rsf2009Writer extends PmsiWriterImpl {
+public class Rsf2009Writer extends PmsiXmlPipedOutputStreamWriter {
 
 	/**
 	 * Construction du Writer avec son reader associé
 	 * @throws PmsiWriterException 
 	 */
-	public Rsf2009Writer(OutputStream outputStream) throws PmsiWriterException {
-		super(outputStream, "UTF-8");
+	public Rsf2009Writer() throws PmsiWriterException {
+		super("UTF-8");
 	}
 	
 	/**
