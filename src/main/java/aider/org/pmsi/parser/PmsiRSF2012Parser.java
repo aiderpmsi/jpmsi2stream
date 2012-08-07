@@ -3,6 +3,7 @@ package aider.org.pmsi.parser;
 import java.io.IOException;
 import java.io.Reader;
 
+import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -88,11 +89,12 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 	/**
 	 * Fonction appelée par {@link #run()} pour réaliser chaque étape de la machine à états
 	 * @throws PmsiWriterException 
+	 * @throws MachineStateException 
 	 * @throws IOException 
 	 * @throws PmsiFileNotReadable 
 	 * @throws Exception 
 	 */
-	public void process() throws PmsiWriterException, PmsiReaderException {
+	public void process() throws PmsiWriterException, PmsiReaderException, MachineStateException {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
@@ -138,14 +140,13 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 	}
 
 	@Override
-	public void endOfFile() throws PmsiReaderException {
+	public void endOfFile() throws PmsiReaderException, MachineStateException {
 		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
 	@Override
-	public String finish() throws Exception {
+	public void finish() throws Exception {
 		writer.writeEndDocument();
-		return null;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import aider.org.machinestate.MachineState;
+import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -62,9 +63,10 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	/**
 	 * Lecture d'une nouvelle ligne : les données de la dernière ligne sont détruites et remplacées
 	 * par les données de la ligne suivante
+	 * @throws MachineStateException 
 	 * @throws Exception
 	 */
-	public void readNewLine() throws PmsiReaderException {
+	public void readNewLine() throws PmsiReaderException, MachineStateException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
@@ -136,7 +138,7 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler à la fin du fichier
 	 * @throws Exception 
 	 */
-	public abstract void endOfFile() throws PmsiReaderException;
+	public abstract void endOfFile() throws PmsiReaderException, MachineStateException;
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe
@@ -144,7 +146,7 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws PmsiWriterException
 	 * @throws PmsiReaderException
 	 */
-	public abstract void process() throws PmsiWriterException, PmsiReaderException;
+	public abstract void process() throws PmsiWriterException, PmsiReaderException, MachineStateException;
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet

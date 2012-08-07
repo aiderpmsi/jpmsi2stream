@@ -20,6 +20,12 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 	 */
 	private EnumState stateFinished;
 	
+	
+	/**
+	 * Indicateur définissant l'état actuel
+	 */
+	private EnumState stateActual;
+	
 	/**
 	 * La table de changement d'état associe un signal
 	 * à un chamgement d'état à partir d'un état initial :
@@ -28,13 +34,8 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 			new HashMap<EnumSignal, HashMap<EnumState,EnumState>>();
 	
 	/**
-	 * Indicateur définissant l'état actuel
-	 */
-	private EnumState stateActual;
-	
-	/**
 	 * Interdiction de construire une machine à états sans définir l'état initial
-	 * et létat final
+	 * et l'état final
 	 */
 	protected MachineState() {}
 	
@@ -50,37 +51,46 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 	}
 	
 	/**
-	 * Insertion d'une transition entre signal, état initial et état final
+	 * Insertion d'une transition entre signal, état initial et état final. Le caractère protégé de cette méthode
+	 * implique qu'elle ne doit être utilisé que pour surcharger cette classe. Les définitions états ne doivent
+	 * jamais être modifés pendant la marche de la machine. Si on en a besoin, c'est que le design des
+	 * signaux et états n'est pas complet
 	 * @param signal
 	 * @param stateInitial
 	 * @param stateFinal
 	 */
-	public void addTransition(EnumSignal signal, EnumState stateInitial, EnumState stateFinal) {
+	protected void addTransition(EnumSignal signal, EnumState stateInitial, EnumState stateFinal) {
+		// Ajout du signal dans la table des transitions s'il n'existe pas
 		if (!transitionsTable.containsKey(signal)) {
 			transitionsTable.put(signal, new HashMap<EnumState, EnumState>());
 		}
+		
+		// Lien entre ce signal et cette transition de l'état stateInitial à l'état stateFinal 
 		transitionsTable.get(signal).put(stateInitial, stateFinal);
 	}
 
 	/**
-	 * Modification de l'état de la machine selon le signal donné
+	 * Modification de l'état de la machine selon le signal donné. Le caractère protégé de cette méthode
+	 * implique qu'elle ne doit être utilisé que pour surcharger cette classe. Les définitions états ne doivent
+	 * jamais être modifés pendant la marche de la machine. Si on en a besoin, c'est que le design des
+	 * signaux et états n'est pas correct
 	 * @param signal
-	 * @return Le nouvel état de la machine à états
+	 * @throws MachineStateException 
 	 */
-	public EnumState changeState(EnumSignal signal) {
+	protected void changeState(EnumSignal signal) throws MachineStateException {
 		EnumState newState = transitionsTable.get(signal).get(stateActual);
 		if (newState == null)
-			throw new RuntimeException ("Signal " + signal.toString() + " indéterminé dans l'état actuel " + stateActual.toString() + " de la machine à états");
+			throw new MachineStateException ("Signal " + signal.toString() + " indéterminé dans l'état actuel " + stateActual.toString() + " de la machine à états");
 		else
 			stateActual = newState; 
-		return stateActual;
 	}
 	
 	/**
-	 * Retourne l'état de la machine
+	 * Retourne l'état de la machine. Le caractère protégé de cette méthode
+	 * implique qu'elle ne doit être utilisé que pour surcharger cette classe.
 	 * @return Etat de la machine
 	 */
-	public EnumState getState() {
+	protected EnumState getState() {
 		return stateActual;
 	}
 	
@@ -88,24 +98,45 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 	 * Lancement de la machine à états
 	 * @throws Exception
 	 */
-	public ReturnType call() throws Exception {
+	public final ReturnType call() throws Exception {
+		begin();
+		
 		while (stateActual != stateFinished) {
 			process();
 		}
-		return finish();
+		
+		finish();
+		
+		return getEndMessage();
 	}
+	
+	/**
+	 * Méthode à implémenter pour réaliser une action au début du fonctionnement de
+	 * la machine à états
+	 * @throws Exception
+	 */
+	protected void begin() throws Exception {};
 	
 	/**
 	 * Méthode à implémenter pour lancer la machine à états
 	 * @throws Exception
 	 */
-	public abstract void process() throws Exception;
+	protected void process() throws Exception {};
 	
 	/**
 	 * Méthode à implémenter pour réaliser une action à la fin du fonctionnement de
 	 * la machine à états
-	 * @return Un objet de type ReturnType renvoyé par l'appel à Call
 	 * @throws Exception
 	 */
-	public abstract ReturnType finish() throws Exception;
+	protected void finish() throws Exception {};
+	
+	/**
+	 * Méthode à implémenter pour renvoyer un message lors de la fin du fonctionnement de
+	 * la machine à états
+	 * @throws Exception
+	 */
+	protected ReturnType getEndMessage() {
+		return null;
+	}
+	
 }
