@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import aider.org.pmsi.dto.PmsiDtoRunnable;
+import aider.org.pmsi.dto.PmsiDto;
 import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
 
-public class PmsiDtoRunner implements PmsiDtoRunnable {
+public class PmsiDtoRunner implements PmsiDto {
 
 	private InputStream inputStream;
 	
@@ -20,7 +20,7 @@ public class PmsiDtoRunner implements PmsiDtoRunnable {
 	}
 	
 	@Override
-	public void run() throws PmsiDtoRunnableException {
+	public void transfer() throws PmsiDtoRunnableException {
 		byte buffer[] = new byte[512];
 		int size;
 		

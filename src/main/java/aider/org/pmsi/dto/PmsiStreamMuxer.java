@@ -19,7 +19,7 @@ public class PmsiStreamMuxer {
 
 	/**
 	 * Pipe entrante, permettant de lire ce que le Writer a écrit
-	 * @see PmsiDtoRunnable
+	 * @see PmsiDto
 	 */
 	private PipedInputStream inputStream = null;
 	

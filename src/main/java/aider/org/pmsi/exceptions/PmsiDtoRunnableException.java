@@ -1,12 +1,12 @@
 package aider.org.pmsi.exceptions;
 
-import aider.org.pmsi.dto.PmsiDtoRunnable;
+import aider.org.pmsi.dto.PmsiDto;
 
 /**
  * Exceptions levées lors d'une erreur lors du transfert des données
  * dans le support de sérialisation
  * @author delabre
- * @see PmsiDtoRunnable
+ * @see PmsiDto
  */
 public class PmsiDtoRunnableException extends PmsiException {
 

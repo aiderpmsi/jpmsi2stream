@@ -5,12 +5,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import aider.org.pmsi.dto.PmsiStreamMuxer;
-import aider.org.pmsi.dto.PmsiThread;
+import aider.org.pmsi.dto.PmsiCallable;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.parser.PmsiRSF2009Reader;
 import aider.org.pmsi.parser.PmsiRSF2012Reader;
@@ -124,9 +128,12 @@ public class Main {
 		PmsiWriter writer = null;
 		PmsiStreamMuxer muxer = null;
 		// Thread du lecteur de writer
-		PmsiThread thread = null;
+		PmsiCallable thread = null;
 		// exception du lecteur de writer
-		Exception exception;
+		Exception exception = null;
+		// Thread executor
+		ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
+		Future<String> threadExecutorFuture = null;
 		
 		try {
 			// Création du transformateur de outputstream en inputstream
@@ -135,7 +142,7 @@ public class Main {
 			// Création de lecteur de inputstream et conenction au muxer
 			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream(), System.out);
 			// Création du thread du lecteur de inputstream
-			thread = new PmsiThread(runner);
+			thread = new PmsiCallable(runner);
 			
 			// Choix du reader et du writer et connection au muxer
 			switch(type) {
@@ -154,7 +161,7 @@ public class Main {
 				}
 			
 			// lancement du lecteur de muxer
-			thread.start();
+			threadExecutorFuture = threadExecutor.submit(thread);
 	
 			// Lecture du fichier par mise en route de la machine à états
 			reader.run();
@@ -163,8 +170,12 @@ public class Main {
 			muxer.eof();
 	
 			// Attente que le lecteur de muxer ait fini
-			thread.waitEndOfProcess();
+			threadExecutorFuture.get();
 						
+		} catch (ExecutionException e) {
+			exception = (Exception) e.getCause();
+		} catch (InterruptedException e) {
+			exception = e;
 		} finally {
 			// Fermeture de resources
 			if (reader != null)
@@ -174,9 +185,6 @@ public class Main {
 			if (muxer != null)
 				muxer.close();
 		}
-
-		// Récupération d'une erreur éventuelle du lecteur de muxer
-		exception = thread.getTerminalException();
 		
 		if (exception != null)
 			throw exception;
