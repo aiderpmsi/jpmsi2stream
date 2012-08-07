@@ -124,8 +124,10 @@ public class MainExample {
 	 * @throws Exception 
 	 */
 	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
+		// Les classes qui sont indépendantes :
+		// 
 		// Reader et writer
-		PmsiParser<?, ?> reader = null;
+		PmsiParser<?, ?> parser = null;
 		PmsiWriter writer = null;
 		
 		// Flux output connecté
@@ -145,15 +147,15 @@ public class MainExample {
 			switch(type) {
 				case RSS116:
 					writer = new Rss116Writer();
-					reader = new PmsiRSS116Parser(new InputStreamReader(in), writer);
+					parser = new PmsiRSS116Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
 					writer = new Rsf2009Writer();
-					reader = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
+					parser = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
 					writer = new Rsf2012Writer();
-					reader = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
+					parser = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
 					break;
 				}
 			
@@ -169,7 +171,7 @@ public class MainExample {
 			threadDtoFuture = threadExecutor.submit(pmsiCallable);
 	
 			// lancement du parseur
-			threadParserFuture = threadExecutor.submit(reader);
+			threadParserFuture = threadExecutor.submit(parser);
 			
 			// Attente que le parseur ait fini
 			threadParserFuture.get();
@@ -186,8 +188,8 @@ public class MainExample {
 			exception = e;
 		} finally {
 			// Fermeture de resources
-			if (reader != null)
-				reader.close();
+			if (parser != null)
+				parser.close();
 			if (writer != null)
 				writer.close();
 			if (outputStream != null)

@@ -8,14 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import aider.org.machinestate.MachineState;
 import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
+
 /**
- * Classe de base de parseur pmsi.
+ * Classe de base de parseur pmsi permettant de définir un état de base du parseur.
+ * Par la suite, le lancement de cette machine à états permettra de réaliser les
+ * actions liées aux différents états
  * @author delabre
  *
  * @param <EnumState>
@@ -40,6 +44,11 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private HashMap<EnumState, List<PmsiLineType>> linesTypes = new HashMap<EnumState, List<PmsiLineType>>();
 
+	/**
+	 * Signal de EOF
+	 */
+	private EnumSignal signalEof;
+	
 	protected PmsiParser() { }
 	
 	/**
@@ -52,12 +61,16 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	public PmsiParser(
 			Reader reader,
 			EnumState stateReady,
-			EnumState stateFinished) {
+			EnumState stateFinished,
+			EnumSignal signalEof) {
 		// Initialisation de la machine à états
 		super(stateReady, stateFinished);
 
 		// Initialisation de la lecture du fichier à importer
 		this.reader = new BufferedReader(reader);
+		
+		// Définition du signal de fin de fichier
+		this.signalEof = signalEof;
 	}
 	
 	/**
@@ -66,22 +79,23 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws MachineStateException 
 	 * @throws Exception
 	 */
-	public void readNewLine() throws PmsiReaderException, MachineStateException {
+	protected void readNewLine() throws PmsiReaderException, MachineStateException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
 			throw new PmsiReaderException(e);
 		}
 		
+		// Si il n'y a plus de ligne à lire, on envoie le signal eof
 		if (toParse == null)
-			endOfFile();
+			changeState(signalEof);
 	}
 	
 	/**
 	 * Retourne la taille de la ligne actuelle
 	 * @return Ligne actuelle
 	 */
-	public final int getLineSize() {
+	protected int getLineSize() {
 		return toParse.length();
 	}
 	
@@ -90,7 +104,7 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @param state état permettant de lire la ligne
 	 * @param pmsiLine Définitions de la ligne à lire
 	 */
-	public void addLineType(EnumState state, PmsiLineType pmsiLine) {
+	protected void addLineType(EnumState state, PmsiLineType pmsiLine) {
 		if (linesTypes.get(state) == null)
 			linesTypes.put(state, new ArrayList<PmsiLineType>());
 		
@@ -102,9 +116,11 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * et les types de ligne que l'on peut rechercher
 	 * @return la ligne lue, avec les données récupérées dans le contenu ou <code>null</code> si pas de lecture possible 
 	 */
-	public PmsiLineType parseLine() {
+	protected PmsiLineType parseLine() {
+		// Vérification qu'il existe bien un état à la machine à états
 		if (linesTypes.get(getState()) == null)
 			throw new RuntimeException("Lecture impossible dans l'état actuel");
+			
 		for (PmsiLineType lineType : linesTypes.get(getState())) {
 			// Récupération du type de ligne (paut être réutilisé)
 			Pattern pattern = lineType.getPattern();
@@ -130,15 +146,9 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	/**
 	 * Suppression du contenu du buffer stockant la ligne actuelle
 	 */
-	public void flushLine() {
+	protected void flushLine() {
 		toParse = new String();
 	}
-
-	/**
-	 * Fonction à appeler à la fin du fichier
-	 * @throws Exception 
-	 */
-	public abstract void endOfFile() throws PmsiReaderException, MachineStateException;
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe

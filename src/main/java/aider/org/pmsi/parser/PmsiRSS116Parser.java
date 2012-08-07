@@ -83,7 +83,7 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 	 * @throws PmsiWriterException 
 	 */
 	public PmsiRSS116Parser(Reader reader, PmsiWriter writer) throws PmsiWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSS_HEADER, new PmsiRss116Header());
@@ -213,11 +213,6 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
-	}
-
-	@Override
-	public void endOfFile() throws PmsiReaderException, MachineStateException {
-		changeState(EnumSignal.SIGNAL_EOF);		
 	}
 
 	@Override

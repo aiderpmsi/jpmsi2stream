@@ -62,7 +62,7 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 	 * @throws PmsiWriterException 
 	 */
 	public PmsiRSF2009Parser(Reader reader, PmsiWriter pmsiPipedWriter) throws PmsiWriterException {
-		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
+		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
 		addLineType(EnumState.WAIT_RSF_HEADER, new PmsiRsf2009Header());
@@ -135,11 +135,6 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
-	}
-
-	@Override
-	public void endOfFile() throws PmsiReaderException, MachineStateException {
-		changeState(EnumSignal.SIGNAL_EOF);
 	}
 
 	@Override
