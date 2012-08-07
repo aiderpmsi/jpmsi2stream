@@ -20,7 +20,7 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @param <EnumState>
  * @param <EnumSignal>
  */
-public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal> {
+public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<EnumState, EnumSignal, String> {
 
 	/**
 	 * Lecteur du fichier permettant de lire des lignes.Attention, la fin de ligne est définie
@@ -29,7 +29,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	private BufferedReader reader;
 	
 	/**
-	 * Stocke la dernière ligne extraite du {@link PmsiReader#pmsiReader) permettant
+	 * Stocke la dernière ligne extraite du {@link PmsiParser#pmsiReader) permettant
 	 * de la traiter et de la comparer avec les lignes que l'on recherche 
 	 */
 	private String toParse;
@@ -39,7 +39,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private HashMap<EnumState, List<PmsiLineType>> linesTypes = new HashMap<EnumState, List<PmsiLineType>>();
 
-	protected PmsiReader() { }
+	protected PmsiParser() { }
 	
 	/**
 	 * Constructeur de la classe permettant de lire un fichier PMSI à partir d'un flux
@@ -48,7 +48,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	 * @param stateReady
 	 * @param stateFinished
 	 */
-	public PmsiReader(
+	public PmsiParser(
 			Reader reader,
 			EnumState stateReady,
 			EnumState stateFinished) {
@@ -140,6 +140,7 @@ public abstract class PmsiReader<EnumState, EnumSignal> extends MachineState<Enu
 	
 	/**
 	 * Fonction à appeler pour réaliser le travail de cette classe
+	 * @return 
 	 * @throws PmsiWriterException
 	 * @throws PmsiReaderException
 	 */

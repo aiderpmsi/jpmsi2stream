@@ -8,13 +8,13 @@ import java.io.PrintStream;
 import aider.org.pmsi.dto.PmsiDto;
 import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
 
-public class PmsiDtoRunner implements PmsiDto {
+public class PmsiDtoExample implements PmsiDto {
 
 	private InputStream inputStream;
 	
 	private PrintStream outputStream;
 	
-	public PmsiDtoRunner(InputStream inputStream, OutputStream outputStream) {
+	public PmsiDtoExample(InputStream inputStream, OutputStream outputStream) {
 		this.inputStream = inputStream;
 		this.outputStream = new PrintStream(outputStream);
 	}

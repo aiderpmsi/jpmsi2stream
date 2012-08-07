@@ -18,7 +18,7 @@ import org.kohsuke.args4j.Option;
  * @author delabre
  *
  */
-public class MainOptions {
+public class MainExampleOptions {
 
 	/**
 	 * Définit si l'argument de demande d'affichage de l'aide a été défini

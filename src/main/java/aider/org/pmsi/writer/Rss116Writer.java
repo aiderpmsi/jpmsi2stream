@@ -3,7 +3,7 @@ package aider.org.pmsi.writer;
 import java.io.OutputStream;
 
 import aider.org.pmsi.exceptions.PmsiWriterException;
-import aider.org.pmsi.parser.PmsiRSS116Reader;
+import aider.org.pmsi.parser.PmsiRSS116Parser;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Acte;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Da;
@@ -12,7 +12,7 @@ import aider.org.pmsi.parser.linestypes.PmsiRss116Header;
 import aider.org.pmsi.parser.linestypes.PmsiRss116Main;
 
 /**
- * Writer {@link PmsiWriterImpl} pour {@link PmsiRSS116Reader}
+ * Writer {@link PmsiWriterImpl} pour {@link PmsiRSS116Parser}
  * @author delabre
  *
  */
@@ -38,7 +38,7 @@ public class Rss116Writer extends PmsiWriterImpl {
 			super.writeLineElement(lineType);
 		}
 		
-		// Lecture d'un RSS Main
+		// Lecture d'un RSS MainExample
 		else if (lineType instanceof PmsiRss116Main) {
 			// Si un rss main est ouvert, il faut le fermer
 			if (getLastLine() instanceof PmsiRss116Main) {

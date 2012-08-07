@@ -16,10 +16,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import aider.org.pmsi.dto.PmsiStreamMuxer;
 import aider.org.pmsi.dto.PmsiCallable;
 import aider.org.pmsi.exceptions.PmsiReaderException;
-import aider.org.pmsi.parser.PmsiRSF2009Reader;
-import aider.org.pmsi.parser.PmsiRSF2012Reader;
-import aider.org.pmsi.parser.PmsiRSS116Reader;
-import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.parser.PmsiRSF2009Parser;
+import aider.org.pmsi.parser.PmsiRSF2012Parser;
+import aider.org.pmsi.parser.PmsiRSS116Parser;
+import aider.org.pmsi.parser.PmsiParser;
 import aider.org.pmsi.writer.PmsiWriter;
 import aider.org.pmsi.writer.Rsf2009Writer;
 import aider.org.pmsi.writer.Rsf2012Writer;
@@ -30,7 +30,7 @@ import aider.org.pmsi.writer.Rss116Writer;
  * @author delabre 
  *
  */
-public class Main {
+public class MainExample {
 
 	/**
 	 * Enumération permettant d'indiquer quel lecteur a réussi à réaliser la lecture du fichier
@@ -44,7 +44,7 @@ public class Main {
 	/**
 	 * Liste des fichiers que l'on peut lire
 	 */
-	public static List<FileType> listTypes = new ArrayList<Main.FileType>() {
+	public static List<FileType> listTypes = new ArrayList<MainExample.FileType>() {
 		private static final long serialVersionUID = -4594379149065725315L;
 		{
 			add(FileType.RSS116);
@@ -67,7 +67,7 @@ public class Main {
 	public static void main(String[] args) throws Throwable  {
 		
 		// Définition des arguments fournis au programme
-		MainOptions options = new MainOptions();
+		MainExampleOptions options = new MainExampleOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
         ArrayList<String> errorsList = new ArrayList<String>();
@@ -124,7 +124,7 @@ public class Main {
 	 */
 	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
 		// Reader et writer
-		PmsiReader<?, ?> reader = null;
+		PmsiParser<?, ?> reader = null;
 		PmsiWriter writer = null;
 		PmsiStreamMuxer muxer = null;
 		// Thread du lecteur de writer
@@ -132,15 +132,16 @@ public class Main {
 		// exception du lecteur de writer
 		Exception exception = null;
 		// Thread executor
-		ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
-		Future<String> threadExecutorFuture = null;
+		ExecutorService threadExecutor = Executors.newCachedThreadPool();
+		Future<String> threadDtoFuture = null;
+		Future<String> threadParserFuture = null;
 		
 		try {
 			// Création du transformateur de outputstream en inputstream
 			muxer = new PmsiStreamMuxer();
 			
 			// Création de lecteur de inputstream et conenction au muxer
-			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream(), System.out);
+			PmsiDtoExample runner = new PmsiDtoExample(muxer.getInputStream(), System.out);
 			// Création du thread du lecteur de inputstream
 			pmsiCallable = new PmsiCallable(runner);
 			
@@ -148,29 +149,32 @@ public class Main {
 			switch(type) {
 				case RSS116:
 					writer = new Rss116Writer(muxer.getOutputStream());
-					reader = new PmsiRSS116Reader(new InputStreamReader(in), writer);
+					reader = new PmsiRSS116Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
 					writer = new Rsf2009Writer(muxer.getOutputStream());
-					reader = new PmsiRSF2009Reader(new InputStreamReader(in), writer);
+					reader = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
 					writer = new Rsf2012Writer(muxer.getOutputStream());
-					reader = new PmsiRSF2012Reader(new InputStreamReader(in), writer);
+					reader = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
 					break;
 				}
 			
 			// lancement du lecteur de muxer
-			threadExecutorFuture = threadExecutor.submit(pmsiCallable);
+			threadDtoFuture = threadExecutor.submit(pmsiCallable);
 	
-			// Lecture du fichier par mise en route de la machine à états
-			reader.run();
+			// lancement du parseur
+			threadParserFuture = threadExecutor.submit(reader);
+			
+			// Attente que le parseur ait fini
+			threadParserFuture.get();
 			
 			// Fin de fichier evoyé au muxer
 			muxer.eof();
 	
 			// Attente que le lecteur de muxer ait fini
-			threadExecutorFuture.get();
+			threadDtoFuture.get();
 						
 		} catch (ExecutionException e) {
 			exception = (Exception) e.getCause();

@@ -3,7 +3,7 @@ package aider.org.pmsi.writer;
 import java.io.OutputStream;
 
 import aider.org.pmsi.exceptions.PmsiWriterException;
-import aider.org.pmsi.parser.PmsiRSF2012Reader;
+import aider.org.pmsi.parser.PmsiRSF2012Parser;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
@@ -14,7 +14,7 @@ import aider.org.pmsi.parser.linestypes.PmsiRsf2012l;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012m;
 
 /**
- * Writer {@link PmsiWriterImpl} pour {@link PmsiRSF2012Reader}
+ * Writer {@link PmsiWriterImpl} pour {@link PmsiRSF2012Parser}
  * @author delabre
  *
  */
