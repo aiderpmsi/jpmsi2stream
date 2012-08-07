@@ -157,6 +157,7 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws PmsiReaderException
 	 */
 	public abstract void process() throws PmsiWriterException, PmsiReaderException, MachineStateException;
+
 	
 	/**
 	 * Fonction permettant de libérer les ressources créées par cet objet
