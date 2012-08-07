@@ -16,12 +16,12 @@ import aider.org.pmsi.writer.PmsiWriter;
 
 
 /**
- * Classe étendant la classe abstraite de PmsiReader et permettant de lire un
+ * Classe étendant la classe abstraite de PmsiParser et permettant de lire un
  * fichier RSS (version 116). 
  * @author delabre
  *
  */
-public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS116Reader.EnumState, PmsiRSS116Reader.EnumSignal> {
+public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS116Parser.EnumState, PmsiRSS116Parser.EnumSignal> {
 
 	/**
 	 * Liste des états de la machine à états
@@ -81,7 +81,7 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	 * @param reader
 	 * @throws PmsiWriterException 
 	 */
-	public PmsiRSS116Reader(Reader reader, PmsiWriter writer) throws PmsiWriterException {
+	public PmsiRSS116Parser(Reader reader, PmsiWriter writer) throws PmsiWriterException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED);
 	
 		// Indication des différents types de ligne que l'on peut rencontrer
@@ -219,8 +219,9 @@ public class PmsiRSS116Reader extends aider.org.pmsi.parser.PmsiReader<PmsiRSS11
 	}
 
 	@Override
-	public void finish() throws Exception {
+	public String finish() throws Exception {
 		writer.writeEndDocument();
+		return null;
 	}
 
 	@Override

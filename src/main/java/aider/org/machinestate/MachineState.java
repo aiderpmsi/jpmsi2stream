@@ -1,9 +1,11 @@
 package aider.org.machinestate;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 
 /**
- * Machine à états avec transitions par signaux
+ * <p>
+ * Machine à états avec transitions par signaux.
  * Template pouvant être utilisée avec toutes sortes de signaux et états
  * à partir du moment où ils sont comparables
  * @author delabre
@@ -11,7 +13,7 @@ import java.util.HashMap;
  * @param <EnumState> classe d'énumération des états
  * @param <EnumSignal> classe d'énumération des signaux
  */
-public abstract class MachineState<EnumState, EnumSignal> {
+public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements Callable<ReturnType>{
 
 	/**
 	 * Définition de l'état où la machine doit d'arrêter
@@ -86,11 +88,11 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	 * Lancement de la machine à états
 	 * @throws Exception
 	 */
-	public void run() throws Exception {
+	public ReturnType call() throws Exception {
 		while (stateActual != stateFinished) {
 			process();
 		}
-		finish();
+		return finish();
 	}
 	
 	/**
@@ -102,7 +104,8 @@ public abstract class MachineState<EnumState, EnumSignal> {
 	/**
 	 * Méthode à implémenter pour réaliser une action à la fin du fonctionnement de
 	 * la machine à états
+	 * @return Un objet de type ReturnType renvoyé par l'appel à Call
 	 * @throws Exception
 	 */
-	public abstract void finish() throws Exception;
+	public abstract ReturnType finish() throws Exception;
 }

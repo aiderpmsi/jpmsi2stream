@@ -7,7 +7,7 @@
  * <p>
  * Le schéma est le suivant :
  * <br/>
- * aider.org.pmsi.parser.PmsiReader &#8658;
+ * aider.org.pmsi.parser.PmsiParser &#8658;
  * aider.org.pmsi.dto.PmsiPipedWriter &#8658;
  * aider.org.pmsi.dto.PmsiThreadedPipedReader &#8658;
  * aider.org.pmsi.dto.PmsiDto &#8658;
@@ -15,7 +15,7 @@
  * </p>
  * 
  * <p>
- * Le construction de ces classes (sauf PmsiReader) est gérée par des fabirques imbriquées. :
+ * Le construction de ces classes (sauf PmsiParser) est gérée par des fabirques imbriquées. :
  * <ol>
  *   <li>On crée un PmsiDtoReportFactory sans avoir besoin d'une autre classe</li>
  *   <li>On crée un PmsiDtoFactory en donnant au constructeur un PmsiDtoReportFactory</li>

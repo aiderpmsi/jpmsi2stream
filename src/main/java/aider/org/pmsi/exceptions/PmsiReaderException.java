@@ -1,11 +1,11 @@
 package aider.org.pmsi.exceptions;
 
-import aider.org.pmsi.parser.PmsiReader;
+import aider.org.pmsi.parser.PmsiParser;
 
 /**
  * Exception levée lors d'une erreur de lecture d'un fichier de pmsi
  * @author delabre
- * @see PmsiReader
+ * @see PmsiParser
  */
 public class PmsiReaderException extends PmsiException {
 
