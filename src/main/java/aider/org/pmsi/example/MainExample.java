@@ -3,7 +3,6 @@ package aider.org.pmsi.example;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +127,7 @@ public class MainExample {
 		PmsiParser<?, ?> reader = null;
 		PmsiWriter writer = null;
 		
-		// Flux input et output connectés
-		PipedInputStream inputStream = null;
+		// Flux output connecté
 		PipedOutputStream outputStream = null;
 		
 		// Thread du lecteur de writer
@@ -142,16 +140,9 @@ public class MainExample {
 		Future<String> threadParserFuture = null;
 		
 		try {
-			// Création du transformateur de outputstream en inputstream
-			inputStream = new PipedInputStream();
-			outputStream = new PipedOutputStream(inputStream);
+			outputStream = new PipedOutputStream();
 			
-			// Création de lecteur de inputstream et conenction au muxer
-			PmsiDtoExample runner = new PmsiDtoExample(inputStream, System.out);
-			// Création du thread du lecteur de inputstream
-			pmsiCallable = new PmsiCallable(runner);
-			
-			// Choix du reader et du writer et connection au muxer
+			// Choix du parser et du writer
 			switch(type) {
 				case RSS116:
 					writer = new Rss116Writer(outputStream);
@@ -167,6 +158,14 @@ public class MainExample {
 					break;
 				}
 			
+			// Création de la classe de transfert de données
+			// Et connection au flux de sortie du writer
+			PmsiDtoExample pmsiDto = new PmsiDtoExample(System.out);
+			outputStream.connect(pmsiDto.getPipedInputStream());
+			
+			// Création du thread du lecteur de inputstream
+			pmsiCallable = new PmsiCallable(pmsiDto);
+			
 			// lancement du lecteur de muxer
 			threadDtoFuture = threadExecutor.submit(pmsiCallable);
 	
@@ -176,16 +175,15 @@ public class MainExample {
 			// Attente que le parseur ait fini
 			threadParserFuture.get();
 			
+			// Fermeture de la classe de transfert de données
+			pmsiDto.close();
+			
 			// Fin de fichier envoyé au muxer
 			outputStream.close();
 			outputStream = null;
 	
 			// Attente que le lecteur de muxer ait fini
 			threadDtoFuture.get();
-			
-			// Fermeture de l'inputStream
-			inputStream.close();
-			inputStream = null;
 						
 		} catch (ExecutionException e) {
 			exception = (Exception) e.getCause();
@@ -199,8 +197,6 @@ public class MainExample {
 				writer.close();
 			if (outputStream != null)
 				outputStream.close();
-			if (inputStream != null)
-				inputStream.close();
 		}
 		
 		if (exception != null)

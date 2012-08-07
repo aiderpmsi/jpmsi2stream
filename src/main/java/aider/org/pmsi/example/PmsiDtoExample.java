@@ -1,8 +1,8 @@
 package aider.org.pmsi.example;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
 import java.io.PrintStream;
 
 import aider.org.pmsi.dto.PmsiDto;
@@ -10,13 +10,17 @@ import aider.org.pmsi.exceptions.PmsiDtoRunnableException;
 
 public class PmsiDtoExample implements PmsiDto {
 
-	private InputStream inputStream;
+	private PipedInputStream inputStream;
 	
 	private PrintStream outputStream;
 	
-	public PmsiDtoExample(InputStream inputStream, OutputStream outputStream) {
-		this.inputStream = inputStream;
+	public PmsiDtoExample(OutputStream outputStream) {
+		this.inputStream = new PipedInputStream();
 		this.outputStream = new PrintStream(outputStream);
+	}
+	
+	public PipedInputStream getPipedInputStream() {
+		return inputStream;
 	}
 	
 	@Override
@@ -37,6 +41,11 @@ public class PmsiDtoExample implements PmsiDto {
 	}
 
 	@Override
-	public void close() {
+	public void close() throws PmsiDtoRunnableException {
+		try {
+			inputStream.close();
+		} catch (IOException e) {
+			throw new PmsiDtoRunnableException(e);
+		}
 	}
 }
