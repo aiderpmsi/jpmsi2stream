@@ -128,7 +128,7 @@ public class Main {
 		PmsiWriter writer = null;
 		PmsiStreamMuxer muxer = null;
 		// Thread du lecteur de writer
-		PmsiCallable thread = null;
+		PmsiCallable pmsiCallable = null;
 		// exception du lecteur de writer
 		Exception exception = null;
 		// Thread executor
@@ -142,7 +142,7 @@ public class Main {
 			// Création de lecteur de inputstream et conenction au muxer
 			PmsiDtoRunner runner = new PmsiDtoRunner(muxer.getInputStream(), System.out);
 			// Création du thread du lecteur de inputstream
-			thread = new PmsiCallable(runner);
+			pmsiCallable = new PmsiCallable(runner);
 			
 			// Choix du reader et du writer et connection au muxer
 			switch(type) {
@@ -161,7 +161,7 @@ public class Main {
 				}
 			
 			// lancement du lecteur de muxer
-			threadExecutorFuture = threadExecutor.submit(thread);
+			threadExecutorFuture = threadExecutor.submit(pmsiCallable);
 	
 			// Lecture du fichier par mise en route de la machine à états
 			reader.run();
