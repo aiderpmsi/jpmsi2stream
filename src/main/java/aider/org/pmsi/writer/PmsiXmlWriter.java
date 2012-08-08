@@ -47,8 +47,8 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void open(OutputStream outputStream, String encoding) throws PmsiWriterException {
-		// Si le flux xmlwriter est déjà ouvert, il faut le fermer
-		this.close();
+		// Si le flux xmlwriter est déjà ouvert, il faut lancer une exception
+		checkIsClosed();
 		
 		try {
 			// Création du writer de xml
@@ -175,6 +175,15 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 */
 	private void checkIsOpen() throws PmsiWriterException {
 		if (xmlWriter == null)
+			throw new PmsiWriterException("Tentative d'écriture dans un flux fermé");
+	}
+	
+	/**
+	 * Vérifie que le flux est bien fermé avant son overture
+	 * @throws PmsiWriterException 
+	 */
+	private void checkIsClosed() throws PmsiWriterException {
+		if (xmlWriter != null)
 			throw new PmsiWriterException("Tentative d'écriture dans un flux fermé");
 	}
 	
