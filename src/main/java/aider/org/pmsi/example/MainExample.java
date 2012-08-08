@@ -8,7 +8,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.exceptions.PmsiReaderException;
+import aider.org.pmsi.exceptions.PmsiParserException;
 import aider.org.pmsi.parser.PmsiRSF2009Parser;
 import aider.org.pmsi.parser.PmsiRSF2012Parser;
 import aider.org.pmsi.parser.PmsiRSS116Parser;
@@ -61,7 +61,7 @@ public class MainExample {
 		MainExampleOptions options = new MainExampleOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
-        ArrayList<String> errorsList = new ArrayList<String>();
+        ArrayList<String> parsersErrorsList = new ArrayList<String>();
         
         // Lecture des arguments
         try {
@@ -89,17 +89,18 @@ public class MainExample {
         			break;
         		}
             } catch (Throwable e) {
-            	// Si on a une erreur de Reader, c'est que le reader est pas le bon
-            	// Si c'est une autre erreur, c'est que le reader est bon, mais que l'insertino
-            	// des données après n'a pas marché.
-            	if (e instanceof PmsiReaderException) {
-            		errorsList.add(((PmsiReaderException) e).getXmlMessage());
+            	// Si on a une erreur de PmsiParserException, c'est que le parseur n'a
+            	// juste pas été capable de déchiffrer le fichier, tout le reste marchait.
+            	// Il faut donc essayer avec un autre parseur
+            	if (e instanceof PmsiParserException) {
+            		parsersErrorsList.add(e.getStackTrace()[0].getClassName() + " : " +
+            				((PmsiParserException) e).getMessage());
             	} else
             		throw e;
             }
         }
 	
-        for (String hoho : errorsList) {
+        for (String hoho : parsersErrorsList) {
         	System.out.println(hoho);
         }
         
@@ -118,7 +119,7 @@ public class MainExample {
 		PmsiParser<?, ?> parser = null;
 		PmsiWriter writer = new PmsiXmlWriter(System.out, "UTF-8");
 		
-		try {		
+		try {
 			// Choix du parser et du writer
 			switch(type) {
 				case RSS116:

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import aider.org.machinestate.MachineState;
 import aider.org.machinestate.MachineStateException;
-import aider.org.pmsi.exceptions.PmsiReaderException;
+import aider.org.pmsi.exceptions.PmsiParserException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 
@@ -79,11 +79,11 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws MachineStateException 
 	 * @throws Exception
 	 */
-	protected void readNewLine() throws PmsiReaderException, MachineStateException {
+	protected void readNewLine() throws PmsiParserException, MachineStateException {
 		try {
 			toParse = reader.readLine();
 		} catch (IOException e) {
-			throw new PmsiReaderException(e);
+			throw new PmsiParserException(e);
 		}
 		
 		// Si il n'y a plus de ligne à lire, on envoie le signal eof
@@ -154,9 +154,9 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * Fonction à appeler pour réaliser le travail de cette classe
 	 * @return 
 	 * @throws PmsiWriterException
-	 * @throws PmsiReaderException
+	 * @throws PmsiParserException
 	 */
-	public abstract void process() throws PmsiWriterException, PmsiReaderException, MachineStateException;
+	public abstract void process() throws PmsiWriterException, PmsiParserException, MachineStateException;
 
 	
 	/**

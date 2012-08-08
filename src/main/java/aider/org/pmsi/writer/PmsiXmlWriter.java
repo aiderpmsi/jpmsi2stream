@@ -26,6 +26,10 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 */
 	private XMLStreamWriter xmlWriter = null;
 	
+	public PmsiXmlWriter() {
+		// Ne rien faire
+	}
+	
 	/**
 	 * Construction, écrit sur le flux sortant fourni, avec l'encoding désiré
 	 * @param outputStream

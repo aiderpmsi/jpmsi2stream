@@ -2,12 +2,6 @@ package aider.org.pmsi.exceptions;
 
 /**
  * Exception de base des exceptions lancées par le parseur pmsi.
- * Elle permet de définir :
- * <ul>
- *  <li>Le message d'erreur comme d'habitude</li>
- *  <li>Un message d'erreur xml pour simplifier le report de réussite
- *    ou d'échec de parsing</li>
- * </ul>
  * @author delabre
  *
  */
@@ -15,11 +9,6 @@ package aider.org.pmsi.exceptions;
 // classe qui a lancé l'erreur
 public abstract class PmsiException extends Exception {
 
-	/**
-	 * Message : chaine vide par défaut
-	 */
-	private String xmlMessage = "";
-	
 	/**
 	 * numéro de série autogénéré
 	 */
@@ -53,24 +42,6 @@ public abstract class PmsiException extends Exception {
 	 */
 	public PmsiException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-	}
-
-	/**
-	 * Définit le message xml de cette exception
-	 * @return message xml
-	 */
-	public String getXmlMessage() {
-		return xmlMessage;
-	}
-
-	/**
-	 * Retourne le message xml de cette exception
-	 * @param xmlMessage
-	 * @return l'exception {@link PmsiException} actuelle (pour faire des set en cascade)
-	 */
-	public PmsiException setXmlMessage(String xmlMessage) {
-		this.xmlMessage = xmlMessage;
-		return this;
 	}
 
 }

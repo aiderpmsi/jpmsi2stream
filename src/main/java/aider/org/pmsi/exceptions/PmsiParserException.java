@@ -1,31 +1,30 @@
 package aider.org.pmsi.exceptions;
 
-import aider.org.pmsi.dto.PmsiDto;
+import aider.org.pmsi.parser.PmsiParser;
 
 /**
- * Exceptions levées lors d'une erreur lors du transfert des données
- * dans le support de sérialisation
+ * Exception levée lors d'une erreur de lecture d'un fichier de pmsi
  * @author delabre
- * @see PmsiDto
+ * @see PmsiParser
  */
-public class PmsiDtoException extends PmsiException {
+public class PmsiParserException extends PmsiException {
 
 	/**
 	 * Numéro de série autogénéré
 	 */
-	private static final long serialVersionUID = 8837938697462130158L;
+	private static final long serialVersionUID = -5876923561804105709L;
 
 	/**
 	 * @see PmsiException#PmsiException()
 	 */	
-	public PmsiDtoException() {
+	public PmsiParserException() {
 	}
 
 	/**
 	 * @see PmsiException#PmsiException(String)
 	 * @param arg0
 	 */
-	public PmsiDtoException(String arg0) {
+	public PmsiParserException(String arg0) {
 		super(arg0);
 	}
 
@@ -33,7 +32,7 @@ public class PmsiDtoException extends PmsiException {
 	 * @see PmsiException#PmsiException(Throwable)
 	 * @param arg0
 	 */
-	public PmsiDtoException(Throwable arg0) {
+	public PmsiParserException(Throwable arg0) {
 		super(arg0);
 	}
 
@@ -42,7 +41,7 @@ public class PmsiDtoException extends PmsiException {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public PmsiDtoException(String arg0, Throwable arg1) {
+	public PmsiParserException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

@@ -5,7 +5,7 @@ import java.io.Reader;
 import java.util.Stack;
 
 import aider.org.machinestate.MachineStateException;
-import aider.org.pmsi.exceptions.PmsiReaderException;
+import aider.org.pmsi.exceptions.PmsiParserException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
@@ -99,7 +99,7 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 	 * @throws PmsiFileNotReadable 
 	 * @throws Exception 
 	 */
-	public void process() throws PmsiWriterException, PmsiReaderException, MachineStateException {
+	public void process() throws PmsiWriterException, PmsiParserException, MachineStateException {
 		PmsiLineType matchLine = null;
 
 		switch(getState()) {
@@ -117,7 +117,7 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				throw new PmsiReaderException("Entête du fichier non trouvée");
+				throw new PmsiParserException("Entête du fichier non trouvée");
 			}
 			break;
 		case WAIT_RSF_LINES:
@@ -141,19 +141,18 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				throw new PmsiReaderException("Ligne non reconnue");
+				throw new PmsiParserException("Ligne non reconnue");
 			}
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw new PmsiReaderException("trop de caractères dans la ligne");
+				throw new PmsiParserException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			throw (PmsiReaderException) new PmsiReaderException("Fichier vide").
-				setXmlMessage("<rsf v=\"2012\"><parsingerror>Fichier vide</parsingerror></rsf>");
+			throw new PmsiParserException("Fichier vide");
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
