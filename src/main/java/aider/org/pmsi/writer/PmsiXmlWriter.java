@@ -1,11 +1,12 @@
 package aider.org.pmsi.writer;
 
-import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PipedOutputStream;
-import java.util.Stack;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
@@ -17,37 +18,25 @@ import aider.org.pmsi.parser.linestypes.PmsiLineType;
  * @author delabre
  *
  */
-public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
-	
+public class PmsiXmlWriter implements PmsiWriter {
+
 	/**
-	 * Flux pipedoutputstream dans lequel le fichier xml va être écrit
-	 */
-	PipedOutputStream outputStream = null;
-	
-	/**
-	 * Flux xml dans lequel on écrit le fichier final (repose sur {@link PmsiXmlPipedOutputStreamWriter#out}
+	 * Flux xml dans lequel on écrit le fichier final (repose sur {@link PmsiXmlWriter#out}
 	 * Il faut faire attention à l'ordre de création et de destruction
 	 */
 	private XMLStreamWriter xmlWriter = null;
 	
 	/**
-	 * Permet de se souvenir quelle ligne a été insérée en dernier
-	 */
-	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
-	
-	/**
 	 * Construction, écrit sur le flux sortant fourni, avec l'encoding désiré
 	 * @param outputStream
 	 * @param encoding
-	 * @throws PmsiWriterException 
+	 * @throws PmsiWriterException
 	 */
-	public PmsiXmlPipedOutputStreamWriter(String encoding) throws PmsiWriterException {
+	public PmsiXmlWriter(OutputStream outputStream, String encoding) throws PmsiWriterException {
 		try {
-			// Création du PipedOutputStream
-			outputStream = new PipedOutputStream();
 			// Création du writer de xml
-			xmlWriter = XMLOutputFactory.newInstance().
-					createXMLStreamWriter(outputStream, encoding);
+			xmlWriter = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance().
+					createXMLStreamWriter(outputStream, encoding));
 		} catch (XMLStreamException e) {
 			throw new PmsiWriterException(e);
 		}
@@ -89,10 +78,6 @@ public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
 	 */
 	public void writeEndElement() throws PmsiWriterException {
 		try {
-			// On prend en compte la fermeture de la ligne (en donc la modification
-			// nécessaire de lastLine)
-			if (!lastLine.empty())
-				lastLine.pop();
 			xmlWriter.writeEndElement();
 		} catch (Exception e) {
 			throw new PmsiWriterException(e);
@@ -106,8 +91,6 @@ public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException {
-		// On prend en compte l'ajout de ce type de ligne
-		lastLine.add(lineType);
 		writeLineElement(lineType.getName(), lineType.getNames(), lineType.getContent());
 	}
 	
@@ -137,22 +120,10 @@ public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
 	 */
 	public void writeEndDocument() throws PmsiWriterException {
 		try {
-			// Fermeture de tous les tags non fermés
-			while (!lastLine.empty()) {
-				lastLine.pop();
-				xmlWriter.writeEndElement();
-			}
-			xmlWriter.writeEndElement();
-			
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
-			
-			// Fermeture du flux
-			outputStream.close();
-			outputStream = null;
+
 		} catch (XMLStreamException e) {
-			throw new PmsiWriterException(e);
-		} catch (IOException e) {
 			throw new PmsiWriterException(e);
 		}
 	}
@@ -168,31 +139,10 @@ public class PmsiXmlPipedOutputStreamWriter implements PmsiWriter {
 				xmlWriter.close();
 				xmlWriter = null;
 			}
-			if (outputStream != null) {
-				outputStream.close();
-				outputStream = null;
-			}
+
 		} catch (XMLStreamException e) {
 			throw new PmsiWriterException(e);
-		} catch (IOException e) {
-			throw new PmsiWriterException(e);
 		}
-		
 	}
-
-	/**
-	 * Renvoie la dernière ligne insérée
-	 * @return La dernière ligne insérée
-	 */
-	public PmsiLineType getLastLine() throws PmsiWriterException {
-		return lastLine.peek();
-	}
-
-	/**
-	 * Retourne le {@link PipedOutputStream} de cette classe dans lequel le writer écrit
-	 */
-	public PipedOutputStream getOutputStream() {
-		return outputStream;
-	}	
 	
 }

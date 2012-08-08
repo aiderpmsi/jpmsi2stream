@@ -2,6 +2,7 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Stack;
 
 import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
@@ -57,6 +58,11 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 	private PmsiWriter writer = null;
 	
 	/**
+	 * Permet de se souvenir quelle ligne a été insérée en dernier
+	 */
+	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
+	
+	/**
 	 * Constructeur
 	 * @param reader
 	 * @throws PmsiWriterException 
@@ -96,42 +102,56 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 
 		switch(getState()) {
 		case STATE_READY:
+			// Le parseur est en attente de la prochaine ligne
 			writer.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSF_HEADER:
+			// Attente de la ligne de header
 			matchLine = parseLine();
 			if (matchLine != null) {
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Entête du fichier non trouvée").
-						setXmlMessage("<rsf v=\"2009\"><parsingerror>Entête du fichier non trouvée</parsingerror></rsf>");
+				throw new PmsiReaderException("Entête du fichier non trouvée");
 			}
 			break;
 		case WAIT_RSF_LINES:
+			// Attente d'une ligne A, B, C, H ou M
 			matchLine = parseLine();
 			if (matchLine != null) {
+				if (matchLine instanceof PmsiRsf2009a) {
+					// Si on a une ligne A, il faut fermer les lignes précédentes jusqu'au header
+					while (!(lastLine.lastElement() instanceof PmsiRsf2009Header)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+				} else {
+					// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
+					while (!(lastLine.lastElement() instanceof PmsiRsf2009a)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+				}
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Ligne non reconnue").
-					setXmlMessage("<rsf v=\"2009\"><parsingerror>Ligne non reconnue</parsingerror></rsf>");
+				throw new PmsiReaderException("Ligne non reconnue");
 
 			}
 			break;
 		case WAIT_ENDLINE:
-			// On vérifie qu'il ne reste rien
+			// Attente de la fin de la ligne
 			if (getLineSize() != 0)
-				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
-					setXmlMessage("<rsf v=\"2009\"><parsingerror>trop de caractères dans la ligne</parsingerror></rsf>");
+				throw new PmsiReaderException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
 		case STATE_EMPTY_FILE:
-			throw (PmsiReaderException) new PmsiReaderException("Fichier vide").
-				setXmlMessage("<rsf v=\"2009\"><parsingerror>Fichier vide</parsingerror></rsf>");
+			throw new PmsiReaderException("Fichier vide");
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
@@ -139,6 +159,12 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 
 	@Override
 	public void finish() throws Exception {
+		// Fermeture de tous les éléments ouverts :
+		while (!lastLine.isEmpty()) {
+			lastLine.pop();
+			writer.writeEndElement();
+		}
+		// Fermeture du document
 		writer.writeEndDocument();
 	}
 	

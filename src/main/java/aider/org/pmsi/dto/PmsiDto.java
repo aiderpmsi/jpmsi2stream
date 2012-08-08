@@ -16,7 +16,7 @@ import aider.org.pmsi.exceptions.PmsiDtoException;
  * @author delabre
  *
  */
-public interface PmsiDto {
+public interface PmsiDto<ReturnType> {
 
 	/**
 	 * Réalise le travail de transfert entre {@link InputStream} du {@link InOutStream}
@@ -30,4 +30,9 @@ public interface PmsiDto {
 	 * @throws PmsiDtoException
 	 */
 	public void close() throws PmsiDtoException;
+	
+	/**
+	 * Renvoie un rapport d'insertion
+	 */
+	public ReturnType getEndMessage() throws PmsiDtoException;
 }

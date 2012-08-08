@@ -7,7 +7,7 @@ import java.io.PrintStream;
 import aider.org.pmsi.dto.PmsiPipedStreamDto;
 import aider.org.pmsi.exceptions.PmsiDtoException;
 
-public class PmsiDtoExample extends PmsiPipedStreamDto {
+public class PmsiDtoExample extends PmsiPipedStreamDto<String> {
 	
 	private PrintStream outputStream;
 	
@@ -36,5 +36,10 @@ public class PmsiDtoExample extends PmsiPipedStreamDto {
 	@Override
 	public void close() throws PmsiDtoException {
 		super.close();
+	}
+
+	@Override
+	public String getEndMessage() throws PmsiDtoException {
+		return "PmsiDtoExample done";
 	}
 }

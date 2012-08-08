@@ -8,25 +8,25 @@ import java.util.concurrent.Callable;
  * @author delabre
  *
  */
-public class PmsiCallable implements Callable<String> {
+public class PmsiCallable<ReturnType> implements Callable<ReturnType> {
 
 	/**
 	 * Classe implémentant {@link PmsiDto} à lancer
 	 */
-	private PmsiDto runnable;
+	private PmsiDto<ReturnType> pmsiDto;
 		
 	/**
 	 * Constructeur
-	 * @param runnable sera lancée lors de l'exécution de {@link PmsiCallable#runnable}
+	 * @param pmsiDto sera lancée lors de l'exécution de {@link PmsiCallable#pmsiDto}
 	 */
-	public PmsiCallable(PmsiDto runnable) {
-		this.runnable = runnable;
+	public PmsiCallable(PmsiDto<ReturnType> pmsiDto) {
+		this.pmsiDto = pmsiDto;
 	}
 
 	@Override
-	public String call() throws Exception {
-		runnable.transfer();
-		return "done";
+	public ReturnType call() throws Exception {
+		pmsiDto.transfer();
+		return pmsiDto.getEndMessage();
 	}
 	
 }

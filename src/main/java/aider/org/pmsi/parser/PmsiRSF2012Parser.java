@@ -2,6 +2,7 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Stack;
 
 import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
@@ -56,10 +57,14 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 	private static final String name = "RSF2012"; 
 	
 	/**
+	 * Permet de se souvenir quelle ligne a été insérée en dernier
+	 */
+	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
+
+	/**
 	 * Constructeur
 	 * @param reader
 	 * @throws PmsiWriterException 
-
 	 */
 	public PmsiRSF2012Parser(Reader reader, PmsiWriter writer) throws PmsiWriterException {
 		super(reader, EnumState.STATE_READY, EnumState.STATE_FINISHED, EnumSignal.SIGNAL_EOF);
@@ -99,35 +104,50 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 
 		switch(getState()) {
 		case STATE_READY:
+			// Le parseur est en attente de la prochaine ligne
 			writer.writeStartDocument(name, new String[0], new String[0]);
 			changeState(EnumSignal.SIGNAL_START);
 			readNewLine();
 			break;
 		case WAIT_RSF_HEADER:
+			// Attente de la ligne de header
 			matchLine = parseLine();
 			if (matchLine != null) {
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Entête du fichier non trouvée").
-					setXmlMessage("<rsf v=\"2012\"><parsingerror>Entête du fichier non trouvée</parsingerror></rsf>");
+				throw new PmsiReaderException("Entête du fichier non trouvée");
 			}
 			break;
 		case WAIT_RSF_LINES:
+			// Attente d'une ligne A, B, C, H, L ou M
 			matchLine = parseLine();
 			if (matchLine != null) {
+				if (matchLine instanceof PmsiRsf2012a) {
+					// Si on a une ligne A, il faut fermer les lignes précédentes jusqu'au header
+					while (!(lastLine.lastElement() instanceof PmsiRsf2012Header)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+				} else {
+					// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
+					while (!(lastLine.lastElement() instanceof PmsiRsf2012a)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+				}
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Ligne non reconnue").
-					setXmlMessage("<rsf v=\"2012\"><parsingerror>Ligne non reconnue</parsingerror></rsf>");
+				throw new PmsiReaderException("Ligne non reconnue");
 			}
 			break;
 		case WAIT_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
-					setXmlMessage("<rsf v=\"2012\"><parsingerror>trop de caractères dans la ligne</parsingerror></rsf>");
+				throw new PmsiReaderException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_ENDLINE);
 			readNewLine();
 			break;
@@ -141,6 +161,12 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 
 	@Override
 	public void finish() throws Exception {
+		// Fermeture de tous les éléments ouverts :
+		while (!lastLine.isEmpty()) {
+			lastLine.pop();
+			writer.writeEndElement();
+		}
+		// Fermeture du document
 		writer.writeEndDocument();
 	}
 

@@ -12,7 +12,7 @@ import aider.org.pmsi.exceptions.PmsiDtoException;
  * @author delabre
  *
  */
-public abstract class PmsiPipedStreamDto implements PmsiDto {
+public abstract class PmsiPipedStreamDto<ReturnType> implements PmsiDto<ReturnType> {
 
 	private PipedInputStream inputStream;
 		

@@ -52,11 +52,4 @@ public interface PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void close() throws PmsiWriterException;
-	
-	/**
-	 * Renvoie la dernière ligne insérée
-	 * @return objet de la dernière ligne insérée
-	 * @throws PmsiWriterException
-	 */
-	public PmsiLineType getLastLine() throws PmsiWriterException;
 }

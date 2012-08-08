@@ -3,28 +3,18 @@ package aider.org.pmsi.example;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import aider.org.pmsi.dto.PmsiCallable;
 import aider.org.pmsi.exceptions.PmsiReaderException;
 import aider.org.pmsi.parser.PmsiRSF2009Parser;
 import aider.org.pmsi.parser.PmsiRSF2012Parser;
 import aider.org.pmsi.parser.PmsiRSS116Parser;
 import aider.org.pmsi.parser.PmsiParser;
 import aider.org.pmsi.writer.PmsiWriter;
-import aider.org.pmsi.writer.PmsiXmlPipedOutputStreamWriter;
-import aider.org.pmsi.writer.Rsf2009Writer;
-import aider.org.pmsi.writer.Rsf2012Writer;
-import aider.org.pmsi.writer.Rss116Writer;
+import aider.org.pmsi.writer.PmsiXmlWriter;
 
 /**
  * Entrée du programme permettant de lire un fichier pmsi et de le transformer en xml
@@ -124,81 +114,34 @@ public class MainExample {
 	 * @throws Exception 
 	 */
 	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
-		// Les classes qui sont indépendantes :
-		// 
 		// Reader et writer
 		PmsiParser<?, ?> parser = null;
-		PmsiWriter writer = null;
-		
-		// Flux output connecté
-		PipedOutputStream outputStream = null;
-		
-		// Thread du lecteur de writer
-		PmsiCallable pmsiCallable = null;
-		// exception du lecteur de writer
-		Exception exception = null;
-		// Thread executor
-		ExecutorService threadExecutor = Executors.newCachedThreadPool();
-		Future<String> threadDtoFuture = null;
-		Future<String> threadParserFuture = null;
+		PmsiWriter writer = new PmsiXmlWriter(System.out, "UTF-8");
 		
 		try {		
 			// Choix du parser et du writer
 			switch(type) {
 				case RSS116:
-					writer = new Rss116Writer();
 					parser = new PmsiRSS116Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2009:
-					writer = new Rsf2009Writer();
 					parser = new PmsiRSF2009Parser(new InputStreamReader(in), writer);
 					break;
 				case RSF2012:
-					writer = new Rsf2012Writer();
 					parser = new PmsiRSF2012Parser(new InputStreamReader(in), writer);
 					break;
 				}
 			
-			// Création de la classe de transfert de données
-			// Et connection au flux de sortie du writer
-			PmsiDtoExample pmsiDto = new PmsiDtoExample(System.out);
-			((PmsiXmlPipedOutputStreamWriter) writer).getOutputStream().connect(pmsiDto.getPipedInputStream());
-			
-			// Création du thread du lecteur de inputstream
-			pmsiCallable = new PmsiCallable(pmsiDto);
-			
-			// lancement du lecteur de muxer
-			threadDtoFuture = threadExecutor.submit(pmsiCallable);
-	
 			// lancement du parseur
-			threadParserFuture = threadExecutor.submit(parser);
+			parser.call();
 			
-			// Attente que le parseur ait fini
-			threadParserFuture.get();
-			
-			// Fermeture de la classe de transfert de données
-			pmsiDto.close();
-	
-			// Attente que le lecteur de muxer ait fini
-			threadDtoFuture.get();
-						
-		} catch (ExecutionException e) {
-			exception = (Exception) e.getCause();
-		} catch (InterruptedException e) {
-			exception = e;
+			return true;
 		} finally {
 			// Fermeture de resources
 			if (parser != null)
 				parser.close();
 			if (writer != null)
 				writer.close();
-			if (outputStream != null)
-				outputStream.close();
 		}
-		
-		if (exception != null)
-			throw exception;
-
-		return true;
 	}
 }

@@ -2,6 +2,7 @@ package aider.org.pmsi.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Stack;
 
 import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiReaderException;
@@ -78,6 +79,11 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 	private static final String name = "RSS116"; 
 	
 	/**
+	 * Permet de se souvenir quelle ligne a été insérée en dernier
+	 */
+	private Stack<PmsiLineType> lastLine = new Stack<PmsiLineType>();
+
+	/**
 	 * Constructeur d'un lecteur de fichier rss
 	 * @param reader
 	 * @throws PmsiWriterException 
@@ -128,24 +134,29 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 		case WAIT_RSS_HEADER:
 			matchLine = parseLine();
 			if (matchLine != null) {
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Entête du fichier non trouvée").
-					setXmlMessage("<rss v=\"116\"><parsingerror>Entête du fichier non trouvée</parsingerror></rss>");
+				throw new PmsiReaderException("Entête du fichier non trouvée");
 			}
 			break;
 		case WAIT_RSS_MAIN:
 			matchLine = parseLine();
 			if (matchLine != null) {
+				// Fermeture de toutes les lignes jusqu'à rssheader
+				while (!(lastLine.lastElement() instanceof PmsiRss116Header)) {
+					lastLine.pop();
+					writer.writeEndElement();
+				}
+				lastLine.add(matchLine);
 				writer.writeLineElement(matchLine);
 				nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
 				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
 				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
 				changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
 			} else {
-				throw (PmsiReaderException) new PmsiReaderException("Première partie de ligne RSS non trouvée").
-					setXmlMessage("<rss v=\"116\"><parsingerror>Première partie de ligne RSS non trouvée</parsingerror></rss>");
+				throw new PmsiReaderException("Première partie de ligne RSS non trouvée");
 			}
 			break;
 		case WAIT_RSS_DA:
@@ -154,11 +165,16 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					// Fermeture de toutes les lignes jusqu'à rssmain
+					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+					lastLine.add(matchLine);
 					writer.writeLineElement(matchLine);
 					nbDaRestants -= 1;
 				} else {
-					throw (PmsiReaderException) new PmsiReaderException("DA non trouvés dans ligne RSS").
-						setXmlMessage("<rss v=\"116\"><parsingerror>DA non trouvés dans ligne RSS</parsingerror></rss>");
+					throw new PmsiReaderException("DA non trouvés dans ligne RSS");
 				}
 			}
 			break;
@@ -168,11 +184,16 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					// Fermeture de toutes les lignes jusqu'à rssmain
+					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+					lastLine.add(matchLine);
 					writer.writeLineElement(matchLine);
 					nbDaDRestants -= 1;
 				} else {
-					throw (PmsiReaderException) new PmsiReaderException("DAD non trouvés dans ligne RSS").
-						setXmlMessage("<rss v=\"116\"><parsingerror>DAD non trouvés dans ligne RSS</parsingerror></rss>");
+					throw new PmsiReaderException("DAD non trouvés dans ligne RSS");
 				}
 			}
 			break;
@@ -182,34 +203,36 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 			else {
 				matchLine = parseLine();
 				if (matchLine != null) {
+					// Fermeture de toutes les lignes jusqu'à rssmain
+					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+						lastLine.pop();
+						writer.writeEndElement();
+					}
+					lastLine.add(matchLine);
 					writer.writeLineElement(matchLine);
 					nbZARestants -= 1;
 				} else {
-					throw (PmsiReaderException) new PmsiReaderException("Actes non trouvés dans ligne RSS").
-						setXmlMessage("<rss v=\"116\"><parsingerror>Actes non trouvés dans ligne RSS</parsingerror></rss>");
+					throw new PmsiReaderException("Actes non trouvés dans ligne RSS");
 				}
 			}
 			break;
 		case WAIT_RSS_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0)
-				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
-				setXmlMessage("<rss v=\"116\"><parsingerror>trop de caractères dans la ligne</parsingerror></rss>");
+				throw new PmsiReaderException("trop de caractères dans la ligne");
 			changeState(EnumSignal.SIGNAL_RSS_NEWLINE);
 			readNewLine();
 			break;
 		case WAIT_RSS_HEADER_ENDLINE:
 			// On vérifie qu'il ne reste rien
 			if (getLineSize() != 0) {
-				throw (PmsiReaderException) new PmsiReaderException("trop de caractères dans la ligne").
-					setXmlMessage("<rss v=\"116\"><parsingerror>trop de caractères dans la ligne</parsingerror></rss>");
+				throw new PmsiReaderException("trop de caractères dans la ligne");
 			}
 			changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
 			readNewLine();
 			break;			
 		case STATE_EMPTY_FILE:
-			throw (PmsiReaderException) new PmsiReaderException("Fichier vide").
-				setXmlMessage("<rss v=\"116\"><parsingerror>Fichier vide</parsingerror></rss>");
+			throw new PmsiReaderException("Fichier vide");
 		default:
 			throw new RuntimeException("Cas non prévu par la machine à états");
 		}
@@ -217,6 +240,12 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 
 	@Override
 	public void finish() throws Exception {
+		// Fermeture de tous les éléments ouverts :
+		while (!lastLine.isEmpty()) {
+			lastLine.pop();
+			writer.writeEndElement();
+		}
+		// Fermeture du document
 		writer.writeEndDocument();
 	}
 
