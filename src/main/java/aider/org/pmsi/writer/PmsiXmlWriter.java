@@ -62,6 +62,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException 
 	 */
 	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiWriterException {
+		checkIsOpen();
 		try {
 			xmlWriter.writeStartDocument();
 			xmlWriter.writeStartElement(name);
@@ -79,6 +80,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void writeStartElement(String name) throws PmsiWriterException {
+		checkIsOpen();
 		try {
 			xmlWriter.writeStartElement(name);
 		} catch (Exception e) {
@@ -91,6 +93,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void writeEndElement() throws PmsiWriterException {
+		checkIsOpen();
 		try {
 			xmlWriter.writeEndElement();
 		} catch (Exception e) {
@@ -105,6 +108,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException {
+		checkIsOpen();
 		writeLineElement(lineType.getName(), lineType.getNames(), lineType.getContent());
 	}
 	
@@ -133,6 +137,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public void writeEndDocument() throws PmsiWriterException {
+		checkIsOpen();
 		try {
 	        // Ecriture de la fin du document xml
 			xmlWriter.writeEndDocument();
@@ -158,6 +163,15 @@ public class PmsiXmlWriter implements PmsiWriter {
 		} catch (XMLStreamException e) {
 			throw new PmsiWriterException(e);
 		}
+	}
+	
+	/**
+	 * Vérifie que le flux est bien ouvert avant chaque écriture dedans
+	 * @throws PmsiWriterException 
+	 */
+	private void checkIsOpen() throws PmsiWriterException {
+		if (xmlWriter == null)
+			throw new PmsiWriterException("Tentative d'écriture dans un flux fermé");
 	}
 	
 }
