@@ -1,6 +1,7 @@
 package aider.org.pmsi.example;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -8,7 +9,9 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiParserException;
+import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.PmsiRSF2009Parser;
 import aider.org.pmsi.parser.PmsiRSF2012Parser;
 import aider.org.pmsi.parser.PmsiRSS116Parser;
@@ -53,15 +56,18 @@ public class MainExample {
 	/**
 	 * Fonction principale du programme
 	 * @param args
+	 * @throws FileNotFoundException 
+	 * @throws PmsiWriterException 
+	 * @throws MachineStateException 
 	 * @throws Throwable 
 	 */
-	public static void main(String[] args) throws Throwable  {
+	public static void main(String[] args) throws PmsiWriterException, FileNotFoundException, MachineStateException {
 		
 		// Définition des arguments fournis au programme
 		MainExampleOptions options = new MainExampleOptions();
         CmdLineParser parser = new CmdLineParser(options);
         
-        ArrayList<String> parsersErrorsList = new ArrayList<String>();
+        ArrayList<String> parsersReportErrorsList = new ArrayList<String>();
         
         // Lecture des arguments
         try {
@@ -88,19 +94,20 @@ public class MainExample {
         		if (readPMSI(new FileInputStream(options.getPmsiFile()), fileTypeEntry) == true) {
         			break;
         		}
-            } catch (Throwable e) {
-            	// Si on a une erreur de PmsiParserException, c'est que le parseur n'a
+            } catch (MachineStateException e) {
+            	// Si l'erreur parente est PmsiParserException, c'est que le parseur n'a
             	// juste pas été capable de déchiffrer le fichier, tout le reste marchait.
             	// Il faut donc essayer avec un autre parseur
-            	if (e instanceof PmsiParserException) {
-            		parsersErrorsList.add(e.getStackTrace()[0].getClassName() + " : " +
-            				((PmsiParserException) e).getMessage());
+            	if (e.getCause() instanceof PmsiParserException) {
+            		parsersReportErrorsList.add(
+            				e.getStackTrace()[0].getClassName() + " : " +
+            				e.getCause().getMessage());
             	} else
             		throw e;
             }
         }
 	
-        for (String hoho : parsersErrorsList) {
+        for (String hoho : parsersReportErrorsList) {
         	System.out.println(hoho);
         }
         
@@ -112,9 +119,11 @@ public class MainExample {
 	 * @param in flux à insérer
 	 * @param type Type de fichier à insérer
 	 * @return true si le fichier a pu être inséré, false sinon
+	 * @throws PmsiWriterException 
+	 * @throws MachineStateException 
 	 * @throws Exception 
 	 */
-	public static boolean readPMSI(InputStream in, FileType type) throws Exception {
+	public static boolean readPMSI(InputStream in, FileType type) throws PmsiWriterException, MachineStateException {
 		// Reader et writer
 		PmsiParser<?, ?> parser = null;
 		PmsiWriter writer = new PmsiXmlWriter(System.out, "UTF-8");

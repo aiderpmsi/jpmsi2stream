@@ -121,137 +121,148 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 	 * @throws PmsiParserException
 	 * @throws MachineStateException 
 	 */
-	public void process() throws PmsiWriterException, PmsiParserException, MachineStateException {
+	public void process() throws MachineStateException {
 		PmsiLineType matchLine = null;
 		
-		switch(getState()) {
-		case STATE_READY:
-			// L'état initial nous demande de lire un nouvelle ligne
-			writer.writeStartDocument(name, new String[0], new String[0]);
-			changeState(EnumSignal.SIGNAL_START);
-			readNewLine();
-			break;
-		case WAIT_RSS_HEADER:
-			matchLine = parseLine();
-			if (matchLine != null) {
-				lastLine.add(matchLine);
-				writer.writeLineElement(matchLine);
-				changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
-			} else {
-				throw new PmsiParserException("Entête du fichier non trouvée");
-			}
-			break;
-		case WAIT_RSS_MAIN:
-			matchLine = parseLine();
-			if (matchLine != null) {
-				// Fermeture de toutes les lignes jusqu'à rssheader
-				while (!(lastLine.lastElement() instanceof PmsiRss116Header)) {
-					lastLine.pop();
-					writer.writeEndElement();
-				}
-				lastLine.add(matchLine);
-				writer.writeLineElement(matchLine);
-				nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
-				nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
-				nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
-				changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
-			} else {
-				throw new PmsiParserException("Première partie de ligne RSS non trouvée");
-			}
-			break;
-		case WAIT_RSS_DA:
-			if (nbDaRestants == 0)
-				changeState(EnumSignal.SIGNAL_RSS_END_DA);
-			else {
+		try {
+			switch(getState()) {
+			case STATE_READY:
+				// L'état initial nous demande de lire un nouvelle ligne
+				writer.writeStartDocument(name, new String[0], new String[0]);
+				changeState(EnumSignal.SIGNAL_START);
+				readNewLine();
+				break;
+			case WAIT_RSS_HEADER:
 				matchLine = parseLine();
 				if (matchLine != null) {
-					// Fermeture de toutes les lignes jusqu'à rssmain
-					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+					lastLine.add(matchLine);
+					writer.writeLineElement(matchLine);
+					changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
+				} else {
+					throw new PmsiParserException("Entête du fichier non trouvée");
+				}
+				break;
+			case WAIT_RSS_MAIN:
+				matchLine = parseLine();
+				if (matchLine != null) {
+					// Fermeture de toutes les lignes jusqu'à rssheader
+					while (!(lastLine.lastElement() instanceof PmsiRss116Header)) {
 						lastLine.pop();
 						writer.writeEndElement();
 					}
 					lastLine.add(matchLine);
 					writer.writeLineElement(matchLine);
-					nbDaRestants -= 1;
+					nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
+					nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
+					nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
+					changeState(EnumSignal.SIGNAL_RSS_END_MAIN);
 				} else {
-					throw new PmsiParserException("DA non trouvés dans ligne RSS");
+					throw new PmsiParserException("Première partie de ligne RSS non trouvée");
 				}
-			}
-			break;
-		case WAIT_RSS_DAD:
-			if (nbDaDRestants == 0)
-				changeState(EnumSignal.SIGNAL_RSS_END_DAD);
-			else {
-				matchLine = parseLine();
-				if (matchLine != null) {
-					// Fermeture de toutes les lignes jusqu'à rssmain
-					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
-						lastLine.pop();
-						writer.writeEndElement();
+				break;
+			case WAIT_RSS_DA:
+				if (nbDaRestants == 0)
+					changeState(EnumSignal.SIGNAL_RSS_END_DA);
+				else {
+					matchLine = parseLine();
+					if (matchLine != null) {
+						// Fermeture de toutes les lignes jusqu'à rssmain
+						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+							lastLine.pop();
+							writer.writeEndElement();
+						}
+						lastLine.add(matchLine);
+						writer.writeLineElement(matchLine);
+						nbDaRestants -= 1;
+					} else {
+						throw new PmsiParserException("DA non trouvés dans ligne RSS");
 					}
-					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
-					nbDaDRestants -= 1;
-				} else {
-					throw new PmsiParserException("DAD non trouvés dans ligne RSS");
 				}
-			}
-			break;
-		case WAIT_RSS_ACTE:
-			if (nbZARestants == 0)
-				changeState(EnumSignal.SIGNAL_RSS_END_ACTE);
-			else {
-				matchLine = parseLine();
-				if (matchLine != null) {
-					// Fermeture de toutes les lignes jusqu'à rssmain
-					while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
-						lastLine.pop();
-						writer.writeEndElement();
+				break;
+			case WAIT_RSS_DAD:
+				if (nbDaDRestants == 0)
+					changeState(EnumSignal.SIGNAL_RSS_END_DAD);
+				else {
+					matchLine = parseLine();
+					if (matchLine != null) {
+						// Fermeture de toutes les lignes jusqu'à rssmain
+						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+							lastLine.pop();
+							writer.writeEndElement();
+						}
+						lastLine.add(matchLine);
+						writer.writeLineElement(matchLine);
+						nbDaDRestants -= 1;
+					} else {
+						throw new PmsiParserException("DAD non trouvés dans ligne RSS");
 					}
-					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
-					nbZARestants -= 1;
-				} else {
-					throw new PmsiParserException("Actes non trouvés dans ligne RSS");
 				}
+				break;
+			case WAIT_RSS_ACTE:
+				if (nbZARestants == 0)
+					changeState(EnumSignal.SIGNAL_RSS_END_ACTE);
+				else {
+					matchLine = parseLine();
+					if (matchLine != null) {
+						// Fermeture de toutes les lignes jusqu'à rssmain
+						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
+							lastLine.pop();
+							writer.writeEndElement();
+						}
+						lastLine.add(matchLine);
+						writer.writeLineElement(matchLine);
+						nbZARestants -= 1;
+					} else {
+						throw new PmsiParserException("Actes non trouvés dans ligne RSS");
+					}
+				}
+				break;
+			case WAIT_RSS_ENDLINE:
+				// On vérifie qu'il ne reste rien
+				if (getLineSize() != 0)
+					throw new PmsiParserException("trop de caractères dans la ligne");
+				changeState(EnumSignal.SIGNAL_RSS_NEWLINE);
+				readNewLine();
+				break;
+			case WAIT_RSS_HEADER_ENDLINE:
+				// On vérifie qu'il ne reste rien
+				if (getLineSize() != 0) {
+					throw new PmsiParserException("trop de caractères dans la ligne");
+				}
+				changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
+				readNewLine();
+				break;			
+			case STATE_EMPTY_FILE:
+				throw new PmsiParserException("Fichier vide");
+			default:
+				throw new PmsiParserException("Cas non prévu par la machine à états");
 			}
-			break;
-		case WAIT_RSS_ENDLINE:
-			// On vérifie qu'il ne reste rien
-			if (getLineSize() != 0)
-				throw new PmsiParserException("trop de caractères dans la ligne");
-			changeState(EnumSignal.SIGNAL_RSS_NEWLINE);
-			readNewLine();
-			break;
-		case WAIT_RSS_HEADER_ENDLINE:
-			// On vérifie qu'il ne reste rien
-			if (getLineSize() != 0) {
-				throw new PmsiParserException("trop de caractères dans la ligne");
-			}
-			changeState(EnumSignal.SIGNAL_RSS_HEADER_NEWLINE);
-			readNewLine();
-			break;			
-		case STATE_EMPTY_FILE:
-			throw new PmsiParserException("Fichier vide");
-		default:
-			throw new RuntimeException("Cas non prévu par la machine à états");
+		} catch (PmsiParserException e) {
+			throw new MachineStateException(e);
+		} catch (PmsiWriterException e) {
+			throw new MachineStateException(e);
+		} catch (NumberFormatException e) {
+			throw new MachineStateException(new PmsiParserException(e));
 		}
 	}
 
 	@Override
-	public void finish() throws Exception {
-		// Fermeture de tous les éléments ouverts :
-		while (!lastLine.isEmpty()) {
-			lastLine.pop();
-			writer.writeEndElement();
+	public void finish() throws MachineStateException {
+		try {
+			// Fermeture de tous les éléments ouverts :
+			while (!lastLine.isEmpty()) {
+				lastLine.pop();
+				writer.writeEndElement();
+			}
+			// Fermeture du document
+			writer.writeEndDocument();
+		} catch (PmsiWriterException e) {
+			throw new MachineStateException(e);
 		}
-		// Fermeture du document
-		writer.writeEndDocument();
 	}
 
 	@Override
-	public void close() throws PmsiWriterException {
-		writer.close();
+	public void close() throws MachineStateException {
 	}
 
 }

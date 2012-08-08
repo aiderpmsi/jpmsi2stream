@@ -98,7 +98,7 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 	 * Lancement de la machine à états
 	 * @throws Exception
 	 */
-	public final ReturnType call() throws Exception {
+	public final ReturnType call() throws MachineStateException {
 		begin();
 		
 		while (stateActual != stateFinished) {
@@ -115,20 +115,20 @@ public abstract class MachineState<EnumState, EnumSignal, ReturnType> implements
 	 * la machine à états
 	 * @throws Exception
 	 */
-	protected void begin() throws Exception {};
+	protected void begin() throws MachineStateException {};
 	
 	/**
 	 * Méthode à implémenter pour lancer la machine à états
 	 * @throws Exception
 	 */
-	protected void process() throws Exception {};
+	protected void process() throws MachineStateException {};
 	
 	/**
 	 * Méthode à implémenter pour réaliser une action à la fin du fonctionnement de
 	 * la machine à états
 	 * @throws Exception
 	 */
-	protected void finish() throws Exception {};
+	protected void finish() throws MachineStateException {};
 	
 	/**
 	 * Méthode à implémenter pour renvoyer un message lors de la fin du fonctionnement de

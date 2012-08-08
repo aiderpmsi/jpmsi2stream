@@ -99,79 +99,88 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 	 * @throws PmsiFileNotReadable 
 	 * @throws Exception 
 	 */
-	public void process() throws PmsiWriterException, PmsiParserException, MachineStateException {
+	public void process() throws MachineStateException {
 		PmsiLineType matchLine = null;
 
-		switch(getState()) {
-		case STATE_READY:
-			// Le parseur est en attente de la prochaine ligne
-			writer.writeStartDocument(name, new String[0], new String[0]);
-			changeState(EnumSignal.SIGNAL_START);
-			readNewLine();
-			break;
-		case WAIT_RSF_HEADER:
-			// Attente de la ligne de header
-			matchLine = parseLine();
-			if (matchLine != null) {
-				lastLine.add(matchLine);
-				writer.writeLineElement(matchLine);
-				changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
-			} else {
-				throw new PmsiParserException("Entête du fichier non trouvée");
-			}
-			break;
-		case WAIT_RSF_LINES:
-			// Attente d'une ligne A, B, C, H, L ou M
-			matchLine = parseLine();
-			if (matchLine != null) {
-				if (matchLine instanceof PmsiRsf2012a) {
-					// Si on a une ligne A, il faut fermer les lignes précédentes jusqu'au header
-					while (!(lastLine.lastElement() instanceof PmsiRsf2012Header)) {
-						lastLine.pop();
-						writer.writeEndElement();
-					}
+		try {
+			switch(getState()) {
+			case STATE_READY:
+				// Le parseur est en attente de la prochaine ligne
+				writer.writeStartDocument(name, new String[0], new String[0]);
+				changeState(EnumSignal.SIGNAL_START);
+				readNewLine();
+				break;
+			case WAIT_RSF_HEADER:
+				// Attente de la ligne de header
+				matchLine = parseLine();
+				if (matchLine != null) {
+					lastLine.add(matchLine);
+					writer.writeLineElement(matchLine);
+					changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 				} else {
-					// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
-					while (!(lastLine.lastElement() instanceof PmsiRsf2012a)) {
-						lastLine.pop();
-						writer.writeEndElement();
-					}
+					throw new PmsiParserException("Entête du fichier non trouvée");
 				}
-				lastLine.add(matchLine);
-				writer.writeLineElement(matchLine);
-				changeState(EnumSignal.SIGNAL_RSF_END_LINES);
-			} else {
-				throw new PmsiParserException("Ligne non reconnue");
+				break;
+			case WAIT_RSF_LINES:
+				// Attente d'une ligne A, B, C, H, L ou M
+				matchLine = parseLine();
+				if (matchLine != null) {
+					if (matchLine instanceof PmsiRsf2012a) {
+						// Si on a une ligne A, il faut fermer les lignes précédentes jusqu'au header
+						while (!(lastLine.lastElement() instanceof PmsiRsf2012Header)) {
+							lastLine.pop();
+							writer.writeEndElement();
+						}
+					} else {
+						// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
+						while (!(lastLine.lastElement() instanceof PmsiRsf2012a)) {
+							lastLine.pop();
+							writer.writeEndElement();
+						}
+					}
+					lastLine.add(matchLine);
+					writer.writeLineElement(matchLine);
+					changeState(EnumSignal.SIGNAL_RSF_END_LINES);
+				} else {
+					throw new PmsiParserException("Ligne non reconnue");
+				}
+				break;
+			case WAIT_ENDLINE:
+				// On vérifie qu'il ne reste rien
+				if (getLineSize() != 0)
+					throw new PmsiParserException("trop de caractères dans la ligne");
+				changeState(EnumSignal.SIGNAL_ENDLINE);
+				readNewLine();
+				break;
+			case STATE_EMPTY_FILE:
+				throw new PmsiParserException("Fichier vide");
+			default:
+				throw new PmsiParserException("Cas non prévu par la machine à états");
 			}
-			break;
-		case WAIT_ENDLINE:
-			// On vérifie qu'il ne reste rien
-			if (getLineSize() != 0)
-				throw new PmsiParserException("trop de caractères dans la ligne");
-			changeState(EnumSignal.SIGNAL_ENDLINE);
-			readNewLine();
-			break;
-		case STATE_EMPTY_FILE:
-			throw new PmsiParserException("Fichier vide");
-		default:
-			throw new RuntimeException("Cas non prévu par la machine à états");
+		} catch (PmsiParserException e) {
+			throw new MachineStateException(e);
+		} catch (PmsiWriterException e) {
+			throw new MachineStateException(e);
 		}
 	}
 
 	@Override
-	public void finish() throws Exception {
-		// Fermeture de tous les éléments ouverts :
-		while (!lastLine.isEmpty()) {
-			lastLine.pop();
-			writer.writeEndElement();
+	public void finish() throws MachineStateException {
+		try {
+			// Fermeture de tous les éléments ouverts :
+			while (!lastLine.isEmpty()) {
+				lastLine.pop();
+				writer.writeEndElement();
+			}
+			// Fermeture du document
+			writer.writeEndDocument();
+		} catch (PmsiWriterException e) {
+			throw new MachineStateException(e);
 		}
-		// Fermeture du document
-		writer.writeEndDocument();
 	}
 
 	@Override
-	public void close() throws PmsiWriterException {
-		writer.close();
+	public void close() throws MachineStateException {
 	}
 
 }
