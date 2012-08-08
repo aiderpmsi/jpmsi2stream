@@ -33,6 +33,19 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @throws PmsiWriterException
 	 */
 	public PmsiXmlWriter(OutputStream outputStream, String encoding) throws PmsiWriterException {
+		open(outputStream, encoding);
+	}
+
+	/**
+	 * Utilise un {@link OutputStream} pour écrire le flux xml
+	 * @param outputStream
+	 * @param encoding
+	 * @throws PmsiWriterException
+	 */
+	public void open(OutputStream outputStream, String encoding) throws PmsiWriterException {
+		// Si le flux xmlwriter est déjà ouvert, il faut le fermer
+		this.close();
+		
 		try {
 			// Création du writer de xml
 			xmlWriter = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance().
@@ -40,8 +53,9 @@ public class PmsiXmlWriter implements PmsiWriter {
 		} catch (XMLStreamException e) {
 			throw new PmsiWriterException(e);
 		}
+		
 	}
-
+	
 	/**
 	 * Ouvre le document
 	 * @param name Nom de la balise initiale
@@ -136,6 +150,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 		// Fermeture des flux créés dans cette classe si besoin
 		try {
 			if (xmlWriter != null) {
+				xmlWriter.flush();
 				xmlWriter.close();
 				xmlWriter = null;
 			}
