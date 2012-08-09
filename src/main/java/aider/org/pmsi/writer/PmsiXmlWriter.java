@@ -49,7 +49,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	public void open(OutputStream outputStream, String encoding) throws PmsiWriterException {
 		// Si le flux xmlwriter est déjà ouvert, il faut lancer une exception
 		checkIsClosed();
-		
+
 		try {
 			// Création du writer de xml
 			xmlWriter = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance().
