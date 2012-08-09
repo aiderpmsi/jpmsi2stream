@@ -49,6 +49,11 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	private EnumSignal signalEof;
 	
+	/**
+	 * Compteur de lignes
+	 */
+	private int lineNumber = 0;
+	
 	protected PmsiParser() { }
 	
 	/**
@@ -89,6 +94,12 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 		// Si il n'y a plus de ligne à lire, on envoie le signal eof
 		if (toParse == null)
 			changeState(signalEof);
+		else
+			lineNumber += 1;
+	}
+	
+	public int getLineNumber() {
+		return lineNumber;
 	}
 	
 	/**

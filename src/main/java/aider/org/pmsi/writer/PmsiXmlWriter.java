@@ -65,7 +65,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @param name Nom de la balise initiale
 	 * @throws PmsiWriterException 
 	 */
-	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiWriterException {
+	public void writeStartDocument(String name, String[] attributes, String[] values, int lineNumber) throws PmsiWriterException {
 		checkIsOpen();
 		try {
 			xmlWriter.writeStartDocument();
@@ -73,6 +73,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 			for (int i = 0 ; i < attributes.length ; i++) {
 				xmlWriter.writeAttribute(attributes[i], values[i]);
 			}
+			xmlWriter.writeAttribute("lineNumber", Integer.toString(lineNumber));
 		} catch (Exception e) {
 			throw new PmsiWriterException(e);
 		}
@@ -83,10 +84,11 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @param name nom de l'élément
 	 * @throws PmsiWriterException
 	 */
-	public void writeStartElement(String name) throws PmsiWriterException {
+	public void writeStartElement(String name, int lineNumber) throws PmsiWriterException {
 		checkIsOpen();
 		try {
 			xmlWriter.writeStartElement(name);
+			xmlWriter.writeAttribute("lineNumber", Integer.toString(lineNumber));
 		} catch (Exception e) {
 			throw new PmsiWriterException(e);
 		}
@@ -96,7 +98,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * Ferme l'élément en cours
 	 * @throws PmsiWriterException
 	 */
-	public void writeEndElement() throws PmsiWriterException {
+	public void writeEndElement(int lineNumber) throws PmsiWriterException {
 		checkIsOpen();
 		try {
 			xmlWriter.writeEndElement();
@@ -111,9 +113,9 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @param lineType
 	 * @throws PmsiWriterException
 	 */
-	public void writeLineElement(PmsiLineType lineType) throws PmsiWriterException {
+	public void writeLineElement(PmsiLineType lineType, int lineNumber) throws PmsiWriterException {
 		checkIsOpen();
-		writeLineElement(lineType.getName(), lineType.getNames(), lineType.getContent());
+		writeLineElement(lineType.getName(), lineType.getNames(), lineType.getContent(), lineNumber);
 	}
 	
 	/**
@@ -125,12 +127,13 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * @param attContent Valeur des attributs
 	 * @throws PmsiWriterException
 	 */
-	private void writeLineElement(String name, String[] attNames, String[] attContent) throws PmsiWriterException {
+	private void writeLineElement(String name, String[] attNames, String[] attContent, int lineNumber) throws PmsiWriterException {
 		try {
 			xmlWriter.writeStartElement(name);
 			for (int i = 0 ; i < attNames.length ; i++) {
 				xmlWriter.writeAttribute(attNames[i], attContent[i]);
 			}
+			xmlWriter.writeAttribute("lineNumber", Integer.toString(lineNumber));
 		} catch (Exception e) {
 			throw new PmsiWriterException(e);
 		}
@@ -140,7 +143,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 	 * Ecrit la fin du document
 	 * @throws PmsiWriterException
 	 */
-	public void writeEndDocument() throws PmsiWriterException {
+	public void writeEndDocument(int lineNumber) throws PmsiWriterException {
 		checkIsOpen();
 		try {
 	        // Ecriture de la fin du document xml

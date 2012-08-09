@@ -104,7 +104,7 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 			switch(getState()) {
 			case STATE_READY:
 				// Le parseur est en attente de la prochaine ligne
-				writer.writeStartDocument(name, new String[0], new String[0]);
+				writer.writeStartDocument(name, new String[0], new String[0], getLineNumber());
 				changeState(EnumSignal.SIGNAL_START);
 				readNewLine();
 				break;
@@ -113,7 +113,7 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 				matchLine = parseLine();
 				if (matchLine != null) {
 					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine, getLineNumber());
 					changeState(EnumSignal.SIGNAL_RSF_END_HEADER);
 				} else {
 					throw new PmsiParserException("Entête du fichier non trouvée");
@@ -127,17 +127,17 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 						// Si on a une ligne A, il faut fermer les lignes précédentes jusqu'au header
 						while (!(lastLine.lastElement() instanceof PmsiRsf2009Header)) {
 							lastLine.pop();
-							writer.writeEndElement();
+							writer.writeEndElement(getLineNumber());
 						}
 					} else {
 						// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
 						while (!(lastLine.lastElement() instanceof PmsiRsf2009a)) {
 							lastLine.pop();
-							writer.writeEndElement();
+							writer.writeEndElement(getLineNumber());
 						}
 					}
 					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine, getLineNumber());
 					changeState(EnumSignal.SIGNAL_RSF_END_LINES);
 				} else {
 					throw new PmsiParserException("Ligne non reconnue");
@@ -169,10 +169,10 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 			// Fermeture de tous les éléments ouverts :
 			while (!lastLine.isEmpty()) {
 				lastLine.pop();
-				writer.writeEndElement();
+				writer.writeEndElement(getLineNumber());
 			}
 			// Fermeture du document
-			writer.writeEndDocument();
+			writer.writeEndDocument(getLineNumber());
 		} catch (Exception e) {
 			throw new MachineStateException(e);
 		}

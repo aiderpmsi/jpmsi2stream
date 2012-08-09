@@ -128,7 +128,7 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 			switch(getState()) {
 			case STATE_READY:
 				// L'état initial nous demande de lire un nouvelle ligne
-				writer.writeStartDocument(name, new String[0], new String[0]);
+				writer.writeStartDocument(name, new String[0], new String[0], getLineNumber());
 				changeState(EnumSignal.SIGNAL_START);
 				readNewLine();
 				break;
@@ -136,7 +136,7 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 				matchLine = parseLine();
 				if (matchLine != null) {
 					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine, getLineNumber());
 					changeState(EnumSignal.SIGNAL_RSS_END_HEADER);
 				} else {
 					throw new PmsiParserException("Entête du fichier non trouvée");
@@ -148,10 +148,10 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 					// Fermeture de toutes les lignes jusqu'à rssheader
 					while (!(lastLine.lastElement() instanceof PmsiRss116Header)) {
 						lastLine.pop();
-						writer.writeEndElement();
+						writer.writeEndElement(getLineNumber());
 					}
 					lastLine.add(matchLine);
-					writer.writeLineElement(matchLine);
+					writer.writeLineElement(matchLine, getLineNumber());
 					nbDaRestants = Integer.parseInt(matchLine.getContent()[26]);
 					nbDaDRestants = Integer.parseInt(matchLine.getContent()[27]);
 					nbZARestants = Integer.parseInt(matchLine.getContent()[28]);
@@ -169,10 +169,10 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 						// Fermeture de toutes les lignes jusqu'à rssmain
 						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
 							lastLine.pop();
-							writer.writeEndElement();
+							writer.writeEndElement(getLineNumber());
 						}
 						lastLine.add(matchLine);
-						writer.writeLineElement(matchLine);
+						writer.writeLineElement(matchLine, getLineNumber());
 						nbDaRestants -= 1;
 					} else {
 						throw new PmsiParserException("DA non trouvés dans ligne RSS");
@@ -188,10 +188,10 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 						// Fermeture de toutes les lignes jusqu'à rssmain
 						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
 							lastLine.pop();
-							writer.writeEndElement();
+							writer.writeEndElement(getLineNumber());
 						}
 						lastLine.add(matchLine);
-						writer.writeLineElement(matchLine);
+						writer.writeLineElement(matchLine, getLineNumber());
 						nbDaDRestants -= 1;
 					} else {
 						throw new PmsiParserException("DAD non trouvés dans ligne RSS");
@@ -207,10 +207,10 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 						// Fermeture de toutes les lignes jusqu'à rssmain
 						while (!(lastLine.lastElement() instanceof PmsiRss116Main)) {
 							lastLine.pop();
-							writer.writeEndElement();
+							writer.writeEndElement(getLineNumber());
 						}
 						lastLine.add(matchLine);
-						writer.writeLineElement(matchLine);
+						writer.writeLineElement(matchLine, getLineNumber());
 						nbZARestants -= 1;
 					} else {
 						throw new PmsiParserException("Actes non trouvés dans ligne RSS");
@@ -252,10 +252,10 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 			// Fermeture de tous les éléments ouverts :
 			while (!lastLine.isEmpty()) {
 				lastLine.pop();
-				writer.writeEndElement();
+				writer.writeEndElement(getLineNumber());
 			}
 			// Fermeture du document
-			writer.writeEndDocument();
+			writer.writeEndDocument(getLineNumber());
 		} catch (PmsiWriterException e) {
 			throw new MachineStateException(e);
 		}

@@ -18,20 +18,20 @@ public interface PmsiWriter {
 	 * @param values liste des valeurs des attributs
 	 * @throws PmsiWriterException
 	 */
-	public void writeStartDocument(String name, String[] attributes, String[] values) throws PmsiWriterException;
+	public void writeStartDocument(String name, String[] attributes, String[] values, int lineNumber) throws PmsiWriterException;
 	
 	/**
 	 * Crée un élément
 	 * @param name nom de l'élément
 	 * @throws PmsiWriterException
 	 */
-	public void writeStartElement(String name) throws PmsiWriterException;
+	public void writeStartElement(String name, int lineNumber) throws PmsiWriterException;
 	
 	/**
 	 * Clôt l'élément en cours
 	 * @throws PmsiWriterException
 	 */
-	public void writeEndElement() throws PmsiWriterException;
+	public void writeEndElement(int lineNumber) throws PmsiWriterException;
 
 	/**
 	 * Insère un élément avec les données d'une ligne. Attention, l'élément n'est pas fermé
@@ -39,13 +39,13 @@ public interface PmsiWriter {
 	 * @param lineType
 	 * @throws PmsiWriterException
 	 */
-	public void writeLineElement(PmsiLineType lineType)  throws PmsiWriterException;
+	public void writeLineElement(PmsiLineType lineType, int lineNumber)  throws PmsiWriterException;
 	
 	/**
 	 * Cloture l'élément en cours
 	 * @throws PmsiWriterException
 	 */
-	public void writeEndDocument() throws PmsiWriterException;
+	public void writeEndDocument(int lineNumber) throws PmsiWriterException;
 	
 	/**
 	 * Ferme les objets de flux utilisés, libère les resources utilisées
