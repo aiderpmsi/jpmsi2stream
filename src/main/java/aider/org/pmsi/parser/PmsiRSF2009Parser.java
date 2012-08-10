@@ -130,7 +130,11 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 							writer.writeEndElement(getLineNumber());
 						}
 					} else {
-						// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
+						// Si on a une ligne autre que A, il faut :
+						// 1 - Vérifier que la dernière ligne n'est pas un header
+						if (lastLine.lastElement() instanceof PmsiRsf2009Header)
+							throw new PmsiParserException("Pas de première ligne A dans le RSF");
+						// 2 - fermer les lignes précédentes jusqu'à une ligne A
 						while (!(lastLine.lastElement() instanceof PmsiRsf2009a)) {
 							lastLine.pop();
 							writer.writeEndElement(getLineNumber());

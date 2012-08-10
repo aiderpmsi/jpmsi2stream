@@ -8,6 +8,7 @@ import aider.org.machinestate.MachineStateException;
 import aider.org.pmsi.exceptions.PmsiParserException;
 import aider.org.pmsi.exceptions.PmsiWriterException;
 import aider.org.pmsi.parser.linestypes.PmsiLineType;
+import aider.org.pmsi.parser.linestypes.PmsiRsf2009Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012a;
 import aider.org.pmsi.parser.linestypes.PmsiRsf2012b;
@@ -132,7 +133,11 @@ public class PmsiRSF2012Parser extends PmsiParser<PmsiRSF2012Parser.EnumState, P
 							writer.writeEndElement(getLineNumber());
 						}
 					} else {
-						// Si on a une ligne autre que A, il faut fermer les lignes précédentes jusqu'à une ligne A
+						// Si on a une ligne autre que A, il faut :
+						// 1 - Vérifier que la dernière ligne n'est pas un header
+						if (lastLine.lastElement() instanceof PmsiRsf2009Header)
+							throw new PmsiParserException("Pas de première ligne A dans le RSF");
+						// 2 - fermer les lignes précédentes jusqu'à une ligne A
 						while (!(lastLine.lastElement() instanceof PmsiRsf2012a)) {
 							lastLine.pop();
 							writer.writeEndElement(getLineNumber());
