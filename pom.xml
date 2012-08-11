@@ -67,7 +67,15 @@
   	  <version>4.10</version>
   	  <scope>test</scope>
   	</dependency>
-  	
+
+    <dependency>
+      <groupId>stax-utils</groupId>
+      <artifactId>stax-utils</artifactId>
+      <version>2010</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/stax-utils.jar</systemPath>
+    </dependency>
+
   </dependencies>
   
 </project>
