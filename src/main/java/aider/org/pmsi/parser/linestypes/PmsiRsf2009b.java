@@ -20,9 +20,38 @@ public class PmsiRsf2009b extends PmsiLineTypeImpl {
 		"MontantTotalDepense", "MontantRemboursableOCPH", "NumGHS", "MontantNOEMIE", "OperationNOEMIE"
 	};
 
+	private static final String[][] transforms = {
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null}
+	};
+	
 	private static final String name = "RsfB";
 	
 	public PmsiRsf2009b() {
-		super(name, pattern, names, null);
+		super(name, pattern, names, transforms);
 	}
 }
