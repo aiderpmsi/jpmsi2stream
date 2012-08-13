@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * @author delabre
  *
  */
-public class PmsiRsf2009b extends PmsiLineType {
+public class PmsiRsf2009b extends PmsiLineTypeImpl {
 	
 	private static final Pattern pattern = Pattern.compile("^(B)(\\d{9})(.{20})(.{13})(.{2})(.{3})(.{9})(.{2})(.{3})(.{8})(.{8})" +
 			"(.{5})(.{3})(.{1})(.{5})(.{1})(.{5})(.{7})(.{8})(.{3})(.{8})(.{8})(.{7})(.{4})(.{8})(.{3})");
@@ -22,30 +22,7 @@ public class PmsiRsf2009b extends PmsiLineType {
 
 	private static final String name = "RsfB";
 	
-	private String[] content = new String[names.length];
-
-	@Override
-	public Pattern getPattern() {
-		return pattern;
-	}
-	
-	@Override
-	public String[] getNames() {
-		return names;
-	}
-		
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public void setContent(int index, String content) {
-		this.content[index] = content;
-	}
-	
-	@Override
-	public String[] getContent() {
-		return content;
+	public PmsiRsf2009b() {
+		super(name, pattern, names, null);
 	}
 }

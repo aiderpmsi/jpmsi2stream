@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * @author delabre
  *
  */
-public class PmsiRss116Acte extends PmsiLineType {
+public class PmsiRss116Acte extends PmsiLineTypeImpl {
 
 	private static final Pattern pattern = Pattern.compile("^(\\d{8})(.{7})(.{1})(.{1})(.{1})(.{4})(.{1})(.{1})(\\d{2})");
 	
@@ -18,30 +18,8 @@ public class PmsiRss116Acte extends PmsiLineType {
 
 	private static final String name = "RssActe";
 
-	private String[] content = new String[names.length];
-
-	@Override
-	public Pattern getPattern() {
-		return pattern;
+	public PmsiRss116Acte() {
+		super(name, pattern, names, null);
 	}
 	
-	@Override
-	public String[] getNames() {
-		return names;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setContent(int index, String content) {
-		this.content[index] = content;
-	}
-	
-	@Override
-	public String[] getContent() {
-		return content;
-	}
 }
