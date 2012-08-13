@@ -22,7 +22,33 @@ public class PmsiRsf2009c extends PmsiLineTypeImpl {
 
 	private static final String name = "RsfC";
 
+	private static final String[][] transforms = {
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null}
+	};
+	
 	public PmsiRsf2009c() {
-		super(name, pattern, names, null);
+		super(name, pattern, names, transforms);
 	}
 }
