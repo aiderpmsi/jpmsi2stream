@@ -166,11 +166,9 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 * @throws PmsiParserException si il n'y a pas que des espaces
 	 */
 	protected void removeRemainingSpaces() throws PmsiParserException {
-		char[] characters = new char[toParse.length()];
-		toParse.getChars(0, toParse.length(), characters, 0);
 		
-		for (char character : characters) {
-			if (character != ' ')
+		for (int i = 0 ; i < toParse.length() ; i++) {
+			if (toParse.charAt(i) != ' ')
 				throw new PmsiParserException("La fin de ligne comporte d'autres caractères que des espaces");
 		}
 		flushLine();
