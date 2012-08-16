@@ -218,6 +218,8 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 				}
 				break;
 			case WAIT_RSS_ENDLINE:
+				// Suppression des espaces
+				removeRemainingSpaces();
 				// On vérifie qu'il ne reste rien
 				if (getLineSize() != 0)
 					throw new PmsiParserException("trop de caractères dans la ligne");
@@ -225,6 +227,8 @@ public class PmsiRSS116Parser extends aider.org.pmsi.parser.PmsiParser<PmsiRSS11
 				readNewLine();
 				break;
 			case WAIT_RSS_HEADER_ENDLINE:
+				// Suppression des espaces
+				removeRemainingSpaces();
 				// On vérifie qu'il ne reste rien
 				if (getLineSize() != 0) {
 					throw new PmsiParserException("trop de caractères dans la ligne");

@@ -138,7 +138,7 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 			Matcher match = pattern.matcher(toParse);
 
 			// On a une ligne qui correspond
-			if (match.matches()) {
+			if (match.lookingAt()) {
 				for (int i = 0 ; i < match.groupCount() ; i++) {
 					lineType.setContent(i, match.group(i + 1));
 				}
@@ -159,6 +159,21 @@ public abstract class PmsiParser<EnumState, EnumSignal> extends MachineState<Enu
 	 */
 	protected void flushLine() {
 		toParse = new String();
+	}
+	
+	/**
+	 * Suppression des espaces.
+	 * @throws PmsiParserException si il n'y a pas que des espaces
+	 */
+	protected void removeRemainingSpaces() throws PmsiParserException {
+		char[] characters = new char[toParse.length()];
+		toParse.getChars(0, toParse.length(), characters, 0);
+		
+		for (char character : characters) {
+			if (character != ' ')
+				throw new PmsiParserException("La fin de ligne comporte d'autres caractères que des espaces");
+		}
+		flushLine();
 	}
 	
 	/**

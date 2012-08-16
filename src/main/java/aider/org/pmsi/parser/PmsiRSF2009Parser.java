@@ -149,6 +149,8 @@ public class PmsiRSF2009Parser extends PmsiParser<PmsiRSF2009Parser.EnumState, P
 				}
 				break;
 			case WAIT_ENDLINE:
+				// Suppression des espaces
+				removeRemainingSpaces();
 				// Attente de la fin de la ligne
 				if (getLineSize() != 0)
 					throw new PmsiParserException("trop de caractères dans la ligne");
