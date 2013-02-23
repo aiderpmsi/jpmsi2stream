@@ -53,8 +53,8 @@ public class PmsiXmlWriter implements PmsiWriter {
 
 		try {
 			// Création du writer de xml
-			xmlWriter = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance().
-					createXMLStreamWriter(outputStream, encoding));
+			xmlWriter = XMLOutputFactory.newInstance().
+					createXMLStreamWriter(outputStream, encoding);
 		} catch (XMLStreamException e) {
 			throw new PmsiWriterException(e);
 		}
