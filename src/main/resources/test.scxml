@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:my="http://my.custom-actions.domain/CUSTOM"
+       version="1.0"
+       initial="test_header">
+
+    <state id="test_header">
+		<datamodel>
+	    	<data id="rsf2012h_found" expr="10" />
+   		</datamodel>
+    	<onentry>
+    		<assign name="rsf2012h_found" expr="_rsf2012Header.isFound(_file)" />
+	    </onentry>
+    	<transition target="rsf2012h" cond="rsf2012h_found"/>
+    </state>
+
+	<state id="rsf2012h" final="true">
+		<onentry>
+			<script>_rsf2012Header.writeResults(_contentHandler);</script>
+		</onentry>
+	</state>
+
+</scxml>
