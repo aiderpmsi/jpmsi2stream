@@ -111,6 +111,7 @@ public class DefaultContentHandler implements ContentHandler {
                 }
         }
 
+        
         @Override
         public void ignorableWhitespace(char[] ch, int start, int length)
                         throws SAXException {
