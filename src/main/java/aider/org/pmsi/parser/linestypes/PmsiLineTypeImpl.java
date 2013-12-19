@@ -1,6 +1,13 @@
 package aider.org.pmsi.parser.linestypes;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
+import com.github.aiderpmsi.jpmi2stream.MemoryBufferedReader;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :
@@ -32,40 +39,72 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 		this.content = new String[names.length];
 	}
 	
-	@Override
-	public Pattern getPattern() {
+	protected Pattern getPattern() {
 		return pattern;
 	}
 	
-	@Override
-	public String[] getNames() {
+	protected String[] getNames() {
 		return names;
 	}
 	
-	@Override
-	public String getName() {
+	protected String getName() {
 		return name;
 	}
 	
-	@Override
-	public void setContent(int index, String content) {
+	protected void setContent(int index, String content) {
 		this.content[index] = content;
 	}
 	
-	@Override
-	public String[] getContent() {
-		if (transforms == null)
-			return content;
-		else {
-			String[] modContent = new String[names.length];
+	
+	public void writeResults(ContentHandler contentHandler) throws IOException {
+		
+		try {
+			
 			for (int i = 0 ; i < names.length ; i++) {
+				// Début d'élément :
+				contentHandler.startElement("", "", names[i], null);
+				
+				// Contenu de l'élément
 				if (transforms[i][0] == null)
-					modContent[i] = content[i];
+					// Pas de transformation
+					contentHandler.characters(content[i].toCharArray(),
+							0, content[i].length());
 				else {
-					modContent[i] = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
+					// Transformation
+					String modContent = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
+					contentHandler.characters(modContent.toCharArray(),
+							0, content[i].length());
 				}
+				
+				// Fin de l'élément
+				contentHandler.endElement("", "", names[i]);
 			}
-			return modContent;
+		} catch (SAXException se) {
+			throw new IOException(se);
 		}
+	}
+
+	@Override
+	public boolean isFound(MemoryBufferedReader br) throws IOException {
+		// Récupération de la ligne à lire
+		String toParse = br.getLine();
+		
+		// Test du match
+		Matcher match = pattern.matcher(toParse);
+
+		// On a une ligne qui correspond
+		if (match.lookingAt()) {
+			for (int i = 0 ; i < match.groupCount() ; i++) {
+				content[i] = match.group(i + 1);
+			}
+			
+			// On supprime du reader ce qui a été lu.
+			br.consume(match.end());
+			
+			return true;
+		}
+		// La ligne ne correspond pas
+		else 
+			return false;
 	}
 }
