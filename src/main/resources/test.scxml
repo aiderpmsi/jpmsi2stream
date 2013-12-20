@@ -6,19 +6,12 @@
        initial="test_header">
 
     <state id="test_header">
-		<datamodel>
-	    	<data id="rsf2012h_found" expr="10" />
-   		</datamodel>
-    	<onentry>
-    		<assign name="rsf2012h_found" expr="_rsf2012Header.isFound(_file)" />
-	    </onentry>
-    	<transition target="rsf2012h" cond="rsf2012h_found"/>
+    	<transition event="rsf2012h" target="rsf2012h" />
+    	<transition event="none" target="headernotfound" />
     </state>
 
-	<state id="rsf2012h" final="true">
-		<onentry>
-			<script>_rsf2012Header.writeResults(_contentHandler);</script>
-		</onentry>
-	</state>
+    <state id="headernotfound" final="true" />
+    	
+	<state id="rsf2012h" final="true" />
 
 </scxml>

@@ -68,7 +68,7 @@ public class ExecutorFactory {
 		return this;
 	}
 
-	public SCXMLExecutor createMachine() throws IOException, SAXException,
+	public MyStateMachine createMachine() throws IOException, SAXException,
 			ModelException {
 		
 		URLConnection connection = scxmlDocument.openConnection();
@@ -79,20 +79,19 @@ public class ExecutorFactory {
 
 		SCXML scxml = SCXMLParser.parse(source, errorHandler, customActions);
 		
-		SCXMLExecutor engine =
-				new SCXMLExecutor(new JexlEvaluator(),
-						new SimpleDispatcher(),
-						new SimpleErrorReporter());
-		engine.setStateMachine(scxml);
-		engine.setSuperStep(true);
-		
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("_file", memoryBufferedReader);
 		appCtx.set("_rsf2012Header", new PmsiRsf2012Header());
 		appCtx.set("_contentHandler", new DefaultContentHandler(new PrintWriter(System.out)));
-		engine.setRootContext(appCtx);
 
-		return engine;
+		SCXMLExecutor engine = new SCXMLExecutor(
+				new JexlEvaluator(), new SimpleDispatcher(), new SimpleErrorReporter());
+		engine.setStateMachine(scxml);
+		engine.setSuperStep(true);
+		engine.setRootContext(appCtx);
+		engine.addListener(scxml, new EntryListener());
+		
+		return new MyStateMachine(scxml, appCtx, new JexlEvaluator());
 	}
 
 }

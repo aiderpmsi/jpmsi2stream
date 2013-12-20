@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.scxml.SCXMLExecutor;
 import org.apache.commons.scxml.model.CustomAction;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -24,10 +23,8 @@ public class DefaultParser {
 					.setScxmlDocument(scxmlLocation)
 					.setCustomActions(customActions)
 					.setErrorHandler(new DefaultHandler());
-			SCXMLExecutor machine = machineFactory.createMachine();
+			MyStateMachine machine = machineFactory.createMachine();
 			
-			machine.go();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
