@@ -6,12 +6,39 @@
        initial="test_header">
 
     <state id="test_header">
+   
+   		<datamodel>
+    		<data name="isrsf2012h" expr="false" />
+		</datamodel>
+   
+    	<onentry>
+    		<my:lineinvocator linename="_line_rsf2012header" varname="isrsf2012h" />
+    		 <if cond="isrsf2012h">
+    		    <my:linewriter linename="_line_rsf2012header" />
+                <send event="'rsf2012h'" />
+                <else />
+                <send event="'none'" />
+             </if>
+    	</onentry>
+    	
     	<transition event="rsf2012h" target="rsf2012h" />
     	<transition event="none" target="headernotfound" />
+
     </state>
 
     <state id="headernotfound" final="true" />
     	
-	<state id="rsf2012h" final="true" />
+	<state id="rsf2012h">
+	
+   		<datamodel>
+    		<data name="isrsf2012a" expr="false" />
+    		<data name="isrsf2012a" expr="false" />
+		</datamodel>
+
+		<onentry>
+			<my:lineinvocator linename="_line_rsf2012a" varname="isrsf2012a"/>
+		</onentry>
+	
+	</state>
 
 </scxml>

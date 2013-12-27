@@ -20,7 +20,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import aider.org.pmsi.parser.linestypes.PmsiRsf2012Header;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012Header;
 
 public class ExecutorFactory {
 

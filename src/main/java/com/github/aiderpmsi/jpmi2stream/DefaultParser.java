@@ -1,5 +1,6 @@
 package com.github.aiderpmsi.jpmi2stream;
 
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,14 @@ public class DefaultParser {
 		try {
 			URL scxmlLocation = new URL(null, "classpath:test.scxml",
 					new ClasspathHandler(ClassLoader.getSystemClassLoader()));
+			URL filelocation = new URL("file:///home/AIDER-delabre/Documents/test_rsf");
+			
 			ExecutorFactory machineFactory = new ExecutorFactory()
 					.setScxmlDocument(scxmlLocation)
 					.setCustomActions(customActions)
-					.setErrorHandler(new DefaultHandler());
+					.setErrorHandler(new DefaultHandler())
+					.setMemoryBufferedReader(new MemoryBufferedReader(new InputStreamReader(filelocation.openStream())));
+			
 			SCXMLExecutor machine = machineFactory.createMachine();
 			machine.go();
 			

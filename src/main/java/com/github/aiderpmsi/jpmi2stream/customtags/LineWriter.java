@@ -12,13 +12,13 @@ import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
 
-import aider.org.pmsi.parser.linestypes.PmsiLineType;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiLineType;
 
 public class LineWriter extends Action {
 	
 	private static final long serialVersionUID = -8154241482062171428L;
 	
-	private String lineName;
+	private String linename;
 
 	public LineWriter() {
 		super();
@@ -36,7 +36,7 @@ public class LineWriter extends Action {
 
 		// Gets the line definition
 		PmsiLineType line = 
-				(PmsiLineType) scInstance.getRootContext().get(lineName);
+				(PmsiLineType) scInstance.getRootContext().get(linename);
 		
 		// Writes the result in the content handler
 		try {
@@ -47,12 +47,12 @@ public class LineWriter extends Action {
 		
 	}
 
-	public String getLineName() {
-		return lineName;
+	public String getLinename() {
+		return linename;
 	}
 
-	public void setLineName(String lineName) {
-		this.lineName = lineName;
+	public void setLinename(String linename) {
+		this.linename = linename;
 	}
 
 }
