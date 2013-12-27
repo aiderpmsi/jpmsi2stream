@@ -103,6 +103,7 @@ public class PmsiXmlWriter implements PmsiWriter {
 		checkIsOpen();
 		try {
 			xmlWriter.writeEndElement();
+			xmlWriter.writeCharacters("\n");
 		} catch (Exception e) {
 			throw new PmsiWriterException(e);
 		}

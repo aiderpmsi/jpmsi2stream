@@ -41,8 +41,8 @@ public class MainExample {
 	public static List<FileType> listTypes = new ArrayList<MainExample.FileType>() {
 		private static final long serialVersionUID = -4594379149065725315L;
 		{
-			add(FileType.RSS116);
-			add(FileType.RSF2009);
+		//	add(FileType.RSS116);
+		//	add(FileType.RSF2009);
 			add(FileType.RSF2012);
 		}
 	};
