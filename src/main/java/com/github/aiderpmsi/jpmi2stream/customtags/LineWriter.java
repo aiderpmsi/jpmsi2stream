@@ -12,7 +12,7 @@ import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
 
-import com.github.aiderpmsi.jpmi2stream.MemoryBufferedReader;
+import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiLineType;
 
 public class LineWriter extends Action {

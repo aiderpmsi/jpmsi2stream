@@ -1,5 +1,6 @@
-package com.github.aiderpmsi.jpmi2stream;
+package com.github.aiderpmsi.jpmi2stream.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -20,6 +21,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.github.aiderpmsi.jpmi2stream.main.DefaultContentHandler;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.EndOfFile;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012Header;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012a;
@@ -43,6 +45,8 @@ public class ExecutorFactory {
 	private List<CustomAction> customActions = null;
 	
 	private MemoryBufferedReader memoryBufferedReader = null;
+	
+	private File outputdocument;
 
 	public URL getScxmlDocument() {
 		return scxmlDocument;
@@ -106,8 +110,8 @@ public class ExecutorFactory {
 		appCtx.set("_line_rss116dad", new PmsiRss116Dad());
 		appCtx.set("_line_rss116za", new PmsiRss116Acte());
 		appCtx.set("_line_eof", new EndOfFile());
-		appCtx.set("_contenthandler", new DefaultContentHandler(new PrintWriter(System.out)));
-
+		appCtx.set("_contenthandler", new DefaultContentHandler(new PrintWriter(outputdocument)));
+		
 		SCXMLExecutor engine = new SCXMLExecutor(
 				new JexlEvaluator(), new SimpleDispatcher(), new SimpleErrorReporter());
 		engine.setStateMachine(scxml);
@@ -115,6 +119,15 @@ public class ExecutorFactory {
 		engine.setRootContext(appCtx);
 		
 		return engine;
+	}
+
+	public File getOutputdocument() {
+		return outputdocument;
+	}
+
+	public ExecutorFactory setOutputdocument(File outputdocument) {
+		this.outputdocument = outputdocument;
+		return this;
 	}
 
 }

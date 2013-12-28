@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.jpmi2stream;
+package com.github.aiderpmsi.jpmi2stream.main;
 
 import java.io.IOException;
 import java.io.Writer;

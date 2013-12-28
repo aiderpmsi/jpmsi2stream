@@ -15,11 +15,24 @@ public class PmsiRss116Acte extends PmsiLineTypeImpl {
 		"DateRealisation", "CodeCCAM", "Phase", "Activite", "ExtensionDoc", "Modificateurs",
 		"RemboursementExceptionnel", "AssociationNonPrevue", "NbActes"
 	};
+	
+	private static final String[][] transforms = {
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null}
+	};
+
 
 	private static final String name = "RssActe";
 
 	public PmsiRss116Acte() {
-		super(name, pattern, names, null);
+		super(name, pattern, names, transforms);
 	}
 	
 }

@@ -23,8 +23,48 @@ public class PmsiRss116Main extends PmsiLineTypeImpl {
 
 	private static final String name = "RssMain";
 
+	private static final String[][] transforms = {
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null},
+		{null, null}
+		};
+
 	public PmsiRss116Main() {
-		super(name, pattern, names, null);
+		super(name, pattern, names, transforms);
 	}
 	
 	public int getnbda() {

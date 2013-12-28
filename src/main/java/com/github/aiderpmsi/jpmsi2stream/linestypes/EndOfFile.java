@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.jpmi2stream.MemoryBufferedReader;
+import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
 
 public class EndOfFile implements PmsiLineType {
 

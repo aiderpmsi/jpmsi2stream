@@ -1,9 +1,10 @@
 package com.github.aiderpmsi.jpmsi2stream.linestypes;
 
 import java.io.IOException;
+
 import org.xml.sax.ContentHandler;
 
-import com.github.aiderpmsi.jpmi2stream.MemoryBufferedReader;
+import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :
