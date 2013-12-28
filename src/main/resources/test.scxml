@@ -6,7 +6,7 @@
        initial="test_header">
 
 	<datamodel>
-   		<data name="line" expr="0" />
+   		<data name="numline" expr="0" />
 	</datamodel>
 
     <state id="test_header">
@@ -16,19 +16,18 @@
 		</datamodel>
    
     	<onentry>
-    		<my:lineinvocator linename="_line_rsf2012header" varname="isrsf2012h" />
+   		 	<my:numlinewriter/><my:print content="" newline="true" />
+			<my:lineinvocator linename="_line_rsf2012header" varname="isrsf2012h" />
 
-    		 <if cond="isrsf2012h">
+    		<if cond="isrsf2012h">
     		    <my:linewriter linename="_line_rsf2012header" />
+	    		<my:print content="" newline="true" />
+	    		<assign name="numline" expr="numline + 1" />
                 <send event="'rsf2012h'" />
                 <else />
                 <send event="'none'" />
              </if>
     	</onentry>
-    	
-    	<onexit>
-    		<my:print content="" newline="true" />
-    	</onexit>
     	
     	<transition event="rsf2012h" target="rsf2012h" />
     	<transition event="none" target="headernotfound" />
@@ -54,6 +53,7 @@
 			</datamodel>
 
 			<onentry>
+	   		 	<my:numlinewriter/><my:print content="" newline="true" />
 				<my:lineinvocator linename="_line_rsf2012a" varname="isrsf2012a"/>
 				<my:lineinvocator linename="_line_rsf2012b" varname="isrsf2012b"/>
 				<my:lineinvocator linename="_line_rsf2012c" varname="isrsf2012c"/>
@@ -65,26 +65,32 @@
 				<if cond="isrsf2012a">
     				<my:linewriter linename="_line_rsf2012a" />
 		    		<my:print content="" newline="true" />
+		    		<assign name="numline" expr="numline + 1" />
        	   		    <send event="'rsf2012a'" />
        	        <elseif cond="isrsf2012b" />
  					<my:linewriter linename="_line_rsf2012b" />
 		    		<my:print content="" newline="true" />
+  		    		<assign name="numline" expr="numline + 1" />
        	         	<send event="'rsf2012b'" />
              	<elseif cond="isrsf2012c" />
     		    	<my:linewriter linename="_line_rsf2012c" />
 		    		<my:print content="" newline="true" />
+ 		    		<assign name="numline" expr="numline + 1" />
                 	<send event="'rsf2012c'" />
              	<elseif cond="isrsf2012h" />
     		    	<my:linewriter linename="_line_rsf2012h" />
 		    		<my:print content="" newline="true" />
+  		    		<assign name="numline" expr="numline + 1" />
                 	<send event="'rsf2012h'" />
              	<elseif cond="isrsf2012l" />
     		    	<my:linewriter linename="_line_rsf2012l" />
+		    		<assign name="numline" expr="numline + 1" />
 		    		<my:print content="" newline="true" />
                 	<send event="'rsf2012l'" />
              	<elseif cond="isrsf2012m" />
     		    	<my:linewriter linename="_line_rsf2012m" />
 		    		<my:print content="" newline="true" />
+		    		<assign name="numline" expr="numline + 1" />
                 	<send event="'rsf2012m'" />
              	<elseif cond="iseof" />
     		    	<my:linewriter linename="_line_eof" />
