@@ -27,4 +27,16 @@ public class PmsiRss116Main extends PmsiLineTypeImpl {
 		super(name, pattern, names, null);
 	}
 	
+	public int getnbda() {
+		return Integer.decode(getContent()[26]);
+	}
+
+	public int getnbdad() {
+		return Integer.decode(getContent()[27]);
+	}
+	
+	public int getnbza() {
+		return Integer.decode(getContent()[28]);
+	}
+
 }

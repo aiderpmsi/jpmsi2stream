@@ -53,6 +53,10 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 		return name;
 	}
 	
+	protected String[] getContent() {
+		return content;
+	}
+
 	protected void setContent(int index, String content) {
 		this.content[index] = content;
 	}
@@ -68,7 +72,7 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 				contentHandler.startElement("", names[i], names[i], null);
 				
 				// Contenu de l'élément
-				if (transforms[i][0] == null)
+				if (transforms == null || transforms[i][0] == null)
 					// Pas de transformation
 					contentHandler.characters(content[i].toCharArray(),
 							0, content[i].length());

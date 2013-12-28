@@ -34,7 +34,7 @@ public class LineWriter extends Action {
 		// Gets The content Handler
 		ContentHandler contentHandler =
 				(ContentHandler) scInstance.getRootContext().get("_contenthandler");
-
+		
 		// Gets the line definition
 		PmsiLineType line = 
 				(PmsiLineType) scInstance.getRootContext().get(linename);

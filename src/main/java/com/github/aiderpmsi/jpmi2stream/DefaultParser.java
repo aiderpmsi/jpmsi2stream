@@ -31,7 +31,7 @@ public class DefaultParser {
 		try {
 			URL scxmlLocation = new URL(null, "classpath:test.scxml",
 					new ClasspathHandler(ClassLoader.getSystemClassLoader()));
-			URL filelocation = new URL("file:///home/AIDER-delabre/Documents/test_rsf");
+			URL filelocation = new URL("file:///home/AIDER-delabre/Documents/test_rss");
 			
 			ExecutorFactory machineFactory = new ExecutorFactory()
 					.setScxmlDocument(scxmlLocation)
