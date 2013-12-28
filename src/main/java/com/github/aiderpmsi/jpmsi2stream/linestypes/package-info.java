@@ -1,5 +1,5 @@
 /**
- * Définition des données qui peuvent être lues dans les fichiers de pmsi
+ * Définition des lignes des fichiers pmsi
  */
 
 package com.github.aiderpmsi.jpmsi2stream.linestypes;
