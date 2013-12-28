@@ -20,7 +20,14 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.github.aiderpmsi.jpmsi2stream.linestypes.EndOfFile;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012Header;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012a;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012b;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012c;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012h;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012l;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012m;
 
 public class ExecutorFactory {
 
@@ -82,6 +89,13 @@ public class ExecutorFactory {
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("_file", memoryBufferedReader);
 		appCtx.set("_line_rsf2012header", new PmsiRsf2012Header());
+		appCtx.set("_line_rsf2012a", new PmsiRsf2012a());
+		appCtx.set("_line_rsf2012b", new PmsiRsf2012b());
+		appCtx.set("_line_rsf2012c", new PmsiRsf2012c());
+		appCtx.set("_line_rsf2012h", new PmsiRsf2012h());
+		appCtx.set("_line_rsf2012l", new PmsiRsf2012l());
+		appCtx.set("_line_rsf2012m", new PmsiRsf2012m());
+		appCtx.set("_line_eof", new EndOfFile());
 		appCtx.set("_contenthandler", new DefaultContentHandler(new PrintWriter(System.out)));
 
 		SCXMLExecutor engine = new SCXMLExecutor(

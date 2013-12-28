@@ -1,6 +1,5 @@
 package com.github.aiderpmsi.jpmi2stream.customtags;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.commons.logging.Log;
@@ -11,17 +10,17 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.jpmi2stream.MemoryBufferedReader;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiLineType;
+public class Print extends Action {
 
-public class LineWriter extends Action {
+	private static final long serialVersionUID = -142007029759321069L;
+
+	private String content;
 	
-	private static final long serialVersionUID = -8154241482062171428L;
-	
-	private String linename;
+	private Boolean newline;
 
-	public LineWriter() {
+	public Print() {
 		super();
 	}
 
@@ -34,32 +33,31 @@ public class LineWriter extends Action {
 		// Gets The content Handler
 		ContentHandler contentHandler =
 				(ContentHandler) scInstance.getRootContext().get("_contenthandler");
-
-		// Gets the line definition
-		PmsiLineType line = 
-				(PmsiLineType) scInstance.getRootContext().get(linename);
-		
-		// Gets The file instance
-		MemoryBufferedReader memoryBufferedReader =
-				(MemoryBufferedReader) scInstance.getRootContext().get("_file");
-
+				
 		try {
-			// Writes the result in the content handler
-			line.writeResults(contentHandler);
-			// Removes the corresponding datas from input
-			line.consume(memoryBufferedReader);
-		} catch (IOException e) {
+			contentHandler.characters(content.toCharArray(), 0, content.length());
+			if (getNewline())
+				contentHandler.characters("\n".toCharArray(), 0, 1);
+		} catch (SAXException e) {
 			throw new ModelException(e);
 		}
 		
 	}
 
-	public String getLinename() {
-		return linename;
+	public String getContent() {
+		return content;
 	}
 
-	public void setLinename(String linename) {
-		this.linename = linename;
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Boolean getNewline() {
+		return newline;
+	}
+
+	public void setNewline(Boolean newline) {
+		this.newline = newline;
 	}
 
 }

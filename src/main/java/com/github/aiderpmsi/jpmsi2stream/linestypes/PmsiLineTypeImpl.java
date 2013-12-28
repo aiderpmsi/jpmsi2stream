@@ -31,6 +31,8 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 	
 	private String[] content;
 	
+	int matchLength = 0;
+	
 	public PmsiLineTypeImpl(String name, Pattern pattern, String[] names, String[][] transforms) {
 		this.name = name;
 		this.pattern = pattern;
@@ -74,7 +76,7 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 					// Transformation
 					String modContent = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
 					contentHandler.characters(modContent.toCharArray(),
-							0, content[i].length());
+							0, modContent.length());
 				}
 				
 				// Fin de l'élément
@@ -93,6 +95,9 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 		// Récupération de la ligne à lire
 		String toParse = br.getLine();
 		
+		if (toParse == null)
+			return false;
+		
 		// Test du match
 		Matcher match = pattern.matcher(toParse);
 
@@ -102,13 +107,19 @@ public class PmsiLineTypeImpl implements PmsiLineType {
 				content[i] = match.group(i + 1);
 			}
 			
-			// On supprime du reader ce qui a été lu.
-			br.consume(match.end());
+			// On Sauvegarde la taille de ce qui a été lu
+			matchLength = match.end();
 			
 			return true;
 		}
 		// La ligne ne correspond pas
 		else 
 			return false;
+	}
+	
+	public void consume(MemoryBufferedReader br) throws IOException {
+		// supprime du reader ce qui a été lu.
+		br.consume(matchLength);
+		matchLength = 0;
 	}
 }

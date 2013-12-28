@@ -17,12 +17,18 @@ public class MemoryBufferedReader extends BufferedReader {
 	}
 
 	public String getLine() throws IOException {
-		if (readed.length() == 0) {
+		if (readed == null || readed.length() == 0) {
 			readed = readLine();
 		}
 		return readed;
 	}
 	
+	/**
+	 * Supprime un nombre d'éléments de la ligne actuellement lue.
+	 * Si le nombre d'éléments à supprimer est plus important que la taille de la ligne,
+	 * seule la ligne actuelle est effacée, pas les lignes suivantes
+	 * @param nbElts
+	 */
 	public void consume(int nbElts) {
 		readed = readed.substring(nbElts);
 	}

@@ -29,5 +29,7 @@ public interface PmsiLineType {
 	 * @throws IOException
 	 */
 	public void writeResults(ContentHandler contentHandler) throws IOException;
-	
+
+	public void consume(MemoryBufferedReader br) throws IOException;
+
 }
