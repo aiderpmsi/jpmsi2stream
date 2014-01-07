@@ -16,21 +16,26 @@ import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
  * @author delabre
  *
  */
-public interface PmsiLineType {
+public abstract class PmsiLineType {
 	
 	/**
 	 * Checks if thie line is a valid line
 	 * @return
 	 */
-	public boolean isFound(MemoryBufferedReader br) throws IOException;
+	public abstract boolean isFound(MemoryBufferedReader br) throws IOException;
 
 	/**
 	 * Maps the line to content writen to the content handler
 	 * @param contentHandler
 	 * @throws IOException
 	 */
-	public void writeResults(ContentHandler contentHandler) throws IOException;
+	public abstract void writeResults(ContentHandler contentHandler) throws IOException;
 
-	public void consume(MemoryBufferedReader br) throws IOException;
+	/**
+	 * Consumes from the reader the number of characters matched
+	 * @param br
+	 * @throws IOException
+	 */
+	public abstract void consume(MemoryBufferedReader br) throws IOException;
 
 }

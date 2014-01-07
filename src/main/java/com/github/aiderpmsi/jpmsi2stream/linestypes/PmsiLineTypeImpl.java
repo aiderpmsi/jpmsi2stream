@@ -19,7 +19,7 @@ import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
  * @author delabre
  *
  */
-public class PmsiLineTypeImpl implements PmsiLineType {
+public class PmsiLineTypeImpl extends PmsiLineType {
 
 	private Pattern pattern;
 	

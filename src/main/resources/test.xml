@@ -72,6 +72,7 @@
 				<data name="isrsf2012b" />
 				<data name="isrsf2012c" />
 				<data name="isrsf2012h" />
+				<data name="isrsf2012i" />
 				<data name="isrsf2012l" />
 				<data name="isrsf2012m" />
 				<data name="iseof" />
@@ -83,6 +84,7 @@
 				<assign name="isrsf2012b" expr="false" />
 				<assign name="isrsf2012c" expr="false" />
 				<assign name="isrsf2012h" expr="false" />
+				<assign name="isrsf2012i" expr="false" />
 				<assign name="isrsf2012l" expr="false" />
 				<assign name="isrsf2012m" expr="false" />
 				<assign name="iseof" expr="false" />
@@ -100,6 +102,8 @@
 					varname="isrsf2012c" />
 				<my:lineinvocator linename="_line_rsf2012h"
 					varname="isrsf2012h" />
+				<my:lineinvocator linename="_line_rsf2012i"
+					varname="isrsf2012i" />
 				<my:lineinvocator linename="_line_rsf2012l"
 					varname="isrsf2012l" />
 				<my:lineinvocator linename="_line_rsf2012m"
@@ -136,6 +140,13 @@
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012h'" />
 					
+					<!-- RSF I -->
+					<elseif cond="isrsf2012i" />
+					<my:linewriter linename="_line_rsf2012i" />
+					<assign name="numline" expr="numline + 1" />
+					<my:print content="" newline="true" />
+					<send event="'rsf2012i'" />
+
 					<!-- RSF L -->
 					<elseif cond="isrsf2012l" />
 					<my:linewriter linename="_line_rsf2012l" />
@@ -167,6 +178,7 @@
 			<transition event="rsf2012b" target="rsf2012h.entry" />
 			<transition event="rsf2012c" target="rsf2012h.entry" />
 			<transition event="rsf2012h" target="rsf2012h.entry" />
+			<transition event="rsf2012i" target="rsf2012h.entry" />
 			<transition event="rsf2012l" target="rsf2012h.entry" />
 			<transition event="rsf2012m" target="rsf2012h.entry" />
 			<transition event="eof" target="eof" />
