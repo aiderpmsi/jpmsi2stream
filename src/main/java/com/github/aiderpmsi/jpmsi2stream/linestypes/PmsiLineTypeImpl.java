@@ -8,6 +8,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
+import com.github.aiderpmsi.jpmsi2stream.jaxb.Element;
+import com.github.aiderpmsi.jpmsi2stream.jaxb.Linetype;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :
@@ -33,12 +35,27 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	
 	int matchLength = 0;
 	
-	public PmsiLineTypeImpl(String name, Pattern pattern, String[] names, String[][] transforms) {
-		this.name = name;
-		this.pattern = pattern;
-		this.names = names;
-		this.transforms = transforms;
-		this.content = new String[names.length];
+	public PmsiLineTypeImpl(Linetype linetype) {
+		this.name = linetype.getName();
+		this.names = new String[linetype.getElements().size()];
+		this.transforms = new String[linetype.getElements().size()][2];
+		StringBuilder patternS = new StringBuilder("^");
+		
+		int count = 0;
+		for (Element element : linetype.getElements()) {
+			this.names[count] = element.getName();
+			if (element.getIn().length() == 0) {
+				this.transforms[count][0] = null;
+				this.transforms[count][1] = null;
+			} else {
+				this.transforms[count][0] = element.getIn();
+				this.transforms[count][1] = element.getOut();
+			}
+			patternS.append("(").append(element.getPattern()).append(")");
+			count++;
+		}
+
+		this.pattern = Pattern.compile(patternS.toString());
 	}
 	
 	protected Pattern getPattern() {

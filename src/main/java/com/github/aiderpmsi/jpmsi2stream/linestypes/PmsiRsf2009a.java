@@ -1,7 +1,5 @@
 package com.github.aiderpmsi.jpmsi2stream.linestypes;
 
-import java.util.regex.Pattern;
-
 /**
  * Définition d'une ligne A de RSF version 2009
  * @author delabre
@@ -9,52 +7,40 @@ import java.util.regex.Pattern;
  */
 public class PmsiRsf2009a extends PmsiLineTypeImpl {
 
-	private static final Pattern pattern = Pattern.compile("^(A)(\\d{9})(.{20})(.{1})(.{1})(.{13})(.{2})(.{3})(.{9})(.{1})(.{2})(.{2})(.{1})" +
-			"(.{1})(.{2})(.{8})(.{1})(.{8})(.{8})(.{8})(.{8})(.{8})(.{8})(.{8})(.{8})(.{8})(.{8})(.{1})");
-	
-	private static final String[] names = {
-		"TypeEnregistrement", "Finess", "NumRSS", "Sexe", "CodeCivilite", "CodeSS", "CleCodeSS",
-		"RangBeneficiaire", "NumFacture", "NatureOperation", "NatureAssurance", "TypeContratOC",
-		"JustifExonerationTM", "CodePEC", "CodeGdRegime", "DateNaissance", "RangNaissance",
-		"DateEntree", "DateSortie", "TotalBaseRemboursementPH", "TotalRemboursableAMOPH",
-		"TotalFactureHonoraire", "TotalRemboursableAMOHonoraire", "TotalParticipationAvantOC",
-		"TotalRemboursableOCPH", "TotalRemboursableOCHonoraire", "TotalFacturePH", "EtatLiquidation"
-	};
-	
-	private static final String[][] transforms = {
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
-		{null, null},
-		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
-		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null}
+	private static final String[][] definitions = {
+		{"TypeEnregistrement", "(A)", null, null},
+		{"Finess", "(\\d{9})", null, null},
+		{"NumRSS", "(.{20})", null, null},
+		{"Sexe", "(.{1})", null, null},
+		{"CodeCivilite", "(.{1})", null, null},
+		{"CodeSS", "(.{13})", null, null},
+		{"CleCodeSS", "(.{2})", null, null},
+		{"RangBeneficiaire", "(.{3})", null, null},
+		{"NumFacture", "(.{9})", null, null},
+		{"NatureOperation", "(.{1})", null, null},
+		{"NatureAssurance", "(.{2})", null, null},
+		{"TypeContratOC", "(.{2})", null, null},
+		{"JustifExonerationTM", "(.{1})", null, null},
+		{"CodePEC", "(.{1})", null, null},
+		{"CodeGdRegime", "(.{2})", null, null},
+		{"DateNaissance", "(.{8})", "(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"RangNaissance", "(.{1})", null, null},
+		{"DateEntree", "(.{8})", "(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"DateSortie", "(.{8})", "(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"TotalBaseRemboursementPH", "(.{8})", null, null},
+		{"TotalRemboursableAMOPH", "(.{8})", null, null},
+		{"TotalFactureHonoraire", "(.{8})", null, null},
+		{"TotalRemboursableAMOHonoraire", "(.{8})", null, null},
+		{"TotalParticipationAvantOC", "(.{8})", null, null},
+		{"TotalRemboursableOCPH", "(.{8})", null, null},
+		{"TotalRemboursableOCHonoraire", "(.{8})", null, null},
+		{"TotalFacturePH", "(.{8})", null, null},
+		{"EtatLiquidation", "(.{1})", null, null}
 	};
 	
 	private static final String name = "RsfA";
 
 	public PmsiRsf2009a() {
-		super(name, pattern, names, transforms);
+		super(definitions, name);
 	}
 }

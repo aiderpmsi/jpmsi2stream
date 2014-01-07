@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<linetypes>
+	<linetype name="rsfa">
+		<ids>
+			<id>rsf2009a</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>A</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="Finess">
+			<pattern></pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="Sexe">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeCivilite">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="NatureOperation">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="NatureAssurance">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="TypeContratOC">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="JustifExonerationTM">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodePEC">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeGdRegime">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DateNaissance">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="RangNaissance">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="DateEntree">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="DateSortie">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="TotalBaseRemboursementPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableAMOPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalFactureHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableAMOHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalParticipationAvantOC">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableOCPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableOCHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalFacturePH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="EtatLiquidation">
+			<pattern>.{1}</pattern>
+		</element>
+	</linetype>
+</linetypes>

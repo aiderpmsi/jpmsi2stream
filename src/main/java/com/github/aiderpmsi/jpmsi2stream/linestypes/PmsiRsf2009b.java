@@ -1,7 +1,5 @@
 package com.github.aiderpmsi.jpmsi2stream.linestypes;
 
-import java.util.regex.Pattern;
-
 /**
  * Définition d'une ligne B de RSF version 2009
  * @author delabre
@@ -9,49 +7,38 @@ import java.util.regex.Pattern;
  */
 public class PmsiRsf2009b extends PmsiLineTypeImpl {
 	
-	private static final Pattern pattern = Pattern.compile("^(B)(\\d{9})(.{20})(.{13})(.{2})(.{3})(.{9})(.{2})(.{3})(.{8})(.{8})" +
-			"(.{5})(.{3})(.{1})(.{5})(.{1})(.{5})(.{7})(.{8})(.{3})(.{8})(.{8})(.{7})(.{4})(.{8})(.{3})");
-	
-	private static final String[] names = {
-		"TypeEnregistrement", "Finess", "NumRSS", "CodeSS", "CleCodeSS", "RangBeneficiaire",
-		"NumFacture", "ModeTraitement", "DisciplinePrestation", "DateDebutSejour", "DateFinSejour",
-		"CodeActe", "Quantite", "JustifExonerationTM", "Coefficient", "CodePEC", "CoefficientMCO",
-		"PrixUnitaire", "MontantBaseRemboursementPH", "TauxPrestation", "MontantRemboursableAMOPH",
-		"MontantTotalDepense", "MontantRemboursableOCPH", "NumGHS", "MontantNOEMIE", "OperationNOEMIE"
-	};
-
-	private static final String[][] transforms = {
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
-		{"(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null},
-		{null, null}
+	private static final String[][] definitions = {
+		{"TypeEnregistrement", "(B)", null, null},
+		{"Finess", "(\\d{9})", null, null},
+		{"NumRSS", "(.{20})", null, null},
+		{"CodeSS", "(.{13})", null, null},
+		{"CleCodeSS", "(.{2})", null, null},
+		{"RangBeneficiaire", "(.{3})", null, null},
+		{"NumFacture", "(.{9})", null, null},
+		{"ModeTraitement", "(.{2})", null, null},
+		{"DisciplinePrestation", "(.{3})", null, null},
+		{"DateDebutSejour", "(.{8})", "(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"DateFinSejour", "(.{8})", "(\\d{2})(\\d{2})(\\d{4})", "$3-$2-$1"},
+		{"CodeActe", "(.{5})", null, null},
+		{"Quantite", "(.{3})", null, null},
+		{"JustifExonerationTM", "(.{1})", null, null},
+		{"Coefficient", "(.{5})", null, null},
+		{"CodePEC", "(.{1})", null, null},
+		{"CoefficientMCO", "(.{5})", null, null},
+		{"PrixUnitaire", "(.{7})", null, null},
+		{"MontantBaseRemboursementPH", "(.{8})", null, null},
+		{"TauxPrestation", "(.{3})", null, null},
+		{"MontantRemboursableAMOPH", "(.{8})", null, null},
+		{"MontantTotalDepense", "(.{8})", null, null},
+		{"MontantRemboursableOCPH", "(.{7})", null, null},
+		{"NumGHS", "(.{4})", null, null},
+		{"MontantNOEMIE", "(.{8})", null, null},
+		{"OperationNOEMIE", "(.{3})", null, null}
 	};
 	
 	private static final String name = "RsfB";
 	
 	public PmsiRsf2009b() {
-		super(name, pattern, names, transforms);
+		super(definitions, name);
 	}
 }

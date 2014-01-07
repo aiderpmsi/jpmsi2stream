@@ -12,6 +12,7 @@ import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
 import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.LineMultiTon;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiLineType;
 
 public class LineInvocator extends Action {
@@ -36,7 +37,7 @@ public class LineInvocator extends Action {
 
 		// Gets the line definition
 		PmsiLineType line = 
-				(PmsiLineType) scInstance.getRootContext().get(linename);
+				LineMultiTon.getInstance(linename);
 		
 		// Writes the result in the local var
 		try {
