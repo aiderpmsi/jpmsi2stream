@@ -28,6 +28,7 @@ import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012a;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012b;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012c;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012h;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012i;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012l;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012m;
 import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Acte;
@@ -102,6 +103,7 @@ public class ExecutorFactory {
 		appCtx.set("_line_rsf2012b", new PmsiRsf2012b());
 		appCtx.set("_line_rsf2012c", new PmsiRsf2012c());
 		appCtx.set("_line_rsf2012h", new PmsiRsf2012h());
+		appCtx.set("_line_rsf2012i", new PmsiRsf2012i());
 		appCtx.set("_line_rsf2012l", new PmsiRsf2012l());
 		appCtx.set("_line_rsf2012m", new PmsiRsf2012m());
 		appCtx.set("_line_rss116header", new PmsiRss116Header());
