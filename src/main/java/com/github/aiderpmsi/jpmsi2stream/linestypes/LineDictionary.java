@@ -17,17 +17,15 @@ import javax.xml.transform.stream.StreamSource;
 import com.github.aiderpmsi.jpmi2stream.utils.ClasspathHandler;
 import com.github.aiderpmsi.jpmsi2stream.jaxb.Linetype;
 
-public class LineMultiTon {
+public class LineDictionary {
 
 	private static final String configUrl = "classpath:linedefs.xml";
 	private static final String configXslUrl = "classpath:linedefsset.xsl";
 	
-	private static final Map<String, PmsiLineType> instances =
+	private Map<String, PmsiLineType> instances =
 			new HashMap<String, PmsiLineType>();
 	
-	private LineMultiTon() { };
-	
-	public static synchronized PmsiLineType getInstance(String element) {
+	public synchronized PmsiLineType getInstance(String element) {
 		// Get the singleton instance
 		PmsiLineType instance = instances.get(element);
         

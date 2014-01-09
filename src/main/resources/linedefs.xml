@@ -99,4 +99,92 @@
 			<pattern>.{1}</pattern>
 		</element>
 	</linetype>
+	
+	<linetype name="rsfb">
+		<ids>
+			<id>rsf2009b</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>B</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="ModeTraitement">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DisciplinePrestation">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="DateDebutSejour">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="DateFinSejour">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="CodeActe">
+			<pattern>.{5}</pattern>
+		</element>
+		<element name="Quantite">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="JustifExonerationTM">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Coefficient">
+			<pattern>.{5}</pattern>
+		</element>
+		<element name="CodePEC">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CoefficientMCO">
+			<pattern>.{5}</pattern>
+		</element>
+		<element name="PrixUnitaire">
+			<pattern>.{7}</pattern>
+		</element>
+		<element name="MontantBaseRemboursementPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TauxPrestation">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="MontantRemboursableAMOPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="MontantTotalDepense">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="MontantRemboursableOCPH">
+			<pattern>.{7}</pattern>
+		</element>
+		<element name="NumGHS">
+			<pattern>.{4}</pattern>
+		</element>
+		<element name="MontantNOEMIE">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="OperationNOEMIE">
+			<pattern>.{3}</pattern>
+		</element>	
+	</linetype>
 </linetypes>

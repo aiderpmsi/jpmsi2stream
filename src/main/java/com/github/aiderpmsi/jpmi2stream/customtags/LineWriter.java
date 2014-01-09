@@ -13,7 +13,8 @@ import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
 
 import com.github.aiderpmsi.jpmi2stream.utils.MemoryBufferedReader;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.LineMultiTon;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.LineDictionary;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiLineType;
 
 public class LineWriter extends Action {
 	
@@ -36,7 +37,8 @@ public class LineWriter extends Action {
 				(ContentHandler) scInstance.getRootContext().get("_contenthandler");
 		
 		// Gets the line definition
-		LineMultiTon.getInstance(linename);
+		PmsiLineType line = 
+				((LineDictionary) scInstance.getRootContext().get("_dictionary")).getInstance(linename);
 		
 		// Gets The file instance
 		MemoryBufferedReader memoryBufferedReader =
@@ -44,9 +46,9 @@ public class LineWriter extends Action {
 
 		try {
 			// Writes the result in the content handler
-			LineMultiTon.getInstance(linename).writeResults(contentHandler);
+			line.writeResults(contentHandler);
 			// Removes the corresponding datas from input
-			LineMultiTon.getInstance(linename).consume(memoryBufferedReader);
+			line.consume(memoryBufferedReader);
 		} catch (IOException e) {
 			throw new ModelException(e);
 		}

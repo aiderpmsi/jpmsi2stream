@@ -22,20 +22,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.github.aiderpmsi.jpmi2stream.main.DefaultContentHandler;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.EndOfFile;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012Header;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012a;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012b;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012c;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012h;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012i;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012l;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRsf2012m;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Acte;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Da;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Dad;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Header;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.PmsiRss116Main;
+import com.github.aiderpmsi.jpmsi2stream.linestypes.LineDictionary;
 
 public class ExecutorFactory {
 
@@ -98,20 +85,7 @@ public class ExecutorFactory {
 		
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("_file", memoryBufferedReader);
-		appCtx.set("_line_rsf2012header", new PmsiRsf2012Header());
-		appCtx.set("_line_rsf2012a", new PmsiRsf2012a());
-		appCtx.set("_line_rsf2012b", new PmsiRsf2012b());
-		appCtx.set("_line_rsf2012c", new PmsiRsf2012c());
-		appCtx.set("_line_rsf2012h", new PmsiRsf2012h());
-		appCtx.set("_line_rsf2012i", new PmsiRsf2012i());
-		appCtx.set("_line_rsf2012l", new PmsiRsf2012l());
-		appCtx.set("_line_rsf2012m", new PmsiRsf2012m());
-		appCtx.set("_line_rss116header", new PmsiRss116Header());
-		appCtx.set("_line_rss116main", new PmsiRss116Main());
-		appCtx.set("_line_rss116da", new PmsiRss116Da());
-		appCtx.set("_line_rss116dad", new PmsiRss116Dad());
-		appCtx.set("_line_rss116za", new PmsiRss116Acte());
-		appCtx.set("_line_eof", new EndOfFile());
+		appCtx.set("_dictionary", new LineDictionary());
 		appCtx.set("_contenthandler", new DefaultContentHandler(new PrintWriter(outputdocument)));
 		
 		SCXMLExecutor engine = new SCXMLExecutor(
