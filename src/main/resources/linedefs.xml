@@ -1,6 +1,51 @@
 <?xml version="1.0"?>
 
 <linetypes>
+
+	<linetype name="rsfheader">
+		<ids>
+			<id>rsf2009header</id>
+			<id>rsf2012header</id>
+		</ids>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumLot">
+			<pattern>\d{3}</pattern>
+		</element>
+		<element name="StatutJuridique">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="ModeTarifs">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DateDebut">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="DateFin">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="NbEnregistrements">
+			<pattern>\d{6}</pattern>
+		</element>
+		<element name="NbRSS">
+			<pattern>\d{6}</pattern>
+		</element>
+		<element name="PremierRSS">
+			<pattern>\d{7}</pattern>
+		</element>
+		<element name="DernierRSS">
+			<pattern>\d{7}</pattern>
+		</element>
+		<element name="DernierEnvoi">
+			<pattern>.{1}</pattern>
+		</element>
+	</linetype>
+	
 	<linetype name="rsfa">
 		<ids>
 			<id>rsf2009a</id>
@@ -100,9 +145,115 @@
 		</element>
 	</linetype>
 	
+	<linetype name="rsfa">
+		<ids>
+			<id>rsf2009a</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>A</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="Finess">
+			<pattern></pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="Sexe">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeCivilite">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="NatureOperation">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="NatureAssurance">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="TypeContratOC">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="JustifExonerationTM">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodePEC">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeGdRegime">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DateNaissance">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="RangNaissance">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="DateEntree">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="DateSortie">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="TotalBaseRemboursementPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableAMOPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalFactureHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableAMOHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalParticipationAvantOC">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableOCPH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalRemboursableOCHonoraire">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="TotalFacturePH">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="EtatLiquidation">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CMU">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="LienMere">
+			<pattern>.{1}</pattern>
+		</element>
+	</linetype>
+
 	<linetype name="rsfb">
 		<ids>
 			<id>rsf2009b</id>
+			<id>rsf2012b</id>
 		</ids>
 		<element name="TypeEnregistrement">
 			<pattern>B</pattern>
@@ -187,4 +338,591 @@
 			<pattern>.{3}</pattern>
 		</element>	
 	</linetype>
+	
+	<linetype name="rsfc">
+		<ids>
+			<id>rsf2009c</id>
+			<id>rsf2012c</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>C</pattern>
+		</element>	
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>	
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>	
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>	
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>	
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>	
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>	
+		<element name="ModeTraitement">
+			<pattern>.{2}</pattern>
+		</element>	
+		<element name="DisciplinePrestation">
+			<pattern>.{3}</pattern>
+		</element>	
+		<element name="JustifExonerationTM">
+			<pattern>.{1}</pattern>
+		</element>	
+		<element name="DateActe">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>	
+		<element name="CodeActe">
+			<pattern>.{5}</pattern>
+		</element>	
+		<element name="Quantite">
+			<pattern>.{2}</pattern>
+		</element>	
+		<element name="Coefficient">
+			<pattern>.{6}</pattern>
+		</element>	
+		<element name="Denombrement">
+			<pattern>.{2}</pattern>
+		</element>	
+		<element name="PrixUnitaire">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="MontantBaseRemboursementHonoraire">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="TauxRemboursement">
+			<pattern>.{3}</pattern>
+		</element>	
+		<element name="MontantRemboursableAMOHonoraire">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="MontantTotalHonoraire">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="MontantRemboursableOCHonoraire">
+			<pattern>.{6}</pattern>
+		</element>	
+		<element name="MontantNOEMIE">
+			<pattern>.{8}</pattern>
+		</element>	
+		<element name="OperationNOEMIE">
+			<pattern>.{3}</pattern>
+		</element>	
+	</linetype>
+	
+	<linetype name="rsfh">
+		<ids>
+			<id>rsf2009h</id>
+			<id>rsf2012h</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>H</pattern>
+		</element>	
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>	
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>	
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>	
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>	
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>	
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>	
+		<element name="DateDebutSejour">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>	
+		<element name="CodeUCD">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="CoefficientFractionnement">
+			<pattern>.{5}</pattern>
+		</element>	
+		<element name="PrixAchatUnitaire">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="MontantUnitaireEcartIndemnisable">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="MontantTotalEcartIndemnisable">
+			<pattern>.{7}</pattern>
+		</element>	
+		<element name="Quantite">
+			<pattern>.{3}</pattern>
+		</element>	
+		<element name="MontantTotalFactureTTC">
+			<pattern>.{7}</pattern>
+		</element>
+	</linetype>
+	
+	<linetype name="rsfi">
+		<ids>
+			<id>rsf2012i</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>I</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="DateDebutSejour">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="DateFinSejour">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="NatureFinSejour">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="LieuExecutionActe">
+			<pattern>.{14}</pattern>
+		</element>
+	</linetype>
+
+	<linetype name="rsfl">
+		<ids>
+			<id>rsf2012l</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>L</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="ModeTraitement">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="Discipline">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="DateActe1">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="QuantiteActe1">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="CodeActe1">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="DateActe2">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="QuantiteActe2">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="CodeActe2">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="DateActe3">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="QuantiteActe3">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="CodeActe3">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="DateActe4">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="QuantiteActe4">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="CodeActe4">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="DateActe5">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="QuantiteActe5">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="CodeActe5">
+			<pattern>.{8}</pattern>
+		</element>
+	</linetype>
+
+	<linetype name="rsfm">
+		<ids>
+			<id>rsf2009m</id>
+			<id>rsf2012m</id>
+		</ids>
+		<element name="TypeEnregistrement">
+			<pattern>M</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="CodeSS">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="CleCodeSS">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="RangBeneficiaire">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="NumFacture">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="ModeTraitement">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DisciplinePrestation">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="DateActe">
+			<pattern>.{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="CodeCCAM">
+			<pattern>.{13}</pattern>
+		</element>
+		<element name="ExtensionDocumentaire">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Activite">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Phase">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Modificateur1">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Modificateur2">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Modificateur3">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Modificateur4">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="AssociationNonPrevue">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CodeRemboursementExceptionnel">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="NumDent1">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent2">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent3">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent4">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent5">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent6">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent7">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent8">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent9">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent10">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent11">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent12">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent13">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent14">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent15">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumDent16">
+			<pattern>.{2}</pattern>
+		</element>
+	</linetype>
+	
+	<linetype name="rssheader">
+		<ids>
+			<id>rss116header</id>
+		</ids>
+		<element name="Finess">
+			<pattern>\d{9}</pattern>
+		</element>
+		<element name="NumLot">
+			<pattern>\d{3}</pattern>
+		</element>
+		<element name="StatutEtablissement">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DbtPeriode">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="FinPeriode">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="NbEnregistrements">
+			<pattern>\d{6}</pattern>
+		</element>
+		<element name="NbRSS">
+			<pattern>\d{6}</pattern>
+		</element>
+		<element name="PremierRSS">
+			<pattern>\d{7}</pattern>
+		</element>
+		<element name="DernierRSS">
+			<pattern>\d{7}</pattern>
+		</element>
+		<element name="DernierEnvoiTrimestre">
+			<pattern>.{1}</pattern>
+		</element>
+	</linetype>
+	
+	<linetype name="rssmain">
+		<ids>
+			<id>rss116main</id>
+		</ids>
+		<element name="VersionClassification">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumCMD">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NumGHM">
+			<pattern>.{4}</pattern>
+		</element>
+		<element name="Filler">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="VersionFormatRSS">
+			<pattern>116</pattern>
+		</element>
+		<element name="GroupageCodeRet">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="Finess">
+			<pattern>.{9}</pattern>
+		</element>
+		<element name="VersionFormatRUM">
+			<pattern>016</pattern>
+		</element>
+		<element name="NumRSS">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="NumLocalSejour">
+			<pattern>.{20}</pattern>
+		</element>
+		<element name="NumRUM">
+			<pattern>.{10}</pattern>
+		</element>
+		<element name="DDN">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="Sexe">
+			<pattern>[1|2]</pattern>
+		</element>
+		<element name="NumUniteMedicale">
+			<pattern>.{4}</pattern>
+		</element>
+		<element name="TypeAutorisationLit">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DateEntree">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="ModeEntree">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Provenance">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="DateSortie">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="ModeSortie">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Destination">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="CPResidence">
+			<pattern>.{5}</pattern>
+		</element>
+		<element name="PoidsNouveauNe">
+			<pattern>.{4}</pattern>
+		</element>
+		<element name="AgeGestationnel">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="DDRegles">
+			<pattern>\d{8}|[ ]{8}</pattern>
+		</element>
+		<element name="NbSeances">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NbDA">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NbDAD">
+			<pattern>.{2}</pattern>
+		</element>
+		<element name="NbZA">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="DP">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="DR">
+			<pattern>.{8}</pattern>
+		</element>
+		<element name="IGS2">
+			<pattern>.{3}</pattern>
+		</element>
+		<element name="ConfCodageRSS">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="TypeMachineRadiotherapie">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="TypeDosimetrie">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="NumInnovation">
+			<pattern>.{15}</pattern>
+		</element>
+		<element name="ZoneReservee">
+			<pattern>.{15}</pattern>
+		</element>
+	</linetype>
+
+	<linetype name="rssacte">
+		<ids>
+			<id>rss116acte</id>
+		</ids>
+		<element name="DateRealisation">
+			<pattern>\d{8}</pattern>
+			<in>(\d{2})(\d{2})(\d{4})</in>
+			<out>$3-$2-$1</out>
+		</element>
+		<element name="CodeCCAM">
+			<pattern>.{7}</pattern>
+		</element>
+		<element name="Phase">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Activite">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="ExtensionDoc">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="Modificateurs">
+			<pattern>.{4}</pattern>
+		</element>
+		<element name="RemboursementExceptionnel">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="AssociationNonPrevue">
+			<pattern>.{1}</pattern>
+		</element>
+		<element name="NbActes">
+			<pattern>\d{2}</pattern>
+		</element>
+	</linetype>
+	
+	<linetype name="rssda">
+		<ids>
+			<id>rss116da</id>
+		</ids>
+		<element name="DA">
+			<pattern>.{8}</pattern>
+		</element>
+	</linetype>
+
+	<linetype name="rssdad">
+		<ids>
+			<id>rss116dad</id>
+		</ids>
+		<element name="DAD">
+			<pattern>.{8}</pattern>
+		</element>
+	</linetype>
+
 </linetypes>
