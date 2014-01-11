@@ -3,17 +3,17 @@ package com.github.aiderpmsi.jpmsi2stream.jaxb;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="linetype")
 public class Linetype {
 
-	@XmlElement(name = "name")
 	private String name = null;
 	
-	@XmlElement(name="elements")
 	private List<Element> elements = null;
 
+	@XmlElement
 	public String getName() {
 		return name;
 	}
@@ -22,6 +22,8 @@ public class Linetype {
 		this.name = name;
 	}
 
+	@XmlElementWrapper(name = "elements")
+	@XmlElement(name="element")
 	public List<Element> getElements() {
 		return elements;
 	}

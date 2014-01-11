@@ -39,7 +39,7 @@ public class LineWriter extends Action {
 		// Gets the line definition
 		PmsiLineType line = 
 				((LineDictionary) scInstance.getRootContext().get("_dictionary")).getInstance(linename);
-		
+
 		// Gets The file instance
 		MemoryBufferedReader memoryBufferedReader =
 				(MemoryBufferedReader) scInstance.getRootContext().get("_file");

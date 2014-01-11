@@ -874,7 +874,7 @@
 
 	<linetype name="rssacte">
 		<ids>
-			<id>rss116acte</id>
+			<id>rss116za</id>
 		</ids>
 		<element name="DateRealisation">
 			<pattern>\d{8}</pattern>

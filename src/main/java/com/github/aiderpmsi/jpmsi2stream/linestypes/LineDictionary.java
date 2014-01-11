@@ -12,6 +12,7 @@ import javax.xml.bind.util.JAXBResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.github.aiderpmsi.jpmi2stream.utils.ClasspathHandler;
@@ -45,7 +46,7 @@ public class LineDictionary {
 	
 	private static PmsiLineType createInstance(String element) throws IOException, JAXBException, TransformerException {
 			// If eof is asked
-			if (element.equals("EOF"))
+			if (element.equals("eof"))
 				return new EndOfFile();
 			else {
 				// Opens the config file
@@ -67,6 +68,8 @@ public class LineDictionary {
 				// Jaxb object
 				JAXBContext jaxbContext = JAXBContext.newInstance(Linetype.class);
 			    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			    
+			    // transformer.transform(inp,  new StreamResult(System.out));
 			    
 				// Creates a config object from the result
 			    JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);

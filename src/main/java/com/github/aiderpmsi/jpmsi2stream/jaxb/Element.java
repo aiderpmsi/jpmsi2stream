@@ -3,21 +3,18 @@ package com.github.aiderpmsi.jpmsi2stream.jaxb;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="element")
+@XmlRootElement
 public class Element {
 
-	@XmlElement(name="name")
 	private String name = null;
 	
-	@XmlElement(name="pattern")
 	private String pattern = null;
 	
-	@XmlElement(name="in", defaultValue="")
 	private String in = null;
 	
-	@XmlElement(name="out", defaultValue="")
 	private String out = null;
 
+	@XmlElement
 	public String getName() {
 		return name;
 	}
@@ -26,6 +23,7 @@ public class Element {
 		this.name = name;
 	}
 
+	@XmlElement
 	public String getPattern() {
 		return pattern;
 	}
@@ -34,6 +32,7 @@ public class Element {
 		this.pattern = pattern;
 	}
 
+	@XmlElement(defaultValue="")
 	public String getIn() {
 		return in;
 	}
@@ -42,6 +41,7 @@ public class Element {
 		this.in = in;
 	}
 
+	@XmlElement(defaultValue="")
 	public String getOut() {
 		return out;
 	}

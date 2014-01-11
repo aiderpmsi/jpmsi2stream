@@ -39,6 +39,7 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		this.name = linetype.getName();
 		this.names = new String[linetype.getElements().size()];
 		this.transforms = new String[linetype.getElements().size()][2];
+		this.content = new String[linetype.getElements().size()];
 		StringBuilder patternS = new StringBuilder("^");
 		
 		int count = 0;
@@ -143,4 +144,9 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		br.consume(matchLength);
 		matchLength = 0;
 	}
+	
+	public int getInt(int index) {
+		return Integer.parseInt(content[index]);
+	}
+
 }

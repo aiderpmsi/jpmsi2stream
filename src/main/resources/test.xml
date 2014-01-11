@@ -233,12 +233,12 @@
 					<my:numlinewriter />
 					<my:print content="" newline="true" />
 					<!-- Writes the content of the RSS -->
+					<assign name="nbda" expr="_dictionary.getInstance('rss116main').getInt(26)" />
+					<assign name="nbdad" expr="_dictionary.getInstance('rss116main').getInt(27)" />
+					<assign name="nbza" expr="_dictionary.getInstance('rss116main').getInt(28)" />
 					<my:linewriter linename="rss116main" />
 					<my:print content="" newline="true" />
 					<assign name="numline" expr="numline + 1" />
-					<assign name="nbda" expr="_dictionary.get('rss116main').getnbda()" />
-					<assign name="nbdad" expr="_dictionary.get('rss116main').getnbdad()" />
-					<assign name="nbza" expr="_dictionary.get('rss116main').getnbza()" />
 					<send event="'rss116main'" />
 					
 					<!-- EOF -->
