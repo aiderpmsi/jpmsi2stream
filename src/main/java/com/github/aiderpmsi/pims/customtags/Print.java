@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.jpmi2stream.customtags;
+package com.github.aiderpmsi.pims.customtags;
 
 import java.util.Collection;
 
@@ -12,11 +12,15 @@ import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class NumLineWriter extends Action {
+public class Print extends Action {
 
-	private static final long serialVersionUID = 7940029301826823425L;
+	private static final long serialVersionUID = -142007029759321069L;
 
-	public NumLineWriter() {
+	private String content;
+	
+	private Boolean newline;
+
+	public Print() {
 		super();
 	}
 
@@ -29,18 +33,31 @@ public class NumLineWriter extends Action {
 		// Gets The content Handler
 		ContentHandler contentHandler =
 				(ContentHandler) scInstance.getRootContext().get("_contenthandler");
-
-		// Gets The line number
-		String numline =
-				scInstance.getRootContext().get("numline").toString();
-
+				
 		try {
-			contentHandler.startElement("", "numline", "numline", null);
-			contentHandler.characters(numline.toCharArray(), 0, numline.length());
-			contentHandler.endElement("",  "numline", "numline");
+			contentHandler.characters(content.toCharArray(), 0, content.length());
+			if (getNewline())
+				contentHandler.characters("\n".toCharArray(), 0, 1);
 		} catch (SAXException e) {
 			throw new ModelException(e);
 		}
 		
 	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Boolean getNewline() {
+		return newline;
+	}
+
+	public void setNewline(Boolean newline) {
+		this.newline = newline;
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.jpmsi2stream.jaxb;
+package com.github.aiderpmsi.pims.jaxb;
 
 import java.util.List;
 

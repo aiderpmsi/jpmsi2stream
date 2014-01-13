@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.jpmsi2stream.linestypes;
+package com.github.aiderpmsi.pims.linestypes;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,11 +12,10 @@ import javax.xml.bind.util.JAXBResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import com.github.aiderpmsi.jpmi2stream.utils.ClasspathHandler;
-import com.github.aiderpmsi.jpmsi2stream.jaxb.Linetype;
+import com.github.aiderpmsi.pims.jaxb.Linetype;
+import com.github.aiderpmsi.pims.utils.ClasspathHandler;
 
 public class LineDictionary {
 

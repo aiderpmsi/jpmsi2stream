@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.aiderpmsi</groupId>
-	<artifactId>jpmsi2stream</artifactId>
+	<artifactId>pims</artifactId>
 	<version>1.9.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>jpmsi2stream</name>
-	<url>http://github.com/aiderpmsi/jpmsi2stream</url>
+	<name>pims</name>
+	<url>http://github.com/aiderpmsi/pims</url>
 	<description>Programme de transformation pmsi -> sax events</description>
 
 	<parent>
@@ -25,9 +25,9 @@
 	</licenses>
 
 	<scm>
-		<url>git@github.com:aiderpmsi/jpmsi2stream.git</url>
-		<connection>scm:git:git@github.com:aiderpmsi/jpmsi2stream.git</connection>
-		<developerConnection>scm:git:git@github.com:aiderpmsi/jpmsi2stream.git</developerConnection>
+		<url>git@github.com:aiderpmsi/pims.git</url>
+		<connection>scm:git:git@github.com:aiderpmsi/pims.git</connection>
+		<developerConnection>scm:git:git@github.com:aiderpmsi/pims.git</developerConnection>
 	</scm>
 
 
@@ -62,30 +62,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create-my-bundle</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<mainClass>com.github.aiderpmsi.jpmi2stream.main.DefaultParser</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.1</version>
 			</plugin>
@@ -113,7 +89,6 @@
 				<artifactId>maven-source-plugin</artifactId>
 				<version>2.2.1</version>
 				<configuration />
-
 				<executions>
 					<execution>
 						<id>javasources-jar</id>
@@ -204,18 +179,6 @@
 			<groupId>commons-jexl</groupId>
 			<artifactId>commons-jexl</artifactId>
 			<version>1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>args4j</groupId>
-			<artifactId>args4j</artifactId>
-			<version>2.0.16</version>
 		</dependency>
 
 		<dependency>

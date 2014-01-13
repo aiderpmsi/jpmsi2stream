@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.jpmi2stream.utils;
+package com.github.aiderpmsi.pims.utils;
 
 import java.io.IOException;
 import java.net.URL;

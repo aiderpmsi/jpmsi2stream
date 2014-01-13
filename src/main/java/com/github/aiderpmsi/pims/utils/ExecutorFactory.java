@@ -1,11 +1,10 @@
-package com.github.aiderpmsi.jpmi2stream.utils;
+package com.github.aiderpmsi.pims.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.scxml.SCXMLExecutor;
@@ -17,24 +16,26 @@ import org.apache.commons.scxml.io.SCXMLParser;
 import org.apache.commons.scxml.model.CustomAction;
 import org.apache.commons.scxml.model.ModelException;
 import org.apache.commons.scxml.model.SCXML;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.jpmi2stream.main.DefaultContentHandler;
-import com.github.aiderpmsi.jpmsi2stream.linestypes.LineDictionary;
+import com.github.aiderpmsi.pims.customtags.LineInvocator;
+import com.github.aiderpmsi.pims.customtags.LineWriter;
+import com.github.aiderpmsi.pims.customtags.NumLineWriter;
+import com.github.aiderpmsi.pims.customtags.Print;
+import com.github.aiderpmsi.pims.linestypes.LineDictionary;
 
 public class ExecutorFactory {
 
 	private URL scxmlDocument = null;
 
 	private ErrorHandler errorHandler = null;
-
-	private List<CustomAction> customActions = null;
 	
 	private MemoryBufferedReader memoryBufferedReader = null;
-	
-	private File outputdocument;
+		
+	private ContentHandler contentHandler;
 
 	public URL getScxmlDocument() {
 		return scxmlDocument;
@@ -54,15 +55,6 @@ public class ExecutorFactory {
 		return this;
 	}
 
-	public List<CustomAction> getCustomActions() {
-		return customActions;
-	}
-
-	public ExecutorFactory setCustomActions(List<CustomAction> customActions) {
-		this.customActions = customActions;
-		return this;
-	}
-
 	public MemoryBufferedReader getMemoryBufferedReader() {
 		return memoryBufferedReader;
 	}
@@ -72,22 +64,50 @@ public class ExecutorFactory {
 		return this;
 	}
 
+	public ContentHandler getContentHandler() {
+		return contentHandler;
+	}
+
+	public ExecutorFactory setContentHandler(ContentHandler contentHandler) {
+		this.contentHandler = contentHandler;
+		return this;
+	}
+	
 	public SCXMLExecutor createMachine() throws IOException, SAXException,
 			ModelException {
 		
+		// Sets the scxml document
 		URLConnection connection = scxmlDocument.openConnection();
 		connection.setUseCaches(false);
 		InputStream stream = connection.getInputStream();
 		InputSource source = new InputSource(stream);
 		source.setSystemId(scxmlDocument.toExternalForm());
 
+		// Sets the custom tags
+		List<CustomAction> customActions = new ArrayList<CustomAction>();
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "lineinvocator",
+				LineInvocator.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "linewriter",
+				LineWriter.class));
+		customActions
+				.add(new CustomAction("http://my.custom-actions.domain/CUSTOM",
+						"print", Print.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "numlinewriter",
+				NumLineWriter.class));
+
+		// Sets the scxml definition
 		SCXML scxml = SCXMLParser.parse(source, errorHandler, customActions);
 		
+		// Sets the machine context
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("_file", memoryBufferedReader);
 		appCtx.set("_dictionary", new LineDictionary());
-		appCtx.set("_contenthandler", new DefaultContentHandler(new PrintWriter(outputdocument)));
+		appCtx.set("_contenthandler", contentHandler);
 		
+		// Creates the engine
 		SCXMLExecutor engine = new SCXMLExecutor(
 				new JexlEvaluator(), new SimpleDispatcher(), new SimpleErrorReporter());
 		engine.setStateMachine(scxml);
@@ -95,15 +115,6 @@ public class ExecutorFactory {
 		engine.setRootContext(appCtx);
 		
 		return engine;
-	}
-
-	public File getOutputdocument() {
-		return outputdocument;
-	}
-
-	public ExecutorFactory setOutputdocument(File outputdocument) {
-		this.outputdocument = outputdocument;
-		return this;
 	}
 
 }
