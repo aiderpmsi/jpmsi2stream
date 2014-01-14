@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.utils;
 
 import java.io.Reader;
-import java.net.URL;
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,7 +14,7 @@ public class Parser {
 	private ContentHandler contentHandler = null;
 
 	// scxml location
-	private String scxmlLocation = "classpath:pims.xml";
+	private String scxmlLocation = "pims.xml";
 
 	public Parser(Reader inStream, ContentHandler contentHandler) {
 		this.inStream = inStream;
@@ -25,13 +24,10 @@ public class Parser {
 	public void parse() {
 
 		try {
-			URL scxmlURL = new URL(null, scxmlLocation, new ClasspathHandler(
-					ClassLoader.getSystemClassLoader())); // If scxml can't be
-															// opened, runtime
-															// exception
-
 			ExecutorFactory machineFactory = new ExecutorFactory()
-					.setScxmlDocument(scxmlURL)
+					.setScxmlSource(
+							getClass().getResourceAsStream(scxmlLocation))
+					// If scxml can't be opened, runtime exception
 					.setErrorHandler(new DefaultHandler())
 					.setMemoryBufferedReader(new MemoryBufferedReader(inStream))
 					.setContentHandler(contentHandler);

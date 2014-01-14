@@ -1,7 +1,7 @@
 package com.github.aiderpmsi.pims.linestypes;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +15,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
 import com.github.aiderpmsi.pims.jaxb.Linetype;
-import com.github.aiderpmsi.pims.utils.ClasspathHandler;
 
 public class LineDictionary {
 
-	private static final String configUrl = "classpath:linedefs.xml";
-	private static final String configXslUrl = "classpath:linedefsset.xsl";
+	private static final String configPath = "linedefs.xml";
+	private static final String configXslPath = "linedefsset.xsl";
 	
 	private Map<String, PmsiLineType> instances =
 			new HashMap<String, PmsiLineType>();
@@ -49,20 +48,20 @@ public class LineDictionary {
 				return new EndOfFile();
 			else {
 				// Opens the config file
-				URL configUrlLocation = new URL(null, configUrl,
-						new ClasspathHandler(ClassLoader.getSystemClassLoader()));
+				InputStream configStream = 
+						LineDictionary.class.getClassLoader().getResourceAsStream(configPath);
 				
 				// Opens the thansformation
-				URL configXslLocation = new URL(null, configXslUrl,
-						new ClasspathHandler(ClassLoader.getSystemClassLoader()));
+				InputStream configXslStream = 
+						LineDictionary.class.getClassLoader().getResourceAsStream(configXslPath);
 				TransformerFactory tFactory = TransformerFactory.newInstance();
 				Transformer transformer = tFactory.newTransformer(
-						new StreamSource(configXslLocation.openStream()));
+						new StreamSource(configXslStream));
 				// Sets the kind of line we have to parse
 				transformer.setParameter("linetype", element);
 				
 				// Input StreamSource
-				StreamSource inp = new StreamSource(configUrlLocation.openStream());
+				StreamSource inp = new StreamSource(configStream);
 	
 				// Jaxb object
 				JAXBContext jaxbContext = JAXBContext.newInstance(Linetype.class);

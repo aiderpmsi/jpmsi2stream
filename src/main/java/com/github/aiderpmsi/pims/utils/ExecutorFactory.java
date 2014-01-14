@@ -2,8 +2,6 @@ package com.github.aiderpmsi.pims.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ import com.github.aiderpmsi.pims.linestypes.LineDictionary;
 
 public class ExecutorFactory {
 
-	private URL scxmlDocument = null;
+	private InputStream scxmlSource = null;
 
 	private ErrorHandler errorHandler = null;
 	
@@ -37,12 +35,12 @@ public class ExecutorFactory {
 		
 	private ContentHandler contentHandler;
 
-	public URL getScxmlDocument() {
-		return scxmlDocument;
+	public InputStream getScxmlSource() {
+		return scxmlSource;
 	}
 
-	public ExecutorFactory setScxmlDocument(URL scxmlDocument) {
-		this.scxmlDocument = scxmlDocument;
+	public ExecutorFactory setScxmlSource(InputStream scxmlSource) {
+		this.scxmlSource = scxmlSource;
 		return this;
 	}
 
@@ -75,13 +73,8 @@ public class ExecutorFactory {
 	
 	public SCXMLExecutor createMachine() throws IOException, SAXException,
 			ModelException {
-		
 		// Sets the scxml document
-		URLConnection connection = scxmlDocument.openConnection();
-		connection.setUseCaches(false);
-		InputStream stream = connection.getInputStream();
-		InputSource source = new InputSource(stream);
-		source.setSystemId(scxmlDocument.toExternalForm());
+		InputSource source = new InputSource(scxmlSource);
 
 		// Sets the custom tags
 		List<CustomAction> customActions = new ArrayList<CustomAction>();
