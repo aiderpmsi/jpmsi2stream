@@ -93,7 +93,6 @@ public class ExecutorFactory {
 
 		// Sets the scxml definition
 		SCXML scxml = SCXMLParser.parse(source, errorHandler, customActions);
-		
 		// Sets the machine context
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("_file", memoryBufferedReader);

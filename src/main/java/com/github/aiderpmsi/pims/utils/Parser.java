@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.utils;
 
 import java.io.Reader;
+
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.DefaultHandler;
@@ -14,7 +15,7 @@ public class Parser {
 	private ContentHandler contentHandler = null;
 
 	// scxml location
-	private String scxmlLocation = "pims.xml";
+	private String scxmlLocation = "/pims.xml";
 
 	public Parser(Reader inStream, ContentHandler contentHandler) {
 		this.inStream = inStream;
@@ -37,6 +38,7 @@ public class Parser {
 							// is a runtime error
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+			
 		}
 	}
 

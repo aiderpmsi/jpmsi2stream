@@ -147,7 +147,7 @@
 	
 	<linetype name="rsfa">
 		<ids>
-			<id>rsf2009a</id>
+			<id>rsf2012a</id>
 		</ids>
 		<element name="TypeEnregistrement">
 			<pattern>A</pattern>

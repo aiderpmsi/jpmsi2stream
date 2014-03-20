@@ -54,7 +54,8 @@ public class LineDictionary {
 				// Opens the thansformation
 				InputStream configXslStream = 
 						LineDictionary.class.getClassLoader().getResourceAsStream(configXslPath);
-				TransformerFactory tFactory = TransformerFactory.newInstance();
+				
+				TransformerFactory tFactory = org.apache.xalan.processor.TransformerFactoryImpl.newInstance();
 				Transformer transformer = tFactory.newTransformer(
 						new StreamSource(configXslStream));
 				// Sets the kind of line we have to parse
@@ -66,9 +67,7 @@ public class LineDictionary {
 				// Jaxb object
 				JAXBContext jaxbContext = JAXBContext.newInstance(Linetype.class);
 			    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			    
-			    // transformer.transform(inp,  new StreamResult(System.out));
-			    
+			    			    
 				// Creates a config object from the result
 			    JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);
 			    transformer.transform(inp, jaxbResult);
