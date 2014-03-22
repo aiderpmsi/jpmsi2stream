@@ -27,8 +27,15 @@ public class Parser extends XMLFilterImpl {
 					.setContentHandler(getContentHandler());
 
 			SCXMLExecutor machine = machineFactory.createMachine();
+
+			getContentHandler().startDocument();
+			getContentHandler().startElement(null, "root", "root", null);
+
 			machine.go(); // If exception, error in model or something else, it
 							// is a runtime error
+			getContentHandler().endElement(null, "root", "root");
+			getContentHandler().endDocument();
+
 		} catch (ModelException e) {
 			throw new IOException(e);
 		}
