@@ -1,28 +1,20 @@
 package com.github.aiderpmsi.pims.utils;
 
-import java.io.Reader;
-
+import java.io.IOException;
 import org.apache.commons.scxml.SCXMLExecutor;
-import org.xml.sax.ContentHandler;
+import org.apache.commons.scxml.model.ModelException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLFilterImpl;
 
-public class Parser {
-
-	// Stream to read
-	private Reader inStream = null;
-
-	// Content handler
-	private ContentHandler contentHandler = null;
+public class Parser extends XMLFilterImpl {
 
 	// scxml location
-	private String scxmlLocation = "/pims.xml";
+	private static final String scxmlLocation = "/pims.xml";
 
-	public Parser(Reader inStream, ContentHandler contentHandler) {
-		this.inStream = inStream;
-		this.contentHandler = contentHandler;
-	}
-
-	public void parse() {
+	@Override
+	public void parse(InputSource input)  throws SAXException, IOException {
 
 		try {
 			ExecutorFactory machineFactory = new ExecutorFactory()
@@ -30,15 +22,15 @@ public class Parser {
 							getClass().getResourceAsStream(scxmlLocation))
 					// If scxml can't be opened, runtime exception
 					.setErrorHandler(new DefaultHandler())
-					.setMemoryBufferedReader(new MemoryBufferedReader(inStream))
-					.setContentHandler(contentHandler);
+					.setMemoryBufferedReader(
+							new MemoryBufferedReader(input.getCharacterStream()))
+					.setContentHandler(getContentHandler());
 
 			SCXMLExecutor machine = machineFactory.createMachine();
 			machine.go(); // If exception, error in model or something else, it
 							// is a runtime error
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-			
+		} catch (ModelException e) {
+			throw new IOException(e);
 		}
 	}
 

@@ -246,7 +246,7 @@
 			<pattern>.{1}</pattern>
 		</element>
 		<element name="LienMere">
-			<pattern>.{1}</pattern>
+			<pattern>.{9}</pattern>
 		</element>
 	</linetype>
 
