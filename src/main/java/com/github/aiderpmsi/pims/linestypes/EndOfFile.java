@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.Attributes2Impl;
 
 import com.github.aiderpmsi.pims.utils.MemoryBufferedReader;
 
@@ -18,7 +19,7 @@ public class EndOfFile extends PmsiLineType {
 
 	public void writeResults(ContentHandler contentHandler) throws IOException {
 		try {
-			contentHandler.startElement("", "eof", "eof", null);
+			contentHandler.startElement("", "eof", "eof", new Attributes2Impl());
 			contentHandler.endElement("",  "eof",  "eof");
 		} catch (SAXException e) {
 			throw new IOException(e);

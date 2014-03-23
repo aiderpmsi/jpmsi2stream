@@ -1,10 +1,12 @@
 package com.github.aiderpmsi.pims.utils;
 
 import java.io.IOException;
+
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.Attributes2Impl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
 
@@ -32,11 +34,11 @@ public class Parser extends XMLFilterImpl {
 			SCXMLExecutor machine = machineFactory.createMachine();
 
 			getContentHandler().startDocument();
-			getContentHandler().startElement(null, "root", "root", null);
+			getContentHandler().startElement("", "root", "root", new Attributes2Impl());
 
 			machine.go(); // If exception, error in model or something else, it
 							// is a runtime error
-			getContentHandler().endElement(null, "root", "root");
+			getContentHandler().endElement("", "root", "root");
 			getContentHandler().endDocument();
 
 		} catch (ModelException e) {

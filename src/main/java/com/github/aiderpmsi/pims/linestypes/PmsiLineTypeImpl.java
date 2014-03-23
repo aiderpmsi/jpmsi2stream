@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.Attributes2Impl;
 
 import com.github.aiderpmsi.pims.jaxb.Element;
 import com.github.aiderpmsi.pims.jaxb.Linetype;
@@ -83,11 +84,11 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	public void writeResults(ContentHandler contentHandler) throws IOException {
 		
 		try {
-			contentHandler.startElement("", getName(), getName(), null);
+			contentHandler.startElement("", getName(), getName(), new Attributes2Impl());
 			
 			for (int i = 0 ; i < names.length ; i++) {
 				// Début d'élément :
-				contentHandler.startElement("", names[i], names[i], null);
+				contentHandler.startElement("", names[i], names[i], new Attributes2Impl());
 				
 				// Contenu de l'élément
 				if (transforms == null || transforms[i][0] == null)

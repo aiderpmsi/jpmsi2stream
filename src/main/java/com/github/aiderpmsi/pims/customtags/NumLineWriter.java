@@ -11,6 +11,7 @@ import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.Attributes2Impl;
 
 public class NumLineWriter extends Action {
 
@@ -35,7 +36,7 @@ public class NumLineWriter extends Action {
 				scInstance.getRootContext().get("numline").toString();
 
 		try {
-			contentHandler.startElement("", "numline", "numline", null);
+			contentHandler.startElement("", "numline", "numline", new Attributes2Impl());
 			contentHandler.characters(numline.toCharArray(), 0, numline.length());
 			contentHandler.endElement("",  "numline", "numline");
 		} catch (SAXException e) {
