@@ -14,16 +14,19 @@ public class Parser extends XMLFilterImpl {
 	private static final String scxmlLocation = "/pims.xml";
 
 	@Override
-	public void parse(InputSource input)  throws SAXException, IOException {
+	public void parse(InputSource input) throws SAXException, IOException {
 
 		try {
+			// THIS WORKS ONLY ON CHARACTER STREAMS
+			if (input.getCharacterStream() == null)
+				throw new IOException("No CharacterStream in input");
+
 			ExecutorFactory machineFactory = new ExecutorFactory()
 					.setScxmlSource(
 							getClass().getResourceAsStream(scxmlLocation))
 					// If scxml can't be opened, runtime exception
 					.setErrorHandler(new DefaultHandler())
-					.setMemoryBufferedReader(
-							new MemoryBufferedReader(input.getCharacterStream()))
+					.setMemoryBufferedReader(new MemoryBufferedReader(input.getCharacterStream()))
 					.setContentHandler(getContentHandler());
 
 			SCXMLExecutor machine = machineFactory.createMachine();
