@@ -56,9 +56,6 @@
 		<element name="Finess">
 			<pattern>\d{9}</pattern>
 		</element>
-		<element name="Finess">
-			<pattern></pattern>
-		</element>
 		<element name="NumRSS">
 			<pattern>.{20}</pattern>
 		</element>
@@ -154,9 +151,6 @@
 		</element>
 		<element name="Finess">
 			<pattern>\d{9}</pattern>
-		</element>
-		<element name="Finess">
-			<pattern></pattern>
 		</element>
 		<element name="NumRSS">
 			<pattern>.{20}</pattern>
