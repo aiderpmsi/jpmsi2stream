@@ -1,13 +1,13 @@
 package com.github.aiderpmsi.pims.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
-import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 public class Parser extends XMLFilterImpl {
@@ -28,13 +28,16 @@ public class Parser extends XMLFilterImpl {
 			if (input.getCharacterStream() == null)
 				throw new IOException("No CharacterStream in input");
 
+			// SOURCE OF THE STATE MACHINE DEFINITION
+			InputStream scxmlSource = getClass().getResourceAsStream(scxmlLocation);
+			// SOURCE OF THE PMSI FILE
+			MemoryBufferedReader pmsiSource = new MemoryBufferedReader(input.getCharacterStream());
+
 			ExecutorFactory machineFactory = new ExecutorFactory()
-					.setScxmlSource(
-							getClass().getResourceAsStream(scxmlLocation))
-					// IF SCXML CANT BE OPENED, SEND RUNTIME EXCEPTION
-					.setErrorHandler(new DefaultHandler2())
-					.setMemoryBufferedReader(new MemoryBufferedReader(input.getCharacterStream()))
-					.setContentHandler(getContentHandler());
+					.setScxmlSource(scxmlSource)
+					.setMemoryBufferedReader(pmsiSource)
+					.setContentHandler(getContentHandler())
+					.setErrorHandler(getErrorHandler());
 
 			SCXMLExecutor machine = machineFactory.createMachine();
 
@@ -45,10 +48,6 @@ public class Parser extends XMLFilterImpl {
 			if (startState != null)
 				machine.getStateMachine().setInitial(getStartState());
 			machine.go();
-			
-			// GET THE LAST STATE : IF WE HAVE HEADER NOT FOUND OR LINE NOT KNOWN,
-			// CREATE AN ERROR
-			machine.getCurrentStatus();
 			
 			getContentHandler().endElement("", "root", "root");
 			getContentHandler().endDocument();

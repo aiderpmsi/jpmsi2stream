@@ -421,8 +421,17 @@
 
 	</state>
 
-	<state id="headernotfound" final="true" />
-	<state id="linenotknown" final="true" />
+	<state id="headernotfound" final="true">
+		<onentry>
+			<my:error error="Pas d'entête valide retrouvee" />
+		</onentry>
+	</state>
+	
+	<state id="linenotknown" final="true">
+		<onentry>
+			<my:error error="Ligne non reconnue" />
+		</onentry>
+	</state>
 	<state id="eof" final="true" />
 
 </scxml>
