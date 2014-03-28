@@ -7,7 +7,7 @@ import org.apache.commons.scxml.model.ModelException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 public class Parser extends XMLFilterImpl {
@@ -15,6 +15,11 @@ public class Parser extends XMLFilterImpl {
 	// scxml location
 	private static final String scxmlLocation = "/pims.xml";
 
+	/**
+	 * starting state
+	 */
+	private String startState = null;
+	
 	@Override
 	public void parse(InputSource input) throws SAXException, IOException {
 
@@ -26,8 +31,8 @@ public class Parser extends XMLFilterImpl {
 			ExecutorFactory machineFactory = new ExecutorFactory()
 					.setScxmlSource(
 							getClass().getResourceAsStream(scxmlLocation))
-					// If scxml can't be opened, runtime exception
-					.setErrorHandler(new DefaultHandler())
+					// IF SCXML CANT BE OPENED, SEND RUNTIME EXCEPTION
+					.setErrorHandler(new DefaultHandler2())
 					.setMemoryBufferedReader(new MemoryBufferedReader(input.getCharacterStream()))
 					.setContentHandler(getContentHandler());
 
@@ -36,14 +41,29 @@ public class Parser extends XMLFilterImpl {
 			getContentHandler().startDocument();
 			getContentHandler().startElement("", "root", "root", new Attributes2Impl());
 
-			machine.go(); // If exception, error in model or something else, it
-							// is a runtime error
+			// RUN THE STATE MACHINE
+			if (startState != null)
+				machine.getStateMachine().setInitial(getStartState());
+			machine.go();
+			
+			// GET THE LAST STATE : IF WE HAVE HEADER NOT FOUND OR LINE NOT KNOWN,
+			// CREATE AN ERROR
+			machine.getCurrentStatus();
+			
 			getContentHandler().endElement("", "root", "root");
 			getContentHandler().endDocument();
 
 		} catch (ModelException e) {
 			throw new IOException(e);
 		}
+	}
+
+	public String getStartState() {
+		return startState;
+	}
+
+	public void setStartState(String startState) {
+		this.startState = startState;
 	}
 
 }

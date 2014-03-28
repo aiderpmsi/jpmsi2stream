@@ -59,6 +59,83 @@
 
 	</state>
 
+	<state id="headerrsf">
+
+		<datamodel>
+			<data name="isrsf2012h" />
+		</datamodel>
+
+		<onentry>
+			<!-- Init vars -->
+			<assign name="isrsf2012h" expr="false" />
+			
+			<!-- Writes the line number -->
+			<my:numlinewriter />
+			<my:print content="" newline="true" />
+			
+			<!-- Searches what line this header matches  -->
+			<my:lineinvocator linename="rsf2012header"
+				varname="isrsf2012h" />
+
+			<!-- Executes the procedure depending on which header matches -->
+			<if cond="isrsf2012h">
+
+				<!-- RSF 2012 -->
+				<my:linewriter linename="rsf2012header" />
+				<my:print content="" newline="true" />
+				<assign name="numline" expr="numline + 1" />
+				<send event="'rsf2012h'" />
+				
+				<!-- None -->
+				<else />
+				<send event="'none'" />
+			</if>
+		</onentry>
+
+		<!-- Transition map -->
+		<transition event="rsf2012h" target="rsf2012h" />
+		<transition event="none" target="headernotfound" />
+
+	</state>
+
+	<state id="headerrss">
+
+		<datamodel>
+			<data name="isrss116h" />
+		</datamodel>
+
+		<onentry>
+			<!-- Init vars -->
+			<assign name="isrss116h" expr="false" />
+			
+			<!-- Writes the line number -->
+			<my:numlinewriter />
+			<my:print content="" newline="true" />
+			
+			<!-- Searches what line this header matches  -->
+			<my:lineinvocator linename="rss116header"
+				varname="isrss116h" />
+
+			<!-- Executes the procedure depending on which header matches -->
+			<if cond="isrss116h">
+
+				<my:linewriter linename="rss116header" />
+				<my:print content="" newline="true" />
+				<assign name="numline" expr="numline + 1" />
+				<send event="'rss116h'" />
+				
+				<!-- None -->
+				<else />
+				<send event="'none'" />
+			</if>
+		</onentry>
+
+		<!-- Transition map -->
+		<transition event="rss116h" target="rss116h" />
+		<transition event="none" target="headernotfound" />
+
+	</state>
+
 	<state id="rsf2012h">
 
 		<initial>
