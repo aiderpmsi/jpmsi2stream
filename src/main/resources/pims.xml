@@ -432,6 +432,7 @@
 			<my:error error="Ligne non reconnue" />
 		</onentry>
 	</state>
+	
 	<state id="eof" final="true" />
 
 </scxml>
