@@ -13,7 +13,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 public class Parser extends XMLFilterImpl {
 
 	// scxml location
-	private static final String scxmlLocation = "/pims.xml";
+	private static final String scxmlLocation = "pims.xml";
 
 	/**
 	 * starting state
@@ -29,7 +29,7 @@ public class Parser extends XMLFilterImpl {
 				throw new IOException("No CharacterStream in input");
 
 			// SOURCE OF THE STATE MACHINE DEFINITION
-			InputStream scxmlSource = getClass().getResourceAsStream(scxmlLocation);
+			InputStream scxmlSource = this.getClass().getClassLoader().getResourceAsStream(scxmlLocation);
 			// SOURCE OF THE PMSI FILE
 			MemoryBufferedReader pmsiSource = new MemoryBufferedReader(input.getCharacterStream());
 
