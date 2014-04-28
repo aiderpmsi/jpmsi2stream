@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.apache.commons.scxml.model.ModelException;
+import org.apache.commons.scxml.model.TransitionTarget;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
@@ -45,8 +46,8 @@ public class Parser extends XMLFilterImpl {
 			getContentHandler().startElement("", "root", "root", new Attributes2Impl());
 
 			// RUN THE STATE MACHINE
-			if (startState != null)
-				machine.getStateMachine().setInitial(getStartState());
+			if (getStartState() != null)
+				machine.getStateMachine().setInitialTarget((TransitionTarget) machine.getStateMachine().getTargets().get(getStartState()));
 			machine.go();
 			
 			getContentHandler().endElement("", "root", "root");
