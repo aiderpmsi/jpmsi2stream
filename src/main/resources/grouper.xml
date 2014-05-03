@@ -136,7 +136,42 @@
 					</if>
 				</state>
 				
-			</state>
+				<!-- We are in CMD 28, D-145 and D-142 -->
+				
+				<state id="process_cmd28_d145_d142">
+					<datamodel>
+						<data name="da" />
+						<data name="a314" />
+						<data name="a315" />
+						<data name="a316" />
+						<data name="a317" />
+					</datamodel>
+					<onentry>
+						<my:rssActe get="CodeCCAM" varname="da" />
+						<my:isInList list="A-314" varname="da" result="a314" />
+						<my:isInList list="A-315" varname="da" result="a315" />
+						<my:isInList list="A-316" varname="da" result="a316" />
+						<my:isInList list="A-317" varname="dp" result="a317" />
+					</onentry>
+					<if cond="a314" >
+						<my:group result="28Z19Z" />
+						<send event="'end'" />
+						<elseif cond="a315" />
+						<my:group result="28Z20Z" />
+						<send event="'end'" />
+						<elseif cond="a316" />
+						<my:group result="28Z21Z" />
+						<send event="'end'" />
+						<elseif cond="a317" />
+						<my:group result="28Z22Z" />
+						<send event="'end'" />
+						<else />
+						<my:group result="90Z02Z" />
+						<send event="'end'" />
+					</if>
+				</state>
+
+/			</state>
 		
 		</state>
 		

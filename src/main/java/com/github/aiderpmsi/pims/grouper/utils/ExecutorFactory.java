@@ -82,7 +82,7 @@ public class ExecutorFactory {
 				"http://my.custom-actions.domain/CUSTOM", "rssMain",
 				RssMain.class));
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "rssMain",
+				"http://my.custom-actions.domain/CUSTOM", "rssActe",
 				RssActe.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "isInList",

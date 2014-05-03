@@ -2,21 +2,50 @@
 
 <groups>
 
-	<group name="D-145">
-		<element>Z491</element>
-		<element>Z492</element>
-		<element>Z4920</element>
-		<element>Z4921</element>
-		<element>Z5100</element>
-		<element>Z5101</element>
-		<element>Z511</element>
-		<element>Z512</element>
-		<element>Z513</element>
-		<element>Z5130</element>
-		<element>Z5131</element>
-		<element>Z5180</element>
+	<group name="A-180">
+		<element>JVRP007</element>
 	</group>
 
+	<group name="A-181">
+		<element>JVRP008</element>
+	</group>
+
+	<group name="A-234">
+		<element>JVRP004</element>
+	</group>
+
+	<group name="A-342">
+		<element>FENL001</element>
+		<element>JGNL001</element>
+		<element>JKNL001</element>
+		<element>JKNL003</element>
+		<element>JKNL004</element>
+		<element>JKNL005</element>
+		<element>JLNL001</element>
+		<element>JLNL003</element>
+		<element>JLNL004</element>
+		<element>JLNL005</element>
+		<element>KCNL003</element>
+		<element>KCNL004</element>
+		<element>PANL001</element>
+		<element>ZANL001</element>
+		<element>ZZNL001</element>
+		<element>ZZNL005</element>
+		<element>ZZNL006</element>
+		<element>ZZNL007</element>
+		<element>ZZNL009</element>
+		<element>ZZNL010</element>
+		<element>ZZNL012</element>
+		<element>ZZNL013</element>
+		<element>ZZNL016</element>
+		<element>ZZNL017</element>
+		<element>ZZNL049</element>
+		<element>ZZNL055</element>
+	</group>
+
+	<group name="D-030" >
+		<element>Z491</element>
+	</group>
 
 	<group name="D-047" >
 		<element>Z5180</element>
@@ -46,12 +75,27 @@
 		<element>Z5130</element>
 	</group>
 	
-	<group name="D-143" >
-		<element>Z5101</element>
-	</group>
-			
 	<group name="D-142" >
 		<element>Z5100</element>
 	</group>
 	
+	<group name="D-143" >
+		<element>Z5101</element>
+	</group>
+			
+	<group name="D-145">
+		<element>Z491</element>
+		<element>Z492</element>
+		<element>Z4920</element>
+		<element>Z4921</element>
+		<element>Z5100</element>
+		<element>Z5101</element>
+		<element>Z511</element>
+		<element>Z512</element>
+		<element>Z513</element>
+		<element>Z5130</element>
+		<element>Z5131</element>
+		<element>Z5180</element>
+	</group>
+
 </groups>
