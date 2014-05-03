@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.customtags;
+package com.github.aiderpmsi.pims.parser.customtags;
 
 import java.util.Collection;
 

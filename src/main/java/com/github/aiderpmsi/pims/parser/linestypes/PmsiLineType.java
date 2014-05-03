@@ -1,10 +1,10 @@
-package com.github.aiderpmsi.pims.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
 
 import org.xml.sax.ContentHandler;
 
-import com.github.aiderpmsi.pims.utils.MemoryBufferedReader;
+import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :

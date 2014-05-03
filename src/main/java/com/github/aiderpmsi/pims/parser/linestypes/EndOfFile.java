@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 
-import com.github.aiderpmsi.pims.utils.MemoryBufferedReader;
+import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 public class EndOfFile extends PmsiLineType {
 

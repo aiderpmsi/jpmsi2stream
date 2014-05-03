@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.jaxb;
+package com.github.aiderpmsi.pims.parser.jaxb;
 
 import java.util.List;
 

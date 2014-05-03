@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
-import com.github.aiderpmsi.pims.jaxb.Linetype;
+import com.github.aiderpmsi.pims.parser.jaxb.Linetype;
 
 public class LineDictionary {
 

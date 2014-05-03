@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.utils;
+package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +20,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import com.github.aiderpmsi.pims.customtags.ErrorInvocator;
-import com.github.aiderpmsi.pims.customtags.LineInvocator;
-import com.github.aiderpmsi.pims.customtags.LineWriter;
-import com.github.aiderpmsi.pims.customtags.NumLineWriter;
-import com.github.aiderpmsi.pims.customtags.Print;
-import com.github.aiderpmsi.pims.linestypes.LineDictionary;
+import com.github.aiderpmsi.pims.parser.customtags.ErrorInvocator;
+import com.github.aiderpmsi.pims.parser.customtags.LineInvocator;
+import com.github.aiderpmsi.pims.parser.customtags.LineWriter;
+import com.github.aiderpmsi.pims.parser.customtags.NumLineWriter;
+import com.github.aiderpmsi.pims.parser.customtags.Print;
+import com.github.aiderpmsi.pims.parser.linestypes.LineDictionary;
 
 public class ExecutorFactory {
 

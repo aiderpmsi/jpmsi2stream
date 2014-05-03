@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+	xmlns:my="http://my.custom-actions.domain/CUSTOM"
+	version="1.0" initial="group">
+
+	<state id="group">
+
+	<initial>
+    	<transition target="test_cmd28"/>
+	</initial>
+
+	<!-- TEST IF WE ARE IN CMD 28 -->
+	<state id="test_cmd28">
+		<datamodel>
+			<data name="numSeances" />
+		</datamodel>
+		<onentry>
+			<my:rssMain get="NbSeances" varname="numSeances" />
+			<if cond="numSeances != 0">
+				<send event="'cmd_found'" />
+				<else />
+				<send event="'cmd_not_found'" />
+			</if>
+		</onentry>
+		
+		<transition event="cmd_found" target="process_cmd28" />
+		<transition event="cmd_not_found" target="test_cmd27" />
+
+		<!-- WE ARE IN CMD28 -->
+		<state id="process_cmd28">
+		<datamodel>
+			<data name="dp" />
+			<data name="d145" />
+		</datamodel>
+		<onentry>
+			<my:rssMain get="DP" varname="dp" />
+			<my:isInList list="D-145" varname="dp" result="d145"/>
+			<if cond="d145">
+				<send event="'d145_found'" />
+				<else />
+				<my:group result="90Z01Z" />
+				<send event="'end'" />
+			</if>
+		</onentry>
+		</state>
+		
+	</state>
+
+	<state id="end" final="true" />
+</scxml>

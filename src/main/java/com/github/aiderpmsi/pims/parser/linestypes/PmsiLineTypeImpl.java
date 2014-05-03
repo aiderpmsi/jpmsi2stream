@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -8,9 +8,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 
-import com.github.aiderpmsi.pims.jaxb.Element;
-import com.github.aiderpmsi.pims.jaxb.Linetype;
-import com.github.aiderpmsi.pims.utils.MemoryBufferedReader;
+import com.github.aiderpmsi.pims.parser.jaxb.Element;
+import com.github.aiderpmsi.pims.parser.jaxb.Linetype;
+import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :
