@@ -95,10 +95,47 @@
 						<send event="'end'" />
 					</if>
 				</onentry>
+				
 				<transition event="d113_found" target="process_cmd28_d145_d113" />
 				<transition event="d142_found" target="process_cmd28_d145_d142" />
 				<transition event="d143_found" target="process_cmd28_d145_d143" />
 				<transition event="end" target="end" />
+				
+				<!-- We are in CMD 28, D-145 and D-113 -->
+				
+				<state id="process_cmd28_d145_d113">
+					<datamodel>
+						<data name="da" />
+						<data name="a180" />
+						<data name="a181" />
+						<data name="a234" />
+						<data name="d030" />
+					</datamodel>
+					<onentry>
+						<my:rssActe get="CodeCCAM" varname="da" />
+						<my:isInList list="A-180" varname="da" result="a180" />
+						<my:isInList list="A-181" varname="da" result="a181" />
+						<my:isInList list="A-234" varname="da" result="a234" />
+						<my:isInList list="D-030" varname="dp" result="d030" />
+					</onentry>
+					<if cond="a180" >
+						<my:group result="28Z01Z" />
+						<send event="'end'" />
+						<elseif cond="a181" />
+						<my:group result="28Z02Z" />
+						<send event="'end'" />
+						<elseif cond="a234" />
+						<my:group result="28Z03Z" />
+						<send event="'end'" />
+						<elseif cond="d030" />
+						<my:group result="28Z04Z" />
+						<send event="'end'" />
+						<else />
+						<my:group result="90Z02Z" />
+						<send event="'end'" />
+					</if>
+				</state>
+				
 			</state>
 		
 		</state>

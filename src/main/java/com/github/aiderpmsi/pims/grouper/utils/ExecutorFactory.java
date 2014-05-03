@@ -21,6 +21,7 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
 import com.github.aiderpmsi.pims.grouper.customtags.IsInList;
+import com.github.aiderpmsi.pims.grouper.customtags.RssActe;
 import com.github.aiderpmsi.pims.grouper.customtags.RssMain;
 import com.github.aiderpmsi.pims.grouper.model.GrouperDictionary;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
@@ -80,6 +81,9 @@ public class ExecutorFactory {
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "rssMain",
 				RssMain.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "rssMain",
+				RssActe.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "isInList",
 				IsInList.class));
