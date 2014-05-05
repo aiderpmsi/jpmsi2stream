@@ -16,8 +16,8 @@ public class RssMain extends Action {
 	
 	private static final long serialVersionUID = 6879554289822402659L;
 
-	private String get, varname;
-
+	private String get, varname, type;
+	
 	public RssMain() {
 		super();
 	}
@@ -35,8 +35,26 @@ public class RssMain extends Action {
 		// GETS THE DEMANDED ELEMENT
 		String result = rssContent.getRssmain().get(get);
 
+		// CONVERTS THE RESULT
+		Object convResult;
+		switch (type) {
+		case "Integer" :
+			try {
+				convResult = (result == null || result.trim().length() == 0 ?
+						0 : new Integer(result.trim()));
+			} catch (NumberFormatException e) {
+				throw new ModelException(result + " Is not of type " + type, e);
+			}
+			break;
+		case "String" :
+			convResult = result;
+			break;
+		default:
+			throw new ModelException("RssMain unknown type : " + type);
+		}
+		
 		// WRITES THE RESULT
-		scInstance.getContext(getParentTransitionTarget()).setLocal(varname, result);
+		scInstance.getContext(getParentTransitionTarget()).setLocal(varname, convResult);
 	}
 
 	public String getGet() {
@@ -54,4 +72,14 @@ public class RssMain extends Action {
 	public void setVarname(String varname) {
 		this.varname = varname;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	
 }

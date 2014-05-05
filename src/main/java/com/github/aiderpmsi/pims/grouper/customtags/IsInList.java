@@ -45,7 +45,7 @@ public class IsInList extends Action {
 		if (varContent instanceof List<?>) {
 			for (Object element : (List) varContent) {
 				if (element instanceof String) {
-					if (dicoContent.contains((String) element)) {
+					if (dicoContent.contains(((String) element).trim())) {
 						matches = true;
 						break;
 					}
@@ -54,11 +54,11 @@ public class IsInList extends Action {
 		}
 		// IF WE HAVE TO CHECK AGAINST A STRING, CHECK THIS STRING
 		else if (varContent instanceof String) {
-			if (dicoContent.contains((String) varContent)) {
+			if (dicoContent.contains(((String) varContent).trim())) {
 				matches = true;
 			}
 		}
-
+		
 		// WRITES THE RESULT
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, matches);
 	}

@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
 import java.util.Collection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml.ErrorReporter;
 import org.apache.commons.scxml.EventDispatcher;
@@ -13,7 +14,8 @@ public class Group extends Action {
 	
 	private static final long serialVersionUID = -3102662436572879541L;
 	
-	private String result;
+	private String erreur = "",	racine = "",
+			modalite = "", gravite = "";
 
 	public Group() {
 		super();
@@ -27,15 +29,39 @@ public class Group extends Action {
 
 		// GETS THE LIST IN DICTIONNARY
 		// WRITES THE RESULT
-		scInstance.getRootContext().set("_result", result);
+		scInstance.getRootContext().set("_result", this);
 	}
 
-	public String getResult() {
-		return result;
+	public String getErreur() {
+		return erreur;
 	}
 
-	public void setResult(String result) {
-		this.result = result;
+	public void setErreur(String erreur) {
+		this.erreur = erreur;
 	}
 
+	public String getRacine() {
+		return racine;
+	}
+
+	public void setRacine(String racine) {
+		this.racine = racine;
+	}
+
+	public String getModalite() {
+		return modalite;
+	}
+
+	public void setModalite(String modalite) {
+		this.modalite = modalite;
+	}
+
+	public String getGravite() {
+		return gravite;
+	}
+
+	public void setGravite(String gravite) {
+		this.gravite = gravite;
+	}
+	
 }

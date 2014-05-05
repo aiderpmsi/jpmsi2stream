@@ -2,45 +2,120 @@
 
 <groups>
 
+	<group name="A-170">
+		<element>AZNL001/0</element>
+		<element>QZNL001/0</element>
+		<element>ZZNL045/0</element>
+		<element>ZZNL046/0</element>
+		<element>ZZNL047/0</element>
+		<element>ZZNL052/0</element>
+		<element>ZZNL058/0</element>
+		<element>ZZNL059/0</element>
+		<element>ZZNL060/0</element>
+		<element>ZZNL066/0</element>
+	</group>
+
 	<group name="A-180">
-		<element>JVRP007</element>
+		<element>JVRP007/0</element>
 	</group>
 
 	<group name="A-181">
-		<element>JVRP008</element>
+		<element>JVRP008/0</element>
+	</group>
+
+	<group name="A-205">
+		<element>BHNL001/2</element>
+		<element>EDLL001/0</element>
+		<element>EDLL002/0</element>
+		<element>JGNL001/0</element>
+		<element>JKNL001/0</element>
+		<element>JKNL002/0</element>
+		<element>JKNL003/0</element>
+		<element>JKNL004/0</element>
+		<element>JKNL005/0</element>
+		<element>JKNL006/0</element>
+		<element>JLNL001/0</element>
+		<element>JLNL002/2</element>
+		<element>JLNL003/0</element>
+		<element>JLNL004/0</element>
+		<element>JLNL005/0</element>
+		<element>JLNL006/0</element>
+		<element>JLNL007/0</element>
+		<element>JLNL008/2</element>
+		<element>PBLL001/0</element>
+		<element>ZZNL001/0</element>
+		<element>ZZNL002/0</element>
+		<element>ZZNL003/0</element>
+		<element>ZZNL004/0</element>
+		<element>ZZNL005/0</element>
+		<element>ZZNL006/0</element>
+		<element>ZZNL007/0</element>
+		<element>ZZNL008/0</element>
+		<element>ZZNL009/0</element>
+		<element>ZZNL010/0</element>
+		<element>ZZNL011/0</element>
+		<element>ZZNL012/0</element>
+		<element>ZZNL013/0</element>
+		<element>ZZNL014/0</element>
+		<element>ZZNL015/0</element>
+		<element>ZZNL017/0</element>
+		<element>ZZNL018/0</element>
+		<element>ZZNL019/2</element>
 	</group>
 
 	<group name="A-234">
-		<element>JVRP004</element>
+		<element>JVRP004/0</element>
+	</group>
+
+	<group name="A-304">
+		<element>ZZNL050/0</element>
+		<element>ZZNL051/0</element>
+		<element>ZZNL054/0</element>
+	</group>
+
+	<group name="A-318">
+		<element>ZZNL062/0</element>
+		<element>ZZNL063/0</element>
+	</group>
+
+	<group name="A-319">
+		<element>ZZNL048/0</element>
+		<element>ZZNL064/0</element>
+		<element>ZZNL065/0</element>
+	</group>
+
+	<group name="A-320">
+		<element>ZZNL053/0</element>
+		<element>ZZNL061/0</element>
 	</group>
 
 	<group name="A-342">
-		<element>FENL001</element>
-		<element>JGNL001</element>
-		<element>JKNL001</element>
-		<element>JKNL003</element>
-		<element>JKNL004</element>
-		<element>JKNL005</element>
-		<element>JLNL001</element>
-		<element>JLNL003</element>
-		<element>JLNL004</element>
-		<element>JLNL005</element>
-		<element>KCNL003</element>
-		<element>KCNL004</element>
-		<element>PANL001</element>
-		<element>ZANL001</element>
-		<element>ZZNL001</element>
-		<element>ZZNL005</element>
-		<element>ZZNL006</element>
-		<element>ZZNL007</element>
-		<element>ZZNL009</element>
-		<element>ZZNL010</element>
-		<element>ZZNL012</element>
-		<element>ZZNL013</element>
-		<element>ZZNL016</element>
-		<element>ZZNL017</element>
-		<element>ZZNL049</element>
-		<element>ZZNL055</element>
+		<element>FENL001/0</element>
+		<element>JGNL001/0</element>
+		<element>JKNL001/0</element>
+		<element>JKNL003/0</element>
+		<element>JKNL004/0</element>
+		<element>JKNL005/0</element>
+		<element>JLNL001/0</element>
+		<element>JLNL003/0</element>
+		<element>JLNL004/0</element>
+		<element>JLNL005/0</element>
+		<element>KCNL003/0</element>
+		<element>KCNL004/0</element>
+		<element>PANL001/0</element>
+		<element>ZANL001/0</element>
+		<element>ZZNL001/0</element>
+		<element>ZZNL005/0</element>
+		<element>ZZNL006/0</element>
+		<element>ZZNL007/0</element>
+		<element>ZZNL009/0</element>
+		<element>ZZNL010/0</element>
+		<element>ZZNL012/0</element>
+		<element>ZZNL013/0</element>
+		<element>ZZNL016/0</element>
+		<element>ZZNL017/0</element>
+		<element>ZZNL049/0</element>
+		<element>ZZNL055/0</element>
 	</group>
 
 	<group name="D-030" >
