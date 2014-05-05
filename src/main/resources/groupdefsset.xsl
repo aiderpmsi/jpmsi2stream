@@ -10,11 +10,11 @@
 		<group>
 			<elements>
 				<xsl:for-each select="/groups/group[@name = $group][1]">
-					<element>
-						<xsl:for-each select="element">
+					<xsl:for-each select="element">
+						<element>
 							<xsl:value-of select="text()" />
-						</xsl:for-each>
-					</element>
+						</element>
+					</xsl:for-each>
 				</xsl:for-each>
 			</elements>
 		</group>
