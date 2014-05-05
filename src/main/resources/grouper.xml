@@ -6,176 +6,155 @@
 
 	<state id="group">
 
-	<initial>
-    	<transition target="test_cmd28"/>
-	</initial>
-
-	<!-- TEST IF WE ARE IN CMD 28 -->
-	<state id="test_cmd28">
-		<datamodel>
-			<data name="numSeances" />
-		</datamodel>
-		<onentry>
-			<my:rssMain get="NbSeances" varname="numSeances" />
-			<if cond="numSeances != 0">
-				<send event="'cmd_found'" />
-				<else />
-				<send event="'cmd_not_found'" />
-			</if>
-		</onentry>
-		
-		<transition event="cmd_found" target="process_cmd28" />
-		<transition event="cmd_not_found" target="test_cmd27" />
+		<initial>
+	    	<transition target="test_cmd28"/>
+		</initial>
+	
+		<!-- TEST IF WE ARE IN CMD 28 -->
+		<state id="test_cmd28">
+			<onentry>
+				<my:rssMain get="NbSeances" varname="numSeances" />
+				<if cond="numSeances != 0">
+					<send event="'cmd_found'" />
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd28" />
+			<transition event="cmd_not_found" target="fend" /> <!-- test_cmd27 -->
+	
+		</state>
 
 		<!-- WE ARE IN CMD28 -->
 		<state id="process_cmd28">
-			<datamodel>
-				<data name="dp" />
-				<data name="d145" />
-			</datamodel>
 			<onentry>
 				<my:rssMain get="DP" varname="dp" />
 				<my:isInList list="D-145" varname="dp" result="d145"/>
 				<if cond="d145">
-					<send event="'d145_found'" />
+				<send event="'d145_found'" />
 					<else />
 					<my:group result="90Z01Z" />
 					<send event="'end'" />
 				</if>
 			</onentry>
 			
-			<transition event="d145_found" target="process_cmd28_d145" />
+			<transition event="d145_found" target="fend" /> <!-- process_cmd28_d145 -->
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD28 AND D145 -->
+		<state id="process_cmd28_d145">
+			<onentry>
+				<my:rssMain get="DP" varname="dp" />
+				<my:isInList list="D-113" varname="dp" result="d113" />
+				<my:isInList list="D-063" varname="dp" result="d063" />
+				<my:isInList list="D-142" varname="dp" result="d142" />
+				<my:isInList list="D-143" varname="dp" result="d143" />
+				<my:isInList list="D-139" varname="dp" result="d139" />
+				<my:isInList list="D-047" varname="dp" result="d047" />
+				<my:isInList list="D-054" varname="dp" result="d054" />
+				<if cond="d113" >
+					<send event="'d113_found'" />
+					<elseif cond="d114" />
+					<my:group result="28Z07Z" />
+					<send event="'end'" />
+					<elseif cond="d063" />
+					<my:group result="28Z17Z" />
+					<send event="'end'" />
+					<elseif cond="d142" />
+					<send event="'d142_found'" />
+					<elseif cond="d143" />
+					<send event="'d143_found'" />
+					<elseif cond="d139" />
+					<my:group result="28Z14Z" />
+					<send event="'end'" />
+					<elseif cond="d047" />
+					<my:group result="28Z15Z" />
+					<send event="'end'" />
+					<elseif cond="d054" />
+					<my:group result="28Z16Z" />
+					<send event="'end'" />
+					<else />
+					<my:group result="90Z02Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="d113_found" target="fend" /> <!-- process_cmd28_d145_d113 -->
+			<transition event="d142_found" target="fend" /> <!-- process_cmd28_d145_d142 -->
+			<transition event="d143_found" target="fend" /> <!-- process_cmd28_d145_d143 -->
+			<transition event="end" target="end" />
+
+		</state>					
+		
+		<!-- We are in CMD 28, D-145 and D-113 -->
+		<state id="process_cmd28_d145_d113">
+			<onentry>
+				<my:rssMain get="DP" varname="dp" />
+				<my:rssActe get="CodeCCAM" varname="da" />
+				<my:isInList list="A-180" varname="da" result="a180" />
+				<my:isInList list="A-181" varname="da" result="a181" />
+				<my:isInList list="A-234" varname="da" result="a234" />
+				<my:isInList list="D-030" varname="dp" result="d030" />
+				<if cond="a180" >
+					<my:group result="28Z01Z" />
+					<send event="'end'" />
+					<elseif cond="a181" />
+					<my:group result="28Z02Z" />
+					<send event="'end'" />
+					<elseif cond="a234" />
+					<my:group result="28Z03Z" />
+					<send event="'end'" />
+					<elseif cond="d030" />
+					<my:group result="28Z04Z" />
+					<send event="'end'" />
+					<else />
+					<my:group result="90Z02Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="d113_found" target="fend" /> <!-- process_cmd28_d145_d113 -->
+			<transition event="d142_found" target="fend" /> <!-- process_cmd28_d145_d142 -->
+			<transition event="d143_found" target="fend" /> <!-- process_cmd28_d145_d143 -->
 			<transition event="end" target="end" />
 			
-			<!-- WE ARE IN CMD28 AND D145 -->
-		
-			<state id="process_cmd28_d145">
-				<datamodel>
-					<data name="d113" />
-					<data name="d114" />
-					<data name="d063" />
-					<data name="d142" />
-					<data name="d143" />
-					<data name="d139" />
-					<data name="d047" />
-					<data name="d054" />
-				</datamodel>
-				<onentry>
-					<my:isInList list="D-113" varname="dp" result="d113" />
-					<my:isInList list="D-114" varname="dp" result="d114" />
-					<my:isInList list="D-063" varname="dp" result="d063" />
-					<my:isInList list="D-142" varname="dp" result="d142" />
-					<my:isInList list="D-143" varname="dp" result="d143" />
-					<my:isInList list="D-139" varname="dp" result="d139" />
-					<my:isInList list="D-047" varname="dp" result="d047" />
-					<my:isInList list="D-054" varname="dp" result="d054" />
-					<if cond="d113" >
-						<send event="'d113_found'" />
-						<elseif cond="d114" />
-						<my:group result="28Z07Z" />
-						<send event="'end'" />
-						<elseid cond="d063" />
-						<my:group result="28Z17Z" />
-						<send event="'end'" />
-						<elseif cond="d142" />
-						<send event="'d142_found'" />
-						<elseid cond="d143" />
-						<send event="'d143_found'" />
-						<elseif cond="d139" />
-						<my:group result="28Z14Z" />
-						<send event="'end'" />
-						<elseif cond="d047" />
-						<my:group result="28Z15Z" />
-						<send event="'end'" />
-						<elseif cond="d054" />
-						<my:group result="28Z16Z" />
-						<send event="'end'" />
-						<else />
-						<my:group result="90Z02Z" />
-						<send event="'end'" />
-					</if>
-				</onentry>
-				
-				<transition event="d113_found" target="process_cmd28_d145_d113" />
-				<transition event="d142_found" target="process_cmd28_d145_d142" />
-				<transition event="d143_found" target="process_cmd28_d145_d143" />
-				<transition event="end" target="end" />
-				
-				<!-- We are in CMD 28, D-145 and D-113 -->
-				
-				<state id="process_cmd28_d145_d113">
-					<datamodel>
-						<data name="da" />
-						<data name="a180" />
-						<data name="a181" />
-						<data name="a234" />
-						<data name="d030" />
-					</datamodel>
-					<onentry>
-						<my:rssActe get="CodeCCAM" varname="da" />
-						<my:isInList list="A-180" varname="da" result="a180" />
-						<my:isInList list="A-181" varname="da" result="a181" />
-						<my:isInList list="A-234" varname="da" result="a234" />
-						<my:isInList list="D-030" varname="dp" result="d030" />
-					</onentry>
-					<if cond="a180" >
-						<my:group result="28Z01Z" />
-						<send event="'end'" />
-						<elseif cond="a181" />
-						<my:group result="28Z02Z" />
-						<send event="'end'" />
-						<elseif cond="a234" />
-						<my:group result="28Z03Z" />
-						<send event="'end'" />
-						<elseif cond="d030" />
-						<my:group result="28Z04Z" />
-						<send event="'end'" />
-						<else />
-						<my:group result="90Z02Z" />
-						<send event="'end'" />
-					</if>
-				</state>
-				
-				<!-- We are in CMD 28, D-145 and D-142 -->
-				
-				<state id="process_cmd28_d145_d142">
-					<datamodel>
-						<data name="da" />
-						<data name="a314" />
-						<data name="a315" />
-						<data name="a316" />
-						<data name="a317" />
-					</datamodel>
-					<onentry>
-						<my:rssActe get="CodeCCAM" varname="da" />
-						<my:isInList list="A-314" varname="da" result="a314" />
-						<my:isInList list="A-315" varname="da" result="a315" />
-						<my:isInList list="A-316" varname="da" result="a316" />
-						<my:isInList list="A-317" varname="dp" result="a317" />
-					</onentry>
-					<if cond="a314" >
-						<my:group result="28Z19Z" />
-						<send event="'end'" />
-						<elseif cond="a315" />
-						<my:group result="28Z20Z" />
-						<send event="'end'" />
-						<elseif cond="a316" />
-						<my:group result="28Z21Z" />
-						<send event="'end'" />
-						<elseif cond="a317" />
-						<my:group result="28Z22Z" />
-						<send event="'end'" />
-						<else />
-						<my:group result="90Z02Z" />
-						<send event="'end'" />
-					</if>
-				</state>
-
-/			</state>
-		
 		</state>
-		
+				
+		<!-- We are in CMD 28, D-145 and D-142 -->
+		<state id="process_cmd28_d145_d142">
+			<onentry>
+				<my:rssMain get="DP" varname="dp" />
+				<my:rssActe get="CodeCCAM" varname="da" />
+				<my:isInList list="A-314" varname="da" result="a314" />
+				<my:isInList list="A-315" varname="da" result="a315" />
+				<my:isInList list="A-316" varname="da" result="a316" />
+				<my:isInList list="A-317" varname="dp" result="a317" />
+				<if cond="a314" >
+					<my:group result="28Z19Z" />
+					<send event="'end'" />
+					<elseif cond="a315" />
+					<my:group result="28Z20Z" />
+					<send event="'end'" />
+					<elseif cond="a316" />
+					<my:group result="28Z21Z" />
+					<send event="'end'" />
+					<elseif cond="a317" />
+					<my:group result="28Z22Z" />
+					<send event="'end'" />
+					<else />
+					<my:group result="90Z02Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+		</state>
+	
 	</state>
 
 	<state id="end" final="true" />
+
+	<state id="fend" finale="true" />
+	
 </scxml>
