@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * We find the list of excluded DP in sts_20130005_0001_p000.pdf pages 268 to 381
- * (pdftotext sts_20130005_0001_p000.pdf -f 268 -l 381)
+ * (pdftotext sts_20130005_0001_p000.pdf -nopgbrk -f 268 -l 381)
  * 
  * @author jpc
  *

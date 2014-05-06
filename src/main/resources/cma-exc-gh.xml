@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gh-exclude-cmas>
+    <excluding id="CMA-GH-1" >
+        <ghm>01C03</ghm>
+    </excluding>
+        <ghm>01M18</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-2" >
+        <ghm>01C03</ghm>
+    </excluding>
+        <ghm>01M19</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-3" >
+        <ghm>01C03</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-4" >
+        <ghm>01C11</ghm>
+    </excluding>
+    <excluding id="CMA-GH-5" >
+        <ghm>02C10</ghm>
+    </excluding>
+    <excluding id="CMA-GH-6" >
+        <ghm>02C10</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-7" >
+        <ghm>05C14</ghm>
+    </excluding>
+    <excluding id="CMA-GH-8" >
+        <ghm>05C14</ghm>
+    </excluding>
+        <ghm>05K05</ghm>
+    </excluding>
+        <ghm>05M04</ghm>
+    </excluding>
+        <ghm>27C05</ghm>
+    </excluding>
+    <excluding id="CMA-GH-9" >
+        <ghm>05C14</ghm>
+    </excluding>
+        <ghm>27C05</ghm>
+    </excluding>
+    <excluding id="CMA-GH-10" >
+        <ghm>06C03</ghm>
+    </excluding>
+        <ghm>06C04</ghm>
+    </excluding>
+        <ghm>06C23</ghm>
+    </excluding>
+    <excluding id="CMA-GH-11" >
+        <ghm>06C08</ghm>
+    </excluding>
+    <excluding id="CMA-GH-12" >
+        <ghm>06C16</ghm>
+    </excluding>
+    <excluding id="CMA-GH-13" >
+        <ghm>06C20</ghm>
+    </excluding>
+    <excluding id="CMA-GH-14" >
+        <ghm>07C06</ghm>
+    </excluding>
+    <excluding id="CMA-GH-15" >
+        <ghm>07C06</ghm>
+    </excluding>
+        <ghm>07C09</ghm>
+    </excluding>
+    <excluding id="CMA-GH-16" >
+        <ghm>07C13</ghm>
+    </excluding>
+        <ghm>27C02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-17" >
+        <ghm>07C13</ghm>
+    </excluding>
+        <ghm>27C03</ghm>
+    </excluding>
+    <excluding id="CMA-GH-18" >
+        <ghm>08C29</ghm>
+    </excluding>
+    <excluding id="CMA-GH-19" >
+        <ghm>08C47</ghm>
+    </excluding>
+        <ghm>08C49</ghm>
+    </excluding>
+        <ghm>08C51</ghm>
+    </excluding>
+        <ghm>08C53</ghm>
+    </excluding>
+    <excluding id="CMA-GH-20" >
+        <ghm>08C47</ghm>
+    </excluding>
+        <ghm>08C49</ghm>
+    </excluding>
+        <ghm>08C51</ghm>
+    </excluding>
+        <ghm>08C53</ghm>
+    </excluding>
+        <ghm>08C55</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-21" >
+        <ghm>08C47</ghm>
+    </excluding>
+        <ghm>08C49</ghm>
+    </excluding>
+        <ghm>08C51</ghm>
+    </excluding>
+        <ghm>08C53</ghm>
+    </excluding>
+        <ghm>08M37</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-22" >
+        <ghm>08C47</ghm>
+    </excluding>
+        <ghm>08C49</ghm>
+    </excluding>
+        <ghm>08C51</ghm>
+    </excluding>
+        <ghm>08C53</ghm>
+    </excluding>
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-23" >
+        <ghm>09C02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-24" >
+        <ghm>09C04</ghm>
+    </excluding>
+        <ghm>09C05</ghm>
+    </excluding>
+    <excluding id="CMA-GH-25" >
+        <ghm>10C11</ghm>
+    </excluding>
+    <excluding id="CMA-GH-26" >
+        <ghm>11C02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-27" >
+        <ghm>11M15</ghm>
+    </excluding>
+    <excluding id="CMA-GH-28" >
+        <ghm>11M15</ghm>
+    </excluding>
+        <ghm>27C06</ghm>
+    </excluding>
+    <excluding id="CMA-GH-29" >
+        <ghm>12C05</ghm>
+    </excluding>
+        <ghm>12C09</ghm>
+    </excluding>
+    <excluding id="CMA-GH-30" >
+        <ghm>12C05</ghm>
+    </excluding>
+        <ghm>12C09</ghm>
+    </excluding>
+        <ghm>12C11</ghm>
+    </excluding>
+    <excluding id="CMA-GH-31" >
+        <ghm>13C05</ghm>
+    </excluding>
+        <ghm>13C11</ghm>
+    </excluding>
+        <ghm>13C14</ghm>
+    </excluding>
+    <excluding id="CMA-GH-32" >
+        <ghm>22Z02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-33" >
+        <ghm>27C02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-34" >
+        <ghm>27C03</ghm>
+    </excluding>
+    <excluding id="CMA-GH-35" >
+        <ghm>27C03</ghm>
+    </excluding>
+        <ghm>27C04</ghm>
+    </excluding>
+    <excluding id="CMA-GH-36" >
+        <ghm>27C04</ghm>
+    </excluding>
+    <excluding id="CMA-GH-37" >
+        <ghm>27C05</ghm>
+    </excluding>
+    <excluding id="CMA-GH-38" >
+        <ghm>27C05</ghm>
+    </excluding>
+        <racine>C</racine>
+    </excluding>
+    <excluding id="CMA-GH-39" >
+        <ghm>27C06</ghm>
+    </excluding>
+    <excluding id="CMA-GH-40" >
+        <ghm>27Z02</ghm>
+    </excluding>
+    <excluding id="CMA-GH-41" >
+        <cmd>26</cmd>
+    </excluding>
+    <excluding id="CMA-GH-42" >
+        <racine>C</racine>
+    </excluding>
+    <excluding id="CMA-GH-43" >
+        <racine>C</racine>
+    </excluding>
+        <racine>K</racine>
+    </excluding>
+    <excluding id="CMA-GH-44" >
+        <racine>M</racine>
+    </excluding>
+<gh-exclude-cmas>
