@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We find the list of excluded DP in sts_20130005_0001_p000.pdf pages 433 to 434
+ * We find the list of excluded DP in sts_20130005_0001_p000.pdf
  * (pdftotext sts_20130005_0001_p000.pdf -nopgbrk -raw -f 433 -l 434)
  * 
  * @author jpc
