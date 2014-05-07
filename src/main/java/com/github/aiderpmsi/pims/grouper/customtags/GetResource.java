@@ -1,7 +1,7 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
 import java.util.Collection;
-import java.util.HashSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml.ErrorReporter;
 import org.apache.commons.scxml.EventDispatcher;
@@ -11,17 +11,11 @@ import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
 import com.github.aiderpmsi.pims.grouper.model.BaseAbstractDictionary;
+import com.github.aiderpmsi.pims.grouper.model.Resource;
 
 public class GetResource extends Action {
 	
 	private static final long serialVersionUID = 6879554289822402659L;
-
-	private static HashSet<String> resources = new HashSet<>();
-	
-	static {
-		resources.add("unclassified");
-		resources.add("acteclassant");
-	}
 	
 	private String resource, key, result;
 
@@ -39,7 +33,7 @@ public class GetResource extends Action {
 		Object resultObject = null;
 			
 		// GETS THE DICTIONARY IF THIS RESOURCE IS ACCEPTED
-		if (resources.contains(resource)) {
+		if (Resource.createResource(resource) != null) {
 			BaseAbstractDictionary<?, ?> dico = 
 					(BaseAbstractDictionary<?, ?>) scInstance.getRootContext().get("_" + resource + "_dictionary");
 			resultObject = dico.getDefintion(key);

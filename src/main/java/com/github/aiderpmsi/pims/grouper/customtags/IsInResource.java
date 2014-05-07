@@ -12,15 +12,16 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
+import com.github.aiderpmsi.pims.grouper.model.Resource;
 import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
-public class IsInList extends Action {
+public class IsInResource extends Action {
 	
 	private static final long serialVersionUID = 6879554289822402659L;
 
-	private String key, value, result, dictionary;
+	private String resource, key, value, result;
 
-	public IsInList() {
+	public IsInResource() {
 		super();
 	}
 
@@ -34,17 +35,21 @@ public class IsInList extends Action {
 		Object varContent = scInstance.getContext(getParentTransitionTarget()).get(value);
 
 		// BOOLEAN TO WRITE IN THE RESULT
-		Boolean matchResult;
+		Boolean matchResult = false;
 		
-		// GETS THE DICTIONARY
-		switch(dictionary) {
-		case "unclassified":
-			UnclassifiedDictionary dico =
+		// GETS THE RESOURCE
+		Resource resourceEnum = Resource.createResource(resource);
+		if (resourceEnum != null) {
+			switch (resourceEnum) {
+			case UNCLASSIFIED:
+				UnclassifiedDictionary dico =
 				(UnclassifiedDictionary) scInstance.getRootContext().get("_unclassified_dictionary");
-			matchResult = isInList(dico, key, varContent);
-			break;
-		default:
-			matchResult = false;
+				matchResult = isInList(dico, key, varContent);
+			default:
+				break;
+			}
+		} else {
+			throw new ModelException("Resource " + resource + " does not exist");
 		}
 
 		// WRITES THE RESULT
@@ -104,11 +109,11 @@ public class IsInList extends Action {
 	}
 
 	public String getDictionary() {
-		return dictionary;
+		return resource;
 	}
 
 	public void setDictionary(String dictionary) {
-		this.dictionary = dictionary;
+		this.resource = dictionary;
 	}
 
 }

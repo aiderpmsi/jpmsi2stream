@@ -19,12 +19,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import com.github.aiderpmsi.pims.grouper.customtags.FromRss;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
-import com.github.aiderpmsi.pims.grouper.customtags.IsInList;
-import com.github.aiderpmsi.pims.grouper.customtags.RssActe;
-import com.github.aiderpmsi.pims.grouper.customtags.RssMain;
-import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
+import com.github.aiderpmsi.pims.grouper.customtags.IsInResource;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
+import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
 public class ExecutorFactory {
 
@@ -79,14 +78,11 @@ public class ExecutorFactory {
 		// Sets the custom tags
 		List<CustomAction> customActions = new ArrayList<CustomAction>();
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "rssMain",
-				RssMain.class));
+				"http://my.custom-actions.domain/CUSTOM", "fromRss",
+				FromRss.class));
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "rssActe",
-				RssActe.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "isInList",
-				IsInList.class));
+				"http://my.custom-actions.domain/CUSTOM", "isInResource",
+				IsInResource.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "group",
 				Group.class));
