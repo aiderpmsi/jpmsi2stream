@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
  * @author jpc
  *
  */
-public class Cmagen {
+public class CmaGen {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Pattern cimrec = Pattern.compile("^[A-Z]\\d+\\.\\d+(?:\\+\\d+)?");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/cma.xml");
+		File output = new File("src/main/resources/grouper-cma.xml");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		

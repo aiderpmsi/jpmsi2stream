@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author jpc
  *
  */
-public class CmaExcludeGH {
+public class CmaExcludeGHGen {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Pattern linepat = Pattern.compile(
@@ -31,7 +31,7 @@ public class CmaExcludeGH {
 				+ "))+)$");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/cma-exc-gh.xml");
+		File output = new File("src/main/resources/grouper-cma-exc-gh.xml");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		

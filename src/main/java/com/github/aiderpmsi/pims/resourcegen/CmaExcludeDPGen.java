@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
  * @author jpc
  *
  */
-public class CmaExcludeDP {
+public class CmaExcludeDPGen {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Pattern dpexcpat = Pattern.compile("^\\d+");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/cma-exc-dp.xml");
+		File output = new File("src/main/resources/grouper-cma-exc-dp.xml");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		

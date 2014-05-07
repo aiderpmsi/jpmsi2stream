@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author jpc
  *
  */
-public class Groupergen {
+public class UnclassifiedGen {
 
 	private static Pattern diagEntree = Pattern.compile("^Diagnostics d'entrée dans la CMD n° (\\d+)");
 	private static Pattern listeEntree = Pattern.compile("^Liste ([A-Z]-\\d+).*");
@@ -27,7 +27,7 @@ public class Groupergen {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/groupdefs.xml");
+		File output = new File("src/main/resources/grouper-unclassified.xml");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		

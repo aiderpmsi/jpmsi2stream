@@ -23,7 +23,7 @@ import com.github.aiderpmsi.pims.grouper.customtags.Group;
 import com.github.aiderpmsi.pims.grouper.customtags.IsInList;
 import com.github.aiderpmsi.pims.grouper.customtags.RssActe;
 import com.github.aiderpmsi.pims.grouper.customtags.RssMain;
-import com.github.aiderpmsi.pims.grouper.model.GrouperDictionary;
+import com.github.aiderpmsi.pims.grouper.model.GroupDictionary;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 
 public class ExecutorFactory {
@@ -95,7 +95,7 @@ public class ExecutorFactory {
 		SCXML scxml = SCXMLParser.parse(source, new DefaultHandler2(), customActions);
 		// Sets the machine context
 		JexlContext appCtx = new JexlContext();
-		appCtx.set("_dictionary", new GrouperDictionary());
+		appCtx.set("_dictionary", new GroupDictionary());
 		appCtx.set("_rssContent", getRss());
 		
 		// Creates the engine

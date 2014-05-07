@@ -24,7 +24,7 @@ public class ActeClassantGen {
 		Pattern ccam = Pattern.compile("^([A-Z]{4}\\d{3}/\\d) (.*)");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/actesclassants.xml");
+		File output = new File("src/main/resources/grouper-acteclassant.xml");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		
@@ -39,7 +39,7 @@ public class ActeClassantGen {
 			Matcher matcher = ccam.matcher(line);
 			// WE HAVE ONE LIST OF GHM FOR THIS CCAM
 			if (matcher.matches()) {
-				bw.write("    <acte id=\">" + matcher.group(1) + "\" >\n");
+				bw.write("    <acte id=\"" + matcher.group(1) + "\" >\n");
 				// SPLIT THE LIST OF CMD
 				String[] chunks = matcher.group(2).split(" ");
 				for (String chunk : chunks) {

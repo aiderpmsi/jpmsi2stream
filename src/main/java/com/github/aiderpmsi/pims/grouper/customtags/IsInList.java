@@ -12,7 +12,7 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
-import com.github.aiderpmsi.pims.grouper.model.GrouperDictionary;
+import com.github.aiderpmsi.pims.grouper.model.GroupDictionary;
 
 public class IsInList extends Action {
 	
@@ -31,9 +31,9 @@ public class IsInList extends Action {
 			throws ModelException, SCXMLExpressionException {
 
 		// GETS THE LIST IN DICTIONNARY
-		GrouperDictionary dico =
-				(GrouperDictionary) scInstance.getRootContext().get("_dictionary");
-		Set<String> dicoContent = dico.getInstance(list);
+		GroupDictionary dico =
+				(GroupDictionary) scInstance.getRootContext().get("_dictionary");
+		Set<String> dicoContent = dico.getDefintion(list);
 		
 		// GETS THE VARIABLE CONTENT
 		Object varContent = scInstance.getContext(getParentTransitionTarget()).get(varname);
