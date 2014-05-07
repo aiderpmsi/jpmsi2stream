@@ -30,7 +30,7 @@
 		<state id="test_cmd27">
 			<onentry>
 				<my:rssActe retrieve="CodeCCAM,Phase" pattern="{0}/{1}" destination="acte" />
-				<my:isInList list="D-145" varname="dp" result="d145"/>
+				<my:isInList dictionary="acteclassant" key="27" value="dp" result="d145"/>
 				<if cond="numSeances != 0">
 					<send event="'cmd_found'" />
 					<else />
@@ -47,7 +47,7 @@
 		<state id="process_cmd28">
 			<onentry>
 				<my:rssMain get="DP" varname="dp"  type="String" />
-				<my:isInList list="D-145" varname="dp" result="d145"/>
+				<my:isInList dictionary="unclassified" key="D-145" value="dp" result="d145"/>
 				<if cond="d145">
 				<send event="'d145_found'" />
 					<else />
@@ -65,14 +65,14 @@
 		<state id="process_cmd28_d145">
 			<onentry>
 				<my:rssMain get="DP" varname="dp" type="String" />
-				<my:isInList list="D-113" varname="dp" result="d113" />
-				<my:isInList list="D-114" varname="dp" result="d114" />
-				<my:isInList list="D-063" varname="dp" result="d063" />
-				<my:isInList list="D-142" varname="dp" result="d142" />
-				<my:isInList list="D-143" varname="dp" result="d143" />
-				<my:isInList list="D-139" varname="dp" result="d139" />
-				<my:isInList list="D-047" varname="dp" result="d047" />
-				<my:isInList list="D-054" varname="dp" result="d054" />
+				<my:isInList dictionary="unclassified" key="D-113" value="dp" result="d113" />
+				<my:isInList dictionary="unclassified" key="D-114" value="dp" result="d114" />
+				<my:isInList dictionary="unclassified" key="D-063" value="dp" result="d063" />
+				<my:isInList dictionary="unclassified" key="D-142" value="dp" result="d142" />
+				<my:isInList dictionary="unclassified" key="D-143" value="dp" result="d143" />
+				<my:isInList dictionary="unclassified" key="D-139" value="dp" result="d139" />
+				<my:isInList dictionary="unclassified" key="D-047" value="dp" result="d047" />
+				<my:isInList dictionary="unclassified" key="D-054" value="dp" result="d054" />
 				<if cond="d113" >
 					<send event="'d113_found'" />
 					<elseif cond="d114" />
@@ -112,10 +112,10 @@
 			<onentry>
 				<my:rssMain get="DP" varname="dp" type="String" />
 				<my:rssActe retrieve="CodeCCAM,Phase" pattern="{0}/{1}" destination="acte" />
-				<my:isInList list="A-180" varname="acte" result="a180" />
-				<my:isInList list="A-181" varname="acte" result="a181" />
-				<my:isInList list="A-234" varname="acte" result="a234" />
-				<my:isInList list="D-030" varname="dp" result="d030" />
+				<my:isInList dictionary="unclassified" key="A-180" value="acte" result="a180" />
+				<my:isInList dictionary="unclassified" key="A-181" value="acte" result="a181" />
+				<my:isInList dictionary="unclassified" key="A-234" value="acte" result="a234" />
+				<my:isInList dictionary="unclassified" key="D-030" value="dp" result="d030" />
 				<if cond="a180" >
 					<my:group racine="28Z01" gravite="Z" />
 					<send event="'end'" />
@@ -143,10 +143,10 @@
 			<onentry>
 				<my:rssMain get="DP" varname="dp" type="String" />
 				<my:rssActe retrieve="CodeCCAM,Phase" pattern="{1}/{2}" destination="acte" />
-				<my:isInList list="A-314" varname="acte" result="a314" />
-				<my:isInList list="A-315" varname="acte" result="a315" />
-				<my:isInList list="A-316" varname="acte" result="a316" />
-				<my:isInList list="A-317" varname="dp" result="a317" />
+				<my:isInList dictionary="unclassified" key="A-314" value="acte" result="a314" />
+				<my:isInList dictionary="unclassified" key="A-315" value="acte" result="a315" />
+				<my:isInList dictionary="unclassified" key="A-316" value="acte" result="a316" />
+				<my:isInList dictionary="unclassified" key="A-317" value="dp" result="a317" />
 				<if cond="a314" >
 					<my:group racine="28Z19" gravite="Z" />
 					<send event="'end'" />
@@ -173,13 +173,13 @@
 		<state id="process_cmd28_d145_d143" >
 			<onentry>
 				<my:rssActe retrieve="CodeCCAM,Phase" pattern="{1}/{2}" destination="acte" />
-				<my:isInList list="A-342" varname="acte" result="a342" />
-				<my:isInList list="A-205" varname="acte" result="a205" />
-				<my:isInList list="A-170" varname="acte" result="a170" />
-				<my:isInList list="A-304" varname="acte" result="a304" />
-				<my:isInList list="A-318" varname="acte" result="a318" />
-				<my:isInList list="A-319" varname="acte" result="a319" />
-				<my:isInList list="A-320" varname="acte" result="a320" />
+				<my:isInList dictionary="unclassified" key="A-342" value="acte" result="a342" />
+				<my:isInList dictionary="unclassified" key="A-205" value="acte" result="a205" />
+				<my:isInList dictionary="unclassified" key="A-170" value="acte" result="a170" />
+				<my:isInList dictionary="unclassified" key="A-304" value="acte" result="a304" />
+				<my:isInList dictionary="unclassified" key="A-318" value="acte" result="a318" />
+				<my:isInList dictionary="unclassified" key="A-319" value="acte" result="a319" />
+				<my:isInList dictionary="unclassified" key="A-320" value="acte" result="a320" />
 				<if cond="a342" >
 					<send event="'fend'" /> <!-- test_cmd27 -->
 					<elseif cond="a205" />

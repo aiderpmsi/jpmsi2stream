@@ -12,13 +12,13 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
-import com.github.aiderpmsi.pims.grouper.model.GroupDictionary;
+import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
 public class IsInList extends Action {
 	
 	private static final long serialVersionUID = 6879554289822402659L;
 
-	private String list, varname, result;
+	private String key, value, result, dictionary;
 
 	public IsInList() {
 		super();
@@ -30,20 +30,36 @@ public class IsInList extends Action {
 			SCInstance scInstance, Log appLog, Collection derivedEvents)
 			throws ModelException, SCXMLExpressionException {
 
-		// GETS THE LIST IN DICTIONNARY
-		GroupDictionary dico =
-				(GroupDictionary) scInstance.getRootContext().get("_dictionary");
-		Set<String> dicoContent = dico.getDefintion(list);
-		
 		// GETS THE VARIABLE CONTENT
-		Object varContent = scInstance.getContext(getParentTransitionTarget()).get(varname);
+		Object varContent = scInstance.getContext(getParentTransitionTarget()).get(value);
 
+		// BOOLEAN TO WRITE IN THE RESULT
+		Boolean matchResult;
+		
+		// GETS THE DICTIONARY
+		switch(dictionary) {
+		case "unclassified":
+			UnclassifiedDictionary dico =
+				(UnclassifiedDictionary) scInstance.getRootContext().get("_unclassified_dictionary");
+			matchResult = isInList(dico, key, varContent);
+			break;
+		default:
+			matchResult = false;
+		}
+
+		// WRITES THE RESULT
+		scInstance.getContext(getParentTransitionTarget()).setLocal(result, matchResult);
+	}
+
+	private Boolean isInList(UnclassifiedDictionary dico, String key, Object value) {
+		// GETS THE DEFINITION IN DICO
+		Set<String> dicoContent = dico.getDefintion(key);
 		// RESULT
 		Boolean matches = false;
 		
 		// IF WE HAVE TO CHECK AGAINST A LIST, CHECK EACH ITEM
-		if (varContent instanceof List<?>) {
-			for (Object element : (List) varContent) {
+		if (value instanceof List<?>) {
+			for (Object element : (List<?>) value) {
 				if (element instanceof String) {
 					if (dicoContent.contains(((String) element).trim())) {
 						matches = true;
@@ -53,30 +69,30 @@ public class IsInList extends Action {
 			}
 		}
 		// IF WE HAVE TO CHECK AGAINST A STRING, CHECK THIS STRING
-		else if (varContent instanceof String) {
-			if (dicoContent.contains(((String) varContent).trim())) {
+		else if (value instanceof String) {
+			if (dicoContent.contains(((String) value).trim())) {
 				matches = true;
 			}
 		}
 		
-		// WRITES THE RESULT
-		scInstance.getContext(getParentTransitionTarget()).setLocal(result, matches);
+		return matches;
+
+	}
+	
+	public String getKey() {
+		return key;
 	}
 
-	public String getList() {
-		return list;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public void setList(String list) {
-		this.list = list;
+	public String getValue() {
+		return value;
 	}
 
-	public String getVarname() {
-		return varname;
-	}
-
-	public void setVarname(String varname) {
-		this.varname = varname;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public String getResult() {
@@ -85,6 +101,14 @@ public class IsInList extends Action {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public String getDictionary() {
+		return dictionary;
+	}
+
+	public void setDictionary(String dictionary) {
+		this.dictionary = dictionary;
 	}
 
 }

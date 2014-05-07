@@ -3,29 +3,29 @@ package com.github.aiderpmsi.pims.grouper.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ActesClassantsDictionnary extends BaseDictionary<Set<String>, ActesClassants> {
+public class ActeClassantDictionnary extends BaseAbstractDictionary<Set<String>, ActeClassant> {
 
-	public class Mapper implements JAXBMapper<ActesClassants, Set<String>> {
+	public class Mapper implements JAXBMapper<ActeClassant, Set<String>> {
 		@Override
-		public Set<String> transform(ActesClassants model) {
+		public Set<String> transform(ActeClassant model) {
 			return new HashSet<>(model.getActes());
 		}
 	}
 	
-	public ActesClassantsDictionnary() {
+	public ActeClassantDictionnary() {
 		// SETS THE JAXBMAPPER AND JAXBCLASS
 		setJaxbMapper(new Mapper());
-		setJaxbClass(ActesClassants.class);
+		setJaxbClass(ActeClassant.class);
 	}
 
 	@Override
 	public String getConfigPath() {
-		return "actesclassants.xml";
+		return "grouper-acteclassant.xml";
 	}
 	
 	@Override
 	public String getConfigXslPath() {
-		return "groupactesclassantsset.xsl";
+		return "grouper-acteclassant-set.xsl";
 	}
 
 	@Override

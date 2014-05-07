@@ -3,19 +3,19 @@ package com.github.aiderpmsi.pims.grouper.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GroupDictionary extends BaseDictionary<Set<String>, Group> {
+public class UnclassifiedDictionary extends BaseAbstractDictionary<Set<String>, Unclassified> {
 
-	public class Mapper implements JAXBMapper<Group, Set<String>> {
+	public class Mapper implements JAXBMapper<Unclassified, Set<String>> {
 		@Override
-		public Set<String> transform(Group model) {
+		public Set<String> transform(Unclassified model) {
 			return new HashSet<>(model.getNames());
 		}
 	}
 	
-	public GroupDictionary() {
+	public UnclassifiedDictionary() {
 		// SETS THE JAXBMAPPER AND JAXBCLASS
 		setJaxbMapper(new Mapper());
-		setJaxbClass(Group.class);
+		setJaxbClass(Unclassified.class);
 	}
 
 	@Override

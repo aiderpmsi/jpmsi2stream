@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="group")
-public class Group {
+public class Unclassified {
 
 	private List<String> names = null;
 

@@ -13,7 +13,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
-public abstract class BaseDictionary<T, U> {
+public abstract class BaseAbstractDictionary<T, U> {
 
 	public abstract String getConfigPath();
 	public abstract String getConfigXslPath();
@@ -47,11 +47,11 @@ public abstract class BaseDictionary<T, U> {
 	protected T createDefinition(String key) throws IOException, JAXBException, TransformerException {
 		// OPENS THE CONFIG FILE
 		InputStream configStream = 
-				BaseDictionary.class.getClassLoader().getResourceAsStream(getConfigPath());
+				BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath());
 				
 		// Opens the thansformation
 		InputStream configXslStream = 
-				BaseDictionary.class.getClassLoader().getResourceAsStream(getConfigXslPath());
+				BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigXslPath());
 				
 		TransformerFactory tFactory = org.apache.xalan.processor.TransformerFactoryImpl.newInstance();
 		Transformer transformer = tFactory.newTransformer(

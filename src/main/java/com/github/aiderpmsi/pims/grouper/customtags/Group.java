@@ -17,10 +17,6 @@ public class Group extends Action {
 	private String erreur = "",	racine = "",
 			modalite = "", gravite = "";
 
-	public Group() {
-		super();
-	}
-
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void execute(EventDispatcher evtDispatcher, ErrorReporter errRep,
