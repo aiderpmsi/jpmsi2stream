@@ -296,10 +296,6 @@
 
 		<!-- WE ARE IN CMD26 -->
 		<state id="process_cmd26">
-			<datamodel>
-				<data name="numdiags" />
-			</datamodel>
-
 			<onentry>
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
@@ -314,7 +310,7 @@
 				<my:isInResource resource="unclassified" key="D-136" value="diags" result="d136"/>
 				<my:isInResource resource="unclassified" key="D-137" value="diags" result="d137"/>
 				<my:isInResource resource="unclassified" key="D-138" value="diags" result="d138"/>
-				<assign name="numdiags" expr="d131 ? 1 : 0" />
+				<my:execute expr="d131 ? 1 : 0"  result="numdiags"/>
 				<if cond="numdiags ge 2">
 					<send event="'2_trauma_diag'" />
 					<elseif cond="numdiags le 1"/>

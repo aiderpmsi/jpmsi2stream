@@ -25,6 +25,7 @@ import com.github.aiderpmsi.pims.grouper.customtags.GetResource;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
 import com.github.aiderpmsi.pims.grouper.customtags.Intersect;
 import com.github.aiderpmsi.pims.grouper.customtags.IsInResource;
+import com.github.aiderpmsi.pims.grouper.customtags.JexlExecute;
 import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
@@ -97,6 +98,9 @@ public class ExecutorFactory {
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "concatenate",
 				Concatenate.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "execute",
+				JexlExecute.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "group",
 				Group.class));
