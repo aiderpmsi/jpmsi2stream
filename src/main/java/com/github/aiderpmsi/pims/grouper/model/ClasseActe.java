@@ -6,8 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="classe")
-public class ActeClassant {
+@XmlRootElement(name="cmd")
+public class ClasseActe {
 
 	private String id = null;
 	

@@ -30,7 +30,9 @@
 		<state id="test_cmd27">
 			<onentry>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
-				<my:isInResource resource="acteclassant" key="27" value="dp" result="d145"/>
+				<my:getResource resource="acteclassant" key="27" result="actesclassants_cmd27"/>
+				<my:getResource resource="classacte" key="ADC" result="acteschir"/>
+				
 				<if cond="numSeances != 0">
 					<send event="'cmd_found'" />
 					<else />

@@ -45,8 +45,9 @@ public class IsInResource extends Action {
 				UnclassifiedDictionary dico =
 				(UnclassifiedDictionary) scInstance.getRootContext().get("_unclassified_dictionary");
 				matchResult = isInList(dico, key, varContent);
-			default:
 				break;
+			default:
+				throw new ModelException(resource + " is not a possible resource for " + getClass().toString());
 			}
 		} else {
 			throw new ModelException("Resource " + resource + " does not exist");
