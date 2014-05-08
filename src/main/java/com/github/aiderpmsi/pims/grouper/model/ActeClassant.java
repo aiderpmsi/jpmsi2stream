@@ -23,7 +23,7 @@ public class ActeClassant {
 		this.actes = actes;
 	}
 
-	@XmlElement(name="acte")
+	@XmlElement(name="id")
 	public String getId() {
 		return id;
 	}

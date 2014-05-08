@@ -1,9 +1,11 @@
 package com.github.aiderpmsi.pims.grouper.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -11,6 +13,7 @@ import javax.xml.bind.util.JAXBResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 public abstract class BaseAbstractDictionary<T, U> {
@@ -59,7 +62,7 @@ public abstract class BaseAbstractDictionary<T, U> {
 		
 		// SETS THE XSL PARAMETERS
 		transformer.setParameter(getKeyParameterInXsl(), key);
-				
+
 		// INPUT STREAMSOURCE
 		StreamSource inp = new StreamSource(configStream);
 	
@@ -70,6 +73,10 @@ public abstract class BaseAbstractDictionary<T, U> {
 		// CREATES THE JAXBOBJECT
 		JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);
 		transformer.transform(inp, jaxbResult);
+
+		// INPUT STREAMSOURCE
+		StreamSource inp2 = new StreamSource(BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath()));
+		transformer.transform(inp2, new StreamResult(new File("/tmp/tex.xml")));
 
 		@SuppressWarnings("unchecked")
 		U jaxbObject = (U) jaxbResult.getResult();

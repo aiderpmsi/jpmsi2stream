@@ -8,7 +8,7 @@
 
 	<xsl:template match="/">
 		<classe>
-			<id>{$classe}</id>
+			<id><xsl:value-of select="$classe" /></id>
 			<actes>
 				<xsl:for-each select="/actes/acte/regroupement/phase[../@type = $classe]">
 					<acte>

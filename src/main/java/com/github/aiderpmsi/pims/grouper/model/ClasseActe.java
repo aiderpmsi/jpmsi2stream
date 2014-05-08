@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="class")
+@XmlRootElement(name="classe")
 public class ClasseActe {
 
 	private String id = null;
@@ -23,7 +23,7 @@ public class ClasseActe {
 		this.actes = actes;
 	}
 
-	@XmlElement(name="acte")
+	@XmlElement(name="id")
 	public String getId() {
 		return id;
 	}
