@@ -42,7 +42,7 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		this.transforms = new String[linetype.getElements().size()][2];
 		this.content = new String[linetype.getElements().size()];
 		StringBuilder patternS = new StringBuilder("^");
-		
+
 		int count = 0;
 		for (Element element : linetype.getElements()) {
 			this.names[count] = element.getName();

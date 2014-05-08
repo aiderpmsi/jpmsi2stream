@@ -3,7 +3,9 @@ package com.github.aiderpmsi.pims.grouper.customtags;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -155,6 +157,25 @@ public class FromRss extends Action {
 					}
 				}
 				return acteResults;
+			case "Calendar":
+				Pattern patcal = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2}");
+				List<Calendar> acteDates = new ArrayList<>(formattedResults.size());
+				for (String formattedResult : formattedResults) {
+					Matcher m = patcal.matcher(formattedResult);
+					if (m.matches()) {
+						Calendar cal = new GregorianCalendar();
+						cal.set(
+								new Integer(m.group(1)),
+								new Integer(m.group(2)),
+								new Integer(m.group(3)),
+								0, 0, 0);
+						cal.set(Calendar.MILLISECOND, 0);
+						acteDates.add(cal);
+					} else {
+						throw new ModelException(formattedResult + " is not a calendar date");
+					}
+				}
+				return acteDates;
 			default:
 				throw new ModelException(type + " is not a possible type");
 			}

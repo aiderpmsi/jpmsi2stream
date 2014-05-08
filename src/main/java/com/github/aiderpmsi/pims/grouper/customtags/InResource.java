@@ -17,13 +17,13 @@ import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
 import com.github.aiderpmsi.pims.grouper.model.Resource;
 import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
-public class IsInResource extends Action {
+public class InResource extends Action {
 	
 	private static final long serialVersionUID = 6879554289822402659L;
 
 	private String resource, key, value, result;
 
-	public IsInResource() {
+	public InResource() {
 		super();
 	}
 
@@ -37,7 +37,7 @@ public class IsInResource extends Action {
 		Object varContent = scInstance.getContext(getParentTransitionTarget()).get(value);
 
 		// BOOLEAN TO WRITE IN THE RESULT
-		Boolean matchResult = false;
+		Integer matchResult = 0;
 		
 		// GETS THE RESOURCE
 		Resource resourceEnum = Resource.createResource(resource);
@@ -61,7 +61,7 @@ public class IsInResource extends Action {
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, matchResult);
 	}
 
-	private Boolean isInList(BaseAbstractDictionary<?, ?> dico, String key, Object value) throws ModelException {
+	private Integer isInList(BaseAbstractDictionary<?, ?> dico, String key, Object value) throws ModelException {
 		// GETS THE DEFINITION IN DICO
 		Set<String> dicoContent;
 
@@ -75,7 +75,7 @@ public class IsInResource extends Action {
 			throw new ModelException(dico.getClass() + " not processable by function");
 		
 		// RESULT
-		Boolean matches = false;
+		Integer matches = 0;
 		
 		// IF VALUE IS NULL, WE RETURN FALSE
 		if (value == null) {
@@ -86,8 +86,7 @@ public class IsInResource extends Action {
 			for (Object element : (Collection<?>) value) {
 				if (element instanceof String) {
 					if (dicoContent.contains(((String) element).trim())) {
-						matches = true;
-						break;
+						matches++;
 					}
 				}
 			}
@@ -95,7 +94,7 @@ public class IsInResource extends Action {
 		// IF WE HAVE TO CHECK AGAINST A STRING, CHECK THIS STRING
 		else if (value instanceof String) {
 			if (dicoContent.contains(((String) value).trim())) {
-				matches = true;
+				matches++;
 			}
 		}
 		

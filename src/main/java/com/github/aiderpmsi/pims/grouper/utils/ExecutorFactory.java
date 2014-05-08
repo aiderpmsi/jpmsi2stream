@@ -19,12 +19,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import com.github.aiderpmsi.pims.grouper.customtags.Age;
 import com.github.aiderpmsi.pims.grouper.customtags.Concatenate;
 import com.github.aiderpmsi.pims.grouper.customtags.FromRss;
-import com.github.aiderpmsi.pims.grouper.customtags.GetResource;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
-import com.github.aiderpmsi.pims.grouper.customtags.Intersect;
-import com.github.aiderpmsi.pims.grouper.customtags.IsInResource;
+import com.github.aiderpmsi.pims.grouper.customtags.InResource;
 import com.github.aiderpmsi.pims.grouper.customtags.JexlExecute;
 import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
@@ -87,17 +86,14 @@ public class ExecutorFactory {
 				"http://my.custom-actions.domain/CUSTOM", "fromRss",
 				FromRss.class));
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "isInResource",
-				IsInResource.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "getResource",
-				GetResource.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "intersect",
-				Intersect.class));
+				"http://my.custom-actions.domain/CUSTOM", "inResource",
+				InResource.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "concatenate",
 				Concatenate.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "age",
+				Age.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "execute",
 				JexlExecute.class));
