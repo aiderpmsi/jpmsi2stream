@@ -30,18 +30,18 @@
 		<state id="test_cmd27">
 			<onentry>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
-				<my:getResource resource="acteclassant" key="27" result="actesclassants_cmd27"/>
-				<my:getResource resource="classacte" key="ADC" result="acteschir"/>
+				<my:isInResource resource="acteclassant" key="27" value="acte" result="acte_cmd27"/>
+				<my:isInResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
 				
-				<if cond="numSeances != 0">
+				<if cond="acte_cmd27 and acte_adc">
 					<send event="'cmd_found'" />
 					<else />
 					<send event="'cmd_not_found'" />
 				</if>
 			</onentry>
 			
-			<transition event="cmd_found" target="process_cmd28" />
-			<transition event="cmd_not_found" target="test_cmd27" />
+			<transition event="cmd_found" target="process_cmd27" />
+			<transition event="cmd_not_found" target="fend" /> <!-- To continue -->
 	
 		</state>
 
@@ -212,7 +212,45 @@
 			<transition event="end" target="end" />
 
 		</state>
-	
+
+		<!-- WE ARE IN CMD27 -->
+		<state id="process_cmd27">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:isInResource resource="unclassified" key="A-139" value="acte" result="a139"/>
+				<my:isInResource resource="unclassified" key="A-140" value="acte" result="a140"/>
+				<my:isInResource resource="unclassified" key="A-141" value="acte" result="a141"/>
+				<my:isInResource resource="unclassified" key="A-027" value="acte" result="a027"/>
+				<my:isInResource resource="unclassified" key="A-093" value="acte" result="a093"/>
+				<my:isInResource resource="unclassified" key="A-265" value="acte" result="a265"/>
+				<if cond="a139">
+					<my:group racine="27C02" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="a140"/>
+					<my:group racine="27C03" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="a141" />
+					<my:group racine="27C04" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="a027" />
+					<my:group racine="27C05" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="a093" />
+					<my:group racine="27C06" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="a265" />
+					<my:group racine="27C07" gravite="1" />
+					<send event="'end'" />
+					<else />
+					<my:group erreur="90Z02Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="end" target="end" />
+
+		</state>
+		
 	</state>
 
 	<state id="end" final="true" />
