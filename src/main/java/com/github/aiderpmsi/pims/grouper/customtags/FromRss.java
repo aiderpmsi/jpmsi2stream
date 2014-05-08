@@ -98,7 +98,12 @@ public class FromRss extends Action {
 
 	private Object getValue(HashMap<String, String> content, String[] keys, String pattern) throws ModelException {
 		// USE A SPECIAL CASE OF GET VALUES
-		return getValues(Arrays.asList(content), keys, pattern).get(0);
+		List<?> values = getValues(Arrays.asList(content), keys, pattern);
+		// IF NO VALUE EXIST, RETURN NULL, ELSE THE FIRST ELEMENT
+		if (values.size() == 0)
+			return null;
+		else
+			return values.get(0);
 	}
 
 	private List<?> getValues(List<HashMap<String, String>> content, String[] keys, String pattern) throws ModelException {
@@ -106,12 +111,16 @@ public class FromRss extends Action {
 		List<String[]> valueslist = new ArrayList<>(content.size());
 		
 		// FOR EACH ELEMENT IN DA, DAD OR ACTE, EXTRACT THE NECESSARY ELEMENTS
-		for (HashMap<String, String> element : content) {
+		extractvalues : for (HashMap<String, String> element : content) {
 			String[] values = new String[keys.length];
 			for (int i = 0 ; i < keys.length ; i++) {
 				// CONSIDER THE CASE WHERE THE KEY DOESN'T EXIST OR VALUE IS NULL
 				String value = element.get(keys[i]);
-				values[i] = (value == null ? "" : value.trim()); 
+				if (value == null)
+					// IF NO VALUE EXISTS FOR THIS KEY, WE CAN'T CREATE THE VALUE IN VALUELIST
+					break extractvalues;
+				else
+					values[i] = value.trim(); 
 			}
 			valueslist.add(values);
 		}

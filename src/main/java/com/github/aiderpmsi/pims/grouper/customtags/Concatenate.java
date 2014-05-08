@@ -34,9 +34,13 @@ public class Concatenate extends Action {
 			// GETS THE OBJECT WITH VALUE
 			Object valueContent = scInstance.getContext(getParentTransitionTarget()).get(value.trim());
 			
-
+			// VALUE IS NULL
+			if (valueContent == null) {
+				// DO NOTHING
+			}
+			
 			// VALUE IS A STRING
-			if (valueContent instanceof String) {
+			else if (valueContent instanceof String) {
 				resultHash.add((String) valueContent);
 			}
 			
@@ -55,6 +59,22 @@ public class Concatenate extends Action {
 		
 		// WRITES THE RESULT
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, resultHash);
+	}
+
+	public String getValues() {
+		return values;
+	}
+
+	public void setValues(String values) {
+		this.values = values;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
 	}
 
 }

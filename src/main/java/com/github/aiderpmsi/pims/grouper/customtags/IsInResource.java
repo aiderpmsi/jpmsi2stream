@@ -78,8 +78,12 @@ public class IsInResource extends Action {
 		// RESULT
 		Boolean matches = false;
 		
+		// IF VALUE IS NULL, WE RETURN FALSE
+		if (value == null) {
+			// DO NOTHING, MATCHES IS ALREADY FALSE
+		}
 		// IF WE HAVE TO CHECK AGAINST A LIST, CHECK EACH ITEM
-		if (value instanceof List<?>) {
+		else if (value instanceof List<?>) {
 			for (Object element : (List<?>) value) {
 				if (element instanceof String) {
 					if (dicoContent.contains(((String) element).trim())) {

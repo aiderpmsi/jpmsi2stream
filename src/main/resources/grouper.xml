@@ -314,7 +314,7 @@
 				<my:isInResource resource="unclassified" key="D-136" value="diags" result="d136"/>
 				<my:isInResource resource="unclassified" key="D-137" value="diags" result="d137"/>
 				<my:isInResource resource="unclassified" key="D-138" value="diags" result="d138"/>
-				<assign name="numdiags" expr="(d131 ? 1 : 0) + (d132 ? 1 : 0) + (d133 ? 1 : 0) + (d134 ? 1 : 0) + (d135 ? 1 : 0) + (d136 ? 1 : 0) + (d137 ? 1 : 0) + (d138 ? 1 : 0)" />
+				<assign name="numdiags" expr="d131 ? 1 : 0" />
 				<if cond="numdiags ge 2">
 					<send event="'2_trauma_diag'" />
 					<elseif cond="numdiags le 1"/>

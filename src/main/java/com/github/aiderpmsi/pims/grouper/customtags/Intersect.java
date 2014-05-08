@@ -38,8 +38,15 @@ public class Intersect extends Action {
 			// TRANSFORM THIS VALUE TO A LIST OF STRINGS
 			List<Object> valueContentList;
 			
+			
+			// VALUE IS NULL
+			if (valueContent == null) {
+				// WE WON'T HAVE ANY VALUE
+				resultHash = new HashSet<>(0);
+				break;
+			}
 			// VALUE IS A STRING
-			if (valueContent instanceof String) {
+			else if (valueContent instanceof String) {
 				valueContentList = new ArrayList<>(1);
 				valueContentList.add((String) valueContent);
 			}
@@ -70,6 +77,22 @@ public class Intersect extends Action {
 
 		// WRITES THE RESULT
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, resultHash);
+	}
+
+	public String getValues() {
+		return values;
+	}
+
+	public void setValues(String values) {
+		this.values = values;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
 	}
 
 }
