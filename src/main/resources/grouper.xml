@@ -51,7 +51,7 @@
 		<!-- TEST IF WE ARE IN CMD 26 -->
 		<state id="test_cmd26">
 			<onentry>
-				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:isInResource resource="unclassified" key="D-130" value="dp" result="d130"/>
 				<if cond="d130">
 					<send event="'cmd_found'" />
@@ -296,11 +296,15 @@
 
 		<!-- WE ARE IN CMD26 -->
 		<state id="process_cmd26">
+			<datamodel>
+				<data name="numdiags" />
+			</datamodel>
+
 			<onentry>
-				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="String"/>
-				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="String"/>
-				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="String"/>
-				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
 				<my:concatenate values="dp,dr,da,dad" result="diags" />
 				<my:isInResource resource="unclassified" key="D-131" value="diags" result="d131"/>
 				<my:isInResource resource="unclassified" key="D-132" value="diags" result="d132"/>
@@ -310,7 +314,7 @@
 				<my:isInResource resource="unclassified" key="D-136" value="diags" result="d136"/>
 				<my:isInResource resource="unclassified" key="D-137" value="diags" result="d137"/>
 				<my:isInResource resource="unclassified" key="D-138" value="diags" result="d138"/>
-				<value name="numdiags" expr="(d131 ? 1 : 0) + (d132 ? 1 : 0) + (d133 ? 1 : 0) + (d134 ? 1 : 0) + (d135 ? 1 : 0) + (d136 ? 1 : 0) + (d137 ? 1 : 0) + (d138 ? 1 : 0)" />
+				<assign name="numdiags" expr="(d131 ? 1 : 0) + (d132 ? 1 : 0) + (d133 ? 1 : 0) + (d134 ? 1 : 0) + (d135 ? 1 : 0) + (d136 ? 1 : 0) + (d137 ? 1 : 0) + (d138 ? 1 : 0)" />
 				<if cond="numdiags ge 2">
 					<send event="'2_trauma_diag'" />
 					<elseif cond="numdiags le 1"/>
@@ -337,8 +341,7 @@
 				</if>
 			</onentry>
 			
-			<transition event="2_trauma_diag" target="cmd_26_2_trauma" />
-			<transition event="1_trauma_diag" target="fend" /> <!-- test_cmd_25 -->
+			<transition event="end" target="end" /> <!-- test_cmd_25 -->
 
 		</state>
 
@@ -346,6 +349,10 @@
 
 	<state id="end" final="true" />
 
-	<state id="fend" finale="true" />
+	<state id="fend" finale="true" >
+		<onentry>
+			<my:group erreur="Fend Stop" />
+		</onentry>
+	</state>
 	
 </scxml>
