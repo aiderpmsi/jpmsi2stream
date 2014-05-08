@@ -51,8 +51,8 @@
 				<version>3.0</version>
 				<configuration>
 					<fork>true</fork>
-					<source>7</source>
-					<target>7</target>
+					<source>6</source>
+					<target>6</target>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
 					<compilerArguments>
@@ -181,6 +181,12 @@
 			<version>1.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jexl</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+            
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

@@ -1,14 +1,16 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
 import java.util.Collection;
-import org.apache.commons.jexl.JexlContext;
+
+import org.apache.commons.jexl2.Expression;
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl2.MapContext;
 import org.apache.commons.logging.Log;
-import org.apache.commons.scxml.Context;
 import org.apache.commons.scxml.ErrorReporter;
 import org.apache.commons.scxml.EventDispatcher;
 import org.apache.commons.scxml.SCInstance;
 import org.apache.commons.scxml.SCXMLExpressionException;
-import org.apache.commons.scxml.env.jexl.JexlEvaluator;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
@@ -24,11 +26,18 @@ public class JexlExecute extends Action {
 			SCInstance scInstance, Log appLog, Collection derivedEvents)
 			throws ModelException, SCXMLExpressionException {
 
-		// GETS EVALUATOR AND CONTEXT
-		JexlEvaluator eval = (JexlEvaluator) scInstance.getEvaluator();
-		JexlContext ctx = (JexlContext) scInstance.getContext(getParentTransitionTarget());
+		// GETS CONTEXT
+		@SuppressWarnings("unchecked")
+		JexlContext jc = 
+				new MapContext(
+						scInstance.getContext(getParentTransitionTarget()).getVars());
 
-		Object resObject = eval.eval((Context) ctx, expr);
+		// CREATE A JEXL2ENGINE
+        JexlEngine jexl = new JexlEngine();
+        
+        // CREATE THE EXPRESSION
+        Expression e = jexl.createExpression(expr);
+		Object resObject = e.evaluate(jc);
 
 		// WRITES THE RESULT
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, resObject);
