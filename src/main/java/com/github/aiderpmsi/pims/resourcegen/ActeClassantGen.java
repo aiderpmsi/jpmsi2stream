@@ -52,7 +52,7 @@ public class ActeClassantGen {
 		}
 		
 		// FINISHES THE ACTES
-		bw.write("<actes>\n");
+		bw.write("</actes>\n");
 		
 		br.close();
 		bw.close();

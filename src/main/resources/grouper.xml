@@ -32,15 +32,18 @@
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
 				<my:isInResource resource="acteclassant" key="27" value="acte" result="acte_cmd27"/>
 				<my:isInResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
-				
+				<my:isInResource resource="unclassified" key="A-138" value="acte" result="a138"/>
 				<if cond="acte_cmd27 and acte_adc">
-					<send event="'cmd_found'" />
+					<send event="'cmd_27_adc'" />
+					<elseif cond="a138"/>
+					<send event="'a138'" />
 					<else />
 					<send event="'cmd_not_found'" />
 				</if>
 			</onentry>
 			
-			<transition event="cmd_found" target="process_cmd27" />
+			<transition event="cmd_27_adc" target="process_cmd27_adc" />
+			<transition event="a138" target="process_cmd27_a138" />
 			<transition event="cmd_not_found" target="fend" /> <!-- To continue -->
 	
 		</state>
@@ -213,8 +216,8 @@
 
 		</state>
 
-		<!-- WE ARE IN CMD27 -->
-		<state id="process_cmd27">
+		<!-- WE ARE IN CMD27 AND IN ADC -->
+		<state id="process_cmd27_adc">
 			<onentry>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
 				<my:isInResource resource="unclassified" key="A-139" value="acte" result="a139"/>
@@ -251,6 +254,8 @@
 
 		</state>
 		
+		<!-- WE ARE IN CMD27 AND A-138 -->
+
 	</state>
 
 	<state id="end" final="true" />
