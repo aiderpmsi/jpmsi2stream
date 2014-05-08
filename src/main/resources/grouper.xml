@@ -46,7 +46,7 @@
 		<!-- WE ARE IN CMD28 -->
 		<state id="process_cmd28">
 			<onentry>
-				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="String" />
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic" />
 				<my:isInResource resource="unclassified" key="D-145" value="dp" result="d145"/>
 				<if cond="d145">
 				<send event="'d145_found'" />
@@ -64,7 +64,7 @@
 		<!-- WE ARE IN CMD28 AND D145 -->
 		<state id="process_cmd28_d145">
 			<onentry>
-				<my:fromRss domain="main" get="DP" result="dp" pattern="{0}" type="String" />
+				<my:fromRss domain="main" get="DP" result="dp" pattern="{0}" type="Diagnostic" />
 				<my:isInResource resource="unclassified" key="D-113" value="dp" result="d113" />
 				<my:isInResource resource="unclassified" key="D-114" value="dp" result="d114" />
 				<my:isInResource resource="unclassified" key="D-063" value="dp" result="d063" />
@@ -110,7 +110,7 @@
 		<!-- We are in CMD 28, D-145 and D-113 -->
 		<state id="process_cmd28_d145_d113">
 			<onentry>
-				<my:fromRss domain="main"  get="DP" result="dp" pattern="{0}" type="String" />
+				<my:fromRss domain="main"  get="DP" result="dp" pattern="{0}" type="Diagnostic" />
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
 				<my:isInResource resource="unclassified" key="A-180" value="acte" result="a180" />
 				<my:isInResource resource="unclassified" key="A-181" value="acte" result="a181" />
@@ -141,7 +141,7 @@
 		<!-- We are in CMD 28, D-145 and D-142 -->
 		<state id="process_cmd28_d145_d142">
 			<onentry>
-				<my:fromRss domain="main" get="DP" result="dp" pattern="{0}" type="String" />
+				<my:fromRss domain="main" get="DP" result="dp" pattern="{0}" type="Diagnostic" />
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{1}/{2}" result="acte" type="String"/>
 				<my:isInResource resource="unclassified" key="A-314" value="acte" result="a314" />
 				<my:isInResource resource="unclassified" key="A-315" value="acte" result="a315" />

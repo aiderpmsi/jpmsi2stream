@@ -12,8 +12,6 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
-import com.google.common.collect.Sets;
-
 public class Intersect extends Action {
 
 	private static final long serialVersionUID = 6123109652537111804L;
@@ -56,7 +54,7 @@ public class Intersect extends Action {
 				}
 				// COPY THE HASH IF WE HAVE ONLY STRINGS
 				if (allString) {
-					valueContentHash = (HashSet<String>) valueContent;
+					valueContentHash = (HashSet<String>) ((HashSet<String>) valueContent).clone();
 				}
 				// ELSE CREATE NEW HASH
 				else {
@@ -83,7 +81,7 @@ public class Intersect extends Action {
 			if (resultHash == null) {
 				resultHash = valueContentHash;
 			} else {
-				resultHash = new HashSet<>(Sets.intersection(resultHash, valueContentHash));
+				resultHash.retainAll(valueContentHash);
 			}
 			
 			// IF RESULT HAS NO ITEM, LEAVE

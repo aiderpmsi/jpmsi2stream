@@ -22,6 +22,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import com.github.aiderpmsi.pims.grouper.customtags.FromRss;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
 import com.github.aiderpmsi.pims.grouper.customtags.IsInResource;
+import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
@@ -91,7 +92,8 @@ public class ExecutorFactory {
 		SCXML scxml = SCXMLParser.parse(source, new DefaultHandler2(), customActions);
 		// Sets the machine context
 		JexlContext appCtx = new JexlContext();
-		appCtx.set("_dictionary", new UnclassifiedDictionary());
+		appCtx.set("_unclassified_dictionary", new UnclassifiedDictionary());
+		appCtx.set("_acteclassant_dictionary", new ActeClassantDictionnary());
 		appCtx.set("_rssContent", getRss());
 		
 		// Creates the engine

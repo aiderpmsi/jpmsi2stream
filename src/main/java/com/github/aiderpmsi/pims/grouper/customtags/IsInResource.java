@@ -108,12 +108,12 @@ public class IsInResource extends Action {
 		this.result = result;
 	}
 
-	public String getDictionary() {
+	public String getResource() {
 		return resource;
 	}
 
-	public void setDictionary(String dictionary) {
-		this.resource = dictionary;
+	public void setResource(String resource) {
+		this.resource = resource;
 	}
 
 }

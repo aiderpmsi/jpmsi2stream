@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml.ErrorReporter;
@@ -96,7 +98,7 @@ public class FromRss extends Action {
 
 	private Object getValue(HashMap<String, String> content, String[] keys, String pattern) throws ModelException {
 		// USE A SPECIAL CASE OF GET VALUES
-		return getValues(Arrays.asList(content), keys, pattern).get(1);
+		return getValues(Arrays.asList(content), keys, pattern).get(0);
 	}
 
 	private List<?> getValues(List<HashMap<String, String>> content, String[] keys, String pattern) throws ModelException {
@@ -132,6 +134,18 @@ public class FromRss extends Action {
 					castedResults.add(new Integer(formattedResult));
 				}
 				return castedResults;
+			case "Diagnostic":
+				Pattern pat = Pattern.compile("^([A-Z]\\d{2})([^ ]*)\\s*");
+				List<String> acteResults = new ArrayList<>(formattedResults.size());
+				for (String formattedResult : formattedResults) {
+					Matcher m = pat.matcher(formattedResult);
+					if (m.matches()) {
+						acteResults.add(m.group(1) + "." + m.group(2));
+					} else {
+						throw new ModelException(formattedResult + " is not a diagnosis");
+					}
+				}
+				return acteResults;
 			default:
 				throw new ModelException(type + " is not a possible type");
 			}
