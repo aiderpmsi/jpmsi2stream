@@ -8,7 +8,7 @@
 
 	<xsl:template match="/">
 		<cmd>
-			<id><xsl:value-of select="$cmd" /></id>
+			<id>{$cmd}</id>
 			<actes>
 				<xsl:for-each select="/actes/acte[CMD/text() = $cmd]">
 					<acte>

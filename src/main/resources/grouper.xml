@@ -43,7 +43,7 @@
 			</onentry>
 			
 			<transition event="cmd_27_adc" target="process_cmd27_adc" />
-			<transition event="a138" target="process_cmd27_a138" />
+			<transition event="a138" target="fend" /> <!-- process_cmd27_a138 -->
 			<transition event="cmd_not_found" target="fend" /> <!-- To continue -->
 	
 		</state>
