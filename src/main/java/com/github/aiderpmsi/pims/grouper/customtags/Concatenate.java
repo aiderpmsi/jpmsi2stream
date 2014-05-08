@@ -2,7 +2,6 @@ package com.github.aiderpmsi.pims.grouper.customtags;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml.ErrorReporter;
@@ -44,9 +43,9 @@ public class Concatenate extends Action {
 				resultHash.add((String) valueContent);
 			}
 			
-			// VALUE IS A LIST
-			else if (valueContent instanceof List<?>) {
-				for (Object valueObject : (List<Object>) valueContent) {
+			// VALUE IS A COLLECTION
+			else if (valueContent instanceof Collection<?>) {
+				for (Object valueObject : (Collection<Object>) valueContent) {
 					if (valueObject instanceof String) {
 						resultHash.add((String) valueObject);
 					}

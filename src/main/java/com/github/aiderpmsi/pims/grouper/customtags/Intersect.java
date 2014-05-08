@@ -3,7 +3,6 @@ package com.github.aiderpmsi.pims.grouper.customtags;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml.ErrorReporter;
@@ -36,7 +35,7 @@ public class Intersect extends Action {
 			Object valueContent = scInstance.getContext(getParentTransitionTarget()).get(value.trim());
 			
 			// TRANSFORM THIS VALUE TO A LIST OF STRINGS
-			List<Object> valueContentList;
+			Collection<Object> valueContentList;
 			
 			
 			// VALUE IS NULL
@@ -51,9 +50,9 @@ public class Intersect extends Action {
 				valueContentList.add((String) valueContent);
 			}
 			
-			// VALUE IS A LIST
-			else if (valueContent instanceof List<?>) {
-				valueContentList = (List<Object>) valueContent;
+			// VALUE IS A COLLECTION
+			else if (valueContent instanceof Collection<?>) {
+				valueContentList = (Collection<Object>) valueContent;
 			}
 			else {
 				throw new ModelException(value + " is not a known type for Intersect");

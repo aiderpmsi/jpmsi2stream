@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -82,9 +81,9 @@ public class IsInResource extends Action {
 		if (value == null) {
 			// DO NOTHING, MATCHES IS ALREADY FALSE
 		}
-		// IF WE HAVE TO CHECK AGAINST A LIST, CHECK EACH ITEM
-		else if (value instanceof List<?>) {
-			for (Object element : (List<?>) value) {
+		// IF WE HAVE TO CHECK AGAINST A COLLECTION, CHECK EACH ITEM
+		else if (value instanceof Collection<?>) {
+			for (Object element : (Collection<?>) value) {
 				if (element instanceof String) {
 					if (dicoContent.contains(((String) element).trim())) {
 						matches = true;
