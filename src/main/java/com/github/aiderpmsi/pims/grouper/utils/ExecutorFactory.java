@@ -19,6 +19,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import com.github.aiderpmsi.pims.grouper.customtags.Concatenate;
 import com.github.aiderpmsi.pims.grouper.customtags.FromRss;
 import com.github.aiderpmsi.pims.grouper.customtags.GetResource;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
@@ -93,6 +94,9 @@ public class ExecutorFactory {
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "intersect",
 				Intersect.class));
+		customActions.add(new CustomAction(
+				"http://my.custom-actions.domain/CUSTOM", "concatenate",
+				Concatenate.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "group",
 				Group.class));
