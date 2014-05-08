@@ -12,7 +12,7 @@
 			<actes>
 				<xsl:for-each select="/actes/acte/regroupement/phase[../@type = $classe]">
 					<acte>
-						<xsl:value-of select="concat(../name/text(), '/', text())" />
+						<xsl:value-of select="concat(../../name/text(), '/', text())" />
 					</acte>
 				</xsl:for-each>
 			</actes>

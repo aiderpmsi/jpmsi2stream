@@ -74,9 +74,9 @@ public abstract class BaseAbstractDictionary<T, U> {
 		JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);
 		transformer.transform(inp, jaxbResult);
 
-		// INPUT STREAMSOURCE
-		StreamSource inp2 = new StreamSource(BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath()));
-		transformer.transform(inp2, new StreamResult(new File("/tmp/tex.xml")));
+		// USED TO DEBUG
+		/* StreamSource inp2 = new StreamSource(BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath()));
+		  transformer.transform(inp2, new StreamResult(new File("/tmp/tex.xml"))); */
 
 		@SuppressWarnings("unchecked")
 		U jaxbObject = (U) jaxbResult.getResult();
