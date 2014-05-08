@@ -43,7 +43,7 @@
 			</onentry>
 			
 			<transition event="cmd_27_adc" target="process_cmd27_adc" />
-			<transition event="a138" target="fend" /> <!-- process_cmd27_a138 -->
+			<transition event="a138" target="process_cmd27_a138" />
 			<transition event="cmd_not_found" target="fend" /> <!-- To continue -->
 	
 		</state>
@@ -255,7 +255,27 @@
 		</state>
 		
 		<!-- WE ARE IN CMD27 AND A-138 -->
+		<state id="process_cmd27_a138">
+			<onentry>
+				<my:fromRss domain="main" get="DateEntree" pattern="{1}" result="entree" type="String"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{1}" result="sortie" type="String"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:isInResource resource="unclassified" key="A-178" value="acte" result="a178"/>
+				<if cond="entree eq sortie">
+					<my:group racine="27Z04" modalite="J" />
+					<send event="'end'" />
+					<elseif cond="a178"/>
+					<my:group racine="27Z02" gravite="1" />
+					<send event="'end'" />
+					<else />
+					<my:group racine="27Z03" gravite="Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="end" target="end" />
 
+		</state>
 	</state>
 
 	<state id="end" final="true" />
