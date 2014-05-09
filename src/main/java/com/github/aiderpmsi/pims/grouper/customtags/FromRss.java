@@ -158,18 +158,15 @@ public class FromRss extends Action {
 				}
 				return acteResults;
 			case "Calendar":
-				Pattern patcal = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2}");
+				Pattern patcal = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})");
 				List<Calendar> acteDates = new ArrayList<>(formattedResults.size());
 				for (String formattedResult : formattedResults) {
 					Matcher m = patcal.matcher(formattedResult);
 					if (m.matches()) {
-						Calendar cal = new GregorianCalendar();
-						cal.set(
+						Calendar cal = new GregorianCalendar(
 								new Integer(m.group(1)),
-								new Integer(m.group(2)),
-								new Integer(m.group(3)),
-								0, 0, 0);
-						cal.set(Calendar.MILLISECOND, 0);
+								new Integer(m.group(2))- 1 ,
+								new Integer(m.group(3)));
 						acteDates.add(cal);
 					} else {
 						throw new ModelException(formattedResult + " is not a calendar date");

@@ -35,7 +35,7 @@
 				<my:inResource resource="unclassified" key="A-138" value="acte" result="a138"/>
 				<if cond="acte_cmd27 gt 0 and acte_adc gt 0">
 					<send event="'cmd_27_adc'" />
-					<elseif cond="a138"/>
+					<elseif cond="a138 gt 0"/>
 					<send event="'a138'" />
 					<else />
 					<send event="'cmd_not_found'" />
@@ -341,7 +341,7 @@
 			</onentry>
 			
 			<transition event="2_trauma_diag" target="process_cmd26_2_trauma" />
-			<transition event="1_trauma_diag" target="test_cmd_25" />
+			<transition event="1_trauma_diag" target="test_cmd25" />
 
 		</state>
 
@@ -354,7 +354,7 @@
 					<my:group racine="26C02" gravite="1" />
 					<send event="'end'" />
 					<else />
-					<my:group racine="26M02" modalite="1" />
+					<my:group racine="26M02" gravite="1" />
 					<send event="'end'" />
 				</if>
 			</onentry>
@@ -370,13 +370,31 @@
 				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
 				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
 				<my:age birthday="ddn" date="dateentree" result="age" />
 				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
-				<if cond="acte_adc gt 0">
-					<my:group racine="26C02" gravite="1" />
+				<my:inResource resource="unclassified" key="D-129" value="diags" result="d129"/>
+				<if cond="modesortie = 9">
+					<my:group racine="25Z02" gravite="E" />
+					<send event="'end'" />
+					<elseif cond="age lt 13"/>
+					<my:group racine="25Z03" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="acte_adc"/>
+					<my:group racine="25C02" gravite="1" />
+					<send event="'end'" />
+					<elseif cond="d129 ge 2"/>
+					<my:group racine="25M02" gravite="C" />
+					<send event="'end'" />
+					<elseif cond="d129 eq 1"/>
+					<my:group racine="25M02" gravite="B" />
 					<send event="'end'" />
 					<else />
-					<my:group racine="26M02" modalite="1" />
+					<my:group racine="25M02" modalite="T" gravite="A" />
 					<send event="'end'" />
 				</if>
 			</onentry>
