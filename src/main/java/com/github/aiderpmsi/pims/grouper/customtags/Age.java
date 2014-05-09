@@ -19,7 +19,7 @@ public class Age extends Action {
 		{"date", null}
 	};
 	
-	private String result;
+	private String result, type;
 	
 	@Override
 	@SuppressWarnings({ "rawtypes"})
@@ -46,12 +46,22 @@ public class Age extends Action {
 		}
 
 		// CALCULATE AGE
-		Integer age = datesCal[1].get(Calendar.YEAR) - datesCal[0].get(Calendar.YEAR);
-		if (datesCal[1].get(Calendar.MONTH) < datesCal[0].get(Calendar.MONTH))
-			age--;
-		else if (datesCal[1].get(Calendar.MONTH) == datesCal[0].get(Calendar.MONTH) &&
-				datesCal[1].get(Calendar.DAY_OF_MONTH) < datesCal[0].get(Calendar.DAY_OF_MONTH))
-			age--;
+		Integer age;
+		switch (type) {
+		case "year":
+			age = datesCal[1].get(Calendar.YEAR) - datesCal[0].get(Calendar.YEAR);
+			if (datesCal[1].get(Calendar.MONTH) < datesCal[0].get(Calendar.MONTH))
+				age--;
+			else if (datesCal[1].get(Calendar.MONTH) == datesCal[0].get(Calendar.MONTH) &&
+					datesCal[1].get(Calendar.DAY_OF_MONTH) < datesCal[0].get(Calendar.DAY_OF_MONTH))
+				age--;
+			break;
+		case "day":
+			age = new Long((datesCal[1].getTimeInMillis() - datesCal[0].getTimeInMillis()) / 86400000L).intValue();
+			break;
+		default:
+			throw new ModelException(type + " is not an accepted type");
+		}
 		
 		// WRITES THE RESULT
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, age);
@@ -79,6 +89,14 @@ public class Age extends Action {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

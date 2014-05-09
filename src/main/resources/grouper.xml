@@ -98,7 +98,34 @@
 				<send event="'continue'" />
 			</onentry>
 			
-			<transition event="continue" target="fend" />
+			<transition event="continue" target="test_cmd25" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 15 -->
+		<state id="test_cmd15">
+			<onentry>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:fromRss domain="main" get="ModeEntree" pattern="{0}" result="modeentree" type="Integer"/>
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:age birthday="ddn" date="dateentree" result="age" type="day"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<if cond="(age lt 8)" />
+					<send event="'cmd_found'"/>
+					<elseif cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)">
+					<if cond="(age lt 29) or (ageyear lt 1 and poidsnn lt 2500)" />
+						<send event="'cmd_found'" />
+						<else />
+						<send event="'cmd_not_found'" />
+					</if>
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+				<send event="'continue'" />
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd15" />
 	
 		</state>
 
@@ -391,7 +418,7 @@
 				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
 				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
 				<my:concatenate values="dp,dr,da,dad" result="diags" />
-				<my:age birthday="ddn" date="dateentree" result="age" />
+				<my:age birthday="ddn" date="dateentree" type="year" result="age" />
 				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
 				<my:inResource resource="unclassified" key="D-129" value="diags" result="d129"/>
 				<if cond="modesortie eq 9">
@@ -415,6 +442,132 @@
 				</if>
 			</onentry>
 			
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 -->
+		<state id="process_cmd15">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="ModeSortie" pattern={0} result="modesortie" type="Integer" />
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:fromRss domain="main" get="AgeGestationnel" pattern="{0}" result="agegest" type="Integer"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Integer"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Integer"/>
+				<my:age birthday="dateentree" date="datesortie" result="dureesejour" type="day"/>
+				<my:inResource resource="unclassified" key="D-056" value="dp" result="d056" />
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc" />
+				<if cond="d056 gt 0">
+						<my:group racine="15Z10" gravite="E" />
+						<send event="'end'" />
+					<elseif cond="acte_adc gt 0"/>
+						<send event="'cmd15_adc'" />
+					<elseif cond="modesortie eq 71 and dureesejour lt 4"/>
+						<my:group racine="15M02" gravite="Z" />
+						<send event="'end'" />
+					<elseif cond="modesortie eq 9"/>
+						<if cond="dureesejour lt 4">
+								<my:group racine="15M03" gravite="E" />
+							<else />
+								<my:group racine="15M04" gravite="E" />
+						</if>
+						<send event="'end'" />
+					<elseif cond="poidsnn ge 3300 and agegest ge 40"/>
+						<send event="cmd15_gnn1" />
+					<elseif cond="poidsnn ge 2400 and agegest ge 38"/>
+						<send event="cmd15_gnn2" />
+					<elseif cond="poidsnn ge 2200 and agegest ge 37"/>
+						<send event="cmd15_gnn3" />
+					<elseif cond="poidsnn ge 2000 and agegest ge 37"/>
+						<send event="cmd15_gnn4" />
+					<elseif cond="poidsnn ge 1800 and agegest ge 36"/>
+						<send event="cmd15_gnn5" />
+					<elseif cond="poidsnn ge 1700 and agegest ge 35"/>
+						<send event="cmd15_gnn6" />
+					<elseif cond="poidsnn ge 1500 and agegest ge 33"/>
+						<send event="cmd15_gnn7" />
+					<elseif cond="poidsnn ge 1300 and agegest ge 32"/>
+						<send event="cmd15_gnn8" />
+					<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
+						<send event="cmd15_gnn9" />
+					<elseif cond="poidsnn ge 800 and agegest ge 28"/>
+						<send event="cmd15_gnn10" />
+					<else />
+						<my:group racine="90Z02" gravite="Z" />
+						<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="end" target="end" />
+			<transition event="cmd15_adc" target="process_cmd15_adc" />
+			<transition event="cmd15_gnn1" target="process_cmd15_gnn1" />
+			<transition event="cmd15_gnn2" target="process_cmd15_gnn2" />
+			<transition event="cmd15_gnn3" target="process_cmd15_gnn3" />
+			<transition event="cmd15_gnn4" target="process_cmd15_gnn4" />
+			<transition event="cmd15_gnn5" target="process_cmd15_gnn5" />
+			<transition event="cmd15_gnn6" target="process_cmd15_gnn6" />
+			<transition event="cmd15_gnn7" target="process_cmd15_gnn7" />
+			<transition event="cmd15_gnn8" target="process_cmd15_gnn8" />
+			<transition event="cmd15_gnn9" target="process_cmd15_gnn9" />
+			<transition event="cmd15_gnn10" target="process_cmd15_gnn10" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN ADC -->
+		<state id="process_cmd15_adc">
+			<onentry>
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:fromRss domain="main" get="AgeGestationnel" pattern="{0}" result="agegest" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-303" value="diags" result="d303"/>
+				<my:inResource resource="unclassified" key="A-337" value="acte" result="a337"/>
+				<my:inResource resource="unclassified" key="A-338" value="acte" result="a338"/>
+				<if cond="poidsnn ge 1500 and agegest ge 33">
+					<if cond="a337">
+						<if cond="d303">
+							<my:group racine="15C02" gravite="B"/>
+						<else />
+							<my:group racine="15C02" gravite="A"/>
+						</if>
+					<elseif cond="a338" />
+						<if cond="d303">
+							<my:group racine="15C03" gravite="B"/>
+						<else />
+							<my:group racine="15C03" gravite="A"/>
+						</if>
+					<elseif cond="d303" />
+						<my:group racine="15C05" gravite="B"/>
+					<else />
+						<my:group racine="15C04" gravite="A"/>
+					</if>
+					<send event="end" />
+				<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
+					<if cond="d303">
+						<my:group racine="15C05" gravite="B"/>
+					<else />
+						<my:group racine="15C05" gravite="A"/>
+					</if>
+					<send event="'end'" />
+				<elseif cond="poidsnn ge 800 and agegest ge 28"/>
+					<if cond="d303">
+						<my:group racine="15C06" gravite="B"/>
+					<else />
+						<my:group racine="15C06" gravite="A"/>
+					</if>
+					<send event="'end'" />
+				<else />
+					<my:group racine="90Z02" gravite="Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+					
 			<transition event="end" target="end" />
 
 		</state>
