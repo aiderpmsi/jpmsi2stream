@@ -43,7 +43,7 @@ public class ToRss extends Action {
 		
 		// FOR EACH KEY, SET THE CORRESPONDING VALUE
 		for (int i = 0 ; i < keys.length && i < values.length ; i++) {
-			rssContent.getRssmain().put(values[i], (String) scInstance.getContext(getParentTransitionTarget()).get(keys[i]));
+			rssContent.getRssmain().put(keys[i], (String) scInstance.getContext(getParentTransitionTarget()).get(values[i]));
 		}
 	}
 

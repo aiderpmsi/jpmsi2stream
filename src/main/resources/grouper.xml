@@ -92,12 +92,10 @@
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
 				<my:execute expr="dp.substring(0, 3)" result = "dpclass"/>
-				<if cond="(dpclass eq 'Z09' or dpclass eq 'Z08') and dr != ''">
-					<my:toRss set="DP" value="dr" />
-					<my:toRss set="DP" value="dp" />
-					<send event="'cmd_found'" />
+				<if cond="(dpclass eq 'Z09' or dpclass eq 'Z08') and not(dr.size() eq 0)">
+					<my:toRss set="DP,DR" value="dr,dp" />
 				</if>
-				<send event="continue" />
+				<send event="'continue'" />
 			</onentry>
 			
 			<transition event="continue" target="fend" />
