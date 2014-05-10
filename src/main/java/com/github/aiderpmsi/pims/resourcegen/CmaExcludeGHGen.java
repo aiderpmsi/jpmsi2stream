@@ -31,14 +31,9 @@ public class CmaExcludeGHGen {
 				+ "))+)$");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/grouper-cma-exc-gh.xml");
+		File output = new File("src/main/resources/grouper-cma-exc-gh.cfg");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
-		
-		// START THE XML
-		
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		bw.write("<gh-exclude-cmas>\n");
 		
 		String line;
 
@@ -46,28 +41,26 @@ public class CmaExcludeGHGen {
 			Matcher matcher = linepat.matcher(line);
 			// WE HAVE ONE LIST OF GH EXCLUDING THIS CMA
 			if (matcher.matches()) {
-				bw.write("    <excluding id=\"CMA-GH-" + matcher.group(1) + "\" >\n");
+				bw.write("01:" + matcher.group(1) + "\n");
 				// THEN CHECK EACH GHM ELEMENT
-				String[] group = matcher.group(2).split(" ");
+				String[] group = matcher.group(2).split("\\s+");
 				for (String element : group) {
-					if (element.length() == 0) {
-						continue;
-					} else if (element.startsWith("Racines_en_")) {
-						bw.write("        <racine>" + element.replace("Racines_en_", "") + "</racine>\n");
+					if (element.startsWith("Racines_en_")) {
+						// 02 : RACINES WITH LETTER
+						bw.write("02:" + element.replace("Racines_en_", "") + "\n");
 					} else if (element.startsWith("Sous_CMD_")) {
-						bw.write("        <cmd>" + element.replace("Sous_CMD_", "") + "</cmd>\n");
+						// 03 : PART OF CMD
+						bw.write("03:" + element.replace("Sous_CMD_", "") + "\n");
 					} else if (element.startsWith("CMD")) {
-						bw.write("        <cmd>" + element.replace("CMD", "") + "</cmd>\n");
+						// 04 : ONE CMD
+						bw.write("04:" + element.replace("CMD", "") + "\n");
 					} else {
-						bw.write("        <ghm>" + element + "</ghm>\n");
+						// 05 : ONE GHM
+						bw.write("05:" + element + "\n");
 					}
-					bw.write("    </excluding>\n");
 				}
 			}
 		}
-		
-		// FINISHES THE EXCLUDED DPS
-		bw.write("<gh-exclude-cmas>\n");
 		
 		br.close();
 		bw.close();
