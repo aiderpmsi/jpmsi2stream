@@ -7,8 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Map.Entry;
 
 /**
  * We find the list of CCAM in NX file from AMELI
@@ -21,30 +22,30 @@ public class CcamGen {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/grouper-classeacte.xml");
+		File output = new File("src/main/resources/grouper-classeacte.cfg");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 		
-		// START THE XML
-		
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		bw.write("<actes>\n");
-		
+		// ONE TYPE (ADC / ADE / ...) HAS MULTIPLE CCAM
+		TreeMap<String, TreeSet<String>> classeacte = new TreeMap<>();
 		String line = br.readLine();
 
 		while ((line) != null) {
 			// IF WE HAVE A LINE BEGINING WITH 1010101, IT MEANS WE HAVE ONE CCAM ACTE DESCRIPTION
 			if (line.startsWith("1010101")) {
-				bw.write("    <acte>\n");
-				line = findActeDef(br, bw, line);
-				bw.write("    </acte>\n");
+				line = findActeDef(br, classeacte, line);
 			} else {
 				line = br.readLine();
 			}
 		}
-		
-		// FINISHES THE ACTES
-		bw.write("<actes>\n");
+
+		// NOW WE WRITE THE LIST OF CCCAM FOR EACH ACTE TYPE
+		for (Entry<String, TreeSet<String>> entryclasse : classeacte.entrySet()) {
+			bw.write("0:" + entryclasse.getKey() + "\n");
+			for (String ccamRead : entryclasse.getValue()) {
+				bw.write("1:" + ccamRead + "\n");
+			}
+		}
 		
 		br.close();
 		bw.close();
@@ -58,31 +59,32 @@ public class CcamGen {
 	 * @return
 	 * @throws IOException 
 	 */
-	private static String findActeDef(BufferedReader br, BufferedWriter bw, String line) throws IOException {
+	private static String findActeDef(BufferedReader br, TreeMap<String, TreeSet<String>> classeacte, String line) throws IOException {
 		// GETS THE ACTE NAME
 		String acte = line.substring(7, 20).trim();
-		bw.write("        <name>" + acte + "</name>\n");
-		
-		String activity = null, maxdate = null, typeacte = null;
-		List<String> phases = null;
+
+		String typeacte = null, maxdate = null;
 
 		while (true) {
 			// READ NEXT LINE
 			line = br.readLine();
 			
 			// IF WE HAVE A LINE 201 (NEW ACTIVITY) OR 199 (END OF CODE DEFINITION)
-			// WRITE THE RESULTS
-			if ((line.startsWith("2010101") || line.startsWith("199")) && activity != null && maxdate != null && typeacte != null && phases != null) {
-				bw.write("        <regroupement activite=\"" + activity + "\" type=\"" + typeacte + "\">\"\n");
-				for (String phase : phases) {
-					bw.write("            <phase>" + phase + "</phase>\n");
+			// STORE THE RESULTS
+			if ((line.startsWith("2010101") || line.startsWith("199")) && typeacte != null) {
+				// CHECH IF THIS TYPE OF ACTE EXISTS
+				TreeSet<String> listactes = classeacte.get(typeacte);
+				if (listactes == null) {
+					listactes = new TreeSet<>();
+					classeacte.put(typeacte, listactes);
 				}
-				bw.write("        </regroupement>\n");
+				// ADDS THIS ACTE
+				listactes.add(acte);
 			}
 			
 			// IF WE HAVE A LINE 201 (NEW ACTIVITY), RESET THE CURRENT DATAS AND CONTINUE
 			if (line.startsWith("2010101")) {
-				activity = line.substring(7, 8); maxdate = null; typeacte = null; phases = new LinkedList<>();
+				typeacte = null; maxdate = null;
 			}
 			
 			// IF WE HAVE A LINE 199, READ NEXT LINE AND RETURN IT TO PROCESS
@@ -102,10 +104,6 @@ public class CcamGen {
 				}
 			}
 			
-			// IF WE HAVE A 3010101 LINE, ADDS THIS POSSIBLE PHASE TO THE LIST OF PHASES
-			if (line.startsWith("3010101")) {
-				phases.add(line.substring(7, 8));
-			}
 		}
 		
 	}

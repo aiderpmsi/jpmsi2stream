@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,36 +27,40 @@ public class ActeClassantGen {
 		Pattern ccam = Pattern.compile("^([A-Z]{4}\\d{3}/\\d) (.*)");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/grouper-acteclassant.xml");
+		File output = new File("src/main/resources/grouper-acteclassant.cfg");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
-		
-		// START THE XML
-		
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		bw.write("<actes>\n");
-		
-		String line;
 
+		// ONE GMH // MULTIPLE CCAM
+		TreeMap<String, TreeSet<String>> cmds = new TreeMap<>();
+		String line;
+		
 		while ((line = br.readLine()) != null) {
 			Matcher matcher = ccam.matcher(line);
-			// WE HAVE ONE LIST OF GHM FOR THIS CCAM
 			if (matcher.matches()) {
-				bw.write("    <acte id=\"" + matcher.group(1) + "\" >\n");
-				// SPLIT THE LIST OF CMD
-				String[] chunks = matcher.group(2).split(" ");
-				for (String chunk : chunks) {
-					if (chunk.length() != 0) {
-						bw.write("        <CMD>" + chunk + "</CMD>\n");
+				// WE HAVE ONE CCAM WITH ASSOCIATED MULTIPLE CMD
+				// GET THE CMD HASHSET FOR EACH CMD OR CREATE IT IF NEEDED
+				String[] cmdsRead = matcher.group(2).split("\\s+");
+				for (String cmd : cmdsRead) {
+					TreeSet<String> ccamSet = cmds.get(cmd);
+					if (ccamSet == null) {
+						ccamSet = new TreeSet<>();
+						cmds.put(cmd, ccamSet);
 					}
+					// ENTER THIS CCAM FOR THIS CMD
+					ccamSet.add(matcher.group(1));
 				}
-				bw.write("    </acte>\n");
 			}
 		}
-		
-		// FINISHES THE ACTES
-		bw.write("</actes>\n");
-		
+
+		// NOW WE WRITE THE LIST OF CCCAM FOR EACH CMD
+		for (Entry<String, TreeSet<String>> entrycmd : cmds.entrySet()) {
+			bw.write("0:" + entrycmd.getKey() + "\n");
+			for (String ccamRead : entrycmd.getValue()) {
+				bw.write("1:" + ccamRead + "\n");
+			}
+		}
+
 		br.close();
 		bw.close();
 	}
