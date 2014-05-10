@@ -530,33 +530,33 @@
 				<my:inResource resource="unclassified" key="A-337" value="acte" result="a337"/>
 				<my:inResource resource="unclassified" key="A-338" value="acte" result="a338"/>
 				<if cond="poidsnn ge 1500 and agegest ge 33">
-					<if cond="a337">
-						<if cond="d303">
+					<if cond="a337 gt 0">
+						<if cond="d303 gt 0">
 							<my:group racine="15C02" gravite="B"/>
 						<else />
 							<my:group racine="15C02" gravite="A"/>
 						</if>
-					<elseif cond="a338" />
-						<if cond="d303">
+					<elseif cond="a338 gt 0" />
+						<if cond="d303 gt 0">
 							<my:group racine="15C03" gravite="B"/>
 						<else />
 							<my:group racine="15C03" gravite="A"/>
 						</if>
-					<elseif cond="d303" />
+					<elseif cond="d303 gt 0" />
 						<my:group racine="15C05" gravite="B"/>
 					<else />
 						<my:group racine="15C04" gravite="A"/>
 					</if>
 					<send event="end" />
 				<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
-					<if cond="d303">
+					<if cond="d303 gt 0">
 						<my:group racine="15C05" gravite="B"/>
 					<else />
 						<my:group racine="15C05" gravite="A"/>
 					</if>
 					<send event="'end'" />
 				<elseif cond="poidsnn ge 800 and agegest ge 28"/>
-					<if cond="d303">
+					<if cond="d303 gt 0">
 						<my:group racine="15C06" gravite="B"/>
 					<else />
 						<my:group racine="15C06" gravite="A"/>
@@ -572,7 +572,242 @@
 
 		</state>
 
-	</state>
+		<!-- WE ARE IN CMD15  AND HAVE AN INNATE GROUP 1 -->
+		<state id="process_cmd15_gnn1">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-303" value="diags" result="d303"/>
+				<my:inResource resource="unclassified" key="D-304" value="diags" result="d304"/>
+				<my:inResource resource="unclassified" key="D-305" value="diags" result="d305"/>
+				<if cond="d303 gt 0">
+					<my:group racine="15M05" gravite="D" />
+				<elseif cond="d304 gt 0" />
+					<my:group racine="15M05" gravite="C"/>
+				<elseif cond="d305 gt 0" />
+					<my:group racine="15M05" gravite="B"/>
+				<else />
+					<my:group racine="15M05" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15  AND HAVE AN INNATE GROUP 2 -->
+		<state id="process_cmd15_gnn2">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-303" value="diags" result="d303"/>
+				<my:inResource resource="unclassified" key="D-304" value="diags" result="d304"/>
+				<my:inResource resource="unclassified" key="D-305" value="diags" result="d305"/>
+				<if cond="d303 gt 0">
+					<my:group racine="15M06" gravite="D" />
+				<elseif cond="d304 gt 0" />
+					<my:group racine="15M06" gravite="C"/>
+				<elseif cond="d305 gt 0" />
+					<my:group racine="15M06" gravite="B"/>
+				<else />
+					<my:group racine="15M06" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15  AND HAVE AN INNATE GROUP 3 -->
+		<state id="process_cmd15_gnn3">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-306" value="diags" result="d306"/>
+				<my:inResource resource="unclassified" key="D-307" value="diags" result="d307"/>
+				<if cond="d306 gt 0">
+					<my:group racine="15M07" gravite="C"/>
+				<elseif cond="d307 gt 0" />
+					<my:group racine="15M07" gravite="B"/>
+				<else />
+					<my:group racine="15M07" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 4 -->
+		<state id="process_cmd15_gnn4">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-306" value="diags" result="d306"/>
+				<my:inResource resource="unclassified" key="D-307" value="diags" result="d307"/>
+				<if cond="d306 gt 0">
+					<my:group racine="15M08" gravite="C"/>
+				<elseif cond="d307 gt 0" />
+					<my:group racine="15M08" gravite="B"/>
+				<else />
+					<my:group racine="15M08" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 5 -->
+		<state id="process_cmd15_gnn5">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-306" value="diags" result="d306"/>
+				<my:inResource resource="unclassified" key="D-307" value="diags" result="d307"/>
+				<if cond="d306 gt 0">
+					<my:group racine="15M09" gravite="C"/>
+				<elseif cond="d307 gt 0" />
+					<my:group racine="15M09" gravite="B"/>
+				<else />
+					<my:group racine="15M09" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 6 -->
+		<state id="process_cmd15_gnn6">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-306" value="diags" result="d306"/>
+				<my:inResource resource="unclassified" key="D-307" value="diags" result="d307"/>
+				<if cond="d306 gt 0">
+					<my:group racine="15M10" gravite="C"/>
+				<elseif cond="d307 gt 0" />
+					<my:group racine="15M10" gravite="B"/>
+				<else />
+					<my:group racine="15M10" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 7 -->
+		<state id="process_cmd15_gnn7">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-306" value="diags" result="d306"/>
+				<my:inResource resource="unclassified" key="D-307" value="diags" result="d307"/>
+				<if cond="d306 gt 0">
+					<my:group racine="15M11" gravite="C"/>
+				<elseif cond="d307 gt 0" />
+					<my:group racine="15M11" gravite="B"/>
+				<else />
+					<my:group racine="15M11" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 8 -->
+		<state id="process_cmd15_gnn8">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-309" value="diags" result="d309"/>
+				<if cond="d309 gt 0">
+					<my:group racine="15M12" gravite="B"/>
+				<else />
+					<my:group racine="15M12" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 9 -->
+		<state id="process_cmd15_gnn9">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-309" value="diags" result="d309"/>
+				<if cond="d309 gt 0">
+					<my:group racine="15M13" gravite="B"/>
+				<else />
+					<my:group racine="15M13" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN INNATE GROUP 10 -->
+		<state id="process_cmd15_gnn10">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="dad" get="DAD" pattern="{0}" result="dad" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da,dad" result="diags" />
+				<my:inResource resource="unclassified" key="D-309" value="diags" result="d309"/>
+				<if cond="d309 gt 0">
+					<my:group racine="15M14" gravite="B"/>
+				<else />
+					<my:group racine="15M14" gravite="A"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
 
 	<state id="end" final="true" />
 
