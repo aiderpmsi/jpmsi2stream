@@ -1,34 +1,22 @@
 package com.github.aiderpmsi.pims.grouper.model;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.util.JAXBResult;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
-
-public abstract class BaseAbstractDictionary<T, U> {
+public abstract class BaseAbstractDictionary {
 
 	public abstract String getConfigPath();
-	public abstract String getConfigXslPath();
-	public abstract String getKeyParameterInXsl();
 	
-	protected Map<String, T> dictionnary =
+	protected Map<String, HashSet<String>> dictionnary =
 			new HashMap<>();
 	
-	protected JAXBMapper<U, T> jaxbMapper;
-	
-	protected Class<U> jaxbClass;
-	
-	public T getDefintion(String key) {
-		T definition = dictionnary.get(key);
+	public HashSet<String> getDefintion(String key) {
+		HashSet<String> definition = dictionnary.get(key);
         
 		// IF KEY DEFINITION DOES NOT EXIST, CREATE IT AND LOAD IT
 		if (definition == null) {
@@ -45,52 +33,37 @@ public abstract class BaseAbstractDictionary<T, U> {
 		return definition;
 	}
 	
-	protected T createDefinition(String key) throws IOException, JAXBException, TransformerException {
+	protected HashSet<String> createDefinition(String key) throws IOException {
 		// OPENS THE CONFIG FILE
-		InputStream configStream = 
-				BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath());
-				
-		// Opens the thansformation
-		InputStream configXslStream = 
-				BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigXslPath());
-				
-		TransformerFactory tFactory = org.apache.xalan.processor.TransformerFactoryImpl.newInstance();
-		Transformer transformer = tFactory.newTransformer(
-				new StreamSource(configXslStream));
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(
+					new InputStreamReader(
+							new BufferedInputStream(
+									BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath())), "UTF-8"));
+			
+			HashSet<String> def = new HashSet<>();
+			String line = br.readLine();
+			
+			while (line != null) {
+				// CHECK IF WE HAVE THE KEY
+				if (line.startsWith("01:") && line.subSequence(3, line.length()).equals(key)) {
+					// ITERATE OVER FILE WHILE WE HAVE A VALUE
+					while ((line = br.readLine()) != null && line.startsWith("02:")) {
+						def.add(line.substring(3, line.length()));
+					}
+					// WE FINISHED, EXIT IMMEDIATELY
+					break;
+				} else {
+					line = br.readLine();
+				}
+			}
+			return def;
+			
+		} finally {
+			if (br != null)
+				br.close();
+		}
 		
-		// SETS THE XSL PARAMETERS
-		transformer.setParameter(getKeyParameterInXsl(), key);
-
-		// INPUT STREAMSOURCE
-		StreamSource inp = new StreamSource(configStream);
-	
-		// JAXB OBJECT
-		JAXBContext jaxbContext = JAXBContext.newInstance(jaxbClass);
-		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			    			    
-		// CREATES THE JAXBOBJECT
-		JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);
-		transformer.transform(inp, jaxbResult);
-
-		// USED TO DEBUG
-		/* StreamSource inp2 = new StreamSource(BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath()));
-		  transformer.transform(inp2, new StreamResult(new File("/tmp/tex.xml"))); */
-
-		@SuppressWarnings("unchecked")
-		U jaxbObject = (U) jaxbResult.getResult();
-		
-		// TRANSFORMS THE JAXBOBJECT TO DEFINITION OBJECT
-		T definition = jaxbMapper.transform(jaxbObject);
-		
-		return definition;
 	}
-
-	public void setJaxbMapper(JAXBMapper<U, T> jaxbMapper) {
-		this.jaxbMapper = jaxbMapper;
-	}
-
-	public void setJaxbClass(Class<U> jaxbClass) {
-		this.jaxbClass = jaxbClass;
-	} 
-
 }
