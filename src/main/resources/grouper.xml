@@ -125,6 +125,23 @@
 			</onentry>
 			
 			<transition event="cmd_found" target="process_cmd15" />
+			<transition event="cmd_not_found" target="test_cmd01" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 01 -->
+		<state id="test_cmd01">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="String"/>
+				<my:inResource resource="unclassified" key="CMD-01" value="dp" result="cmd01"/>
+				<if cond="cmd gt 0" >
+						<send event="'cmd_found'"/>
+					<else />
+						<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd01" />
 			<transition event="cmd_not_found" target="fend" />
 	
 		</state>
@@ -806,6 +823,83 @@
 			</onentry>
 					
 			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD01 -->
+		<state id="process_cmd01">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags" />
+				<my:inResource resource="acteclassant" key="01" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-195" value="acte" result="a195" />
+					<if cond="a195 gt 0">
+						<my:group racine="01C09" gravite="1" />
+					<else />
+						<my:inResource resource="unclassified" key="A-002" value="acte" result="a002"/>
+						<if cond="a002 gt 0" >
+							<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+							<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+							<my:age birthday="ddn" date="dateentree" result="age" type="year"/>
+							<if cond="age lt 18" >
+								<my:inResource resource="unclassified" key="D-039" value="diags" result="d039"/>
+								<if cond="d039 gt 0" >
+									<my:group racine="01C11" gravite="1" />
+								<else />
+									<my:group racine="01C12" gravite="1" />
+								</if>
+							<else />
+								<my:inResource resource="unclassified" key="D-092" value="diags" result="d092"/>
+								<if cond="d092 gt 0" >
+									<my:group racine="01C03" gravite="1" />
+								<else />
+									<my:group racine="01C04" gravite="1" />
+								</if>
+							</if>
+						<else />
+							<my:inResource resource="unclassified" key="A-196" value="acte" result="a196"/>
+							<if cond="a196 gt 0">
+								<my:group racine="01C10" modalite="J" gravite="1"/>
+							<else />
+								<my:inResource resource="unclassified" key="A-003" value="acte" result="a003" />
+								<if cond="a003 gt 0">
+									<my:group racine="01C05" gravite="1" />
+								<else />
+									<my:inResource resource="unclassified" key="A-004" value="acte" result="a004"/>
+									<if cond="a004 get 0" >
+										<my:group racine="01C06" gravite="1" />
+									<else />
+										<my:inResource resource="unclassified" key="A-346" value="acte" result="a346"/>
+										<if cond="a346 gt 0" >
+											<my:group racine="01C14" modalite="J" gravite="1"/>
+										<else />
+											<my:inResource resource="unclassified" key="A-005" value="acte" result="a005"/>
+											<my:inResource resource="unclassified" key="D-326" value="dp" result="D326"/>
+											<if cond="a005 gt 0 or d326 gt 0" >
+												<my:group racine="01C15" gravite="1" modalite="J"/>
+											<else />
+												<my:inResource resource="unclassified" key="A-006" value="acte" result="a006"/>
+												<if cond="a006 gt 0">
+													<my:group racine="01C08" modalite="J" gravite="1"/>
+												</if>
+											</if>
+										</if>
+									</if>
+								</if>
+							</if>
+						</if>
+					</if>
+					<send event="end" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="fend" /> <!-- process_cmd01_step2 -->
 
 		</state>
 

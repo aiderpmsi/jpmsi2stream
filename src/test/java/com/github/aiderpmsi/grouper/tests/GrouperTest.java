@@ -40,6 +40,16 @@ public class GrouperTest {
 		test(group, "15Z10", "E", "", "");
     }
 
+    @Test
+    public void test01C041() throws Exception {
+		Grouper gp = new Grouper(); 
+		RssContent cont = new T01C041();
+
+		Group group = gp.group(cont);
+
+		test(group, "01C04", "1", "", "");
+    }
+
     private void test(Group gp, String racine, String gravite, String modalite, String erreur) {
 		Assert.assertNotNull(gp);
 		Assert.assertEquals(racine, gp.getRacine());
