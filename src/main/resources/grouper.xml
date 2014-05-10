@@ -132,9 +132,9 @@
 		<!-- TEST IF WE ARE IN CMD 01 -->
 		<state id="test_cmd01">
 			<onentry>
-				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:inResource resource="unclassified" key="CMD-01" value="dp" result="cmd01"/>
-				<if cond="cmd gt 0" >
+				<if cond="cmd01 gt 0" >
 						<send event="'cmd_found'"/>
 					<else />
 						<send event="'cmd_not_found'" />
