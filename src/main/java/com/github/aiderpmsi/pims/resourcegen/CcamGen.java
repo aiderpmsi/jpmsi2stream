@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -41,9 +43,9 @@ public class CcamGen {
 
 		// NOW WE WRITE THE LIST OF CCCAM FOR EACH ACTE TYPE
 		for (Entry<String, TreeSet<String>> entryclasse : classeacte.entrySet()) {
-			bw.write("0:" + entryclasse.getKey() + "\n");
+			bw.write("01:" + entryclasse.getKey() + "\n");
 			for (String ccamRead : entryclasse.getValue()) {
-				bw.write("1:" + ccamRead + "\n");
+				bw.write("02:" + ccamRead + "\n");
 			}
 		}
 		
@@ -64,7 +66,8 @@ public class CcamGen {
 		String acte = line.substring(7, 20).trim();
 
 		String typeacte = null, maxdate = null;
-
+		List<String> phases = null;
+		
 		while (true) {
 			// READ NEXT LINE
 			line = br.readLine();
@@ -78,13 +81,15 @@ public class CcamGen {
 					listactes = new TreeSet<>();
 					classeacte.put(typeacte, listactes);
 				}
-				// ADDS THIS ACTE
-				listactes.add(acte);
+				// ADDS THE LIST OF COUPLES ACTE / PHASE
+				for (String phase : phases) {
+					listactes.add(acte + "/" + phase);
+				}
 			}
 			
 			// IF WE HAVE A LINE 201 (NEW ACTIVITY), RESET THE CURRENT DATAS AND CONTINUE
 			if (line.startsWith("2010101")) {
-				typeacte = null; maxdate = null;
+				typeacte = null; maxdate = null; phases = new LinkedList<>();
 			}
 			
 			// IF WE HAVE A LINE 199, READ NEXT LINE AND RETURN IT TO PROCESS
@@ -103,7 +108,12 @@ public class CcamGen {
 					typeacte = line.substring(63, 67).trim();
 				}
 			}
-			
+
+			// IF WE HAVE A 3010101 LINE, ADDS THIS POSSIBLE PHASE TO THE LIST OF PHASES
+			if (line.startsWith("3010101")) {
+				phases.add(line.substring(7, 8));
+			}
+
 		}
 		
 	}

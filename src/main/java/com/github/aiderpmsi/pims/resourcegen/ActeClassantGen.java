@@ -55,9 +55,9 @@ public class ActeClassantGen {
 
 		// NOW WE WRITE THE LIST OF CCCAM FOR EACH CMD
 		for (Entry<String, TreeSet<String>> entrycmd : cmds.entrySet()) {
-			bw.write("0:" + entrycmd.getKey() + "\n");
+			bw.write("01:" + entrycmd.getKey() + "\n");
 			for (String ccamRead : entrycmd.getValue()) {
-				bw.write("1:" + ccamRead + "\n");
+				bw.write("02:" + ccamRead + "\n");
 			}
 		}
 

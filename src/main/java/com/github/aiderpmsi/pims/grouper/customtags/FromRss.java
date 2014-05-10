@@ -151,7 +151,10 @@ public class FromRss extends Action {
 				for (String formattedResult : formattedResults) {
 					Matcher m = pat.matcher(formattedResult);
 					if (m.matches()) {
-						acteResults.add(m.group(1) + "." + m.group(2));
+						StringBuilder acte = new StringBuilder(m.group(1));
+						if (m.group(2).length() != 0)
+							acte.append(".").append(m.group(2));
+						acteResults.add(acte.toString());
 					} else {
 						throw new ModelException(formattedResult + " is not a diagnosis");
 					}

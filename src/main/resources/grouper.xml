@@ -98,7 +98,7 @@
 				<send event="'continue'" />
 			</onentry>
 			
-			<transition event="continue" target="test_cmd25" />
+			<transition event="continue" target="test_cmd15" />
 	
 		</state>
 
@@ -111,21 +111,21 @@
 				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
 				<my:age birthday="ddn" date="dateentree" result="age" type="day"/>
 				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
-				<if cond="(age lt 8)" />
-					<send event="'cmd_found'"/>
-					<elseif cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)">
-					<if cond="(age lt 29) or (ageyear lt 1 and poidsnn lt 2500)" />
-						<send event="'cmd_found'" />
-						<else />
-						<send event="'cmd_not_found'" />
-					</if>
+				<if cond="(age lt 8)" >
+						<send event="'cmd_found'"/>
+					<elseif cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)" />
+						<if cond="(age lt 29) or (ageyear lt 1 and poidsnn lt 2500)" >
+							<send event="'cmd_found'" />
+							<else />
+							<send event="'cmd_not_found'" />
+						</if>
 					<else />
-					<send event="'cmd_not_found'" />
+						<send event="'cmd_not_found'" />
 				</if>
-				<send event="'continue'" />
 			</onentry>
 			
 			<transition event="cmd_found" target="process_cmd15" />
+			<transition event="cmd_not_found" target="fend" />
 	
 		</state>
 
@@ -451,11 +451,11 @@
 			<onentry>
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
-				<my:fromRss domain="main" get="ModeSortie" pattern={0} result="modesortie" type="Integer" />
+				<my:fromRss domain="main" get="ModeSortie" pattern="{0}" result="modesortie" type="Integer" />
 				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
 				<my:fromRss domain="main" get="AgeGestationnel" pattern="{0}" result="agegest" type="Integer"/>
-				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Integer"/>
-				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Integer"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
 				<my:age birthday="dateentree" date="datesortie" result="dureesejour" type="day"/>
 				<my:inResource resource="unclassified" key="D-056" value="dp" result="d056" />
 				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc" />
@@ -808,6 +808,8 @@
 			<transition event="end" target="end" />
 
 		</state>
+
+	</state>
 
 	<state id="end" final="true" />
 
