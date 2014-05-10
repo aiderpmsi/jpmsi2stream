@@ -11,11 +11,8 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
-import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
-import com.github.aiderpmsi.pims.grouper.model.BaseAbstractDictionary;
-import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
+import com.github.aiderpmsi.pims.grouper.model.BaseSimpleDictionary;
 import com.github.aiderpmsi.pims.grouper.model.Resource;
-import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
 public class InResource extends Action {
 	
@@ -46,8 +43,8 @@ public class InResource extends Action {
 			case UNCLASSIFIED:
 			case ACTECLASSANT:
 			case CLASSEACTE:
-				BaseAbstractDictionary<?, ?> dico =
-				(BaseAbstractDictionary<?, ?>) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
+				BaseSimpleDictionary dico =
+				(BaseSimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
 				matchResult = isInList(dico, key, varContent);
 				break;
 			default:
@@ -61,19 +58,10 @@ public class InResource extends Action {
 		scInstance.getContext(getParentTransitionTarget()).setLocal(result, matchResult);
 	}
 
-	private Integer isInList(BaseAbstractDictionary<?, ?> dico, String key, Object value) throws ModelException {
+	private Integer isInList(BaseSimpleDictionary dico, String key, Object value) throws ModelException {
 		// GETS THE DEFINITION IN DICO
-		Set<String> dicoContent;
+		Set<String> dicoContent = dico.getDefintion(key);
 
-		if (dico instanceof ActeClassantDictionnary) {
-			dicoContent = ((ActeClassantDictionnary) dico).getDefintion(key);
-		} else if (dico instanceof ClasseActeDictionary) {
-			dicoContent = ((ClasseActeDictionary) dico).getDefintion(key);
-		} else if (dico instanceof UnclassifiedDictionary) {
-			dicoContent = ((UnclassifiedDictionary) dico).getDefintion(key);
-		} else 
-			throw new ModelException(dico.getClass() + " not processable by function");
-		
 		// RESULT
 		Integer matches = 0;
 		

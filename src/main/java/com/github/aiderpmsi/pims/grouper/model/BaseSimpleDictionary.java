@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public abstract class BaseAbstractDictionary {
+public abstract class BaseSimpleDictionary implements Dictionary<HashSet<String>> {
 
 	public abstract String getConfigPath();
 	
@@ -40,7 +40,7 @@ public abstract class BaseAbstractDictionary {
 			br = new BufferedReader(
 					new InputStreamReader(
 							new BufferedInputStream(
-									BaseAbstractDictionary.class.getClassLoader().getResourceAsStream(getConfigPath())), "UTF-8"));
+									BaseSimpleDictionary.class.getClassLoader().getResourceAsStream(getConfigPath())), "UTF-8"));
 			
 			HashSet<String> def = new HashSet<>();
 			String line = br.readLine();
