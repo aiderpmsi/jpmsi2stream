@@ -23,15 +23,10 @@ public class CmaGen {
 		Pattern cimrec = Pattern.compile("^[A-Z]\\d+\\.\\d+(?:\\+\\d+)?");
 		
 		File input = new File(args[0]);
-		File output = new File("src/main/resources/grouper-cma.xml");
+		File output = new File("src/main/resources/grouper-cma.cfg");
 		BufferedReader br = new BufferedReader(new FileReader(input));
 		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
-		
-		// START THE XML
-		
-		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		bw.write("<cmas>\n");
-		
+				
 		String line, cim, gravity, excdp, exccm;
 
 		while ((line = br.readLine()) != null) {
@@ -51,18 +46,19 @@ public class CmaGen {
 				br.readLine();
 				// NEXT LINE IS EXCLUDED CM LIST NUMBER
 				exccm = br.readLine().trim();
-				bw.write("    <cma cim=\"" + cim + "\" >\n");
-				bw.write("        <gravity>" + gravity + "</gravity>\n");
-				bw.write("        <exclude>CMA-DP-" + excdp + "</exclude>\n");
+				
+				// WRITE ALL
+				bw.write("01:" + cim + "\n");
+				// 02: IS GRAVITY NUMBER
+				bw.write("02:" + gravity + "\n");
+				// 03: THIS LIST OF DPS EXCLUDE THIS CMA FOR THIS CIM ELEMENT ASSOCIATED DIAGNOSIS
+				bw.write("03:" + excdp + "\n");
+				// 04: THIS LIST OF CM EXCLUDE THIS CMA FOR THIS CIM ELEMENT ASSOCIATED DIAGNOSIS
 				if (!exccm.equals("-"))
-					bw.write("        <exclude>CMA-CM-" + exccm + "</exclude>\n");
-				bw.write("    </cma>\n");
+					bw.write("04:" + exccm + "\n");
 			}
 		}
-		
-		// FINISHES THE CMAS
-		bw.write("<cmas>\n");
-		
+
 		br.close();
 		bw.close();
 	}
