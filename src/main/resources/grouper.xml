@@ -564,7 +564,7 @@
 					<else />
 						<my:group racine="15C04" gravite="A"/>
 					</if>
-					<send event="end" />
+					<send event="'end'" />
 				<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
 					<if cond="d303 gt 0">
 						<my:group racine="15C05" gravite="B"/>
@@ -892,7 +892,7 @@
 							</if>
 						</if>
 					</if>
-					<send event="end" />
+					<send event="'end'" />
 				<else />
 					<send event="'continue'" />
 				</if>
@@ -901,6 +901,18 @@
 			<transition event="end" target="end" />
 			<transition event="continue" target="fend" /> <!-- process_cmd01_step2 -->
 
+		</state>
+
+		<state id="process_cdm01_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="actemineurchirreclassant" key="all" value="acte" result="nbacteopreclassant"/>
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="nbacteop"/>
+				<if cond="nbacteopreclassant eq nbacteop"
+					<my:ignore resource="actemineurchirclassant" resourcekey="all" domain="acte" domainkey="DA" />
+				</if>
+			</onentry>
+		
 		</state>
 
 	</state>

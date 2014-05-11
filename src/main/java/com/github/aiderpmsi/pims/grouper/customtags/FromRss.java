@@ -19,38 +19,11 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
+import com.github.aiderpmsi.pims.grouper.model.Domain;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 
 public class FromRss extends Action {
 	
-	private enum Domain {
-
-		MAIN("main"), ACTE("acte"), DA("da"), DAD("dad");
-			
-		private static HashMap<String, Domain> domainsMap = new HashMap<>();
-			
-		static {
-			for (Domain value : Domain.values()) {
-				domainsMap.put(value.getName(), value);
-			}
-		}
-			
-		private String name;
-
-		private Domain(String name) {
-			this.name = name;
-		}
-			
-		public String getName() {
-			return name;
-		}
-			
-		public static Domain createResource(String domainName) {
-			return domainsMap.get(domainName);
-		}
-			
-	}
-
 	private static final long serialVersionUID = -7371526402853556556L;
 
 	private String domain, get, pattern, result, type;
@@ -61,7 +34,7 @@ public class FromRss extends Action {
 			SCInstance scInstance, Log appLog, Collection derivedEvents)
 			throws ModelException, SCXMLExpressionException {
 
-		// Gets the rss content
+		// GETS THE RSS CONTENT
 		RssContent rssContent =
 				(RssContent) scInstance.getRootContext().get("_rssContent");
 
