@@ -23,8 +23,8 @@ import com.github.aiderpmsi.pims.grouper.customtags.Age;
 import com.github.aiderpmsi.pims.grouper.customtags.Concatenate;
 import com.github.aiderpmsi.pims.grouper.customtags.FromRss;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
+import com.github.aiderpmsi.pims.grouper.customtags.Ignore;
 import com.github.aiderpmsi.pims.grouper.customtags.InResource;
-import com.github.aiderpmsi.pims.grouper.customtags.Intersect;
 import com.github.aiderpmsi.pims.grouper.customtags.JexlExecute;
 import com.github.aiderpmsi.pims.grouper.customtags.ToRss;
 import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
@@ -97,8 +97,8 @@ public class ExecutorFactory {
 				"http://my.custom-actions.domain/CUSTOM", "concatenate",
 				Concatenate.class));
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "intersect",
-				Intersect.class));
+				"http://my.custom-actions.domain/CUSTOM", "ignore",
+				Ignore.class));
 		customActions.add(new CustomAction(
 				"http://my.custom-actions.domain/CUSTOM", "age",
 				Age.class));
