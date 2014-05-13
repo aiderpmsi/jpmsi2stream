@@ -48,6 +48,7 @@ public class Ignore extends Action {
 			case ACTECLASSANT:
 			case CLASSEACTE:
 			case ACTECLASSANTOP:
+			case ACTEMINEURCHIRRECLASSANT:
 				BaseSimpleDictionary dico =
 				(BaseSimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
 				// GETS THE DOMAIN
@@ -105,6 +106,46 @@ public class Ignore extends Action {
 				it.remove();
 			} // ELSE DO NOTHING
 		}
+	}
+
+	public String getResource() {
+		return resource;
+	}
+
+	public void setResource(String resource) {
+		this.resource = resource;
+	}
+
+	public String getResourcekey() {
+		return resourcekey;
+	}
+
+	public void setResourcekey(String resourcekey) {
+		this.resourcekey = resourcekey;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public String getDomainkey() {
+		return domainkey;
+	}
+
+	public void setDomainkey(String domainkey) {
+		this.domainkey = domainkey;
+	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 	
 

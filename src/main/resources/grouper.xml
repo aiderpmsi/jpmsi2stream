@@ -873,7 +873,7 @@
 									<my:group racine="01C05" gravite="1" />
 								<else />
 									<my:inResource resource="unclassified" key="A-004" value="acte" result="a004"/>
-									<if cond="a004 get 0" >
+									<if cond="a004 gt 0" >
 										<my:group racine="01C06" gravite="1" />
 									<else />
 										<my:inResource resource="unclassified" key="A-346" value="acte" result="a346"/>
@@ -988,7 +988,7 @@
 					</if>
 				<elseif cond="duree eq 0 and a266 gt 0"/>
 					<my:group racine="01K04" modalite="J" />
-				<elseif cond="duree eq 0 and activite eq 4"/>
+				<elseif cond="duree eq 0 and activite.contains(4)"/>
 					<my:group racine="01K06" modalite="J" />
 				<elseif cond="inversion eq '1' and d057 gt 0" />
 					<my:group racine="01M32" gravite="Z" />

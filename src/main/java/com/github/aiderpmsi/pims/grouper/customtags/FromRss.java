@@ -93,7 +93,7 @@ public class FromRss extends Action {
 				String value = element.get(keys[i]);
 				if (value == null)
 					// IF NO VALUE EXISTS FOR THIS KEY, WE CAN'T CREATE THE VALUE IN VALUELIST
-					break extractvalues;
+					continue extractvalues;
 				else
 					values[i] = value.trim(); 
 			}

@@ -18,10 +18,6 @@ public class T01K06J extends BaseTest {
 				{"Phase", "0"}
 			},
 			{
-				{"CodeCCAM", "LCLB001 "},
-				{"Phase", "0"}
-			},
-			{
 				{"CodeCCAM", "ZZLP025 "},
 				{"Phase", "0"},
 				{"Activite", "4"}
