@@ -43,6 +43,9 @@ public class InResource extends Action {
 			case UNCLASSIFIED:
 			case ACTECLASSANT:
 			case CLASSEACTE:
+			case DPCLASSANT:
+			case ACTECLASSANTOP:
+			case ACTEMINEURCHIRRECLASSANT:
 				BaseSimpleDictionary dico =
 				(BaseSimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
 				matchResult = isInList(dico, key, varContent);

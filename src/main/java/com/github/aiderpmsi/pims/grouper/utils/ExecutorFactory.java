@@ -28,7 +28,9 @@ import com.github.aiderpmsi.pims.grouper.customtags.InResource;
 import com.github.aiderpmsi.pims.grouper.customtags.JexlExecute;
 import com.github.aiderpmsi.pims.grouper.customtags.ToRss;
 import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
+import com.github.aiderpmsi.pims.grouper.model.ActeMineurChirReclassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
+import com.github.aiderpmsi.pims.grouper.model.DPClassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.UnclassifiedDictionary;
 
@@ -116,6 +118,8 @@ public class ExecutorFactory {
 		appCtx.set("_unclassified_dictionary", new UnclassifiedDictionary());
 		appCtx.set("_acteclassant_dictionary", new ActeClassantDictionnary());
 		appCtx.set("_classeacte_dictionary", new ClasseActeDictionary());
+		appCtx.set("_actemineurchirreclassant_dictionary", new ActeMineurChirReclassantDictionnary());
+		appCtx.set("_dpclassant_dictionary", new DPClassantDictionnary());
 		appCtx.set("_rssContent", getRss());
 		
 		// Creates the engine

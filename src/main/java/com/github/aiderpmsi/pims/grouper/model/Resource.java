@@ -6,7 +6,8 @@ import java.util.HashMap;
 public enum Resource {
 
 	UNCLASSIFIED("unclassified"), ACTECLASSANT("acteclassant"), CLASSEACTE("classeacte"),
-	ACTEMINEURCHIRRECLASSANT("actemineurchirreclassant"), ACTECLASSANTOP("acteclassantop");
+	ACTEMINEURCHIRRECLASSANT("actemineurchirreclassant"), ACTECLASSANTOP("acteclassantop"),
+	DPCLASSANT("dpclassant");
 	
 	private static HashMap<String, Resource> resourcesMap = new HashMap<>();
 	

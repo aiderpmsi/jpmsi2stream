@@ -47,6 +47,7 @@ public class Ignore extends Action {
 			case UNCLASSIFIED:
 			case ACTECLASSANT:
 			case CLASSEACTE:
+			case ACTECLASSANTOP:
 				BaseSimpleDictionary dico =
 				(BaseSimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
 				// GETS THE DOMAIN
