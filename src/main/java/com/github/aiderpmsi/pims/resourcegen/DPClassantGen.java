@@ -53,9 +53,9 @@ public class DPClassantGen {
 		
 		// NOW WE WRITE THE LIST OF CIM FOR EACH CMD
 		for (Entry<String, TreeSet<String>> entrycmd : cmd_cim.entrySet()) {
-			bw.write("0:" + entrycmd.getKey() + "\n");
+			bw.write("01:CMD-" + entrycmd.getKey() + "\n");
 			for (String cim : entrycmd.getValue()) {
-				bw.write("1:" + cim + "\n");
+				bw.write("02:" + cim + "\n");
 			}
 		}
 

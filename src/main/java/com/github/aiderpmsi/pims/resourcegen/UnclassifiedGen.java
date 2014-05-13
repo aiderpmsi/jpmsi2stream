@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class UnclassifiedGen {
 
-	private static Pattern diagEntree = Pattern.compile("^Diagnostics d'entrée dans la CMD n° (\\d+)");
+	private static Pattern diagEntree = Pattern.compile("^Diagnostics d'entrée dans la CMD n° (\\d+)");  // WE DO NOT USE THIS LIST OF DP'S (WE USE THE ONE IN VOLUME 1)
 	private static Pattern listeEntree = Pattern.compile("^Liste ([A-Z]-\\d+).*");
 	private static Pattern cim = Pattern.compile("^([A-Z]\\d+(?:\\.\\d+(?:\\+\\d+)?)?).*");
 	private static Pattern ccam = Pattern.compile("^([A-Z]{4}\\d{3}/\\d).*");
@@ -37,36 +37,6 @@ public class UnclassifiedGen {
 		while (line != null) {
 			Matcher matcher;
 			
-			// IF WE HAVE A LIST OF ENTRY DIAGS, LIST THEM
-			if ((matcher = diagEntree.matcher(line)).matches()) {
-				bw.write("01:CMD-" + matcher.group(1) + "\n");
-				// ACCEPT ONLY 2 LINES WITHOUT ENTRY DIAGS BEFORE BREAKING, OR A NEW LIST (CF PATTERNS)
-				Integer nonMatched = 0;
-				while ((line = br.readLine()) != null) {
-					line = br.readLine();
-					// THIS LINE HAS ONE CIM ELEMENT
-					if ((matcher = cim.matcher(line)).matches()) {
-						bw.write("02:" + matcher.group(1) + "\n");
-						nonMatched = 0;
-					}
-					// NO CIM ELEMENT, CHECK IF IT IS A DIAGENTREE OR LISTEENTREE
-					else {
-						if (diagEntree.matcher(line).matches())
-							break;
-						if (listeEntree.matcher(line).matches())
-							break;
-						// NO DIAGENTREE OR LISTENTREE, IF IT IS THE THIRD LINE, GO AWAY
-						if (nonMatched == 2)
-							break;
-						else
-							nonMatched++;
-					}
-				}
-
-				// DO NOT CONTINUE THIS LOOP, RESTART AT BEGINNING
-				continue;
-			}
-
 			// IF WE HAVE A LIST, LIST THE ENTRIES
 			if ((matcher = listeEntree.matcher(line)).matches()) {
 				bw.write("01:" + matcher.group(1) + "\n");

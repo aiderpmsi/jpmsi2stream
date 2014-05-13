@@ -137,7 +137,7 @@
 		<state id="test_cmd01">
 			<onentry>
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
-				<my:inResource resource="unclassified" key="CMD-01" value="dp" result="cmd01"/>
+				<my:inResource resource="dpclassant" key="CMD-01" value="dp" result="cmd01"/>
 				<if cond="cmd01 gt 0" >
 						<send event="'cmd_found'"/>
 					<else />
@@ -908,7 +908,7 @@
 		</state>
 
 		<!-- STEP 2 of MAIN CMD 01 -->
-		<state id="process_cdm01_step2" >
+		<state id="process_cmd01_step2" >
 			<onentry>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
 				<my:inResource resource="actemineurchirreclassant" key="all" value="acte" result="nbacteopreclassant"/>
@@ -926,7 +926,7 @@
 		</state>
 
 		<!-- STEP 3 of MAIN CMD 01 -->
-		<state id="process_cdm01_step3" >
+		<state id="process_cmd01_step3" >
 			<onentry>
 				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
 				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
