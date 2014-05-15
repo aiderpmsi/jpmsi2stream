@@ -1430,11 +1430,11 @@
 								<my:group racine="03M04" gravite="1" modalite="T"/>
 							</if>
 						</if>
-					<elseif cond="d0303 gt 0" >
+					<elseif cond="d0303 gt 0" />
 						<my:group racine="03M05" gravite="1" modalite="T"/>
-					<elseif cond="d0304 gt 0" >
+					<elseif cond="d0304 gt 0" />
 						<my:group racine="03M06" gravite="1" modalite="T"/>
-					<elseif cond="d0305 gt 0" >
+					<elseif cond="d0305 gt 0" />
 						<my:group racine="03M07" gravite="1" modalite="T"/>
 					<elseif cond="d0306 gt 0" />
 						<if cond="ageyear lt 18" >
@@ -1451,9 +1451,9 @@
 						<else />
 							<my:group racine="03M11" gravite="1" modalite="T"/>
 						</if>
-					<elseif cond="d0308 gt 0" >
+					<elseif cond="d0308 gt 0" />
 						<my:group racine="03M14" gravite="Z"/>
-					<elseif cond="d0309 gt 0" >
+					<elseif cond="d0309 gt 0" />
 						<my:group racine="03M15" gravite="Z" modalite="T"/>
 					</if>
 				</if>
@@ -1567,7 +1567,7 @@
 						<else />
 							<my:group racine="04M05" gravite="1" modalite="T"/>
 						</if>
-					<elsif cond="d0404 gt 0" />
+					<elseif cond="d0404 gt 0" />
 						<my:group racine="04M25" gravite="1" modalite="T"/>
 					<elseif cond="d0405 gt 0" />
 						<if cond="ageyear lt 18" >
@@ -1575,42 +1575,42 @@
 						<else />
 							<my:group racine="04M07" gravite="1" modalite="T"/>
 						</if>
-					<elsif cond="d0406 gt 0" />
+					<elseif cond="d0406 gt 0" />
 						<my:group racine="04M26" gravite="1" modalite="T"/>
-					<elsif cond="d0407 gt 0" />
+					<elseif cond="d0407 gt 0" />
 						<my:group racine="04M19" gravite="1" modalite="T"/>
-					<elsif cond="d0408 gt 0" />
+					<elseif cond="d0408 gt 0" />
 						<my:inResource resource="unclassified" key="D-061" value="dp" result="d061"/>
 						<if cond="d061 gt 0" >
 							<my:group racine="04M20" gravite="1" modalite="T"/>
 						<else />
 							<my:group racine="04M08" gravite="1" modalite="T"/>
 						</if>
-					<elsif cond="d0409 gt 0" />
+					<elseif cond="d0409 gt 0" />
 						<my:group racine="04M09" gravite="1" modalite="T"/>
-					<elsif cond="d0410 gt 0" />
+					<elseif cond="d0410 gt 0" />
 						<my:group racine="04M10" gravite="1" modalite="T"/>
-					<elsif cond="d0411 gt 0" />
+					<elseif cond="d0411 gt 0" />
 						<my:group racine="04M10" gravite="1"/>
-					<elsif cond="d0412 gt 0" />
+					<elseif cond="d0412 gt 0" />
 						<my:group racine="04M12" gravite="1" modalite="T"/>
-					<elsif cond="d0413 gt 0" />
+					<elseif cond="d0413 gt 0" />
 						<my:group racine="04M13" gravite="1" modalite="T"/>
-					<elsif cond="d0414 gt 0" />
+					<elseif cond="d0414 gt 0" />
 						<my:group racine="04M14" gravite="1" modalite="T"/>
-					<elsif cond="d0415 gt 0" />
+					<elseif cond="d0415 gt 0" />
 						<my:group racine="04M15" gravite="1" modalite="T"/>
-					<elsif cond="d0416 gt 0" />
+					<elseif cond="d0416 gt 0" />
 						<my:group racine="04M16" gravite="1" modalite="T"/>
-					<elsif cond="d0417 gt 0" />
+					<elseif cond="d0417 gt 0" />
 						<my:group racine="04M17" gravite="1" modalite="T"/>
-					<elsif cond="d0418 gt 0" />
+					<elseif cond="d0418 gt 0" />
 						<my:group racine="04M21" gravite="1"/>
-					<elsif cond="d0419 gt 0" />
+					<elseif cond="d0419 gt 0" />
 						<my:group racine="04M23" gravite="Z" modalite="T"/>
-					<elsif cond="d0420 gt 0" />
+					<elseif cond="d0420 gt 0" />
 						<my:group racine="04M22" gravite="Z"/>
-					<elsif cond="d0421 gt 0" />
+					<elseif cond="d0421 gt 0" />
 						<my:group racine="04M27" gravite="1"/>
 					</if>
 				</if>
