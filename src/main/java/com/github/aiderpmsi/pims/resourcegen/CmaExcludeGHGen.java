@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We find the list of excluded DP in sts_20130005_0001_p000.pdf
- * (pdftotext sts_20130005_0001_p000.pdf -nopgbrk -raw -f 433 -l 434)
+ * We find the list of excluded DP in volume_1.pdf
+ * (pdftotext volume_1.pdf -nopgbrk -raw -f 410 -l 411)
  * 
  * @author jpc
  *
@@ -26,7 +26,8 @@ public class CmaExcludeGHGen {
 				+ "\\s+"
 				+ "(?:"
 				+ "(\\d{2}[A-Z]\\d{2})|"
-				+ "(?:(?:Sous_CMD_)|(?:CMD)\\d{2})|"
+				+ "(?:CMD\\d{2})|"
+				+ "(?:Sous_CMD\\d{2}_(?:C|K|M))|"
 				+ "(?:Racines_en_(?:C|K|M))"
 				+ "))+)$");
 		
@@ -43,14 +44,14 @@ public class CmaExcludeGHGen {
 			if (matcher.matches()) {
 				bw.write("01:" + matcher.group(1) + "\n");
 				// THEN CHECK EACH GHM ELEMENT
-				String[] group = matcher.group(2).split("\\s+");
+				String[] group = matcher.group(2).trim().split("\\s+");
 				for (String element : group) {
 					if (element.startsWith("Racines_en_")) {
 						// 02 : RACINES WITH LETTER
 						bw.write("02:" + element.replace("Racines_en_", "") + "\n");
-					} else if (element.startsWith("Sous_CMD_")) {
+					} else if (element.startsWith("Sous_CMD")) {
 						// 03 : PART OF CMD
-						bw.write("03:" + element.replace("Sous_CMD_", "") + "\n");
+						bw.write("03:" + element.replace("Sous_CMD", "") + "\n");
 					} else if (element.startsWith("CMD")) {
 						// 04 : ONE CMD
 						bw.write("04:" + element.replace("CMD", "") + "\n");

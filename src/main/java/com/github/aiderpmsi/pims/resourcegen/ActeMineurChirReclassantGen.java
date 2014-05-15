@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We find the list of CMD for each CCMA sts_20130005_0001_p000.pdf pages 630 to 634
- * (pdftotext sts_20130005_0001_p000.pdf -nopgbrk -raw -f 630 -l 634)
+ * We find the list of CMD for each CCMA volume_1.pdf pages 608 to 612
+ * (pdftotext volume_1.pdf -nopgbrk -raw -f 608 -l 612)
  * 
  * @author jpc
  *

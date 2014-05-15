@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * We find the lists in sts_20130005_0002_p000.pdf
- * (pdftotext sts_20130005_0002_p000.pdf -nopgbrk -raw)
+ * We find the lists in volume_2.pdf
+ * (pdftotext volume_2.pdf -nopgbrk -raw)
  * 
  * @author jpc
  *
@@ -54,8 +54,8 @@ public class UnclassifiedGen {
 							break;
 						if (listeEntree.matcher(line).matches())
 							break;
-						// NO DIAGENTREE OR LISTENTREE, IF IT IS THE THIRD LINE, GO AWAY
-						if (nonMatched == 2)
+						// NO DIAGENTREE OR LISTENTREE, IF IT IS THE FOURTH LINE, GO AWAY
+						if (nonMatched == 3)
 							break;
 						else
 							nonMatched++;
