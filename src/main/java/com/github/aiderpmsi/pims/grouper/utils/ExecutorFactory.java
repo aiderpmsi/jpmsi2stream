@@ -121,6 +121,7 @@ public class ExecutorFactory {
 		appCtx.set("_actemineurchirreclassant_dictionary", new ActeMineurChirReclassantDictionnary());
 		appCtx.set("_dpclassant_dictionary", new DPClassantDictionnary());
 		appCtx.set("_rssContent", getRss());
+		appCtx.set("_inversion", "0");
 		
 		// Creates the engine
 		SCXMLExecutor engine = new SCXMLExecutor(
