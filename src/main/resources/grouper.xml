@@ -259,6 +259,7 @@
 			</onentry>
 			
 			<transition event="cmd_found" target="process_cmd07" />
+<<<<<<< HEAD
 			<transition event="cmd_not_found" target="test_cmd08" />
 	
 		</state>
@@ -277,6 +278,8 @@
 			</onentry>
 			
 			<transition event="cmd_found" target="process_cmd08" />
+=======
+>>>>>>> refs/remotes/origin/1.9.0
 			<transition event="cmd_not_found" target="fend" />
 	
 		</state>
@@ -302,7 +305,10 @@
 			<transition event="cmd05" target="process_cmd05_step2" />
 			<transition event="cmd06" target="process_cmd06_step2" />
 			<transition event="cmd07" target="process_cmd07_step2" />
+<<<<<<< HEAD
 			<transition event="cmd07" target="process_cmd08_step2" />
+=======
+>>>>>>> refs/remotes/origin/1.9.0
 		
 		</state>
 
@@ -1721,6 +1727,7 @@
 				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+<<<<<<< HEAD
 				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
 				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
 				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
@@ -2097,13 +2104,13 @@
 					</if>
 					<send event="'end'" />
 				<else />
-					<send event="'continue'" />
+					<send event="continue" />
 				</if>
 			</onentry>
-					
+
 			<transition event="end" target="end" />
 			<transition event="continue" target="a_wrdp" />
-
+		
 		</state>
 
 	</state>
