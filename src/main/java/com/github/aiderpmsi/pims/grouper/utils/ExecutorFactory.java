@@ -28,6 +28,7 @@ import com.github.aiderpmsi.pims.grouper.customtags.InResource;
 import com.github.aiderpmsi.pims.grouper.customtags.JexlExecute;
 import com.github.aiderpmsi.pims.grouper.customtags.ToRss;
 import com.github.aiderpmsi.pims.grouper.model.ActeClassantDictionnary;
+import com.github.aiderpmsi.pims.grouper.model.ActeClassantOpDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.ActeMineurChirReclassantDictionnary;
 import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
 import com.github.aiderpmsi.pims.grouper.model.DPClassantDictionnary;
@@ -120,6 +121,7 @@ public class ExecutorFactory {
 		appCtx.set("_classeacte_dictionary", new ClasseActeDictionary());
 		appCtx.set("_actemineurchirreclassant_dictionary", new ActeMineurChirReclassantDictionnary());
 		appCtx.set("_dpclassant_dictionary", new DPClassantDictionnary());
+		appCtx.set("_acteclassantop_dictionary", new ActeClassantOpDictionnary());
 		appCtx.set("_rssContent", getRss());
 		appCtx.set("_inversion", "0");
 		
