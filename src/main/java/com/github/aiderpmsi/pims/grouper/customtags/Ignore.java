@@ -15,7 +15,7 @@ import org.apache.commons.scxml.SCXMLExpressionException;
 import org.apache.commons.scxml.model.Action;
 import org.apache.commons.scxml.model.ModelException;
 
-import com.github.aiderpmsi.pims.grouper.model.BaseSimpleDictionary;
+import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary;
 import com.github.aiderpmsi.pims.grouper.model.Domain;
 import com.github.aiderpmsi.pims.grouper.model.Resource;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
@@ -49,8 +49,8 @@ public class Ignore extends Action {
 			case CLASSEACTE:
 			case ACTECLASSANTOP:
 			case ACTEMINEURCHIRRECLASSANT:
-				BaseSimpleDictionary dico =
-				(BaseSimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
+				SimpleDictionary dico =
+				(SimpleDictionary) scInstance.getRootContext().get("_" + resourceEnum.getName() + "_dictionary");
 				// GETS THE DOMAIN
 				Domain domainEnum = Domain.createResource(domain);
 				if (domainEnum != null) {
@@ -77,7 +77,7 @@ public class Ignore extends Action {
 		}
 	}
 
-	private void remove(BaseSimpleDictionary dico, String resourcekey,
+	private void remove(SimpleDictionary dico, String resourcekey,
 			List<HashMap<String, String>> content, String domainkey, String pattern) throws ModelException {
 		// GETS THE DEFINITION IN DICO
 		Set<String> dicoContent = dico.getDefintion(resourcekey);

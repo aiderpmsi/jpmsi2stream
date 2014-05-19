@@ -8,12 +8,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public abstract class BaseSimpleDictionary implements Dictionary<HashSet<String>> {
+public class SimpleDictionary implements Dictionary<HashSet<String>> {
 
-	public abstract String getConfigPath();
-	
 	protected Map<String, HashSet<String>> dictionnary =
 			new HashMap<>();
+	
+	String resource;
+			
+	public SimpleDictionary(String resource) {
+		this.resource = resource;
+	}
 	
 	public HashSet<String> getDefintion(String key) {
 		HashSet<String> definition = dictionnary.get(key);
@@ -40,7 +44,7 @@ public abstract class BaseSimpleDictionary implements Dictionary<HashSet<String>
 			br = new BufferedReader(
 					new InputStreamReader(
 							new BufferedInputStream(
-									BaseSimpleDictionary.class.getClassLoader().getResourceAsStream(getConfigPath())), "UTF-8"));
+									SimpleDictionary.class.getClassLoader().getResourceAsStream(resource)), "UTF-8"));
 			
 			HashSet<String> def = new HashSet<>();
 			String line = br.readLine();

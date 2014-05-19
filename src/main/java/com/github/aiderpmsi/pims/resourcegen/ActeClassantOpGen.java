@@ -8,7 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
-import com.github.aiderpmsi.pims.grouper.model.ClasseActeDictionary;
+
+import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary;
 
 /**
  * Generated from grouper-acteclassant.cfg and grouper-classeacte.cfg
@@ -21,7 +22,7 @@ public class ActeClassantOpGen {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 			
 		File input = new File("src/main/resources/grouper-acteclassant.cfg");
-		ClasseActeDictionary dico = new ClasseActeDictionary();
+		SimpleDictionary dico = new SimpleDictionary("groupe-classeacte.xml");
 		HashSet<String> acteschir = dico.getDefintion("ADC");
 		File output = new File("src/main/resources/grouper-acteclassantop.cfg");
 		BufferedReader br = new BufferedReader(new FileReader(input));

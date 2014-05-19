@@ -19,7 +19,9 @@ public abstract class BaseAction implements Action {
 		// EXECUTES THE ACTION
 		String result = executeAction(node, jc, jexl);
 		// DEPENDING ON THE RESULT, MOVE INTO DOCUMENT
-		if (result.equals("child|sibling")) {
+		if (result.equals("this")) {
+			return node;
+		} else if (result.equals("child|sibling")) {
 			// WE HAVE TO GO INSIDE NEXT CHILD OR SIBLING DEPENDING ON WHAT EXISTS
 			// FIRST FIND THE FIRST ELEMENT CHILD
 			Node nextNode = nextElement(node.getFirstChild());

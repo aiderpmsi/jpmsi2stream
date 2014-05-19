@@ -3,9 +3,9 @@ package com.github.aiderpmsi.pims.grouper.utils;
 public class T01C041 extends BaseTest {
 
 	private String[][] rssmain = {
-			{"DP", "A839     "},
+			{"DP", "Z491     "},
 			{"DR", "B202    "},
-			{"NbSeances", "0      "},
+			{"NbSeances", "1      "},
 			{"ModeSortie", "9 "},
 			{"DDN", "1980-04-05"},
 			{"DateEntree", "2013-04-08"},

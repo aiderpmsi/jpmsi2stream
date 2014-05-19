@@ -1,32 +1,14 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
-import java.util.Collection;
+import java.io.IOException;
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.JexlEngine;
+import org.w3c.dom.Node;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml.ErrorReporter;
-import org.apache.commons.scxml.EventDispatcher;
-import org.apache.commons.scxml.SCInstance;
-import org.apache.commons.scxml.SCXMLExpressionException;
-import org.apache.commons.scxml.model.Action;
-import org.apache.commons.scxml.model.ModelException;
-
-public class Group extends Action {
-	
-	private static final long serialVersionUID = -3102662436572879541L;
+public class Group extends BaseAction {
 	
 	private String erreur = "",	racine = "",
 			modalite = "", gravite = "";
-
-	@SuppressWarnings({ "rawtypes" })
-	@Override
-	public void execute(EventDispatcher evtDispatcher, ErrorReporter errRep,
-			SCInstance scInstance, Log appLog, Collection derivedEvents)
-			throws ModelException, SCXMLExpressionException {
-
-		// GETS THE LIST IN DICTIONNARY
-		// WRITES THE RESULT
-		scInstance.getRootContext().set("_result", this);
-	}
 
 	public String getErreur() {
 		return erreur;
@@ -58,6 +40,16 @@ public class Group extends Action {
 
 	public void setGravite(String gravite) {
 		this.gravite = gravite;
+	}
+
+	@Override
+	public String executeAction(Node node, JexlContext jc, JexlEngine jexl)
+			throws IOException {
+		// STOPS THE GROUPER
+		jc.set("continue", false);
+		// SETS THE GROUP
+		jc.set("group", this);
+		return "this";
 	}
 	
 }
