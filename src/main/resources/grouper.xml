@@ -2483,7 +2483,7 @@
 		</state>
 
 		<!-- STEP 2 of MAIN CMD 10 -->
-		<state id="process_cmd09_step2" >
+		<state id="process_cmd10_step2" >
 			<onentry>
 				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
 				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
