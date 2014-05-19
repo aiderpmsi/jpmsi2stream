@@ -1,0 +1,3117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+	xmlns:my="http://my.custom-actions.domain/CUSTOM"
+	version="1.0" initial="group">
+
+	<state id="group">
+
+		<datamodel>
+			<data name="cmd" expr="'CMD00'" />
+		</datamodel>
+
+		<initial>
+	    	<transition target="test_cmd28"/>
+		</initial>
+	
+		<!-- TEST IF WE ARE IN CMD 28 -->
+		<state id="test_cmd28">
+			<onentry>
+				<my:fromRss domain="main" get="NbSeances" result="numSeances" pattern="{0}" type="Integer" />
+				<if cond="numSeances gt 0">
+					<send event="'cmd_found'" />
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd28" />
+			<transition event="cmd_not_found" target="test_cmd27" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 27 -->
+		<state id="test_cmd27">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="acteclassant" key="27" value="acte" result="acte_cmd27"/>
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
+				<my:inResource resource="unclassified" key="A-138" value="acte" result="a138"/>
+				<if cond="acte_cmd27 gt 0 and acte_adc gt 0">
+					<send event="'cmd_27_adc'" />
+					<elseif cond="a138 gt 0"/>
+					<send event="'a138'" />
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_27_adc" target="process_cmd27_adc" />
+			<transition event="a138" target="process_cmd27_a138" />
+			<transition event="cmd_not_found" target="test_cmd26" /> 
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 26 -->
+		<state id="test_cmd26">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="unclassified" key="D-130" value="dp" result="d130"/>
+				<if cond="d130 gt 0">
+					<send event="'cmd_found'" />
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd26" />
+			<transition event="cmd_not_found" target="test_cmd25" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 25 -->
+		<state id="test_cmd25">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:inResource resource="unclassified" key="D-127" value="dp" result="dpd127"/>
+				<my:inResource resource="unclassified" key="D-127" value="da" result="dad127"/>
+				<my:inResource resource="unclassified" key="D-128" value="dp" result="dpd128"/>
+				<my:inResource resource="unclassified" key="D-128" value="da" result="dad128"/>
+				<if cond="(dpd127 gt 0 and dad128 gt 0) or (dpd128 gt 0 and dad127 gt 0)">
+					<send event="'cmd_found'" />
+					<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd25" />
+			<transition event="cmd_not_found" target="post_cmd25" />
+	
+		</state>
+
+		<!-- POST CMD 25, PREPARE TEST BY INVERTING DP AND DR IF NEEDED (DP Z09 - Z08) -->
+		<state id="post_cmd25">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:execute expr="dp.substring(0, 3)" result = "dpclass"/>
+				<if cond="(dpclass eq 'Z09' or dpclass eq 'Z08') and not(dr.size() eq 0)">
+					<my:execute expr="'1'" result="_inversion" />
+					<my:toRss set="DP,DR,Inversion" value="dr,dp,_inversion" />
+				<else />
+					<my:execute expr="'0'" result="_inversion" />
+					<my:toRss set="Inversion" value="_inversion" />
+				</if>
+				<send event="'continue'" />
+			</onentry>
+			
+			<transition event="continue" target="test_cmd15" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 15 -->
+		<state id="test_cmd15">
+			<onentry>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:fromRss domain="main" get="ModeEntree" pattern="{0}" result="modeentree" type="Integer"/>
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:age birthday="ddn" date="dateentree" result="age" type="day"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<if cond="(age lt 8)" >
+					<send event="'cmd_found'"/>
+				<elseif cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)" />
+					<if cond="(age lt 29) or (ageyear lt 1 and poidsnn lt 2500)" >
+						<send event="'cmd_found'" />
+					<else />
+						<send event="'cmd_not_found'" />
+					</if>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd15" />
+			<transition event="cmd_not_found" target="test_cmd01" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 01 -->
+		<state id="test_cmd01">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-01" value="dp" result="cmd01"/>
+				<if cond="cmd01 gt 0" >
+					<assign name="cmd" expr="'cmd01'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd01" />
+			<transition event="cmd_not_found" target="test_cmd02" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 02 -->
+		<state id="test_cmd02">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-02" value="dp" result="cmd02"/>
+				<if cond="cmd02 gt 0" >
+					<assign name="cmd" expr="'cmd02'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd02" />
+			<transition event="cmd_not_found" target="test_cmd03" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 03 -->
+		<state id="test_cmd03">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-03" value="dp" result="cmd03"/>
+				<if cond="cmd03 gt 0" >
+					<assign name="cmd" expr="'cmd03'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd03" />
+			<transition event="cmd_not_found" target="test_cmd04" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 04 -->
+		<state id="test_cmd04">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-04" value="dp" result="cmd04"/>
+				<if cond="cmd04 gt 0" >
+					<assign name="cmd" expr="'cmd04'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd04" />
+			<transition event="cmd_not_found" target="test_cmd05" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 05 -->
+		<state id="test_cmd05">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-05" value="dp" result="cmd05"/>
+				<if cond="cmd05 gt 0" >
+					<assign name="cmd" expr="'cmd05'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd05" />
+			<transition event="cmd_not_found" target="test_cmd06" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 06 -->
+		<state id="test_cmd06">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-06" value="dp" result="cmd06"/>
+				<if cond="cmd06 gt 0" >
+					<assign name="cmd" expr="'cmd06'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd06" />
+			<transition event="cmd_not_found" target="test_cmd07" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 07 -->
+		<state id="test_cmd07">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-07" value="dp" result="cmd07"/>
+				<if cond="cmd07 gt 0" >
+					<assign name="cmd" expr="'cmd07'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd07" />
+			<transition event="cmd_not_found" target="test_cmd08" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 08 -->
+		<state id="test_cmd08">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-08" value="dp" result="cmd08"/>
+				<if cond="cmd08 gt 0" >
+					<assign name="cmd" expr="'cmd08'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd08" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 09 -->
+		<state id="test_cmd09">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-09" value="dp" result="cmd09"/>
+				<if cond="cmd09 gt 0" >
+					<assign name="cmd" expr="'cmd09'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd09" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 10 -->
+		<state id="test_cmd10">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-10" value="dp" result="cmd10"/>
+				<if cond="cmd10 gt 0" >
+					<assign name="cmd" expr="'cmd10'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd10" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 11 -->
+		<state id="test_cmd11">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-11" value="dp" result="cmd11"/>
+				<if cond="cmd11 gt 0" >
+					<assign name="cmd" expr="'cmd11'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd11" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 12 -->
+		<state id="test_cmd12">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-12" value="dp" result="cmd12"/>
+				<if cond="cmd12 gt 0" >
+					<assign name="cmd" expr="'cmd12'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd12" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- TEST IF WE ARE IN CMD 13 -->
+		<state id="test_cmd13">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-13" value="dp" result="cmd13"/>
+				<if cond="cmd12 gt 0" >
+					<assign name="cmd" expr="'cmd13'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd13" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
+		<!-- ACTE WITHOUT RELATION WITH DP (USED IN MULTIPLE CMD)-->
+		<state id="a_wrdp" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="actemineurchirreclassant" key="all" value="acte" result="nbacteopreclassant"/>
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="nbacteop"/>
+				<if cond="nbacteopreclassant eq nbacteop" >
+					<my:ignore resource="actemineurchirreclassant" resourcekey="all" domain="acte" domainkey="CodeCCAM,Phase" pattern="{0}/{1}" />
+				<else />
+					<my:ignore resource="acteclassantop" resourcekey="all" domain="acte" domainkey="CodeCCAM,Phase" pattern="{0}/{1}" />
+				</if>
+				<send event="cmd" /> <!-- WE HAVE IN CMD THE NUMBER OF CMD (CMD\d{2}) -->
+			</onentry>
+
+			<transition event="cmd01" target="process_cmd01_step2" />
+			<transition event="cmd02" target="process_cmd02_step2" />
+			<transition event="cmd03" target="process_cmd03_step2" />
+			<transition event="cmd04" target="process_cmd04_step2" />
+			<transition event="cmd05" target="process_cmd05_step2" />
+			<transition event="cmd06" target="process_cmd06_step2" />
+			<transition event="cmd07" target="process_cmd07_step2" />
+			<transition event="cmd08" target="process_cmd08_step2" />
+			<transition event="cmd09" target="process_cmd09_step2" />
+			<transition event="cmd10" target="process_cmd10_step2" />
+			<transition event="cmd11" target="process_cmd11_step2" />
+			<transition event="cmd12" target="process_cmd12_step2" />
+			<transition event="cmd13" target="process_cmd13_step2" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD28 -->
+		<state id="process_cmd28">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic" />
+				<my:inResource resource="unclassified" key="D-145" value="dp" result="d145"/>
+				<if cond="d145 gt 0">
+					<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+					<my:inResource resource="unclassified" key="D-113" value="dp" result="d113" />
+					<my:inResource resource="unclassified" key="D-114" value="dp" result="d114" />
+					<my:inResource resource="unclassified" key="D-063" value="dp" result="d063" />
+					<my:inResource resource="unclassified" key="D-142" value="dp" result="d142" />
+					<my:inResource resource="unclassified" key="D-143" value="dp" result="d143" />
+					<if cond="d113 gt 0 or d114 gt 0 or d063 gt 0 or d142 gt 0" >
+						<if cond="d113 gt 0" >
+							<my:inResource resource="unclassified" key="A-180" value="acte" result="a180" />
+							<my:inResource resource="unclassified" key="A-181" value="acte" result="a181" />
+							<my:inResource resource="unclassified" key="A-234" value="acte" result="a234" />
+							<my:inResource resource="unclassified" key="D-030" value="dp" result="d030" />
+							<if cond="a180 gt 0" >
+								<my:group racine="28Z01" gravite="Z" />
+							<elseif cond="a181 gt 0" />
+								<my:group racine="28Z02" gravite="Z" />
+							<elseif cond="a234 gt 0" />
+								<my:group racine="28Z03" gravite="Z" />
+							<elseif cond="d030 gt 0" />
+								<my:group racine="28Z04" gravite="Z" />
+							<else />
+								<my:group erreur="90Z02Z" />
+							</if>
+						<elseif cond="d114 gt 0" />
+							<my:group racine="28Z07" gravite="Z" />
+						<elseif cond="d063 gt 0" />
+							<my:group racine="28Z17" gravite="Z" />
+						<elseif cond="d142 gt 0" />
+							<my:inResource resource="unclassified" key="A-314" value="acte" result="a314" />
+							<my:inResource resource="unclassified" key="A-315" value="acte" result="a315" />
+							<my:inResource resource="unclassified" key="A-316" value="acte" result="a316" />
+							<my:inResource resource="unclassified" key="A-317" value="dp" result="a317" />
+							<if cond="a314 gt 0" >
+								<my:group racine="28Z19" gravite="Z" />
+							<elseif cond="a315 gt 0" />
+								<my:group racine="28Z20" gravite="Z"/>
+							<elseif cond="a316 gt 0" />
+								<my:group racine="28Z21" gravite="Z" />
+							<elseif cond="a317 gt 0" />
+								<my:group racine="28Z22" gravite="Z" />
+							<else />
+								<my:group erreur="90Z02Z" />
+							</if>
+						</if>
+						<send event="'end'" />
+					<elseif cond="d143 gt 0" />
+						<my:inResource resource="unclassified" key="A-342" value="acte" result="a342" />
+						<my:inResource resource="unclassified" key="A-205" value="acte" result="a205" />
+						<my:inResource resource="unclassified" key="A-170" value="acte" result="a170" />
+						<my:inResource resource="unclassified" key="A-304" value="acte" result="a304" />
+						<my:inResource resource="unclassified" key="A-318" value="acte" result="a318" />
+						<my:inResource resource="unclassified" key="A-319" value="acte" result="a319" />
+						<my:inResource resource="unclassified" key="A-320" value="acte" result="a320" />
+						<if cond="a342 gt 0" >
+							<send event="'test_cmd27'" />
+						<else />
+							<if cond="a205 gt 0" >
+								<my:group racine="28Z10" gravite="Z" />
+							<elseif cond="a170 gt 0" />
+								<my:group racine="28Z11" gravite="Z" />
+							<elseif cond="a304 gt 0" />
+								<my:group racine="28Z18" gravite="Z" />
+							<elseif cond="a318 gt 0" />
+								<my:group racine="28Z23" gravite="Z" />
+							<elseif cond="a319 gt 0" />
+								<my:group racine="28Z24" gravite="Z" />
+							<elseif cond="a320 gt 0" />
+								<my:group racine="28Z25" gravite="Z" />
+							<else />
+								<my:group erreur="90Z02Z" />
+							</if>
+							<send event="'end'" />
+						</if>
+					<else />
+						<my:inResource resource="unclassified" key="D-139" value="dp" result="d139" />
+						<my:inResource resource="unclassified" key="D-047" value="dp" result="d047" />
+						<my:inResource resource="unclassified" key="D-054" value="dp" result="d054" />
+						<if cond="d139 gt 0" >
+							<my:group racine="28Z14" gravite="Z"/>
+						<elseif cond="d047 gt 0" />
+							<my:group racine="28Z15" gravite="Z"/>
+						<elseif cond="d054 gt 0" />
+							<my:group racine="28Z16" gravite="Z"/>
+						<else />
+							<my:group erreur="90Z02Z" />
+						</if>
+						<send event="'end'" />
+					</if>
+				<else />
+					<my:group erreur="90Z01Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+			
+			<transition event="test_cmd27" target="test_cmd27" />
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD27 AND IN ADC -->
+		<state id="process_cmd27_adc">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="unclassified" key="A-139" value="acte" result="a139"/>
+				<my:inResource resource="unclassified" key="A-140" value="acte" result="a140"/>
+				<my:inResource resource="unclassified" key="A-141" value="acte" result="a141"/>
+				<my:inResource resource="unclassified" key="A-027" value="acte" result="a027"/>
+				<my:inResource resource="unclassified" key="A-093" value="acte" result="a093"/>
+				<my:inResource resource="unclassified" key="A-265" value="acte" result="a265"/>
+				<if cond="a139 gt 0">
+					<my:group racine="27C02" gravite="1" />
+				<elseif cond="a140 gt 0"/>
+					<my:group racine="27C03" gravite="1" />
+				<elseif cond="a141 gt 0" />
+					<my:group racine="27C04" gravite="1" />
+				<elseif cond="a027 gt 0" />
+					<my:group racine="27C05" gravite="1" />
+				<elseif cond="a093 gt 0" />
+					<my:group racine="27C06" gravite="1" />
+				<elseif cond="a265 gt 0" />
+					<my:group racine="27C07" gravite="1" />
+				<else />
+					<my:group erreur="90Z02Z" />
+				</if>
+				<send event="'end'" />
+			</onentry>
+			
+			<transition event="end" target="end" />
+
+		</state>
+		
+		<!-- WE ARE IN CMD27 AND A-138 -->
+		<state id="process_cmd27_a138">
+			<onentry>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="entree" type="String"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="sortie" type="String"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="unclassified" key="A-178" value="acte" result="a178"/>
+				<if cond="entree eq sortie">
+					<my:group racine="27Z04" modalite="J" />
+				<elseif cond="a178 gt 0"/>
+					<my:group racine="27Z02" gravite="1" />
+				<else />
+					<my:group racine="27Z03" gravite="Z" />
+				</if>
+				<send event="'end'" />
+			</onentry>
+			
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD26 -->
+		<state id="process_cmd26">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da" result="diags" />
+				<my:inResource resource="unclassified" key="D-131" value="diags" result="d131"/>
+				<my:inResource resource="unclassified" key="D-132" value="diags" result="d132"/>
+				<my:inResource resource="unclassified" key="D-133" value="diags" result="d133"/>
+				<my:inResource resource="unclassified" key="D-134" value="diags" result="d134"/>
+				<my:inResource resource="unclassified" key="D-135" value="diags" result="d135"/>
+				<my:inResource resource="unclassified" key="D-136" value="diags" result="d136"/>
+				<my:inResource resource="unclassified" key="D-137" value="diags" result="d137"/>
+				<my:inResource resource="unclassified" key="D-138" value="diags" result="d138"/>
+				<my:execute expr="(d131 gt 0 ? 1:0) + (d132 gt 0 ? 1:0) + (d133 gt 0 ? 1:0) +
+				    (d134 gt 0 ? 1:0) + (d135 gt 0 ? 1:0) + (d136 gt 0 ? 1:0) + (d137 gt 0 ? 1:0) + (d138 gt 0 ? 1:0)"  result="numdiags"/>
+				<if cond="numdiags ge 2">
+					<send event="'2_trauma_diag'" />
+				<elseif cond="numdiags le 1"/>
+					<send event="'1_trauma_diag'" />
+				</if>
+			</onentry>
+			
+			<transition event="2_trauma_diag" target="process_cmd26_2_trauma" />
+			<transition event="1_trauma_diag" target="test_cmd25" />
+
+		</state>
+
+		<!-- WE ARE IN CMD26 AND HAVE 2 TRAUMAS -->
+		<state id="process_cmd26_2_trauma">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
+				<if cond="acte_adc gt 0">
+					<my:group racine="26C02" gravite="1" />
+				<else />
+					<my:group racine="26M02" gravite="1" />
+				</if>
+				<send event="'end'" />
+			</onentry>
+			
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD25 -->
+		<state id="process_cmd25">
+			<onentry>
+				<my:fromRss domain="main" get="ModelSortie" pattern="{0}" result="modesortie" type="Integer"/> <!-- ModeSortie 9 is deceased -->
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da" result="diags" />
+				<my:age birthday="ddn" date="dateentree" type="year" result="age" />
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc"/>
+				<my:inResource resource="unclassified" key="D-129" value="diags" result="d129"/>
+				<if cond="modesortie eq 9">
+					<my:group racine="25Z02" gravite="E" />
+				<elseif cond="age lt 13"/>
+					<my:group racine="25Z03" gravite="1" />
+				<elseif cond="acte_adc gt 0"/>
+					<my:group racine="25C02" gravite="1" />
+				<elseif cond="d129 ge 2"/>
+					<my:group racine="25M02" gravite="C" />
+				<elseif cond="d129 gt 0"/>
+					<my:group racine="25M02" gravite="B" />
+				<else />
+					<my:group racine="25M02" modalite="T" gravite="A" />
+				</if>
+				<send event="'end'" />
+			</onentry>
+			
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 -->
+		<state id="process_cmd15">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="ModeSortie" pattern="{0}" result="modesortie" type="Integer" />
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:fromRss domain="main" get="AgeGestationnel" pattern="{0}" result="agegest" type="Integer"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="dureesejour" type="day"/>
+				<my:inResource resource="unclassified" key="D-056" value="dp" result="d056" />
+				<my:inResource resource="classeacte" key="ADC" value="acte" result="acte_adc" />
+				<if cond="d056 gt 0">
+					<my:group racine="15Z10" gravite="E" />
+					<send event="'end'" />
+				<elseif cond="acte_adc gt 0"/>
+					<send event="'cmd15_adc'" />
+				<elseif cond="modesortie eq 71 and dureesejour lt 4"/>
+					<my:group racine="15M02" gravite="Z" />
+					<send event="'end'" />
+				<elseif cond="modesortie eq 9"/>
+					<if cond="dureesejour lt 4">
+						<my:group racine="15M03" gravite="E" />
+					<else />
+						<my:group racine="15M04" gravite="E" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+					<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+					<my:concatenate values="dp,dr,da" result="diags" />
+					<if cond="poidsnn ge 2400 and agegest ge 38">
+						<my:inResource resource="unclassified" key="D-303" value="diags" result="d303" />
+						<my:inResource resource="unclassified" key="D-304" value="diags" result="d304" />
+						<my:inResource resource="unclassified" key="D-305" value="diags" result="d305" />
+						<if cond="poidsnn ge 3300 and agegest ge 40">
+							<if cond="d303 gt 0">
+								<my:group racine="15M05" gravite="D" />
+							<elseif cond="d304 gt 0" />
+								<my:group racine="15M05" gravite="C"/>
+							<elseif cond="d305 gt 0" />
+								<my:group racine="15M05" gravite="B"/>
+							<else />
+								<my:group racine="15M05" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 2400 and agegest ge 38" />
+							<if cond="d303 gt 0">
+								<my:group racine="15M06" gravite="D" />
+							<elseif cond="d304 gt 0" />
+								<my:group racine="15M06" gravite="C"/>
+							<elseif cond="d305 gt 0" />
+								<my:group racine="15M06" gravite="B"/>
+							<else />
+								<my:group racine="15M06" gravite="A"/>
+							</if>
+						</if>
+					<elseif cond="poidsnn ge 1500 and agegest ge 33"/>
+						<my:inResource resource="unclassified" key="D-306" value="diags" result="d306" />
+						<my:inResource resource="unclassified" key="D-307" value="diags" result="d307" />
+						<if cond="poidsnn ge 2200 and agegest ge 37">
+							<if cond="d306 gt 0">
+								<my:group racine="15M07" gravite="C"/>
+							<elseif cond="d307 gt 0" />
+								<my:group racine="15M07" gravite="B"/>
+							<else />
+								<my:group racine="15M07" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 2000 and agegest ge 37"/>
+							<if cond="d306 gt 0">
+								<my:group racine="15M08" gravite="C"/>
+							<elseif cond="d307 gt 0" />
+								<my:group racine="15M08" gravite="B"/>
+							<else />
+								<my:group racine="15M08" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 1800 and agegest ge 36"/>
+							<if cond="d306 gt 0">
+								<my:group racine="15M09" gravite="C"/>
+							<elseif cond="d307 gt 0" />
+								<my:group racine="15M09" gravite="B"/>
+							<else />
+								<my:group racine="15M09" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 1700 and agegest ge 35"/>
+							<if cond="d306 gt 0">
+								<my:group racine="15M10" gravite="C"/>
+							<elseif cond="d307 gt 0" />
+								<my:group racine="15M10" gravite="B"/>
+							<else />
+								<my:group racine="15M10" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 1500 and agegest ge 33"/>
+							<if cond="d306 gt 0">
+								<my:group racine="15M11" gravite="C"/>
+							<elseif cond="d307 gt 0" />
+								<my:group racine="15M11" gravite="B"/>
+							<else />
+								<my:group racine="15M11" gravite="A"/>
+							</if>
+						</if>
+					<elseif cond="poidsnn ge 800 and agegest ge 28"/>
+						<my:inResource resource="unclassified" key="D-309" value="diags" result="d309"/>
+						<if cond="poidsnn ge 1300 and agegest ge 32">
+							<if cond="d309 gt 0">
+								<my:group racine="15M12" gravite="B"/>
+							<else />
+								<my:group racine="15M12" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
+							<if cond="d309 gt 0">
+								<my:group racine="15M13" gravite="B"/>
+							<else />
+								<my:group racine="15M13" gravite="A"/>
+							</if>
+						<elseif cond="poidsnn ge 800 and agegest ge 28"/>
+							<if cond="d309 gt 0">
+								<my:group racine="15M14" gravite="B"/>
+							<else />
+								
+							</if>
+						</if>
+					<else />
+						<my:group racine="15M14" gravite="A"/>
+					</if>
+					<send event="end" />
+				</if>
+			</onentry>
+			
+			<transition event="end" target="end" />
+			<transition event="cmd15_adc" target="process_cmd15_adc" />
+
+		</state>
+
+		<!-- WE ARE IN CMD15 AND HAVE AN ADC -->
+		<state id="process_cmd15_adc">
+			<onentry>
+				<my:fromRss domain="main" get="PoidsNouveauNe" pattern="{0}" result="poidsnn" type="Integer"/>
+				<my:fromRss domain="main" get="AgeGestationnel" pattern="{0}" result="agegest" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,dr,da" result="diags" />
+				<my:inResource resource="unclassified" key="D-303" value="diags" result="d303"/>
+				<my:inResource resource="unclassified" key="A-337" value="acte" result="a337"/>
+				<my:inResource resource="unclassified" key="A-338" value="acte" result="a338"/>
+				<if cond="poidsnn ge 1500 and agegest ge 33">
+					<if cond="a337 gt 0">
+						<if cond="d303 gt 0">
+							<my:group racine="15C02" gravite="B"/>
+						<else />
+							<my:group racine="15C02" gravite="A"/>
+						</if>
+					<elseif cond="a338 gt 0" />
+						<if cond="d303 gt 0">
+							<my:group racine="15C03" gravite="B"/>
+						<else />
+							<my:group racine="15C03" gravite="A"/>
+						</if>
+					<elseif cond="d303 gt 0" />
+						<my:group racine="15C05" gravite="B"/>
+					<else />
+						<my:group racine="15C04" gravite="A"/>
+					</if>
+					<send event="'end'" />
+				<elseif cond="poidsnn ge 1100 and agegest ge 30"/>
+					<if cond="d303 gt 0">
+						<my:group racine="15C05" gravite="B"/>
+					<else />
+						<my:group racine="15C05" gravite="A"/>
+					</if>
+					<send event="'end'" />
+				<elseif cond="poidsnn ge 800 and agegest ge 28"/>
+					<if cond="d303 gt 0">
+						<my:group racine="15C06" gravite="B"/>
+					<else />
+						<my:group racine="15C06" gravite="A"/>
+					</if>
+					<send event="'end'" />
+				<else />
+					<my:group racine="90Z02" gravite="Z" />
+					<send event="'end'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+
+		</state>
+
+		<!-- WE ARE IN CMD01 -->
+		<state id="process_cmd01">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags" />
+				<my:inResource resource="acteclassant" key="01" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-195" value="acte" result="a195" />
+					<my:inResource resource="unclassified" key="A-002" value="acte" result="a002"/>
+					<my:inResource resource="unclassified" key="A-196" value="acte" result="a196"/>
+					<my:inResource resource="unclassified" key="A-003" value="acte" result="a003" />
+					<my:inResource resource="unclassified" key="A-004" value="acte" result="a004"/>
+					<my:inResource resource="unclassified" key="A-346" value="acte" result="a346"/>
+					<my:inResource resource="unclassified" key="A-005" value="acte" result="a005"/>
+					<my:inResource resource="unclassified" key="D-326" value="dp" result="D326"/>
+					<my:inResource resource="unclassified" key="A-006" value="acte" result="a006"/>
+					<if cond="a195 gt 0">
+						<my:group racine="01C09" gravite="1" />
+					<elseif cond="a002 gt 0" />
+						<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+						<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+						<my:age birthday="ddn" date="dateentree" result="age" type="year"/>
+						<if cond="age lt 18" >
+							<my:inResource resource="unclassified" key="D-039" value="diags" result="d039"/>
+							<if cond="d039 gt 0" >
+								<my:group racine="01C11" gravite="1" />
+							<else />
+								<my:group racine="01C12" gravite="1" />
+							</if>
+						<else />
+							<my:inResource resource="unclassified" key="D-092" value="diags" result="d092"/>
+							<if cond="d092 gt 0" >
+								<my:group racine="01C03" gravite="1" />
+							<else />
+								<my:group racine="01C04" gravite="1" />
+							</if>
+						</if>
+					<elseif cond="a196 gt 0" />
+						<my:group racine="01C10" modalite="J" gravite="1"/>
+					<elseif cond="a003 gt 0" />
+						<my:group racine="01C05" gravite="1" />
+					<elseif cond="a004 gt 0" />
+						<my:group racine="01C06" gravite="1" />
+					<elseif cond="a346 gt 0" />
+						<my:group racine="01C14" modalite="J" gravite="1"/>
+					<elseif cond="a005 gt 0 or d326 gt 0" />
+						<my:group racine="01C15" gravite="1" modalite="J"/>
+					<elseif cond="a006 gt 0" />
+						<my:group racine="01C08" modalite="J" gravite="1"/>
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 01 -->
+		<state id="process_cmd01_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:fromRss domain="main" get="Inversion" pattern="{0}" result="_inversion" type="String"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:age birthday="ddn" date="dateentree" result="ageday" type="day"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:fromRss domain="main" get="ModeSortie" pattern="{0}" result="modesortie" type="Integer"/>
+				<my:inResource resource="unclassified" key="A-197" value="acte" result="a197"/>
+				<my:inResource resource="unclassified" key="A-198" value="acte" result="a198"/>
+				<my:inResource resource="unclassified" key="A-266" value="acte" result="a266"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="a197 gt 0" >
+					<my:inResource resource="unclassified" key="D-067" value="dp" result="d067"/>
+					<if cond="d067 gt 0" >
+						<my:group racine="01K07" gravite="1"/>
+					<else />
+						<my:group racine="01K02" gravite="1"/>
+					</if>
+				<elseif cond="a198 gt 0" />
+					<my:group racine="01K03" gravite="1"/>
+				<elseif cond="duree lt 2 and modesortie eq 9" />
+					<my:inResource resource="unclassified" key="D-064" value="dp" result="d064"/>
+					<if cond="d064 gt 0" >
+						<my:group racine="01M36" gravite="E"/>
+					<else />
+						<my:group racine="01M37" gravite="E"/>
+					</if>
+				<elseif cond="duree eq 0 and a266 gt 0"/>
+					<my:group racine="01K04" modalite="J" />
+				<elseif cond="duree eq 0 and activite.contains(4)"/>
+					<my:group racine="01K06" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="01M32" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-0101" value="dp" result="d0101"/>
+					<my:inResource resource="unclassified" key="D-0102" value="dp" result="d0102"/>
+					<my:inResource resource="unclassified" key="D-0103" value="dp" result="d0103"/>
+					<my:inResource resource="unclassified" key="D-0104" value="dp" result="d0104"/>
+					<my:inResource resource="unclassified" key="D-0105" value="dp" result="d0105"/>
+					<my:inResource resource="unclassified" key="D-0106" value="dp" result="d0106"/>
+					<my:inResource resource="unclassified" key="D-0107" value="dp" result="d0107"/>
+					<my:inResource resource="unclassified" key="D-0108" value="dp" result="d0108"/>
+					<my:inResource resource="unclassified" key="D-0109" value="dp" result="d0109"/>
+					<my:inResource resource="unclassified" key="D-0110" value="dp" result="d0110"/>
+					<my:inResource resource="unclassified" key="D-0111" value="dp" result="d0111"/>
+					<my:inResource resource="unclassified" key="D-0112" value="dp" result="d0112"/>
+					<my:inResource resource="unclassified" key="D-0113" value="dp" result="d0113"/>
+					<my:inResource resource="unclassified" key="D-0114" value="dp" result="d0114"/>
+					<my:inResource resource="unclassified" key="D-0115" value="dp" result="d0115"/>
+					<my:inResource resource="unclassified" key="D-0116" value="dp" result="d0116"/>
+					<my:inResource resource="unclassified" key="D-0117" value="dp" result="d0117"/>
+					<my:inResource resource="unclassified" key="D-0118" value="dp" result="d0118"/>
+					<my:inResource resource="unclassified" key="D-0119" value="dp" result="d0119"/>
+					<my:inResource resource="unclassified" key="D-0120" value="dp" result="d0120"/>
+					<my:inResource resource="unclassified" key="D-0121" value="dp" result="d0121"/>
+					<my:inResource resource="unclassified" key="D-0122" value="dp" result="d0122"/>
+					<my:inResource resource="unclassified" key="D-0123" value="dp" result="d0123"/>
+					<my:inResource resource="unclassified" key="D-0124" value="dp" result="d0124"/>
+					<my:inResource resource="unclassified" key="D-0125" value="dp" result="d0125"/>
+					<my:inResource resource="unclassified" key="D-0126" value="dp" result="d0126"/>
+					<my:inResource resource="unclassified" key="D-0127" value="dp" result="d0127"/>
+					<if cond="d0101 gt 0" >
+						<my:group racine="01M22" gravite="1" modalite="T" />
+					<elseif cond="d0102 gt 0" />
+						<my:group racine="01M23" gravite="1" />
+					<elseif cond="d0103 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="01M24" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="01M25" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0104 gt 0" />
+						<my:group racine="01M04" gravite="1" modalite="T" />
+					<elseif cond="d0105 gt 0" />
+						<my:group racine="01M25" gravite="1" modalite="T" />
+					<elseif cond="d0106 gt 0" />
+						<my:group racine="01M26" gravite="1" modalite="T" />
+					<elseif cond="d0107 gt 0" />
+						<my:group racine="01M27" gravite="1" modalite="T" />
+					<elseif cond="d0108 gt 0" />
+						<if cond="ageyear gt 79" >
+							<my:group racine="01M07" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="01M08" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0109 gt 0" />
+						<my:group racine="01M28" gravite="1" modalite="T" />
+					<elseif cond="d0110 gt 0" />
+						<my:group racine="01M09" gravite="1" modalite="T" />
+					<elseif cond="d0111 gt 0" />
+						<my:group racine="01M29" gravite="1" />
+					<elseif cond="d0112 gt 0" />
+						<my:group racine="01M10" gravite="1" modalite="T" />
+					<elseif cond="d0113 gt 0" />
+						<my:group racine="01M11" gravite="1" modalite="T" />
+					<elseif cond="d0114 gt 0" />
+						<my:group racine="01M12" gravite="1" modalite="T" />
+					<elseif cond="d0115 gt 0" />
+						<my:group racine="01M13" gravite="1" />
+					<elseif cond="d0116 gt 0" />
+						<my:group racine="01M33" gravite="1" />
+					<elseif cond="d0117 gt 0" />
+						<my:group racine="01M30" gravite="1" modalite="T" />
+					<elseif cond="d0118 gt 0" />
+						<my:group racine="01M31" gravite="1" modalite="T" />
+					<elseif cond="d0119 gt 0" />
+						<if cond="ageyear gt 79" >
+							<my:group racine="01M15" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="01M16" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0120 gt 0" />
+						<my:group racine="01M17" gravite="1" modalite="T" />
+					<elseif cond="d0121 gt 0" />
+						<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+						<my:concatenate values="dp,da" result="diags"/>
+						<my:inResource resource="unclassified" key="D-124" value="diags" result="d124"/>
+						<my:inResource resource="unclassified" key="D-125" value="diags" result="d125"/>
+						<if cond="d124 gt 0" >
+							<my:group racine="01M18" modalite="T" gravite="1" />
+						<elseif cond="d125 gt 0" />
+							<my:group racine="01M19" gravite="1"/>
+						<else />
+							<my:group racine="01M20" gravite="1"/>
+						</if>
+					<elseif cond="d0122 gt 0" />
+						<my:inResource resource="unclassified" key="A-267" value="acte" result="a267"/>
+						<if cond="duree eq 0 and a267 gt 0" >
+							<my:group racine="01K05" modalite="J" />
+						<else />
+							<my:group racine="01M21" modalite="T" gravite="1" />
+						</if>
+					<elseif cond="d0123 gt 0" />
+						<my:group racine="01M32" gravite="Z" />
+					<elseif cond="d0124 gt 0" />
+						<my:group racine="01M35" gravite="Z" modalite="T" />
+					<elseif cond="d0125 gt 0" />
+						<my:group racine="01M34" gravite="Z" modalite="T" />
+					<elseif cond="d0126 gt 0" />
+						<my:group racine="01M38" gravite="1" />
+					<elseif cond="d0127 gt 0" />
+						<my:group racine="01M39" gravite="1" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD02 -->
+		<state id="process_cmd02">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags" />
+				<my:inResource resource="acteclassant" key="02" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-213" value="acte" result="a213" />
+					<my:inResource resource="unclassified" key="A-007" value="acte" result="a007" />
+					<my:inResource resource="unclassified" key="A-008" value="acte" result="a008" />
+					<my:inResource resource="unclassified" key="A-305" value="acte" result="a305" />
+					<my:inResource resource="unclassified" key="A-012" value="acte" result="a012" />
+					<my:inResource resource="unclassified" key="A-013" value="acte" result="a013" />
+					<if cond="a213 gt 0">
+						<my:group racine="02C09" gravite="1" modalite="J" />
+					<elseif cond="a007 gt 0"/>
+						<my:group racine="02C02" gravite="1" modalite="J" />
+					<elseif cond="a008 gt 0"/>
+						<my:group racine="02C03" gravite="1" modalite="J" />
+					<elseif cond="a305 gt 0"/>
+						<my:inResource resource="unclassified" key="A-306" value="acte" result="a306" />
+						<my:inResource resource="unclassified" key="A-010" value="acte" result="a010" />
+						<my:inResource resource="unclassified" key="D-068" value="diags" result="d068" />
+						<if cond="a306 gt 0 and d068 gt 0" >
+							<my:group racine="02C10" gravite="1" modalite="J"/>
+						<elseif cond="a010 gt 0"/>
+							<my:inResource resource="unclassified" key="A-303" value="acte" result="a303" />
+							<if cond="a303 gt 0" >
+								<my:group racine="02C12" gravite="1" modalite="J"/>
+							<else />
+								<my:group racine="02C05" gravite="1" modalite="J"/>
+							</if>
+						<else />
+							<my:group racine="02C11" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a012" />
+						<my:group racine="02C06" gravite="1" modalite="J"/>
+					<elseif cond="a013" />
+						<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+						<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+						<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+						<if cond="ageyear lt 18" >
+							<my:inResource resource="unclassified" key="A-347" value="acte" result="a347"/>
+							<if cond="a347" >
+								<my:group racine="02C13" gravite="1" modalite="J" />
+							<else />
+								<my:group racine="02C07" gravite="1" modalite="J" />
+							</if>
+						<else />
+							<my:group racine="02C08" gravite="1" modalite="J"/>
+						</if>
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 3 of MAIN CMD 02 -->
+		<state id="process_cmd02_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:concatenate values="dp,dr" result="diags" />
+				<my:inResource resource="unclassified" key="D-057" value="diags" result="d057"/>
+				<my:inResource resource="unclassified" key="D-0201" value="dp" result="d0201"/>
+				<my:inResource resource="unclassified" key="D-0202" value="dp" result="d0202"/>
+				<my:inResource resource="unclassified" key="D-0203" value="dp" result="d0203"/>
+				<my:inResource resource="unclassified" key="D-0204" value="dp" result="d0204"/>
+				<my:inResource resource="unclassified" key="D-0205" value="dp" result="d0205"/>
+				<my:inResource resource="unclassified" key="D-0206" value="dp" result="d0206"/>
+				<if cond="_inversion eq '1' and d057 gt 0" >
+					<my:group racine="02M09" gravite="Z"/>
+				<elseif cond="d0201 gt 0" />
+					<my:group racine="02M02" gravite="1"/>
+				<elseif cond="d0202 gt 0" />
+					<my:group racine="02M03" gravite="1"/>
+				<elseif cond="d0203 gt 0" />
+					<my:group racine="02M04" gravite="1" modalite="T"/>
+				<elseif cond="d0204 gt 0" />
+					<if cond="ageyear lt 18" >
+						<my:group racine="02M05" gravite="1" modalite="T"/>
+					<else />
+						<my:inResource resource="unclassified" key="D-058" value="dp" result="d058"/>
+						<if cond="d058" >
+							<my:group racine="02M07" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="02M08" gravite="1" modalite="T"/>
+						</if>
+					</if>
+				<elseif cond="d0205 gt 0" />
+					<my:group racine="02M09" gravite="Z"/>
+				<elseif cond="d0206 gt 0" />
+					<my:group racine="02M10" gravite="Z" modalite="T"/>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD03 -->
+		<state id="process_cmd03">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="acteclassant" key="03" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+					<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+					<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+					<my:inResource resource="unclassified" key="A-291" value="acte" result="a291" />
+					<my:inResource resource="unclassified" key="A-014" value="acte" result="a014" />
+					<my:inResource resource="unclassified" key="A-199" value="acte" result="a199" />
+					<my:inResource resource="unclassified" key="A-287" value="acte" result="a287" />
+					<my:inResource resource="unclassified" key="A-017" value="acte" result="a017" />
+					<my:inResource resource="unclassified" key="A-214" value="acte" result="a214" />
+					<my:inResource resource="unclassified" key="A-018" value="acte" result="a018" />
+					<my:inResource resource="unclassified" key="A-229" value="acte" result="a229" />
+					<my:inResource resource="unclassified" key="A-230" value="acte" result="a230" />
+					<my:inResource resource="unclassified" key="A-020" value="acte" result="a020" />
+					<my:inResource resource="unclassified" key="A-339" value="acte" result="a339" />
+					<my:inResource resource="unclassified" key="A-340" value="acte" result="a340" />
+					<my:inResource resource="unclassified" key="A-021" value="acte" result="a021" />
+					<my:inResource resource="unclassified" key="A-022" value="acte" result="a022" />
+					<my:inResource resource="unclassified" key="A-023" value="acte" result="a023" />
+					<my:inResource resource="unclassified" key="A-024" value="acte" result="a024" />
+					<my:inResource resource="unclassified" key="A-348" value="acte" result="a348" />
+					<my:inResource resource="unclassified" key="A-132" value="acte" result="a132" />
+					<if cond="a291 gt 0">
+						<my:group racine="03C25" gravite="1" />
+					<elseif cond="a014 gt 0" />
+						<my:group racine="03C26" gravite="1" />
+					<elseif cond="a199 gt 0" />
+						<my:group racine="03C18" gravite="1" />
+					<elseif cond="a287 gt 0" />
+						<my:group racine="03C24" gravite="1" modalite="J"/>
+					<elseif cond="a017 gt 0" />
+						<my:group racine="03C05" gravite="1" modalite="T"/>
+					<elseif cond="a214 gt 0" />
+						<my:group racine="03C19" gravite="1" modalite="J"/>
+					<elseif cond="a018 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="03C06" gravite="1" modalite="J"/>
+						<else />
+							<my:group racine="03C07" gravite="1" modalite="J"/>
+						</if>
+					<elseif cond="a229 gt 0" />
+						<my:group racine="03C20" gravite="1" modalite="J"/>
+					<elseif cond="a230 gt 0" />
+						<my:group racine="03C21" gravite="1" modalite="J"/>
+					<elseif cond="a020 gt 0" />
+						<my:group racine="03C09" gravite="1" modalite="J"/>
+					<elseif cond="duree eq 0 and a339 gt 0" />
+						<my:group racine="03C27" modalite="J"/>
+					<elseif cond="duree eq 0 and a340 gt 0" />
+						<my:group racine="03C28" modalite="J"/>
+					<elseif cond="a021 eq acte.size()" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="03C10" gravite="1"/>
+						<else />
+							<my:group racine="03C11" gravite="1"/>
+						</if>
+					<elseif cond="a022 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="03C12" gravite="1"/>
+						<else />
+							<my:group racine="03C13" gravite="1"/>
+						</if>
+					<elseif cond="a023 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="03C14" gravite="1" modalite="J"/>
+						<else />
+							<my:group racine="03C15" gravite="1" modalite="J"/>
+						</if>
+					<elseif cond="a024 gt 0" />
+						<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+						<my:inResource resource="unclassified" key="D-327" value="dp" result="d327"/>
+						<my:inResource resource="unclassified" key="D-328" value="dp" result="d328"/>
+						<if cond="d327 gt 0" >
+							<my:group racine="03C29" gravite="1" modalite="J"/>
+						<elseif />
+							<my:group racine="03C17" gravite="1" modalite="J"/>
+						<else />
+							<my:group racine="03C16" gravite="1" modalite="J"/>
+						</if>
+					<elseif cond="a348 gt 0" />
+						<my:group racine="03C30" gravite="1" modalite="J"/>
+					<elseif cond="a132 gt 0" />
+						<my:group racine="03C17" gravite="1" modalite="J"/>
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 03 -->
+		<state id="process_cmd03_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,dr" result="diags" />
+				<my:inResource resource="unclassified" key="A-227" value="acte" result="a227"/>
+				<my:inResource resource="unclassified" key="A-268" value="acte" result="a268"/>
+				<my:inResource resource="unclassified" key="D-057" value="diags" result="d057"/>
+				<if cond="duree eq 0 and a227 gt 0" >
+					<my:group racine="03K03" modalite="J"/>
+				<elseif cond="duree eq 0 and a268 gt 0"/>
+					<my:group racine="03K04" modalite="J"/>
+				<elseif cond="_inversion eq '1' and d057 gt 0"/>
+					<my:group racine="03M14" gravite="Z"/>
+				<else />
+					<my:inResource resource="unclassified" key="D-0301" value="dp" result="d0301"/>
+					<my:inResource resource="unclassified" key="D-0302" value="dp" result="d0302"/>
+					<my:inResource resource="unclassified" key="D-0303" value="dp" result="d0303"/>
+					<my:inResource resource="unclassified" key="D-0304" value="dp" result="d0304"/>
+					<my:inResource resource="unclassified" key="D-0305" value="dp" result="d0305"/>
+					<my:inResource resource="unclassified" key="D-0306" value="dp" result="d0306"/>
+					<my:inResource resource="unclassified" key="D-0307" value="dp" result="d0307"/>
+					<my:inResource resource="unclassified" key="D-0308" value="dp" result="d0308"/>
+					<my:inResource resource="unclassified" key="D-0309" value="dp" result="d0309"/>
+					<if cond="d0301 gt 0" >
+						<my:group racine="03M02" gravite="1" modalite="T"/>
+					<elseif cond="d0302 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:inResource resource="unclassified" key="D-059" value="dp" result="d059"/>
+							<if cond="d059 gt 0" >
+								<my:group racine="03M12" gravite="1" />
+							<else />
+								<my:group racine="03M03" gravite="1" modalite="T"/>
+							</if>
+						<else />
+							<my:inResource resource="unclassified" key="D-060" value="dp" result="d060"/>
+							<if cond="d060 gt 0" >
+								<my:group racine="03M13" gravite="1" />
+							<else />
+								<my:group racine="03M04" gravite="1" modalite="T"/>
+							</if>
+						</if>
+					<elseif cond="d0303 gt 0" />
+						<my:group racine="03M05" gravite="1" modalite="T"/>
+					<elseif cond="d0304 gt 0" />
+						<my:group racine="03M06" gravite="1" modalite="T"/>
+					<elseif cond="d0305 gt 0" />
+						<my:group racine="03M07" gravite="1" modalite="T"/>
+					<elseif cond="d0306 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="03M08" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="03M09" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0307 gt 0" />
+						<my:inResource resource="unclassified" key="A-053" value="acte" result="a053"/>
+						<if cond="a053 gt 0" >
+							<my:group racine="03K02" gravite="1" modalite="J"/>
+						<elseif cond="ageyear lt 18" />
+							<my:group racine="03M10" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="03M11" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0308 gt 0" />
+						<my:group racine="03M14" gravite="Z"/>
+					<elseif cond="d0309 gt 0" />
+						<my:group racine="03M15" gravite="Z" modalite="T"/>
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD04 -->
+		<state id="process_cmd04">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="acteclassant" key="04" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-025" value="acte" result="a025" />
+					<my:inResource resource="unclassified" key="A-286" value="acte" result="a286" />
+					<my:inResource resource="unclassified" key="A-026" value="acte" result="a026" />
+					<if cond="a025 gt 0">
+						<my:group racine="04C02" gravite="1" />
+					<elseif cond="a286 gt 0" />
+						<my:group racine="04C04" gravite="1" />
+					<elseif cond="a026 gt 0" />
+						<my:group racine="04C03" gravite="1" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 04 -->
+		<state id="process_cmd04_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="main" get="ModelSortie" pattern="{0}" result="modesortie" type="Integer"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,dr" result="diags" />
+				<my:inResource resource="unclassified" key="A-228" value="acte" result="a228"/>
+				<my:inResource resource="unclassified" key="A-228" value="acte" result="a228"/>
+				<my:inResource resource="diags" key="D-057" value="diags" result="d057"/>
+				<if cond="duree eq 0 and a228 gt 0" >
+					<my:group racine="04K02" modalite="J"/>
+				<elseif cond="duree lt 2 and modesortie eq 9"/>
+					<my:group racine="04M24" modalite="E"/>
+				<elseif cond="_inversion eq '1' and d057 gt 0"/>
+					<my:group racine="04M22" gravite="E"/>
+				<else />
+					<my:inResource resource="unclassified" key="D-0401" value="dp" result="d0401"/>
+					<my:inResource resource="unclassified" key="D-0402" value="dp" result="d0402"/>
+					<my:inResource resource="unclassified" key="D-0403" value="dp" result="d0403"/>
+					<my:inResource resource="unclassified" key="D-0404" value="dp" result="d0404"/>
+					<my:inResource resource="unclassified" key="D-0405" value="dp" result="d0405"/>
+					<my:inResource resource="unclassified" key="D-0406" value="dp" result="d0406"/>
+					<my:inResource resource="unclassified" key="D-0407" value="dp" result="d0407"/>
+					<my:inResource resource="unclassified" key="D-0408" value="dp" result="d0408"/>
+					<my:inResource resource="unclassified" key="D-0409" value="dp" result="d0409"/>
+					<my:inResource resource="unclassified" key="D-0410" value="dp" result="d0410"/>
+					<my:inResource resource="unclassified" key="D-0411" value="dp" result="d0411"/>
+					<my:inResource resource="unclassified" key="D-0412" value="dp" result="d0412"/>
+					<my:inResource resource="unclassified" key="D-0413" value="dp" result="d0413"/>
+					<my:inResource resource="unclassified" key="D-0414" value="dp" result="d0414"/>
+					<my:inResource resource="unclassified" key="D-0415" value="dp" result="d0415"/>
+					<my:inResource resource="unclassified" key="D-0416" value="dp" result="d0416"/>
+					<my:inResource resource="unclassified" key="D-0417" value="dp" result="d0417"/>
+					<my:inResource resource="unclassified" key="D-0418" value="dp" result="d0418"/>
+					<my:inResource resource="unclassified" key="D-0419" value="dp" result="d0419"/>
+					<my:inResource resource="unclassified" key="D-0420" value="dp" result="d0420"/>
+					<my:inResource resource="unclassified" key="D-0421" value="dp" result="d0421"/>
+					<if cond="d0401 gt 0" >
+						<if cond="ageyear lt 18" >
+							<my:group racine="04M02" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="04M03" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0402 gt 0" />
+						<my:group racine="04M18" gravite="1" modalite="T"/>
+					<elseif cond="d0403 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="04M04" gravite="1"/>
+						<else />
+							<my:group racine="04M05" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0404 gt 0" />
+						<my:group racine="04M25" gravite="1" modalite="T"/>
+					<elseif cond="d0405 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="04M06" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="04M07" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0406 gt 0" />
+						<my:group racine="04M26" gravite="1" modalite="T"/>
+					<elseif cond="d0407 gt 0" />
+						<my:group racine="04M19" gravite="1" modalite="T"/>
+					<elseif cond="d0408 gt 0" />
+						<my:inResource resource="unclassified" key="D-061" value="dp" result="d061"/>
+						<if cond="d061 gt 0" >
+							<my:group racine="04M20" gravite="1" modalite="T"/>
+						<else />
+							<my:group racine="04M08" gravite="1" modalite="T"/>
+						</if>
+					<elseif cond="d0409 gt 0" />
+						<my:group racine="04M09" gravite="1" modalite="T"/>
+					<elseif cond="d0410 gt 0" />
+						<my:group racine="04M10" gravite="1" modalite="T"/>
+					<elseif cond="d0411 gt 0" />
+						<my:group racine="04M10" gravite="1"/>
+					<elseif cond="d0412 gt 0" />
+						<my:group racine="04M12" gravite="1" modalite="T"/>
+					<elseif cond="d0413 gt 0" />
+						<my:group racine="04M13" gravite="1" modalite="T"/>
+					<elseif cond="d0414 gt 0" />
+						<my:group racine="04M14" gravite="1" modalite="T"/>
+					<elseif cond="d0415 gt 0" />
+						<my:group racine="04M15" gravite="1" modalite="T"/>
+					<elseif cond="d0416 gt 0" />
+						<my:group racine="04M16" gravite="1" modalite="T"/>
+					<elseif cond="d0417 gt 0" />
+						<my:group racine="04M17" gravite="1" modalite="T"/>
+					<elseif cond="d0418 gt 0" />
+						<my:group racine="04M21" gravite="1"/>
+					<elseif cond="d0419 gt 0" />
+						<my:group racine="04M23" gravite="Z" modalite="T"/>
+					<elseif cond="d0420 gt 0" />
+						<my:group racine="04M22" gravite="Z"/>
+					<elseif cond="d0421 gt 0" />
+						<my:group racine="04M27" gravite="1"/>
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD05 -->
+		<state id="process_cmd05">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:inResource resource="acteclassant" key="05" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-028" value="acte" result="a028" />
+					<my:inResource resource="unclassified" key="A-030" value="acte" result="a030" />
+					<my:inResource resource="unclassified" key="A-031" value="acte" result="a031" />
+					<my:inResource resource="unclassified" key="A-033" value="acte" result="a033" />
+					<my:inResource resource="unclassified" key="A-035" value="acte" result="a035" />
+					<my:inResource resource="unclassified" key="A-036" value="acte" result="a036" />
+					<my:inResource resource="unclassified" key="A-187" value="acte" result="a187" />
+					<my:inResource resource="unclassified" key="A-350" value="acte" result="a350" />
+					<my:inResource resource="unclassified" key="A-037" value="acte" result="a037" />
+					<my:inResource resource="unclassified" key="A-294" value="acte" result="a294" />
+					<my:inResource resource="unclassified" key="A-039" value="acte" result="a039" />
+					<my:inResource resource="unclassified" key="A-040" value="acte" result="a040" />
+					<my:inResource resource="unclassified" key="A-183" value="acte" result="a183" />
+					<my:inResource resource="unclassified" key="A-041" value="acte" result="a041" />
+					<if cond="a028 gt 0">
+						<my:inResource resource="unclassified" key="A-029" value="acte" result="a029" />
+						<if cond="a029 gt 0" >
+							<my:group racine="05C02" gravite="1" />
+						<else />
+							<my:group racine="05C03" gravite="1" />
+						</if>
+					<elseif cond="a030 gt 0" />
+						<my:inResource resource="unclassified" key="A-029" value="acte" result="a029" />
+						<if cond="a029 gt 0" >
+							<my:group racine="05C04" gravite="1" />
+						<else />
+							<my:group racine="05C05" gravite="1" />
+						</if>
+					<elseif cond="a031 gt 0" />
+						<my:inResource resource="unclassified" key="A-032" value="acte" result="a032" />
+						<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+						<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+						<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+						<if cond="a032 gt 0">
+							<if cond="ageyear gt 1">
+								<my:group racine="05C06" gravite="1" />
+							<else />
+								<my:group racine="05C07" gravite="1" />
+							</if>
+						<else />
+							<if cond="ageyear gt 1">
+								<my:group racine="05C08" gravite="1" modalite="T" />
+							<else />
+								<my:group racine="05C09" gravite="1" />
+							</if>
+						</if>
+					<elseif cond="a033 gt 0" />
+						<my:inResource resource="unclassified" key="A-032" value="acte" result="a032" />
+						<my:inResource resource="unclassified" key="A-034" value="acte" result="a034" />
+						<if cond="a032 gt 0" >
+							<my:group racine="05C06" gravite="1" />
+						<elseif cond="a034 gt 0" />
+							<my:group racine="05C10" gravite="1" />
+						<else />
+							<my:group racine="05C11" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a035 gt 0" />
+						<my:group racine="05C12" gravite="1" />
+					<elseif cond="a036 gt 0" />
+						<my:group racine="05C13" gravite="1" modalite="J" />
+					<elseif cond="a187 gt 0" />
+						<my:group racine="05C19" gravite="1" modalite="T" />
+					<elseif cond="a350 gt 0" />
+						<my:group racine="05K21" gravite="1" />
+					<elseif cond="a037 gt 0" />
+						<my:inResource resource="unclassified" key="D-093" value="dp" result="d093" />
+						<if cond="d093 gt 0" >
+							<my:group racine="05C14" gravite="1" />
+						<else />
+							<my:group racine="05C15" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="a294 gt 0" />
+						<my:group racine="05C22" gravite="1" modalite="T" />
+					<elseif cond="a039 gt 0" />
+						<my:group racine="05C20" gravite="1" />
+					<elseif cond="a040 gt 0" />
+						<my:group racine="05C17" gravite="1" modalite="J" />
+					<elseif cond="a183 gt 0" />
+						<my:group racine="05C21" gravite="1" modalite="J" />
+					<elseif cond="a041 gt 0" />
+						<my:group racine="05C18" gravite="1" modalite="J" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 05 -->
+		<state id="process_cmd05_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="ModelSortie" pattern="{0}" result="modesortie" type="Integer"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="unclassified" key="A-168" value="acte" result="a168"/>
+				<my:inResource resource="unclassified" key="A-321" value="acte" result="a321"/>
+				<my:inResource resource="unclassified" key="A-322" value="acte" result="a322"/>
+				<my:inResource resource="unclassified" key="A-172" value="acte" result="a172"/>
+				<my:inResource resource="unclassified" key="D-102" value="diags_wo_dr" result="d102"/>
+				<my:inResource resource="unclassified" key="A-188" value="acte" result="a188"/>
+				<my:inResource resource="unclassified" key="D-035" value="dp" result="d035"/>
+				<my:inResource resource="unclassified" key="A-211" value="acte" result="a211"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="duree lt 2 and a168 gt 0" >
+					<my:group racine="05K14" gravite="Z" />
+				<elseif cond="a321 gt 0"/>
+					<my:group racine="05K19" gravite="1" />
+				<elseif cond="a322 gt 0"/>
+					<my:group racine="05K20" gravite="1" modalite="T"/>
+				<elseif cond="a172 gt 0" />
+					<my:inResource resource="unclassified" key="D-102" value="diags_wo_dr" result="d102"/>
+					<if cond="d102 gt 0" >
+						<my:group racine="05K05" gravite="1" />
+					<else />
+						<my:group racine="05K06" gravite="1" modalite="T"/>
+					</if>
+				<elseif cond="d102 gt 0" />
+					<if cond="duree gt 2 and modesortie eq 9" >
+						<my:group racine="05M21" gravite="E" />
+					<else />
+						<my:group racine="05M04" gravite="1" modalite="T"/>
+					</if>
+				<elseif cond="a188 gt 0" />
+					<my:inResource resource="unclassified" key="A-351" value="acte" result="a351"/>
+					<my:inResource resource="unclassified" key="A-352" value="acte" result="a352"/>
+					<my:inResource resource="unclassified" key="A-353" value="acte" result="a353"/>
+					<my:inResource resource="unclassified" key="A-354" value="acte" result="a354"/>
+					<my:inResource resource="unclassified" key="A-355" value="acte" result="a355"/>
+					<if cond="ageyear lt 18" >
+						<my:group racine="05K12" gravite="1" />
+					<elseif cond="a351 gt 0" />
+						<my:group racine="05K22" gravite="1" />
+					<elseif cond="a352 gt 0" />
+						<my:group racine="05K23" gravite="1" modalite="J" />
+					<elseif cond="a353 gt 0" />
+						<my:group racine="05K24" gravite="1" modalite="J" />
+					<elseif cond="a354 gt 0" />
+						<my:group racine="05K25" gravite="1" modalite="J" />
+					<elseif cond="a355 gt 0" />
+						<my:group racine="05K26" gravite="1" modalite="J" />
+					</if>
+				<elseif cond="d035 gt 0" />
+					<my:inResource resource="unclassified" key="A-211" value="acte" result="a211"/>
+					<if cond="a211 gt 0" >
+						<my:group racine="05K15" gravite="1" modalite="J" />
+					<else />
+						<my:group racine="05M19" gravite="1" />
+					</if>
+				<elseif cond="a211 gt 0"/>
+					<my:group racine="05K10" gravite="1" modalite="J"/>
+				<elseif cond="duree eq 0 and activite.contains(4)"/>
+					<my:group racine="05K17" modalite="J"/>
+				<elseif cond="duree lt 2 and modesortie eq 9"/>
+					<my:group racine="05M22" gravite="E"/>
+				<elseif cond="_inversion eq '1' and d057 gt 0"/>
+					<my:group racine="05M20" gravite="Z"/>
+				<else />
+					<my:inResource resource="unclassified" key="D-0501" value="dp" result="d0501"/>
+					<my:inResource resource="unclassified" key="D-0502" value="dp" result="d0502"/>
+					<my:inResource resource="unclassified" key="D-0503" value="dp" result="d0503"/>
+					<my:inResource resource="unclassified" key="D-0504" value="dp" result="d0504"/>
+					<my:inResource resource="unclassified" key="D-0505" value="dp" result="d0505"/>
+					<my:inResource resource="unclassified" key="D-0506" value="dp" result="d0506"/>
+					<my:inResource resource="unclassified" key="D-0507" value="dp" result="d0507"/>
+					<my:inResource resource="unclassified" key="D-0508" value="dp" result="d0508"/>
+					<my:inResource resource="unclassified" key="D-0509" value="dp" result="d0509"/>
+					<my:inResource resource="unclassified" key="D-0510" value="dp" result="d0510"/>
+					<my:inResource resource="unclassified" key="D-0511" value="dp" result="d0511"/>
+					<my:inResource resource="unclassified" key="D-0512" value="dp" result="d0512"/>
+					<my:inResource resource="unclassified" key="D-0513" value="dp" result="d0513"/>
+					<my:inResource resource="unclassified" key="D-0514" value="dp" result="d0514"/>
+					<my:inResource resource="unclassified" key="D-0515" value="dp" result="d0515"/>
+					<if cond="d0501 gt 0" >
+						<my:group racine="05M05" gravite="1" modalite="T" />
+					<elseif cond="d0502 gt 0"/>
+						<my:group racine="05M06" gravite="1" modalite="T" />
+					<elseif cond="d0503 gt 0"/>
+						<my:group racine="05M07" gravite="1" modalite="T" />
+					<elseif cond="d0504 gt 0"/>
+						<my:group racine="05M08" gravite="1" modalite="T" />
+					<elseif cond="d0505 gt 0"/>
+						<my:group racine="05M09" gravite="1" modalite="T" />
+					<elseif cond="d0506 gt 0"/>
+						<if cond="ageyear lt 18">
+							<my:group racine="05M10" gravite="1" modalite="T" />
+						<else/>
+							<my:group racine="05M11" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0507 gt 0"/>
+						<my:group racine="05M12" gravite="1" modalite="T" />
+					<elseif cond="d0508 gt 0"/>
+						<my:group racine="05M13" gravite="1" modalite="T" />
+					<elseif cond="d0509 gt 0"/>
+						<my:group racine="05M14" gravite="1" />
+					<elseif cond="d0510 gt 0"/>
+						<my:group racine="05M15" gravite="1" modalite="T" />
+					<elseif cond="d0511 gt 0"/>
+						<my:group racine="05M16" gravite="1" modalite="T" />
+					<elseif cond="d0512 gt 0"/>
+						<my:group racine="05M17" gravite="1" modalite="T" />
+					<elseif cond="d0513 gt 0"/>
+						<my:group racine="05M18" gravite="1" modalite="T" />
+					<elseif cond="d0514 gt 0"/>
+						<my:group racine="05M23" gravite="Z" modalite="T" />
+					<elseif cond="d0515 gt 0"/>
+						<my:group racine="05M15" gravite="1" modalite="T" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD06 -->
+		<state id="process_cmd06">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:concatenate values="dp,da,dr" result="diags_w_dr" />
+				<my:inResource resource="acteclassant" key="06" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-042" value="acte" result="a042" />
+					<my:inResource resource="unclassified" key="A-043" value="acte" result="a043" />
+					<my:inResource resource="unclassified" key="A-044" value="acte" result="a044" />
+					<my:inResource resource="unclassified" key="A-046" value="acte" result="a046" />
+					<my:inResource resource="unclassified" key="A-290" value="acte" result="a290" />
+					<my:inResource resource="unclassified" key="A-047" value="acte" result="a047" />
+					<my:inResource resource="unclassified" key="A-048" value="acte" result="a048" />
+					<my:inResource resource="unclassified" key="A-045" value="acte" result="a045" />
+					<my:inResource resource="unclassified" key="A-189" value="acte" result="a189" />
+					<my:inResource resource="unclassified" key="A-050" value="acte" result="a050" />
+					<my:inResource resource="unclassified" key="A-288" value="acte" result="a288" />
+					<my:inResource resource="unclassified" key="A-052" value="acte" result="a052" />
+					<if cond="a042 gt 0" >
+						<my:group racine="06C03" gravite="1" />
+					<elseif cond="a043 gt 0" />
+						<my:group racine="06C04" gravite="1" />
+					<elseif cond="a044 gt 0" />
+						<my:inResource resource="unclassified" key="D-040" value="diags_w_dr" result="d040" />
+						<my:inResource resource="unclassified" key="D-065" value="diags_wo_dr" result="d065" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="06C05" gravite="1" />
+						<elseif cond="d040 gt 0" />
+							<my:group racine="06C16" gravite="1" />
+						<elseif cond="d065 gt 0" />
+							<my:group racine="06C20" gravite="1" />
+						<else />
+							<my:group racine="06C22" gravite="1" />
+						</if>
+					<elseif cond="a046 gt 0" />
+						<my:group racine="06C07" gravite="1" />
+					<elseif cond="a290 gt 0" />
+						<my:group racine="06C23" gravite="1" modalite="J" />
+					<elseif cond="a047 gt 0" />
+						<my:inResource resource="unclassified" key="D-094" value="diags_wo_dr" result="d094" />
+						<if cond="d094 gt 0" >
+							<my:group racine="06C08" gravite="1" />
+						<else />
+							<my:group racine="06C09" gravite="1" />
+						</if>
+					<elseif cond="a048 gt 0" />
+						<my:inResource resource="unclassified" key="A-356" value="acte" result="a356" />
+						<my:inResource resource="unclassified" key="A-365" value="acte" result="a365" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="06C10" gravite="1" modalite="J" />
+						<elseif cond="a356 gt 0" />
+							<my:group racine="06C24" gravite="1" modalite="J" />
+						<elseif cond="a365 gt 0" />
+							<my:group racine="06C25" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="06C12" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a045 gt 0" />
+						<my:group racine="06C13" gravite="1" />
+					<elseif cond="a189 gt 0" />
+						<my:group racine="06C19" gravite="1" modalite="J" />
+					<elseif cond="a050 gt 0" />
+						<my:group racine="06C14" gravite="1" modalite="J" />
+					<elseif cond="a288 gt 0" />
+						<my:group racine="06C21" gravite="1" />
+					<elseif cond="a052 gt 0" />
+						<my:group racine="06C15" gravite="1" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 06 -->
+		<state id="process_cmd06_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:inResource resource="unclassified" key="A-222" value="acte" result="a222"/>
+				<my:inResource resource="unclassified" key="A-223" value="acte" result="a223"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="duree lt 2 and a222 gt 0 and activite.contains(4)" >
+					<my:group racine="06K02" gravite="Z" />
+				<elseif cond="duree eq 0 and a222 gt 0" />
+					<my:group racine="06K03" modalite="J" />
+				<elseif cond="duree eq 0 and a223 gt 0" />
+					<if cond="activite.contains(4)" >
+						<my:group racine="06K04" modalite="J" />
+					<else />
+						<my:group racine="06K05" modalite="J" />
+					</if>
+				<elseif cond="duree eq 0 and activite.contains(4)" />
+					<my:group racine="06K06" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="06M16" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-0601" value="dp" result="d0601"/>
+					<my:inResource resource="unclassified" key="D-0602" value="dp" result="d0602"/>
+					<my:inResource resource="unclassified" key="D-0603" value="dp" result="d0603"/>
+					<my:inResource resource="unclassified" key="D-0604" value="dp" result="d0604"/>
+					<my:inResource resource="unclassified" key="D-0605" value="dp" result="d0605"/>
+					<my:inResource resource="unclassified" key="D-0606" value="dp" result="d0606"/>
+					<my:inResource resource="unclassified" key="D-0607" value="dp" result="d0607"/>
+					<my:inResource resource="unclassified" key="D-0608" value="dp" result="d0608"/>
+					<my:inResource resource="unclassified" key="D-0609" value="dp" result="d0609"/>
+					<my:inResource resource="unclassified" key="D-0610" value="dp" result="d0610"/>
+					<my:inResource resource="unclassified" key="D-0611" value="dp" result="d0611"/>
+					<my:inResource resource="unclassified" key="D-0612" value="dp" result="d0612"/>
+					<my:inResource resource="unclassified" key="D-0613" value="dp" result="d0613"/>
+					<my:inResource resource="unclassified" key="D-0614" value="dp" result="d0614"/>
+					<my:inResource resource="unclassified" key="D-0615" value="dp" result="d0615"/>
+					<my:inResource resource="unclassified" key="D-0616" value="dp" result="d0616"/>
+					<my:inResource resource="unclassified" key="D-0617" value="dp" result="d0617"/>
+					<my:inResource resource="unclassified" key="D-0618" value="dp" result="d0618"/>
+					<if cond="d0601 gt 0">
+						<my:group racine="06M19" gravite="1" />
+					<elseif cond="d0602 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="06M02" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="06M03" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0603 gt 0" />
+						<my:group racine="06M12" gravite="1" modalite="T" />
+					<elseif cond="d0604 gt 0" />
+						<my:group racine="06M04" gravite="1" modalite="T" />
+					<elseif cond="d0605 gt 0" />
+						<my:group racine="06M13" gravite="1" modalite="T" />
+					<elseif cond="d0606 gt 0" />
+						<my:group racine="06M05" gravite="1" modalite="T" />
+					<elseif cond="d0607 gt 0" />
+						<my:group racine="06M14" gravite="1" />
+					<elseif cond="d0608 gt 0" />
+						<my:group racine="06M06" gravite="1" modalite="T" />
+					<elseif cond="d0609 gt 0" />
+						<my:group racine="06M07" gravite="1" modalite="T" />
+					<elseif cond="d0610 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="06M08" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="06M09" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0611 gt 0" />
+						<my:group racine="06M20" gravite="1" modalite="T" />
+					<elseif cond="d0612 gt 0" />
+						<my:group racine="06M10" gravite="1" />
+					<elseif cond="d0613 gt 0" />
+						<my:group racine="06M11" gravite="1" modalite="T" />
+					<elseif cond="d0614 gt 0" />
+						<my:group racine="06M15" gravite="Z" />
+					<elseif cond="d0615 gt 0" />
+						<my:group racine="06M17" gravite="Z" modalite="T" />
+					<elseif cond="d0616 gt 0" />
+						<my:group racine="06M18" gravite="Z" modalite="T" />
+					<elseif cond="d0617 gt 0" />
+						<my:group racine="06M16" gravite="Z" />
+					<elseif cond="d0618 gt 0" />
+						<my:group racine="06M21" gravite="1" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD07 -->
+		<state id="process_cmd07">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="acteclassant" key="07" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-144" value="acte" result="a144" />
+					<my:inResource resource="unclassified" key="A-231" value="acte" result="a231" />
+					<my:inResource resource="unclassified" key="A-232" value="acte" result="a232" />
+					<my:inResource resource="unclassified" key="A-056" value="acte" result="a056" />
+					<my:inResource resource="unclassified" key="A-059" value="acte" result="a059" />
+					<my:inResource resource="unclassified" key="A-060" value="acte" result="a060" />
+					<if cond="a144 gt 0" >
+						<my:inResource resource="unclassified" key="D-041" value="diags_wo_dr" result="d041" />
+						<if cond="d041 gt 0" >
+							<my:group racine="07C09" gravite="1" />
+						<else />
+							<my:group racine="07C10" gravite="1" />
+						</if>
+					<elseif cond="a231 gt 0" />
+						<my:group racine="07C11" gravite="1" />
+					<elseif cond="a232 gt 0" />
+						<my:group racine="07C12" gravite="1" />
+					<elseif cond="a056 gt 0" />
+						<my:inResource resource="unclassified" key="D-066" value="diags_wo_dr" result="d066" />
+						<if cond="d066 gt 0" >
+							<my:group racine="07C13" gravite="1" />
+						<else />
+							<my:group racine="07C14" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a059 gt 0" />
+						<my:inResource resource="unclassified" key="D-0709" value="diags_wo_dr" result="d0709" />
+						<if cond="d0709 gt 0" >
+							<my:group racine="07C06" gravite="1" />
+						<else />
+							<my:group racine="07C07" gravite="1" />
+						</if>
+					<elseif cond="a060 gt 0" />
+						<my:group racine="07C08" gravite="1" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+					
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 07 -->
+		<state id="process_cmd07_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:inResource resource="unclassified" key="A-366" value="acte" result="a366"/>
+				<my:inResource resource="unclassified" key="A-219" value="acte" result="a219"/>
+				<my:inResource resource="unclassified" key="A-218" value="acte" result="a218"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="a366 gt 0" >
+					<my:group racine="07K06" gravite="1" />
+				<elseif cond="duree lt 2 and a219 gt 0 and activite.contains(4)" />
+					<my:group racine="07K02" gravite="Z" />
+				<elseif cond="duree eq 0 and a218 gt 0" />
+					<if cond="activite.contains(4)" >
+						<my:group racine="07K04" modalite="J" />
+					<else />
+						<my:group racine="07K05" modalite="J" />
+					</if>
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="07M13" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-0701" value="dp" result="d0701"/>
+					<my:inResource resource="unclassified" key="D-0702" value="dp" result="d0702"/>
+					<my:inResource resource="unclassified" key="D-0703" value="dp" result="d0703"/>
+					<my:inResource resource="unclassified" key="D-0704" value="dp" result="d0704"/>
+					<my:inResource resource="unclassified" key="D-0705" value="dp" result="d0705"/>
+					<my:inResource resource="unclassified" key="D-0706" value="dp" result="d0706"/>
+					<my:inResource resource="unclassified" key="D-0707" value="dp" result="d0707"/>
+					<my:inResource resource="unclassified" key="D-0708" value="dp" result="d0708"/>
+					<my:inResource resource="unclassified" key="D-0709" value="dp" result="d0709"/>
+					<my:inResource resource="unclassified" key="D-0710" value="dp" result="d0710"/>
+					<my:inResource resource="unclassified" key="D-0711" value="dp" result="d0711"/>
+					<my:inResource resource="unclassified" key="D-0712" value="dp" result="d0712"/>
+					<my:inResource resource="unclassified" key="D-0713" value="dp" result="d0713"/>
+					<if cond="d0701 gt 0">
+						<my:group racine="07M02" gravite="Z" />
+					<elseif cond="d0702 gt 0" />
+						<my:group racine="07M07" gravite="1" modalite="T" />
+					<elseif cond="d0703 gt 0" />
+						<my:group racine="07M08" gravite="1" modalite="T" />
+					<elseif cond="d0704 gt 0" />
+						<my:group racine="07M15" gravite="1" modalite="T" />
+					<elseif cond="d0705 gt 0" />
+						<my:group racine="07M04" gravite="1" modalite="T" />
+					<elseif cond="d0706 gt 0" />
+						<my:group racine="07M09" gravite="1" modalite="T" />
+					<elseif cond="d0707 gt 0" />
+						<my:group racine="07M10" gravite="1" modalite="T"/>
+					<elseif cond="d0708 gt 0" />
+						<my:group racine="07M11" gravite="1" modalite="T" />
+					<elseif cond="d0709 gt 0" />
+						<my:group racine="07M06" gravite="1" modalite="T" />
+					<elseif cond="d0710 gt 0" />
+						<my:group racine="07M12" gravite="1" />
+					<elseif cond="d0711 gt 0" />
+						<my:group racine="07M13" gravite="Z" />
+					<elseif cond="d0712 gt 0" />
+						<my:group racine="07M14" gravite="Z" modalite="T" />
+					<elseif cond="d0713 gt 0" />
+						<my:group racine="07M16" gravite="1" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD08 -->
+		<state id="process_cmd08">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="acteclassant" key="08" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="D-077" value="dp" result="d077" />
+					<my:inResource resource="unclassified" key="A-061" value="acte" result="a061" />
+					<my:inResource resource="unclassified" key="A-200" value="acte" result="a200" />
+					<my:inResource resource="unclassified" key="A-201" value="acte" result="a201" />
+					<my:inResource resource="unclassified" key="A-202" value="acte" result="a202" />
+					<my:inResource resource="unclassified" key="A-203" value="acte" result="a203" />
+					<my:inResource resource="unclassified" key="A-063" value="acte" result="a063" />
+					<my:inResource resource="unclassified" key="A-065" value="acte" result="a065" />
+					<my:inResource resource="unclassified" key="A-191" value="acte" result="a191" />
+					<my:inResource resource="unclassified" key="A-066" value="acte" result="a066" />
+					<my:inResource resource="unclassified" key="A-233" value="acte" result="a233" />
+					<my:inResource resource="unclassified" key="A-273" value="acte" result="a273" />
+					<my:inResource resource="unclassified" key="A-069" value="acte" result="a069" />
+					<my:inResource resource="unclassified" key="A-274" value="acte" result="a274" />
+					<my:inResource resource="unclassified" key="A-074" value="acte" result="a074" />
+					<my:inResource resource="unclassified" key="D-042" value="diags_wo_dr" result="d042" />
+ 					<my:inResource resource="unclassified" key="A-275" value="acte" result="a275" />
+ 					<my:inResource resource="unclassified" key="A-276" value="acte" result="a276" />
+ 					<my:inResource resource="unclassified" key="A-073" value="acte" result="a073" />
+ 					<my:inResource resource="unclassified" key="A-277" value="acte" result="a277" />
+ 					<my:inResource resource="unclassified" key="A-278" value="acte" result="a278" />
+ 					<my:inResource resource="unclassified" key="A-070" value="acte" result="a070" />
+ 					<my:inResource resource="unclassified" key="A-071" value="acte" result="a071" />
+ 					<my:inResource resource="unclassified" key="A-358" value="acte" result="a358" />
+ 					<my:inResource resource="unclassified" key="A-279" value="acte" result="a279" />
+ 					<my:inResource resource="unclassified" key="A-280" value="acte" result="a280" />
+ 					<my:inResource resource="unclassified" key="A-359" value="acte" result="a359" />
+ 					<my:inResource resource="unclassified" key="A-281" value="acte" result="a281" />
+ 					<my:inResource resource="unclassified" key="A-282" value="acte" result="a282" />
+ 					<my:inResource resource="unclassified" key="A-283" value="acte" result="a283" />
+ 					<my:inResource resource="unclassified" key="A-284" value="acte" result="a284" />
+ 					<my:inResource resource="unclassified" key="A-285" value="acte" result="a285" />
+ 					<my:inResource resource="unclassified" key="A-144" value="acte" result="a144" />
+ 					<my:inResource resource="unclassified" key="A-064" value="acte" result="a064" />
+ 					<my:inResource resource="unclassified" key="A-067" value="acte" result="a067" />
+ 					<my:inResource resource="unclassified" key="A-077" value="acte" result="a077" />
+					<if cond="d077 gt 0" >
+						<my:group racine="08C56" gravite="1" />
+					<elseif cond="a061 gt 1" />
+						<my:group racine="08C02" gravite="1" />
+					<elseif cond="a200 gt 0" />
+						<my:group racine="08C22" gravite="1" />
+					<elseif cond="a201 gt 0" />
+						<my:inResource resource="unclassified" key="D-069" value="diags_wo_dr" result="d069" />
+						<if cond="d069 gt 0" >
+							<my:group racine="08C47" gravite="1" />
+						<else />
+							<my:group racine="08C48" gravite="1" />
+						</if>
+					<elseif cond="a202 gt 0" />
+						<my:group racine="08C24" gravite="1" />
+					<elseif cond="a203 gt 0" />
+						<my:group racine="08C25" gravite="1" />
+					<elseif cond="a063 gt 0" />
+						<my:inResource resource="unclassified" key="D-069" value="diags_wo_dr" result="d069" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="08C04" gravite="1" />
+						<elseif cond="d069 gt 0" />
+							<my:group racine="08C49" gravite="1" />
+						<else />
+							<my:group racine="08C50" gravite="1" />
+						</if>
+					<elseif cond="a065 gt 0" />
+						<my:group racine="08C06" gravite="1" />
+					<elseif cond="a191 gt 0" />
+						<my:inResource resource="unclassified" key="D-070" value="diags_wo_dr" result="d070" />
+						<if cond="d070 gt 0" >
+							<my:group racine="08C51" gravite="1" />
+						<else />
+							<my:group racine="08C52" gravite="1" />
+						</if>
+					<elseif cond="a066 gt 0" />
+						<my:group racine="08C27" gravite="1" />
+					<elseif cond="a233 gt 0" />
+						<my:group racine="08C28" gravite="1" modalite="J" />
+					<elseif cond="a273 gt 0" />
+	 					<my:inResource resource="unclassified" key="A-357" value="acte" result="a357" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="08C31" gravite="1" />
+						<elseif cond="a357 gt 0" />
+							<my:group racine="08C32" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="08C57" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a069 gt 0" />
+						<my:inResource resource="unclassified" key="D-069" value="diags_wo_dr" result="d069" />
+						<if cond="d069 gt 0" >
+							<my:group racine="08C53" gravite="1" />
+						<else />
+							<my:group racine="08C54" gravite="1" modalite="J"/>
+						</if>
+					<elseif cond="a274 gt 0" />
+						<my:inResource resource="unclassified" key="D-071" value="diags_wo_dr" result="d071" />
+						<if cond="d071 gt 0" >
+							<my:group racine="08C55" gravite="1" />
+						<else />
+							<my:group racine="08C33" gravite="1" />
+						</if>
+					<elseif cond="a074 gt 0 and d042 gt 0" />
+						<my:group racine="08C29" gravite="1" modalite="J" />
+					<elseif cond="a275 gt 0" />
+						<my:group racine="08C34" gravite="1" />
+					<elseif cond="a276 gt 0" />
+						<my:group racine="08C35" gravite="1" modalite="J" />
+					<elseif cond="a073 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="08C36" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="08C37" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a277 gt 0" />
+						<my:group racine="08C38" gravite="1" modalite="J" />
+					<elseif cond="a278 gt 0" />
+						<my:group racine="08C39" gravite="1" modalite="J" />
+					<elseif cond="a070 gt 0" />
+						<my:group racine="08C13" gravite="1" modalite="J" />
+					<elseif cond="a071 gt 0" />
+						<my:group racine="08C14" gravite="1" modalite="J" />
+					<elseif cond="a358 gt 0" />
+						<my:group racine="08C58" gravite="1" modalite="J" />
+					<elseif cond="a279 gt 0" />
+						<my:group racine="08C40" gravite="1" modalite="J" />
+					<elseif cond="a280 gt 0" />
+						<my:group racine="08C60" gravite="1" modalite="J" />
+					<elseif cond="a359 gt 0" />
+						<my:group racine="08C59" gravite="1" modalite="J" />
+					<elseif cond="a281 gt 0" />
+						<my:group racine="08C42" gravite="1" modalite="J" />
+					<elseif cond="a282 gt 0" />
+						<my:group racine="08C43" gravite="1" modalite="J" />
+					<elseif cond="a283 gt 0" />
+						<my:group racine="08C44" gravite="1" modalite="J" />
+					<elseif cond="a284 gt 0" />
+						<my:group racine="08C45" gravite="1" modalite="J" />
+					<elseif cond="a285 gt 0" />
+						<my:group racine="08C46" gravite="1" modalite="J" />
+					<elseif cond="a064 gt 0" />
+						<my:group racine="08C20" gravite="1" modalite="J" />
+					<elseif cond="a067 gt 0" />
+						<my:group racine="08C12" gravite="1" modalite="J" />
+					<elseif cond="a077 gt 0" />
+						<my:group racine="08C21" gravite="1" modalite="J" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 08 -->
+		<state id="process_cmd08_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="unclassified" key="A-289" value="acte" result="a289"/>
+				<my:inResource resource="unclassified" key="A-270" value="acte" result="a270"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<my:inResource resource="unclassified" key="A-289" value="acte" result="a289"/>
+				<if cond="a289 gt 0" >
+					<my:group racine="08K04" gravite="1" />
+				<elseif cond="a270 gt 0" />
+					<my:group racine="08K03" gravite="1" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="08M35" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-0801" value="dp" result="d0801"/>
+					<my:inResource resource="unclassified" key="D-0802" value="dp" result="d0802"/>
+					<my:inResource resource="unclassified" key="D-0803" value="dp" result="d0803"/>
+					<my:inResource resource="unclassified" key="D-0804" value="dp" result="d0804"/>
+					<my:inResource resource="unclassified" key="D-0805" value="dp" result="d0805"/>
+					<my:inResource resource="unclassified" key="D-0806" value="dp" result="d0806"/>
+					<my:inResource resource="unclassified" key="D-0807" value="dp" result="d0807"/>
+					<my:inResource resource="unclassified" key="D-0808" value="dp" result="d0808"/>
+					<my:inResource resource="unclassified" key="D-0809" value="dp" result="d0809"/>
+					<my:inResource resource="unclassified" key="D-0810" value="dp" result="d0810"/>
+					<my:inResource resource="unclassified" key="D-0811" value="dp" result="d0811"/>
+					<my:inResource resource="unclassified" key="D-0812" value="dp" result="d0812"/>
+					<my:inResource resource="unclassified" key="D-0813" value="dp" result="d0813"/>
+					<my:inResource resource="unclassified" key="D-0814" value="dp" result="d0814"/>
+					<my:inResource resource="unclassified" key="D-0815" value="dp" result="d0815"/>
+					<my:inResource resource="unclassified" key="D-0816" value="dp" result="d0816"/>
+					<my:inResource resource="unclassified" key="D-0817" value="dp" result="d0817"/>
+					<my:inResource resource="unclassified" key="D-0818" value="dp" result="d0818"/>
+					<my:inResource resource="unclassified" key="D-0819" value="dp" result="d0819"/>
+					<my:inResource resource="unclassified" key="D-0820" value="dp" result="d0820"/>
+					<my:inResource resource="unclassified" key="D-0821" value="dp" result="d0821"/>
+					<my:inResource resource="unclassified" key="D-0822" value="dp" result="d0822"/>
+					<my:inResource resource="unclassified" key="D-0823" value="dp" result="d0823"/>
+					<my:inResource resource="unclassified" key="D-0824" value="dp" result="d0824"/>
+					<my:inResource resource="unclassified" key="D-0825" value="dp" result="d0825"/>
+					<my:inResource resource="unclassified" key="D-0826" value="dp" result="d0826"/>
+					<my:inResource resource="unclassified" key="D-0827" value="dp" result="d0827"/>
+					<if cond="d0801 gt 0">
+						<my:inResource resource="unclassified" key="D-072" value="diags_wo_dr" result="d072"/>
+						<if cond="ageyear lt 18" >
+							<my:group racine="08M20" gravite="1" />
+						<elseif cond="d072 gt 0" />
+							<my:group racine="08M37" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="08M21" gravite="1" />
+						</if>
+					<elseif cond="d0802 gt 0" />
+						<my:group racine="08M22" gravite="1" />
+					<elseif cond="d0803 gt 0" />
+						<my:group racine="08M23" gravite="1" />
+					<elseif cond="d0804 gt 0" />
+						<my:group racine="08M04" gravite="1" modalite="T" />
+					<elseif cond="d0805 gt 0" />
+						<my:group racine="08M05" gravite="1" modalite="T" />
+					<elseif cond="d0806 gt 0" />
+						<if cond="ageyear lt 18">
+							<my:group racine="08M06" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="08M07" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0807 gt 0" />
+						<my:group racine="08M08" gravite="1" modalite="T"/>
+					<elseif cond="d0808 gt 0" />
+						<my:group racine="08M09" gravite="1" modalite="T" />
+					<elseif cond="d0809 gt 0" />
+						<my:group racine="08M10" gravite="1" modalite="T" />
+					<elseif cond="d0810 gt 0" />
+						<my:group racine="08M24" gravite="1" modalite="T" />
+					<elseif cond="d0811 gt 0" />
+						<my:group racine="08M25" gravite="1" modalite="T" />
+					<elseif cond="d0812 gt 0" />
+						<my:group racine="08M38" gravite="1" modalite="T" />
+					<elseif cond="d0813 gt 0" />
+						<my:group racine="08M26" gravite="1" />
+					<elseif cond="d0814 gt 0" />
+						<my:group racine="08M27" gravite="1" modalite="T" />
+					<elseif cond="d0815 gt 0" />
+						<my:group racine="08M28" gravite="1" modalite="T" />
+					<elseif cond="d0816 gt 0" />
+						<my:group racine="08M29" gravite="1" modalite="T" />
+					<elseif cond="d0817 gt 0" />
+						<my:group racine="08M30" gravite="1" modalite="T" />
+					<elseif cond="d0818 gt 0" />
+						<my:group racine="08M14" gravite="1" modalite="T" />
+					<elseif cond="d0819 gt 0" />
+						<my:group racine="08M15" gravite="1" modalite="T" />
+					<elseif cond="d0820 gt 0" />
+						<my:group racine="08M31" gravite="1" modalite="T" />
+					<elseif cond="d0821 gt 0" />
+						<my:group racine="08M32" gravite="1" modalite="T" />
+					<elseif cond="d0822 gt 0" />
+						<my:group racine="08M18" gravite="1" modalite="T" />
+					<elseif cond="d0823 gt 0" />
+						<my:group racine="08M33" gravite="1" modalite="T" />
+					<elseif cond="d0824 gt 0" />
+						<my:group racine="08M19" gravite="1" modalite="T" />
+					<elseif cond="d0825 gt 0" />
+						<my:group racine="08M34" gravite="1" modalite="T"/>
+					<elseif cond="d0826 gt 0" />
+						<my:group racine="08M36" gravite="Z" modalite="T" />
+					<elseif cond="d0827 gt 0" />
+						<my:group racine="08M25" gravite="Z" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD09 -->
+		<state id="process_cmd09">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="unclassified" key="D-012" value="dp" result="d012"/>
+				<my:inResource resource="acteclassant" key="09" value="acte" result="acteclassant"/>
+				<if cond="d012 gt 0">
+					<my:inResource resource="unclassified" key="D-335" value="da" result="d335"/>
+					<if cond="d335 gt 0" >
+						<my:group racine="09Z02" gravite="B" />
+					<else />
+						<my:group racine="09Z02" gravite="A" />
+					</if>
+				<elseif cond="acteclassant gt 0" />
+					<my:inResource resource="unclassified" key="A-078" value="acte" result="a078" />
+					<my:inResource resource="unclassified" key="D-096" value="diags_wo_dr" result="d096" />
+					<my:inResource resource="unclassified" key="A-292" value="acte" result="a292" />
+					<my:inResource resource="unclassified" key="A-079" value="acte" result="a079" />
+					<my:inResource resource="unclassified" key="A-082" value="acte" result="a082" />
+					<my:inResource resource="unclassified" key="A-083" value="acte" result="a083" />
+					<my:inResource resource="unclassified" key="A-084" value="acte" result="a084" />
+					<if cond="a078 gt 0 and d096 gt 0" >
+						<my:group racine="09C02" gravite="1" modalite="J" />
+					<elseif cond="a292 gt 0" />
+						<my:group racine="09C11" gravite="1" />
+					<elseif cond="a079 gt 0" />
+						<my:inResource resource="unclassified" key="D-105" value="diags_wo_dr" result="d105" />
+						<my:inResource resource="unclassified" key="A-081" value="acte" result="a081" />
+						<if cond="d105 gt 0" >
+							<my:inResource resource="unclassified" key="A-080" value="acte" result="a080" />
+							<if cond="a080 gt 0" >
+								<my:group racine="09C04" gravite="1" />
+							<else />
+								<my:group racine="09C05" gravite="1" modalite="J" />
+							</if>
+						<elseif cond="a081 gt 0" />
+							<my:group racine="09C06" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="09C07" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a078 gt 0" />
+						<my:inResource resource="unclassified" key="D-329" value="dp" result="d329" />
+						<my:inResource resource="unclassified" key="A-360" value="acte" result="a360" />
+						<if cond="d329 gt 0" >
+							<my:group racine="09C12" gravite="1" modalite="J" />
+						<elseif cond="a360 gt 0" />
+							<my:group racine="09C03" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="09C12" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a082 gt 0" />
+						<my:inResource resource="unclassified" key="D-330" value="dp" result="d330" />
+						<if cond="d330 gt 0" >
+							<my:group racine="09C13" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="09C08" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a083 gt 0" />
+						<my:group racine="09C09" gravite="1" modalite="J" />
+					<elseif cond="a084 gt 0" />
+						<my:inResource resource="unclassified" key="D-331" value="dp" result="d331" />
+						<my:inResource resource="unclassified" key="A-361" value="acte" result="a361" />
+						<my:inResource resource="unclassified" key="D-332" value="dp" result="d332" />
+						<if cond="d331 gt 0" >
+							<my:group racine="09C12" gravite="1" modalite="J" />
+						<elseif cond="a361 gt 0" />
+							<my:group racine="09C14" gravite="1" modalite="J" />
+						<elseif cond="d332 gt 0" />
+							<my:group racine="09C15" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="09C10" gravite="1" modalite="J" />
+						</if>
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 09 -->
+		<state id="process_cmd09_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:inResource resource="unclassified" key="D-075" value="dp" result="d075"/>
+				<my:inResource resource="unclassified" key="D-076" value="dp" result="d076"/>
+				<if cond="duree eq 0 and activite.contains(4)" >
+					<my:group racine="09K02" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0 and d075 gt 0" />
+					<my:group racine="09M12" gravite="Z" />
+				<elseif cond="_inversion eq '1' and d057 gt 0 and d076 gt 0" />
+					<my:group racine="09M13" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-0901" value="dp" result="d0901"/>
+					<my:inResource resource="unclassified" key="D-0902" value="dp" result="d0902"/>
+					<my:inResource resource="unclassified" key="D-0903" value="dp" result="d0903"/>
+					<my:inResource resource="unclassified" key="D-0904" value="dp" result="d0904"/>
+					<my:inResource resource="unclassified" key="D-0905" value="dp" result="d0905"/>
+					<my:inResource resource="unclassified" key="D-0906" value="dp" result="d0906"/>
+					<my:inResource resource="unclassified" key="D-0907" value="dp" result="d0907"/>
+					<my:inResource resource="unclassified" key="D-0908" value="dp" result="d0908"/>
+					<my:inResource resource="unclassified" key="D-0909" value="dp" result="d0909"/>
+					<my:inResource resource="unclassified" key="D-0910" value="dp" result="d0910"/>
+					<my:inResource resource="unclassified" key="D-0911" value="dp" result="d0911"/>
+					<my:inResource resource="unclassified" key="D-0912" value="dp" result="d0912"/>
+					<if cond="d0901 gt 0">
+						<if cond="ageyear lt 18" >
+							<my:group racine="09M02" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="09M03" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0902 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="09M04" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="09M05" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d0903 gt 0" />
+						<my:group racine="09M06" gravite="1" modalite="T" />
+					<elseif cond="d0904 gt 0" />
+						<my:group racine="09M11" gravite="1" modalite="T" />
+					<elseif cond="d0905 gt 0" />
+						<my:group racine="09M07" gravite="1" modalite="T" />
+					<elseif cond="d0906 gt 0" />
+						<my:group racine="09M08" gravite="1" modalite="T" />
+					<elseif cond="d0907 gt 0" />
+						<my:group racine="09M09" gravite="1" modalite="T" />
+					<elseif cond="d0908 gt 0" />
+						<my:group racine="09M10" gravite="1" modalite="T" />
+					<elseif cond="d0909 gt 0" />
+						<my:group racine="09M14" gravite="1" modalite="T" />
+					<elseif cond="d0910 gt 0" />
+						<my:group racine="09M15" gravite="Z" />
+					<elseif cond="d0911 gt 0" />
+						<my:group racine="09M12" gravite="Z" />
+					<elseif cond="d0912 gt 0" />
+						<my:group racine="09M13" gravite="Z" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD10 -->
+		<state id="process_cmd10">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="acteclassant" key="10" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0" >
+					<my:inResource resource="unclassified" key="A-174" value="acte" result="a174"/>
+					<my:inResource resource="unclassified" key="A-175" value="acte" result="a175"/>
+					<my:inResource resource="unclassified" key="A-204" value="acte" result="a204"/>
+					<my:inResource resource="unclassified" key="A-258" value="acte" result="a258"/>
+					<my:inResource resource="unclassified" key="A-088" value="acte" result="a088"/>
+					<my:inResource resource="unclassified" key="A-089" value="acte" result="a089"/>
+					<my:inResource resource="unclassified" key="A-090" value="acte" result="a090"/>
+					<my:inResource resource="unclassified" key="A-091" value="acte" result="a091"/>
+					<my:inResource resource="unclassified" key="A-092" value="acte" result="a092"/>
+					<if cond="a174 gt 0" >
+						<my:group racine="10C02" gravite="1" />
+					<elseif cond="a175 gt 0" />
+						<my:group racine="10C03" gravite="1" />
+					<elseif cond="a204 gt 0" />
+						<my:group racine="10C09" gravite="1" />
+					<elseif cond="a258 gt 0" />
+						<my:group racine="10C13" gravite="1" />
+					<elseif cond="a088 gt 0" />
+						<my:group racine="10C10" gravite="1" />
+					<elseif cond="a089 gt 0" />
+						<my:group racine="10C05" gravite="1" />
+					<elseif cond="a090 gt 0" />
+						<my:inResource resource="unclassified" key="D-043" value="diags_wo_dr" result="d043" />
+						<if cond="d043 gt 0" >
+							<my:group racine="10C11" gravite="1" />
+						<else />
+							<my:group racine="10C12" gravite="1" />
+						</if>
+					<elseif cond="a091 gt 0" />
+						<my:group racine="10C07" gravite="1" />
+					<elseif cond="a092 gt 0" />
+						<my:group racine="10C08" gravite="1" modalite="J" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 10 -->
+		<state id="process_cmd10_step2" >
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="_inversion eq '1' and d057 gt 0" >
+					<my:group racine="10M13" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-1001" value="dp" result="d1001"/>
+					<my:inResource resource="unclassified" key="D-1002" value="dp" result="d1002"/>
+					<my:inResource resource="unclassified" key="D-1003" value="dp" result="d1003"/>
+					<my:inResource resource="unclassified" key="D-1004" value="dp" result="d1004"/>
+					<my:inResource resource="unclassified" key="D-1005" value="dp" result="d1005"/>
+					<my:inResource resource="unclassified" key="D-1006" value="dp" result="d1006"/>
+					<my:inResource resource="unclassified" key="D-1007" value="dp" result="d1007"/>
+					<my:inResource resource="unclassified" key="D-1008" value="dp" result="d1008"/>
+					<my:inResource resource="unclassified" key="D-1009" value="dp" result="d1009"/>
+					<my:inResource resource="unclassified" key="D-1010" value="dp" result="d1010"/>
+					<my:inResource resource="unclassified" key="D-1011" value="dp" result="d1011"/>
+					<my:inResource resource="unclassified" key="D-1012" value="dp" result="d1012"/>
+					<my:inResource resource="unclassified" key="D-1013" value="dp" result="d1013"/>
+					<if cond="d1001 gt 0">
+						<if cond="ageyear gt 35" >
+							<my:group racine="10M02" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="10M03" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1002 gt 0" />
+						<my:group racine="10M08" gravite="1" modalite="T" />
+					<elseif cond="d1003 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="10M15" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="10M16" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1004 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="10M17" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="10M18" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1005 gt 0" />
+						<my:group racine="10M09" gravite="1" modalite="T" />
+					<elseif cond="d1006 gt 0" />
+						<my:group racine="10M10" gravite="1" modalite="T" />
+					<elseif cond="d1007 gt 0" />
+						<my:group racine="10M11" gravite="1" modalite="T" />
+					<elseif cond="d1008 gt 0" />
+						<my:group racine="10M12" gravite="1" modalite="T" />
+					<elseif cond="d1009 gt 0" />
+						<my:group racine="10M07" gravite="1" modalite="T" />
+					<elseif cond="d1010 gt 0" />
+						<my:group racine="10M14" gravite="Z" modalite="T" />
+					<elseif cond="d1011 gt 0" />
+						<my:group racine="10M13" gravite="Z" />
+					<elseif cond="d1012 gt 0" />
+						<my:group racine="10M19" gravite="1" />
+					<elseif cond="d1013 gt 0" />
+						<my:group racine="10M20" gravite="1" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD11 -->
+		<state id="process_cmd11">
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:concatenate values="dp,da" result="diags" />
+				<my:inResource resource="acteclassant" key="11" value="acte" result="acteclassant"/>
+				<if cond="acteclassant gt 0">
+					<my:inResource resource="unclassified" key="A-094" value="acte" result="a094" />
+					<my:inResource resource="unclassified" key="A-096" value="acte" result="a096" />
+					<my:inResource resource="unclassified" key="A-097" value="acte" result="a097" />
+					<my:inResource resource="unclassified" key="A-364" value="acte" result="a364" />
+					<my:inResource resource="unclassified" key="A-098" value="acte" result="a098" />
+					<my:inResource resource="unclassified" key="A-183" value="acte" result="a183" />
+					<my:inResource resource="unclassified" key="A-099" value="acte" result="a099" />
+					<if cond="a094 gt 0" >
+						<my:inResource resource="unclassified" key="D-1104" value="diags" result="d1104" />
+						<if cond="d1104 gt 0" >
+							<my:group racine="11C02" gravite="1" />
+						<else />
+							<my:group racine="11C03" gravite="1" />
+						</if>
+					<elseif cond="a096 gt 1" />
+						<my:inResource resource="unclassified" key="D-333" value="dp" result="d333" />
+						<if cond="d333 gt 0" >
+							<my:group racine="11C10" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="11C04" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a097 gt 0" />
+						<my:inResource resource="unclassified" key="D-026" value="dp" result="d026" />
+						<if cond="d333 gt 0" >
+							<my:group racine="11C11" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="11C13" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a364 gt 0" />
+						<my:group racine="11C12" gravite="1" modalite="J" />
+					<elseif cond="a098 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="11C06" gravite="1"/>
+						<else />
+							<my:group racine="11C07" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a183 gt 0" />
+						<my:group racine="11C09" gravite="1" modalite="J" />
+					<elseif cond="a099 gt 0" />
+						<my:group racine="11C08" gravite="1" modalite="T" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 11 -->
+		<state id="process_cmd11_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:concatenate values="dp,da,dr" result="diags" />
+				<my:inResource resource="unclassified" key="A-225" value="acte" result="a225"/>
+				<my:inResource resource="unclassified" key="A-226" value="acte" result="a226"/>
+				<my:inResource resource="unclassified" key="A-168" value="acte" result="a168"/>
+				<my:inResource resource="unclassified" key="A-051" value="acte" result="a051"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="duree lt 2 and a225 gt 0" >
+					<if cond="activite.contains(4)" >
+						<my:group racine="11K03" gravite="Z" />
+					<else />
+						<my:group racine="11K04" gravite="Z" />
+					</if>
+				<elseif cond="duree lt 2 and a226 gt 0" />
+					<if cond="activite.contains(4)" >
+						<my:group racine="11K05" gravite="Z" />
+					<else />
+						<my:group racine="11K06" gravite="Z" />
+					</if>
+				<elseif cond="duree lt 2 and a168 gt 0" />
+					<my:group racine="11K07" gravite="Z" />
+				<elseif cond="duree eq 0 and a051 gt 0" />
+					<my:group racine="11K08" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="11M18" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-1101" value="dp" result="d1101"/>
+					<my:inResource resource="unclassified" key="D-1102" value="dp" result="d1102"/>
+					<my:inResource resource="unclassified" key="D-1103" value="dp" result="d1103"/>
+					<my:inResource resource="unclassified" key="D-1104" value="dp" result="d1104"/>
+					<my:inResource resource="unclassified" key="D-1105" value="dp" result="d1105"/>
+					<my:inResource resource="unclassified" key="D-1106" value="dp" result="d1106"/>
+					<my:inResource resource="unclassified" key="D-1107" value="dp" result="d1107"/>
+					<my:inResource resource="unclassified" key="D-1108" value="dp" result="d1108"/>
+					<my:inResource resource="unclassified" key="D-1109" value="dp" result="d1109"/>
+					<my:inResource resource="unclassified" key="D-1110" value="dp" result="d1110"/>
+					<my:inResource resource="unclassified" key="D-1111" value="dp" result="d1111"/>
+					<if cond="d1101 gt 0">
+						<my:group racine="11M02" gravite="1" modalite="T" />
+					<elseif cond="d1102 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="11M03" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="11M04" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1103 gt 0" />
+						<my:inResource resource="unclassified" key="D-325" value="diags" result="d325"/>
+						<my:inResource resource="unclassified" key="A-143" value="acte" result="a143"/>
+						<if cond="duree eq 0 and d325 gt 0" >
+							<my:group erreur="90Z02Z" />
+						<elseif cond="a143 gt 0" />
+							<my:group racine="11K02" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="11M06" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1104 gt 0" />
+						<my:group racine="11M07" gravite="1" modalite="T" />
+					<elseif cond="d1105 gt 0" />
+						<my:inResource resource="unclassified" key="D-062" value="diags_wo_dr" result="d062"/>
+						<if cond="ageyear lt 18" >
+							<my:group racine="11M08" gravite="1" modalite="T" />
+						<elseif cond="d062 gt 0" />
+							<my:group racine="11M15" gravite="1" modalite="T" />
+						<else />
+							<my:group racine="11M16" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1106 gt 0" />
+						<my:group racine="11M10" gravite="1" modalite="T" />
+					<elseif cond="d1107 gt 0" />
+						<if cond="ageyear lt 18" >
+							<my:group racine="11M11" gravite="1" />
+						<else />
+							<my:group racine="11M12" gravite="1" modalite="T" />
+						</if>
+					<elseif cond="d1108 gt 0" />
+						<my:group racine="11M17" gravite="1" />
+					<elseif cond="d1109 gt 0" />
+						<my:group racine="11M19" gravite="Z" modalite="T" />
+					<elseif cond="d1110 gt 0" />
+						<my:group racine="11M18" gravite="Z" />
+					<elseif cond="d1111 gt 0" />
+						<my:group racine="11M20" gravite="1" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD12 -->
+		<state id="process_cmd12">
+			<onentry>
+				<my:fromRss domain="main" get="Sexe" pattern="{0}" result="sexe" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="acteclassant" key="12" value="acte" result="acteclassant"/>
+				<if cond="sexe eq 2" >
+					<my:group erreur="90Z01Z" />
+				<elseif cond="acteclassant gt 0" />
+					<my:inResource resource="unclassified" key="A-100" value="acte" result="a100" />
+					<my:inResource resource="unclassified" key="A-101" value="acte" result="a101" />
+					<my:inResource resource="unclassified" key="A-102" value="acte" result="a102" />
+					<my:inResource resource="unclassified" key="A-103" value="acte" result="a103" />
+					<my:inResource resource="unclassified" key="A-272" value="acte" result="a272" />
+					<my:inResource resource="unclassified" key="A-104" value="acte" result="a104" />
+					<my:inResource resource="unclassified" key="A-105" value="acte" result="a105" />
+					<if cond="a100 gt 0" >
+						<my:inResource resource="unclassified" key="D-038" value="diags_wo_dr" result="d038" />
+						<if cond="d038 gt 0" >
+							<my:group racine="12C11" gravite="1" />
+						<else />
+							<my:group racine="12C12" gravite="1" />
+						</if>
+					<elseif cond="a101 gt 1" />
+						<my:group racine="12C03" gravite="1" modalite="J" />
+					<elseif cond="a102 gt 0" />
+						<my:group racine="12C04" gravite="1" modalite="J" />
+					<elseif cond="a103 gt 0" />
+						<my:inResource resource="unclassified" key="D-009" value="diags_wo_dr" result="d009" />
+						<if cond="d009 gt 0" >
+							<my:group racine="12C05" gravite="1" />
+						<elseif cond="ageayear lt 18" />
+							<my:group racine="12C06" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="12C07" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a272 gt 0" />
+						<my:group racine="12C13" gravite="1" />
+					<elseif cond="a104 gt 0" />
+						<my:group racine="12C08" gravite="1" modalite="J" />
+					<elseif cond="a105 gt 0" />
+						<my:inResource resource="unclassified" key="D-009" value="diags_wo_dr" result="d009" />
+						<if cond="d009 gt 0" >
+							<my:group racine="12C09" gravite="1" />
+						<else />
+							<my:group racine="12C10" gravite="1" />
+						</if>
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 12 -->
+		<state id="process_cmd12_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:inResource resource="unclassified" key="A-224" value="acte" result="a224"/>
+				<my:inResource resource="unclassified" key="A-271" value="acte" result="a271"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="duree lt 2 and a224 gt 0" >
+					<if cond="activite.contains(4)" >
+						<my:group racine="12K02" gravite="Z" />
+					<else />
+						<my:group racine="12K03" gravite="Z" />
+					</if>
+				<elseif cond="duree eq 0 and a271 gt 0" />
+					<my:group racine="12K06" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="12M08" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-1201" value="dp" result="d1201"/>
+					<my:inResource resource="unclassified" key="D-1202" value="dp" result="d1202"/>
+					<my:inResource resource="unclassified" key="D-1203" value="dp" result="d1203"/>
+					<my:inResource resource="unclassified" key="D-1204" value="dp" result="d1204"/>
+					<my:inResource resource="unclassified" key="D-1205" value="dp" result="d1205"/>
+					<my:inResource resource="unclassified" key="D-1206" value="dp" result="d1206"/>
+					<my:inResource resource="unclassified" key="D-1207" value="dp" result="d1207"/>
+					<if cond="d1201 gt 0">
+						<my:group racine="12M06" gravite="1" modalite="T" />
+					<elseif cond="d1202 gt 0" />
+						<my:group racine="12M07" gravite="1" modalite="T" />
+					<elseif cond="d1203 gt 0" />
+						<my:group racine="12M03" gravite="1" modalite="T"/>
+					<elseif cond="d1204 gt 0" />
+						<my:group racine="12M04" gravite="1" modalite="T" />
+					<elseif cond="d1205 gt 0" />
+						<my:group racine="12M05" gravite="1" modalite="T" />
+					<elseif cond="d1206 gt 0" />
+						<my:group racine="12M08" gravite="Z" />
+					<elseif cond="d1207 gt 0" />
+						<my:group racine="12M09" gravite="Z" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD13 -->
+		<state id="process_cmd13">
+			<onentry>
+				<my:fromRss domain="main" get="Sexe" pattern="{0}" result="sexe" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:fromRss domain="main" get="DDN" pattern="{0}" result="ddn" type="Calendar"/>
+				<my:age birthday="ddn" date="dateentree" result="ageyear" type="year"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:inResource resource="acteclassant" key="13" value="acte" result="acteclassant"/>
+				<if cond="sexe eq 1" >
+					<my:group erreur="90Z01Z"/>
+				<elseif cond="acteclassant gt 0" />
+					<my:inResource resource="unclassified" key="A-194" value="acte" result="a194" />
+					<my:inResource resource="unclassified" key="A-106" value="acte" result="a106" />
+					<my:inResource resource="unclassified" key="A-107" value="acte" result="a107" />
+					<my:inResource resource="unclassified" key="A-108" value="acte" result="a108" />
+					<my:inResource resource="unclassified" key="A-293" value="acte" result="a293" />
+					<my:inResource resource="unclassified" key="A-109" value="acte" result="a109" />
+					<my:inResource resource="unclassified" key="A-111" value="acte" result="a111" />
+					<my:inResource resource="unclassified" key="A-363" value="acte" result="a363" />
+					<my:inResource resource="unclassified" key="A-112" value="acte" result="a112" />
+					<my:inResource resource="unclassified" key="A-113" value="acte" result="a113" />
+					<my:inResource resource="unclassified" key="A-114" value="acte" result="a114" />
+					<my:inResource resource="unclassified" key="A-115" value="acte" result="a115" />
+					<if cond="duree eq 0 and a194 gt 0" >
+						<my:group racine="13C16" modalite="J" />
+					<elseif cond="a106 gt 1" />
+						<my:inResource resource="unclassified" key="D-1303" value="diags_wo_dr" result="d1303" />
+						<if cond="d1303 gt 0" >
+							<my:group racine="13C14" gravite="1" />
+						<else />
+							<my:group racine="13C15" gravite="1" />
+						</if>
+					<elseif cond="a107 gt 0" />
+						<my:group racine="13C03" gravite="1" />
+					<elseif cond="a108 gt 0" />
+						<my:group racine="13C04" gravite="1" modalite="J" />
+					<elseif cond="a293 gt 0" />
+						<my:group racine="13C17" gravite="1" />
+					<elseif cond="a109 gt 0" />
+						<my:inResource resource="unclassified" key="D-1303" value="diags_wo_dr" result="d1303" />
+						<my:inResource resource="unclassified" key="A-110" value="acte" result="a110" />
+						<my:inResource resource="unclassified" key="A-362" value="acte" result="a362" />
+						<my:inResource resource="unclassified" key="D-334" value="dp" result="d334" />
+						<if cond="d1303 gt 0" >
+							<my:group racine="13C05" gravite="1" />
+						<elseif cond="a110 gt 0" />
+							<my:group racine="13C06" gravite="1" modalite="J" />
+						<elseif cond="a362 gt 0" />
+							<my:group racine="13C18" gravite="1" />
+						<elseif cond="d334 gt 0" />
+							<my:group racine="13C19" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="13C07" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a111 gt 0" />
+						<my:group racine="13C08" gravite="1" modalite="J" />
+					<elseif cond="a363 gt 0" />
+						<my:group racine="13C20" gravite="1" modalite="J" />
+					<elseif cond="a112 gt 0" />
+						<my:group racine="13C09" gravite="1" modalite="T" />
+					<elseif cond="a113 gt 0" />
+						<my:group racine="13C10" gravite="1" modalite="T" />
+					<elseif cond="a114 gt 0" />
+						<my:inResource resource="unclassified" key="D-1303" value="diags_wo_dr" result="d1303" />
+						<if cond="d1303 gt 0" >
+							<my:group racine="13C11" gravite="1" modalite="J" />
+						<else />
+							<my:group racine="13C12" gravite="1" modalite="J" />
+						</if>
+					<elseif cond="a115 gt 0" />
+						<my:group racine="13C13" gravite="1" modalite="T" />
+					</if>
+					<send event="'end'" />
+				<else />
+					<send event="'continue'" />
+				</if>
+			</onentry>
+
+			<transition event="end" target="end" />
+			<transition event="continue" target="a_wrdp" />
+		
+		</state>
+
+		<!-- STEP 2 of MAIN CMD 13 -->
+		<state id="process_cmd13_step2" >
+			<onentry>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="acte" get="Activite" pattern="{0}" result="activite" type="Integer"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:inResource resource="unclassified" key="A-225" value="acte" result="a225"/>
+				<my:inResource resource="unclassified" key="A-226" value="acte" result="a226"/>
+				<my:inResource resource="unclassified" key="D-057" value="dp" result="d057"/>
+				<if cond="duree lt 2 and a225 gt 0" >
+					<if cond="activite.contains(4)" >
+						<my:group racine="13K02" gravite="Z" />
+					<else />
+						<my:group racine="13K03" gravite="Z" />
+					</if>
+				<elseif cond="duree lt 2 and a226 gt 0" />
+					<if cond="activite.contains(4)" >
+						<my:group racine="13K04" gravite="Z" />
+					<else />
+						<my:group racine="13K05" gravite="Z" />
+					</if>
+				<elseif cond="duree eq 0 and activite.contains(4)" />
+					<my:group racine="13K06" modalite="J" />
+				<elseif cond="_inversion eq '1' and d057 gt 0" />
+					<my:group racine="13M09" gravite="Z" />
+				<else />
+					<my:inResource resource="unclassified" key="D-1301" value="dp" result="d1301"/>
+					<my:inResource resource="unclassified" key="D-1302" value="dp" result="d1302"/>
+					<my:inResource resource="unclassified" key="D-1303" value="dp" result="d1303"/>
+					<my:inResource resource="unclassified" key="D-1304" value="dp" result="d1304"/>
+					<my:inResource resource="unclassified" key="D-1305" value="dp" result="d1305"/>
+					<my:inResource resource="unclassified" key="D-1306" value="dp" result="d1306"/>
+					<my:inResource resource="unclassified" key="D-1307" value="dp" result="d1307"/>
+					<my:inResource resource="unclassified" key="D-1308" value="dp" result="d1308"/>
+					<if cond="d1301 gt 0">
+						<my:group racine="13M05" gravite="1" />
+					<elseif cond="d1302 gt 0" />
+						<my:group racine="13M06" gravite="1" modalite="T" />
+					<elseif cond="d1303 gt 0" />
+						<my:group racine="13M03" gravite="1" modalite="T" />
+					<elseif cond="d1304 gt 0" />
+						<my:group racine="13M07" gravite="1" />
+					<elseif cond="d1305 gt 0" />
+						<my:group racine="13M04" gravite="1" modalite="T" />
+					<elseif cond="d1306 gt 0" />
+						<my:group racine="13M08" gravite="1" />
+					<elseif cond="d1307 gt 0" />
+						<my:group racine="13M09" gravite="Z" />
+					<elseif cond="d1308 gt 0" />
+						<my:group racine="13M10" gravite="Z" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD14 -->
+		<state id="process_cmd14">
+			<onentry>
+				<my:fromRss domain="main" get="Sexe" pattern="{0}" result="sexe" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:concatenate values="dp,da,dr" result="diags" />
+				<my:inResource resource="unclassified" key="D-116" value="da" result="d116"/>
+				<my:inResource resource="unclassified" key="D-302" value="diags_wo_dr" result="d302"/>
+				<my:inResource resource="unclassified" key="A-336" value="acte" result="a336"/>
+				<my:inResource resource="unclassified" key="D-1403" value="diags" result="d1403"/>
+				<my:inResource resource="unclassified" key="D-1405" value="diags" result="d1405"/>
+				<my:inResource resource="unclassified" key="D-1402" value="diags" result="d1402"/>
+				<my:inResource resource="unclassified" key="A-345" value="acte" result="a345"/>
+				<my:inResource resource="unclassified" key="D-1404" value="diags" result="d1404"/>
+				<my:inResource resource="unclassified" key="D-1407" value="diags" result="d1407"/>
+				<my:inResource resource="unclassified" key="D-1408" value="diags" result="d1408"/>
+				<if cond="sexe eq 1" >
+					<my:group erreur="90Z01Z" />
+				<elseif cond="d116 gt 0" />
+					<my:inResource resource="unclassified" key="D-1403" value="dp" result="d1403"/>
+					<my:inResource resource="unclassified" key="D-301" value="diags" result="d301"/>
+					<my:inResource resource="unclassified" key="A-323" value="acte" result="a323"/>
+					<if cond="d1403 gt 0" >
+						<my:group erreur="90Z01Z" />
+					<elseif cond="d301 gt 0" />
+						<if cond="a323 gt 0" >
+							<my:group erreur="90Z02Z" />
+						<else />
+							<my:group racine="14Z09" gravite="Z" />
+						</if>
+					<elseif cond="a323 gt 0" />
+						<my:inResource resource="unclassified" key="A-117" value="acte" result="a117"/>
+						<my:inResource resource="unclassified" key="D-314" value="diags" result="d314"/>
+						<my:inResource resource="unclassified" key="D-315" value="diags" result="d315"/>
+						<my:inResource resource="unclassified" key="A-119" value="acte" result="a119"/>
+						<my:inResource resource="unclassified" key="A-335" value="acte" result="a335"/>
+						<my:inResource resource="unclassified" key="D-318" value="diags" result="d318"/>
+						<my:inResource resource="unclassified" key="D-002" value="diags" result="d002"/>
+						<my:inResource resource="unclassified" key="D-003" value="diags" result="d003"/>
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+	</state>
+
+	<state id="end" final="true" />
+
+	<state id="fend" finale="true" >
+		<onentry>
+			<my:group erreur="Fend Stop" />
+		</onentry>
+	</state>
+	
+</scxml>

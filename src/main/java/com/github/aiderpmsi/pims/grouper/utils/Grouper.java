@@ -2,41 +2,48 @@ package com.github.aiderpmsi.pims.grouper.utils;
 
 import java.io.InputStream;
 
-import org.apache.commons.scxml.SCXMLExecutor;
-import org.apache.commons.scxml.model.ModelException;
-import org.xml.sax.ext.DefaultHandler2;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.w3c.dom.Document;
+
+import com.github.aiderpmsi.pims.grouper.customtags.Assign;
+import com.github.aiderpmsi.pims.grouper.customtags.Execute;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
+import com.github.aiderpmsi.pims.grouper.customtags.Switch;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 
 public class Grouper {
 
 	// scxml location
-	private static final String scxmlLocation = "grouper.xml";
+	private static final String treeLocation = "grouper.xml";
 
 	public Group group(RssContent rss) throws Exception {
+		
+		Document document = null;
+		DocumentBuilderFactory docbfactory = null;
+		
+		docbfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = docbfactory.newDocumentBuilder();
 
-		try {
-			// SOURCE OF THE STATE MACHINE DEFINITION
-			InputStream scxmlSource = this.getClass().getClassLoader().getResourceAsStream(scxmlLocation);
+		// TREE DEFINITION
+		InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
 
-			ExecutorFactory machineFactory = new ExecutorFactory()
-				.setScxmlSource(scxmlSource)
-				.setErrorHandler(new DefaultHandler2())
-				.setRss(rss);
-
-			SCXMLExecutor machine = machineFactory.createMachine();
-
-			// RUN THE STATE MACHINE
-			machine.go();
-			
-			// GETS THE MACHINE RESULT
-			Group result = (Group) machine.getRootContext().get("_result");
-			return result;
-			
-		} catch (ModelException e) {
-			throw new Exception(e);
-		}
+		// CREATES THE DOM
+		document = builder.parse(treeSource);
+		
+		// CREATES THE DOM BROWSER
+		TreeBrowser tb = new TreeBrowser();
+		tb.setDOM(document);
+		tb.addDataModel("rss", rss);
+		tb.AddAction("http://default.actions/default", "execute", Execute.class);
+		tb.AddAction("http://default.actions/default", "assign", Assign.class);
+		tb.AddAction("http://default.actions/default", "switch", Switch.class);
+		tb.go();
+		// GETS THE MACHINE RESULT
+		Group result = (Group) tb.getDataModel("group");
+		
+		return result;
 	}
 
 }
