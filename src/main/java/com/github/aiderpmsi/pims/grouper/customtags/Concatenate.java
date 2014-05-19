@@ -1,79 +1,42 @@
 package com.github.aiderpmsi.pims.grouper.customtags;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml.ErrorReporter;
-import org.apache.commons.scxml.EventDispatcher;
-import org.apache.commons.scxml.SCInstance;
-import org.apache.commons.scxml.SCXMLExpressionException;
-import org.apache.commons.scxml.model.Action;
-import org.apache.commons.scxml.model.ModelException;
+public class Concatenate {
 
-public class Concatenate extends Action {
-
-	private static final long serialVersionUID = 3615764243955863213L;
-
-	private String values, result;
-	
-	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void execute(EventDispatcher evtDispatcher, ErrorReporter errRep,
-			SCInstance scInstance, Log appLog, Collection derivedEvents)
-			throws ModelException, SCXMLExpressionException {
-		
-		// GETS ALL VALUES NAMES FROM VALUES
-		String[] valuesArray = values.split(",");
+	@SuppressWarnings("unchecked")
+	public HashSet<String> concat(Object... values) throws IOException {
 		
 		// SETS THE RESULT HASH
 		HashSet<String> resultHash = new HashSet<>();
 		
-		for (String value : valuesArray) {
-			// GETS THE OBJECT WITH VALUE
-			Object valueContent = scInstance.getContext(getParentTransitionTarget()).get(value.trim());
+		for (Object value : values) {
 			
 			// VALUE IS NULL
-			if (valueContent == null) {
+			if (value == null) {
 				// DO NOTHING
 			}
 			
 			// VALUE IS A STRING
-			else if (valueContent instanceof String) {
-				resultHash.add((String) valueContent);
+			else if (value instanceof String) {
+				resultHash.add((String) value);
 			}
 			
 			// VALUE IS A COLLECTION
-			else if (valueContent instanceof Collection<?>) {
-				for (Object valueObject : (Collection<Object>) valueContent) {
+			else if (value instanceof Collection<?>) {
+				for (Object valueObject : (Collection<Object>) value) {
 					if (valueObject instanceof String) {
 						resultHash.add((String) valueObject);
 					}
 				}
 			}
 			else {
-				throw new ModelException(value + " is not a known type for Intersect");
+				throw new IOException(value + " is not a known type for Concatenate");
 			}
 		}
-		
-		// WRITES THE RESULT
-		scInstance.getContext(getParentTransitionTarget()).setLocal(result, resultHash);
-	}
-
-	public String getValues() {
-		return values;
-	}
-
-	public void setValues(String values) {
-		this.values = values;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
+		return resultHash;
 	}
 
 }

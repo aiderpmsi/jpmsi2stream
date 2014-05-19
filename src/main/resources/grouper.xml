@@ -4,6 +4,20 @@
 	<dflt:assign var="numseances" expr="rss.get('main', 'NbSeances', '{0}', 'Integer')" />
 	<dflt:assign var="actes" expr="rss.get('acte', 'CodeCCAM,Phase', '{0}/{1}', 'String')" />
 	<dflt:assign var="dp" expr="rss.get('main', 'DP', '{0}', 'Diagnostic')" />
+	<dflt:assign var="das" expr="rss.get('da', 'DA', '{0}', 'Diagnostic')" />
+	<dflt:assign var="dr" expr="rss.get('main', 'DR', '{0}', 'Diagnostic')" />
+
+	<dflt:assign var="dateentree" expr="rss.get('main, 'DateEntree', '{0}', 'Calendar')" />
+	<dflt:assign var="datesortie" expr="rss.get('main, 'DateSortie', '{0}', 'Calendar')" />
+	<dflt:assign var="datenaissance" expr="rss.get('main, 'DDN', '{0}', 'Calendar')" />
+	<dflt:assign var="dureesejour" expr="duration.calculate(dateentree, datesortie, 'day')" />
+	<dflt:assign var="ageyear" expr="duration.calculate(datenaissance, dateentree, 'year')" />
+	<dflt:assign var="ageday" expr="duration.calculate(datenaissance, dateentree, 'day')" />
+
+	<dflt:assign var="modesortie" expr="rss.get('main', 'ModeSortie', '{0}', 'Integer')" />
+
+	<dflt:assign var="diags" expr="concatenate.concat(dp, dr, das)" />
+	<dflt:assign var="diags_wo_dr" expr="concatenate.concat(dp, das)" />
 	
 	<!-- CMD 28 -->
 	<dflt:switch cond="not(numseances eq 0)" >
@@ -106,7 +120,50 @@
 	</dflt:switch>
 
 	<dflt:switch cond="inresource.count('unclassified', 'A-138', actes) gt 0">
-		<pims:group racine="27C07" gravite="1" />
+		<dflt:switch cond="dureesejour eq 0">
+			<pims:group racine="27Z04" modalite="J" />
+		</dflt:switch>
+		<dflt:switch cond="inresource.count('unclassified', 'A-178', actes) gt 0">
+			<pims:group racine="27Z02" gravite="1" />
+		</dflt:switch>
+		<pims:group racine="27Z03" gravite="Z" />
 	</dflt:switch>
 
+	<!-- CMD 26 -->
+	<dflt:switch cond="inresource.count('unclassified', 'D-130', dp) gt 0">
+		<dflt:switch cond="((inresource.count('unclassified', 'D-131', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-132', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-133', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-134', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-135', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-136', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-137', dp) gt 0 ? 1 : 0) +
+						    (inresource.count('unclassified', 'D-138', dp) gt 0 ? 1 : 0)) ge 2">
+			<dflt:switch cond="inresource.count('classeacte', 'ADC', actes) gt 0">
+				<pims:group racine="26C02" gravite="1" />
+			</dflt:switch>
+			<pims:group racine="26M02" gravite="1" />
+		</dflt:switch>
+	</dflt:switch>
+	
+	<!-- CMD 25 -->
+	<dflt:switch cond="(inresource.count('unclassified', 'D-127', dp) gt 0 and inresource.count('unclassified', 'D-128', das) gt 0) or
+					   (inresource.count('unclassified', 'D-128', dp) gt 0 and inresource.count('unclassified', 'D-127', das) gt 0)">
+		<dflt:switch cond="modesortie eq 9">
+			<pims:group racine="25Z02" gravite="E" />
+		</dflt:switch>
+		<dflt:switch cond="ageyear lt 13">
+			<pims:group racine="25Z03" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="inresource.count('classeacte', 'ADC', actes) gt 0">
+			<pims:group racine="25C02" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="inresource.count('unclassified', 'D-129', diags) ge 2">
+			<pims:group racine="25M02" gravite="C" />
+		</dflt:switch>
+		<dflt:switch cond="inresource.count('unclassified', 'D-129', diags) gt 0">
+			<pims:group racine="25M02" gravite="B" />
+		</dflt:switch>
+		<pims:group racine="25M02" gravite="A" modalite="B" />
+	</dflt:switch>	
 </tree>
