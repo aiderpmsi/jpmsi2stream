@@ -353,6 +353,24 @@
 	
 		</state>
 
+		<!-- TEST IF WE ARE IN CMD 13 -->
+		<state id="test_cmd13">
+			<onentry>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:inResource resource="dpclassant" key="CMD-13" value="dp" result="cmd13"/>
+				<if cond="cmd12 gt 0" >
+					<assign name="cmd" expr="'cmd13'" />
+					<send event="'cmd_found'"/>
+				<else />
+					<send event="'cmd_not_found'" />
+				</if>
+			</onentry>
+			
+			<transition event="cmd_found" target="process_cmd13" />
+			<transition event="cmd_not_found" target="fend" />
+	
+		</state>
+
 		<!-- ACTE WITHOUT RELATION WITH DP (USED IN MULTIPLE CMD)-->
 		<state id="a_wrdp" >
 			<onentry>
@@ -379,6 +397,7 @@
 			<transition event="cmd10" target="process_cmd10_step2" />
 			<transition event="cmd11" target="process_cmd11_step2" />
 			<transition event="cmd12" target="process_cmd12_step2" />
+			<transition event="cmd13" target="process_cmd13_step2" />
 		
 		</state>
 
@@ -3021,6 +3040,61 @@
 						<my:group racine="13M09" gravite="Z" />
 					<elseif cond="d1308 gt 0" />
 						<my:group racine="13M10" gravite="Z" />
+					</if>
+				</if>
+				<send event="'end'" />
+			</onentry>
+
+			<transition event="end" target="end" />
+		
+		</state>
+
+		<!-- WE ARE IN CMD14 -->
+		<state id="process_cmd14">
+			<onentry>
+				<my:fromRss domain="main" get="Sexe" pattern="{0}" result="sexe" type="Integer"/>
+				<my:fromRss domain="acte" get="CodeCCAM,Phase" pattern="{0}/{1}" result="acte" type="String"/>
+				<my:fromRss domain="main" get="DP" pattern="{0}" result="dp" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DR" pattern="{0}" result="dr" type="Diagnostic"/>
+				<my:fromRss domain="da" get="DA" pattern="{0}" result="da" type="Diagnostic"/>
+				<my:fromRss domain="main" get="DateEntree" pattern="{0}" result="dateentree" type="Calendar"/>
+				<my:fromRss domain="main" get="DateSortie" pattern="{0}" result="datesortie" type="Calendar"/>
+				<my:age birthday="dateentree" date="datesortie" result="duree" type="day"/>
+				<my:concatenate values="dp,da" result="diags_wo_dr" />
+				<my:concatenate values="dp,da,dr" result="diags" />
+				<my:inResource resource="unclassified" key="D-116" value="da" result="d116"/>
+				<my:inResource resource="unclassified" key="D-302" value="diags_wo_dr" result="d302"/>
+				<my:inResource resource="unclassified" key="A-336" value="acte" result="a336"/>
+				<my:inResource resource="unclassified" key="D-1403" value="diags" result="d1403"/>
+				<my:inResource resource="unclassified" key="D-1405" value="diags" result="d1405"/>
+				<my:inResource resource="unclassified" key="D-1402" value="diags" result="d1402"/>
+				<my:inResource resource="unclassified" key="A-345" value="acte" result="a345"/>
+				<my:inResource resource="unclassified" key="D-1404" value="diags" result="d1404"/>
+				<my:inResource resource="unclassified" key="D-1407" value="diags" result="d1407"/>
+				<my:inResource resource="unclassified" key="D-1408" value="diags" result="d1408"/>
+				<if cond="sexe eq 1" >
+					<my:group erreur="90Z01Z" />
+				<elseif cond="d116 gt 0" />
+					<my:inResource resource="unclassified" key="D-1403" value="dp" result="d1403"/>
+					<my:inResource resource="unclassified" key="D-301" value="diags" result="d301"/>
+					<my:inResource resource="unclassified" key="A-323" value="acte" result="a323"/>
+					<if cond="d1403 gt 0" >
+						<my:group erreur="90Z01Z" />
+					<elseif cond="d301 gt 0" />
+						<if cond="a323 gt 0" >
+							<my:group erreur="90Z02Z" />
+						<else />
+							<my:group racine="14Z09" gravite="Z" />
+						</if>
+					<elseif cond="a323 gt 0" />
+						<my:inResource resource="unclassified" key="A-117" value="acte" result="a117"/>
+						<my:inResource resource="unclassified" key="D-314" value="diags" result="d314"/>
+						<my:inResource resource="unclassified" key="D-315" value="diags" result="d315"/>
+						<my:inResource resource="unclassified" key="A-119" value="acte" result="a119"/>
+						<my:inResource resource="unclassified" key="A-335" value="acte" result="a335"/>
+						<my:inResource resource="unclassified" key="D-318" value="diags" result="d318"/>
+						<my:inResource resource="unclassified" key="D-002" value="diags" result="d002"/>
+						<my:inResource resource="unclassified" key="D-003" value="diags" result="d003"/>
 					</if>
 				</if>
 				<send event="'end'" />
