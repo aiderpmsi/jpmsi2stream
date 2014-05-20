@@ -7,20 +7,20 @@ import org.w3c.dom.Node;
 
 public class Execute extends BaseAction {
 
-	private String script;
+	private String expr;
 	
 	@Override
 	public String executeAction(Node node, JexlContext jc, JexlEngine jexl) {
         // CREATE THE EXPRESSION
-        Expression e = jexl.createExpression(script);
+        Expression e = jexl.createExpression(expr);
 		// EXECUTE EXPRESSION
         e.evaluate(jc);
 		// GO TO NEXT CHILD ELEMENT OR NEXT SIBLING
         return "child|sibling";
 	}
 
-	public void setScript(String script) {
-		this.script = script;
+	public void setExpr(String expr) {
+		this.expr = expr;
 	}
 
 }
