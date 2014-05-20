@@ -1,10 +1,8 @@
 package com.github.aiderpmsi.pims.grouper.model;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -108,9 +106,7 @@ public class Utils {
 		return age;
 	}
 	
-	public void awrdp(RssContent rss) throws IOException {
-		@SuppressWarnings("unchecked")
-		List<String> actes = (List<String>) rss.get("acte", "CodeCCAM,Phase", "{0}/{1}", "String");
+	public void awrdp(List<String> actes) throws IOException {
 		HashSet<String> dicoacteschirmineur = dicos.get("actemineurchirreclassant").getDefintion("all");
 		HashSet<String> dicoacteschir = dicos.get("classeacte").getDefintion("ADC");
 
@@ -129,36 +125,21 @@ public class Utils {
 		
 		if (acteschir.equals(acteschirmineur)) {
 			// IF EVERY ACTE CHIR BELONGS TO ACTES CHIR MINEUR LIST, IGNORE THEM
-			remove(rss.getRssacte(), "CodeCCAM,Phase", "{0}/{1}", acteschir);
+			remove(actes, acteschir);
 		} else {
 			// ELSE IF THERE IS AT LEAST ONE ACTE CLASSANT OP, IGNORE IT
 			HashSet<String> dicoactesclassantsop = dicos.get("acteclassantop").getDefintion("all");
-			remove(rss.getRssacte(), "CodeCCAM,Phase", "{0}/{1}", dicoactesclassantsop);
+			remove(actes, dicoactesclassantsop);
 		}
 	}
 	
-	private void remove(List<HashMap<String, String>> content, String domain, String pattern, HashSet<String> toRemove) {
-		// MESSAGE FORMATER TO WRITE ACCORDING TO THE DESIRED PATTERN
-		MessageFormat mf = new MessageFormat(pattern);
-
-		// GETS THE ELEMENTS IN DOMAINKEY, REFORMAT IT WITH PATTERN AND COMPARE IT WITH THE DEFINITIONS
-		Iterator<HashMap<String, String>> it = content.iterator();
-		extractvalues : while (it.hasNext()) {
-			HashMap<String, String> map = it.next();
-			// GETS THE DOMAINKEYS
-			String[] domainkeys = domain.split("\\s*,\\s*");
-			// GETS THE DOMAIN VALUES
-			String[] domainvalues = new String[domainkeys.length];
-			for (int i = 0 ; i < domainkeys.length ; i++) {
-				domainvalues[i] = map.get(domainkeys[i]);
-				// IF VALUE IS NULL, CHECK NEXT ELEMENT IN CONTENT
-				if (domainvalues[i] == null)
-					break extractvalues;
-			}
-			// REFORMAT THE VALUES
-			String formattedValue = mf.format(domainvalues);
+	private void remove(List<String> actes, HashSet<String> toRemove) {
+		// REMOVE CORRESPONDING ACTES
+		Iterator<String> it = actes.iterator();
+		while (it.hasNext()) {
+			String acte = it.next();
 			// CHECK IF THIS FORMATTED VALUE EXISTS IN DICOCONTENT
-			if (toRemove.contains(formattedValue)) {
+			if (toRemove.contains(acte)) {
 				// REMOVE THIS ELEMENT FROM CONTENT IF EXISTS IN DICOCONTENT
 				it.remove();
 			} // ELSE DO NOTHING

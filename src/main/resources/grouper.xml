@@ -17,6 +17,8 @@
 	<dflt:assign var="ageday" expr="utils.duration(datenaissance, dateentree, 'day')" />
 
 	<dflt:assign var="modesortie" expr="rss.get('main', 'ModeSortie', '{0}', 'Integer')" />
+	
+	<dflt:assign var="inversion" expr="false" />
 
 	<dflt:assign var="diags" expr="utils.concat(dp, dr, das)" />
 	<dflt:assign var="diags_wo_dr" expr="utils.concat(dp, das)" />
@@ -167,6 +169,12 @@
 			<pims:group racine="25M02" gravite="B" />
 		</dflt:switch>
 		<pims:group racine="25M02" gravite="A" modalite="B" />
+	</dflt:switch>
+
+	<!-- POST CMD 25, INVERT DP AND DZ IF NEEDED -->
+	<dflt:switch cond="dp.substring(0,3) eq 'Z09' or dp.substring(0,3) eq 'Z08' and not(dr.size() eq 0)" >
+		<dflt:assign var="inversion" expr="true" />
+		<dflt:execute expr="var temp = dp; dp = dr; dr = temp;" />
 	</dflt:switch>
 
 	<!-- CMD 15 -->
@@ -366,11 +374,132 @@
 				<pims:group racine="01C08" gravite="1" modalite="J" />
 			</dflt:switch>
 		</dflt:switch>
-		<dflt:execute expr="utils.awrdp(rss)" />
+		<dflt:execute expr="utils.awrdp(actes)" />
 		<dflt:switch cond="utils.count('unclassified', 'A-197', actes) gt 0">
 			<dflt:switch cond="utils.count('unclassified', 'D-067', dp) gt 0">
 				<pims:group racine="01K07" gravite="1" />
 			</dflt:switch>
+			<pims:group racine="01K02" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'A-198', actes) gt 0">
+			<pims:group racine="01K03" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="dureesejour lt 2 and modesortie eq 9">
+			<dflt:switch cond="utils.count('unclassified', 'D-064', dp) gt 0">
+				<pims:group racine="01M36" gravite="E" />
+			</dflt:switch>
+			<pims:group racine="01M37" gravite="E" />
+		</dflt:switch>
+		<dflt:switch cond="dureesejour eq 0">
+			<dflt:switch cond="utils.count('unclassified', 'A-266', actes) gt 0">
+				<pims:group racine="01K04" modalite="J" />
+			</dflt:switch>
+			<dflt:switch cond="activite eq 4">
+				<pims:group racine="01K06" modalite="J" />
+			</dflt:switch>
+			<dflt:move dest="parent(1)/sibling(1)"/>
+		</dflt:switch>
+		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) gt 0">
+			<pims:group racine="01M32" gravite="Z" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0101', dp) gt 0">
+			<pims:group racine="01M22" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0102', dp) gt 0">
+			<pims:group racine="01M23" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0103', dp) gt 0">
+			<dflt:switch cond="ageyear lt 18" >
+				<pims:group racine="01M24" gravite="1" modalite="T" />
+			</dflt:switch>
+			<pims:group racine="01M25" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0104', dp) gt 0">
+			<pims:group racine="01M04" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0105', dp) gt 0">
+			<pims:group racine="01M05" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0106', dp) gt 0">
+			<pims:group racine="01M26" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0107', dp) gt 0">
+			<pims:group racine="01M27" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0108', dp) gt 0">
+			<dflt:switch cond="ageyear gt 79" >
+				<pims:group racine="01M07" gravite="1" modalite="T" />
+			</dflt:switch>
+			<pims:group racine="01M08" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0109', dp) gt 0">
+			<pims:group racine="01M28" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0110', dp) gt 0">
+			<pims:group racine="01M09" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0111', dp) gt 0">
+			<pims:group racine="01M29" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0112', dp) gt 0">
+			<pims:group racine="01M10" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0113', dp) gt 0">
+			<pims:group racine="01M11" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0114', dp) gt 0">
+			<pims:group racine="01M12" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0115', dp) gt 0">
+			<pims:group racine="01M13" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0116', dp) gt 0">
+			<pims:group racine="01M33" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0117', dp) gt 0">
+			<pims:group racine="01M30" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0118', dp) gt 0">
+			<pims:group racine="01M31" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0119', dp) gt 0">
+			<dflt:switch cond="ageyear gt 79" >
+				<pims:group racine="01M15" gravite="1" modalite="T" />
+			</dflt:switch>
+			<pims:group racine="01M16" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0120', dp) gt 0">
+			<pims:group racine="01M17" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0121', dp) gt 0">
+			<dflt:switch cond="utils.count('unclassified', 'D-124', diags_wo_dr) gt 0">
+				<pims:group racine="01M18" gravite="1" modalite="T" />
+			</dflt:switch>
+			<dflt:switch cond="utils.count('unclassified', 'D-125', diags_wo_dr) gt 0">
+				<pims:group racine="01M19" gravite="1" />
+			</dflt:switch>
+			<pims:group racine="01M20" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0122', dp) gt 0">
+			<dflt:switch cond="dureesejour eq 0 and utils.count('unclassified', 'A-267', actes) gt 0" >
+				<pims:group racine="01K05" modalite="J" />
+			</dflt:switch>
+			<pims:group racine="01M21" gravite="1" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0123', dp) gt 0">
+			<pims:group racine="01M32" gravite="Z" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0124', dp) gt 0">
+			<pims:group racine="01M35" gravite="Z" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0125', dp) gt 0">
+			<pims:group racine="01M34" gravite="Z" modalite="T" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0126', dp) gt 0">
+			<pims:group racine="01M38" gravite="1" />
+		</dflt:switch>
+		<dflt:switch cond="utils.count('unclassified', 'D-0127', dp) gt 0">
+			<pims:group racine="01M39" gravite="1" />
 		</dflt:switch>
 	</dflt:switch>
 </tree>
