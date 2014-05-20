@@ -1,6 +1,6 @@
-package com.github.aiderpmsi.pims.grouper.utils;
+package com.github.aiderpmsi.grouper.tests;
 
-public class T01C041 extends BaseTest {
+public class T28Z04Z extends BaseTest {
 
 	private String[][] rssmain = {
 			{"DP", "Z491     "},
@@ -32,7 +32,7 @@ public class T01C041 extends BaseTest {
 			}
 	};
 	
-	public T01C041() {
+	public T28Z04Z() {
 		setRssacte(transform(acte));
 		setRssda(transform(da));
 		setRssmain(transform(new String[][][] {rssmain}).get(0));

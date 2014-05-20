@@ -21,6 +21,16 @@ public class GrouperTest {
     }
  
     @Test
+    public void test28Z04Z() throws Exception {
+		Grouper gp = new Grouper(); 
+		RssContent cont = new T28Z04Z();
+
+		Group group = gp.group(cont);
+
+		test(group, "28Z04", "Z", "", "");
+    }
+
+    @Test
     public void test15M04E() throws Exception {
 		Grouper gp = new Grouper(); 
 		RssContent cont = new T15M04E();

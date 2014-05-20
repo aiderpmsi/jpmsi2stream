@@ -6,10 +6,12 @@
 	<dflt:assign var="dp" expr="rss.get('main', 'DP', '{0}', 'Diagnostic')" />
 	<dflt:assign var="das" expr="rss.get('da', 'DA', '{0}', 'Diagnostic')" />
 	<dflt:assign var="dr" expr="rss.get('main', 'DR', '{0}', 'Diagnostic')" />
+	<dflt:assign var="modeentree" expr="rss.get('main', 'ModeEntree', '{0}', 'Integer')" />
+	<dflt:assign var="poidsnn" expr="rss.get('main', 'PoidsNouveauNe', '{0}', 'Integer')" />
 
-	<dflt:assign var="dateentree" expr="rss.get('main, 'DateEntree', '{0}', 'Calendar')" />
-	<dflt:assign var="datesortie" expr="rss.get('main, 'DateSortie', '{0}', 'Calendar')" />
-	<dflt:assign var="datenaissance" expr="rss.get('main, 'DDN', '{0}', 'Calendar')" />
+	<dflt:assign var="dateentree" expr="rss.get('main', 'DateEntree', '{0}', 'Calendar')" />
+	<dflt:assign var="datesortie" expr="rss.get('main', 'DateSortie', '{0}', 'Calendar')" />
+	<dflt:assign var="datenaissance" expr="rss.get('main', 'DDN', '{0}', 'Calendar')" />
 	<dflt:assign var="dureesejour" expr="duration.calculate(dateentree, datesortie, 'day')" />
 	<dflt:assign var="ageyear" expr="duration.calculate(datenaissance, dateentree, 'year')" />
 	<dflt:assign var="ageday" expr="duration.calculate(datenaissance, dateentree, 'day')" />
@@ -60,7 +62,7 @@
 			</dflt:switch>
 			<dflt:switch cond="inresource.count('unclassified', 'D-143', dp) gt 0">
 				<dflt:switch cond="inresource.count('unclassified', 'A-342', actes) gt 0">
-					<dflt:move dest="parent(4)" />
+					<dflt:move dest="'parent(4)/sibling(1)'" />
 				</dflt:switch>
 				<dflt:switch cond="inresource.count('unclassified', 'A-205', actes) gt 0">
 					<pims:group racine="28Z10" gravite="Z" />
@@ -165,5 +167,166 @@
 			<pims:group racine="25M02" gravite="B" />
 		</dflt:switch>
 		<pims:group racine="25M02" gravite="A" modalite="B" />
-	</dflt:switch>	
+	</dflt:switch>
+
+	<!-- CMD 15 -->
+	<dflt:switch cond="ageday lt 8" >
+		<dflt:move dest="'parent(1)/sibling(2)'" />
+	</dflt:switch>
+	<dflt:switch cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)">
+		<dflt:switch cond="ageday lt 29" >
+			<dflt:move dest="'parent(2)/sibling(1)'" />
+		</dflt:switch>
+		<dflt:switch cond="ageyear lt 1 and poidsnn lt 2500" >
+			<dflt:move dest="'parent(2)/sibling(1)'" />
+		</dflt:switch>
+		<dflt:move dest="'parent(1)/sibling(2)'" />
+	</dflt:switch>
+	<dflt:switch cond="false" >
+		<dflt:switch cond="inresource.count('unclassified', 'D-056', dp) gt 0" >
+			<pims:group racine="15Z10" gravite="E" />
+		</dflt:switch>
+		<dflt:assign var="agegest" expr="rss.get('main', 'AgeGestationnel', '{0}', 'Integer')" />
+		<dflt:assign var="gnn" expr="(poidsnn ge 3300 and agegest ge 40 ? 1 :
+									 (poidsnn ge 2400 and agegest ge 38 ? 2 :
+									 (poidsnn ge 2200 and agegest ge 37 ? 3 :
+									 (poidsnn ge 2000 and agegest ge 37 ? 4 :
+									 (poidsnn ge 1800 and agegest ge 36 ? 5 :
+									 (poidsnn ge 1700 and agegest ge 35 ? 6 :
+									 (poidsnn ge 1500 and agegest ge 33 ? 7 :
+									 (poidsnn ge 1300 and agegest ge 32 ? 8 :
+									 (poidsnn ge 1100 and agegest ge 30 ? 9 :
+									 (poidsnn ge 800 and agegest ge 28 ? 10 : 11))))))))))" />
+		<dflt:switch cond="inresource.count('classeacte', 'ADC', actes) gt 0">
+			<dflt:switch cond="gnn eq 10" >
+				<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+					<pims:group racine="15C06" gravite="B" />
+				</dflt:switch>
+				<pims:group racine="15C06" gravite="A" />
+			</dflt:switch>
+			<dflt:switch cond="gnn eq 9 or gnn eq 8" >
+				<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+					<pims:group racine="15C05" gravite="B" />
+				</dflt:switch>
+				<pims:group racine="15C05" gravite="A" />
+			</dflt:switch>
+			<dflt:switch cond="gnn le 7 and gnn ge 1" >
+				<dflt:switch cond="inresource.count('unclassified', 'A-337', actes) gt 0">
+					<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+						<pims:group racine="15C02" gravite="B" />
+					</dflt:switch>
+					<pims:group racine="15C02" gravite="A" />
+				</dflt:switch>
+				<dflt:switch cond="inresource.count('unclassified', 'A-338', actes) gt 0">
+					<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+						<pims:group racine="15C03" gravite="B" />
+					</dflt:switch>
+					<pims:group racine="15C03" gravite="A" />
+				</dflt:switch>
+				<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+					<pims:group racine="15C04" gravite="B" />
+				</dflt:switch>
+				<pims:group racine="15C04" gravite="A" />
+			</dflt:switch>
+			<pims:group erreur="90Z02Z" />
+		</dflt:switch>
+		<dflt:switch cond="modesortie eq 71 and dureesejour lt 4" >
+			<pims:group racine="15M02" gravite="Z" />
+		</dflt:switch>
+		<dflt:switch cond="modesortie eq 9" >
+			<dflt:switch cond="dureesejour lt 4" >
+				<pims:group racine="15M03" gravite="E" />
+			</dflt:switch>
+			<pims:group racine="15M04" gravite="E" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 1" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+				<pims:group racine="15M05" gravite="D" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-304', diags) gt 0">
+				<pims:group racine="15M05" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-305', diags) gt 0">
+				<pims:group racine="15M05" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M05" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 2" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-303', diags) gt 0">
+				<pims:group racine="15M06" gravite="D" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-304', diags) gt 0">
+				<pims:group racine="15M06" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-305', diags) gt 0">
+				<pims:group racine="15M06" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M06" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 3" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-306', diags) gt 0">
+				<pims:group racine="15M07" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-307', diags) gt 0">
+				<pims:group racine="15M07" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M07" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 4" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-306', diags) gt 0">
+				<pims:group racine="15M08" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-307', diags) gt 0">
+				<pims:group racine="15M08" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M08" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 5" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-306', diags) gt 0">
+				<pims:group racine="15M09" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-307', diags) gt 0">
+				<pims:group racine="15M09" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M09" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 6" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-306', diags) gt 0">
+				<pims:group racine="15M10" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-307', diags) gt 0">
+				<pims:group racine="15M10" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M10" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 7" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-306', diags) gt 0">
+				<pims:group racine="15M11" gravite="C" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'D-307', diags) gt 0">
+				<pims:group racine="15M11" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M11" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 8" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-309', diags) gt 0">
+				<pims:group racine="15M12" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M12" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 9" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-309', diags) gt 0">
+				<pims:group racine="15M13" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M13" gravite="A" />
+		</dflt:switch>
+		<dflt:switch cond="gnn eq 10" >
+			<dflt:switch cond="inresource.count('unclassified', 'D-309', diags) gt 0">
+				<pims:group racine="15M14" gravite="B" />
+			</dflt:switch>
+			<pims:group racine="15M14" gravite="A" />
+		</dflt:switch>
+		<pims:group erreur="90Z02Z" />
+	</dflt:switch>
+
 </tree>

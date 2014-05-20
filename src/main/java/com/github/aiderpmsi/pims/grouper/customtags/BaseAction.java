@@ -12,7 +12,8 @@ import com.github.aiderpmsi.pims.grouper.utils.Action;
 
 public abstract class BaseAction implements Action {
 
-	static final Pattern p = Pattern.compile("^parent\\((\\d+)\\)");
+	static final Pattern pparent = Pattern.compile("^parent\\((\\d+)\\)$");
+	static final Pattern psibling = Pattern.compile("^sibling\\((\\d+)\\)$");
 	
 	@Override
 	public Node execute(Node node, JexlContext jc, JexlEngine jexl) throws IOException {
@@ -35,31 +36,43 @@ public abstract class BaseAction implements Action {
 		} else if (result.equals("sibling")) {
 			return nextElement(node.getNextSibling());
 		} else {
-			// WE HAVE TO FIND IF WE HAVE TO GO TO PARENTS
-			Matcher m = p.matcher(result);
-			if (m.matches()) {
-				Integer nbparents = new Integer(m.group(1));
-				for (int i = 0 ; i < nbparents ; i++) {
-					node = node.getParentNode();
-					if (node == null)
-						return null;
+			// WE HAVE TO EXECUTE THE COMMANDS
+			String[] results = result.split("/");
+			for (String resultelt : results) {
+				Matcher m;
+				if ((m = pparent.matcher(resultelt)).matches()) {
+					node = parent(node, new Integer(m.group(1)));
+				} else if ((m = psibling.matcher(resultelt)).matches()) {
+					node = sibling(node, new Integer(m.group(1)));
+				} else {
+					throw new RuntimeException(resultelt + " is not a possible result for BaseAction (" + result + ")");
 				}
-				// FIND NEXT SIBLING ELEMENT OF THIS PARENT NODE
-				return nextElement(node);
-			} else {
-				throw new RuntimeException(result + " is not a possible result for BaseAction");
 			}
+			return node;
 		}
 	}
 	
 	public abstract String executeAction(Node node, JexlContext jc, JexlEngine jexl) throws IOException ;
 
 	private Node nextElement(Node node) {
-		while (node != null) {
-			if (node.getNodeType() == Node.ELEMENT_NODE)
-				return node;
-			else
-				node = node.getNextSibling();
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getNextSibling();
+		}
+		return node;
+	}
+
+	private Node parent(Node node, Integer nb) {
+		for (int i = 0 ; i < nb ; i++) {
+			if (node == null) break;
+			node = nextElement(node.getParentNode());
+		}
+		return node;
+	}
+	
+	private Node sibling(Node node, Integer nb) {
+		for (int i = 0 ; i < nb ; i++) {
+			if (node == null) break;
+			node = nextElement(node.getNextSibling());
 		}
 		return node;
 	}
