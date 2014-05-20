@@ -14,6 +14,7 @@ public abstract class BaseAction implements Action {
 
 	static final Pattern pparent = Pattern.compile("^parent\\((\\d+)\\)$");
 	static final Pattern psibling = Pattern.compile("^sibling\\((\\d+)\\)$");
+	static final Pattern pchild = Pattern.compile("^child\\((\\d+)\\)$");
 	
 	@Override
 	public Node execute(Node node, JexlContext jc, JexlEngine jexl) throws IOException {
@@ -44,6 +45,8 @@ public abstract class BaseAction implements Action {
 					node = parent(node, new Integer(m.group(1)));
 				} else if ((m = psibling.matcher(resultelt)).matches()) {
 					node = sibling(node, new Integer(m.group(1)));
+				} else if ((m = pchild.matcher(resultelt)).matches()) {
+					node = child(node, new Integer(m.group(1)));
 				} else {
 					throw new RuntimeException(resultelt + " is not a possible result for BaseAction (" + result + ")");
 				}
@@ -73,6 +76,14 @@ public abstract class BaseAction implements Action {
 		for (int i = 0 ; i < nb ; i++) {
 			if (node == null) break;
 			node = nextElement(node.getNextSibling());
+		}
+		return node;
+	}
+
+	private Node child(Node node, Integer nb) {
+		for (int i = 0 ; i < nb ; i++) {
+			if (node == null) break;
+			node = nextElement(node.getFirstChild());
 		}
 		return node;
 	}

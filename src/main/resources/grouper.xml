@@ -62,7 +62,7 @@
 			</dflt:switch>
 			<dflt:switch cond="inresource.count('unclassified', 'D-143', dp) gt 0">
 				<dflt:switch cond="inresource.count('unclassified', 'A-342', actes) gt 0">
-					<dflt:move dest="'parent(4)/sibling(1)'" />
+					<dflt:move dest="parent(4)/sibling(1)" />
 				</dflt:switch>
 				<dflt:switch cond="inresource.count('unclassified', 'A-205', actes) gt 0">
 					<pims:group racine="28Z10" gravite="Z" />
@@ -171,16 +171,16 @@
 
 	<!-- CMD 15 -->
 	<dflt:switch cond="ageday lt 8" >
-		<dflt:move dest="'parent(1)/sibling(2)'" />
+		<dflt:move dest="parent(1)/sibling(2)/child(1)" />
 	</dflt:switch>
 	<dflt:switch cond="(modeentree ge 1 and modeentree le 4) or (modeentree ge 61 and modeentree le 66) or (modeentree ge 71 and modeentree le 76)">
 		<dflt:switch cond="ageday lt 29" >
-			<dflt:move dest="'parent(2)/sibling(1)'" />
+			<dflt:move dest="parent(2)/sibling(1)/child(1)" />
 		</dflt:switch>
 		<dflt:switch cond="ageyear lt 1 and poidsnn lt 2500" >
-			<dflt:move dest="'parent(2)/sibling(1)'" />
+			<dflt:move dest="parent(2)/sibling(1)/child(1)" />
 		</dflt:switch>
-		<dflt:move dest="'parent(1)/sibling(2)'" />
+		<dflt:move dest="parent(1)/sibling(2)" />
 	</dflt:switch>
 	<dflt:switch cond="false" >
 		<dflt:switch cond="inresource.count('unclassified', 'D-056', dp) gt 0" >
