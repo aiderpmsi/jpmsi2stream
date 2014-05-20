@@ -8,15 +8,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 
 import com.github.aiderpmsi.pims.grouper.customtags.Assign;
-import com.github.aiderpmsi.pims.grouper.customtags.Concatenate;
-import com.github.aiderpmsi.pims.grouper.customtags.Duration;
 import com.github.aiderpmsi.pims.grouper.customtags.Execute;
 import com.github.aiderpmsi.pims.grouper.customtags.Group;
-import com.github.aiderpmsi.pims.grouper.customtags.InResource;
 import com.github.aiderpmsi.pims.grouper.customtags.Move;
 import com.github.aiderpmsi.pims.grouper.customtags.Switch;
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
+import com.github.aiderpmsi.pims.grouper.model.Utils;
 
 public class Grouper {
 
@@ -41,9 +39,7 @@ public class Grouper {
 		TreeBrowser tb = new TreeBrowser();
 		tb.setDOM(document);
 		tb.addDataModel("rss", rss);
-		tb.addDataModel("inresource", new InResource(new Dictionaries("grouper-", ".cfg")));
-		tb.addDataModel("duration", new Duration());
-		tb.addDataModel("concatenate", new Concatenate());
+		tb.addDataModel("inresource", new Utils(new Dictionaries("grouper-", ".cfg")));
 		tb.AddAction("http://default.actions/default", "execute", Execute.class);
 		tb.AddAction("http://default.actions/default", "assign", Assign.class);
 		tb.AddAction("http://default.actions/default", "switch", Switch.class);

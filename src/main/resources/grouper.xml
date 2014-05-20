@@ -329,4 +329,45 @@
 		<pims:group erreur="90Z02Z" />
 	</dflt:switch>
 
+	<!-- CMD 01 -->
+	<dflt:switch cond="inresource.count('dpclassant', 'CMD-01', dp) gt 0" >
+		<dflt:switch cond="inresource.count('acteclassant', '01', actes) gt 0" >
+			<dflt:switch cond="inresource.count('unclassified', 'A-195', actes) gt 0" >
+				<pims:group racine="01C09" gravite="1" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-002', actes) gt 0" >
+				<dflt:switch cond="ageayear lt 18">
+					<dflt:switch cond="inresource.count('unclassified', 'D-039', diags_wo_dr) gt 0">
+						<pims:group racine="01C11" gravite="1" />
+					</dflt:switch>
+					<pims:group racine="01C12" gravite="1" />
+				</dflt:switch>
+				<dflt:switch cond="inresource.count('unclassified', 'D-092', diags_wo_dr) gt 0">
+					<pims:group racine="01C03" gravite="1" />
+				</dflt:switch>
+				<pims:group racine="01C04" gravite="1" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-196', actes) gt 0">
+				<pims:group racine="01C10" gravite="1" modalite="J" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-003', actes) gt 0">
+				<pims:group racine="01C05" gravite="1" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-004', actes) gt 0">
+				<pims:group racine="01C06" gravite="1" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-346', actes) gt 0">
+				<pims:group racine="01C14" gravite="1" modalite="J" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-005', actes) gt 0 or inresource.count('unclassified', 'D-326', dp) gt 0">
+				<pims:group racine="01C15" gravite="1" modalite="J" />
+			</dflt:switch>
+			<dflt:switch cond="inresource.count('unclassified', 'A-006', actes) gt 0">
+				<pims:group racine="01C08" gravite="1" modalite="J" />
+			</dflt:switch>
+		</dflt:switch>
+		
+		
+		
+	</dflt:switch>
 </tree>
