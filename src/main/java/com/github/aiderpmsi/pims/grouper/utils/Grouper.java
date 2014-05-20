@@ -39,7 +39,7 @@ public class Grouper {
 		TreeBrowser tb = new TreeBrowser();
 		tb.setDOM(document);
 		tb.addDataModel("rss", rss);
-		tb.addDataModel("inresource", new Utils(new Dictionaries("grouper-", ".cfg")));
+		tb.addDataModel("utils", new Utils(new Dictionaries("grouper-", ".cfg")));
 		tb.AddAction("http://default.actions/default", "execute", Execute.class);
 		tb.AddAction("http://default.actions/default", "assign", Assign.class);
 		tb.AddAction("http://default.actions/default", "switch", Switch.class);

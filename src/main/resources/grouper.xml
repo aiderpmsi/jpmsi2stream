@@ -17,6 +17,7 @@
 	<dflt:assign var="ageday" expr="utils.duration(datenaissance, dateentree, 'day')" />
 
 	<dflt:assign var="modesortie" expr="rss.get('main', 'ModeSortie', '{0}', 'Integer')" />
+	<dflt:assign var="activite" expr="rss.get('acte', 'Activite', '{0}', 'Integer')" />
 	
 	<dflt:assign var="inversion" expr="false" />
 
@@ -344,7 +345,7 @@
 				<pims:group racine="01C09" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-002', actes) gt 0" >
-				<dflt:switch cond="ageayear lt 18">
+				<dflt:switch cond="ageyear lt 18">
 					<dflt:switch cond="utils.count('unclassified', 'D-039', diags_wo_dr) gt 0">
 						<pims:group racine="01C11" gravite="1" />
 					</dflt:switch>
@@ -394,7 +395,7 @@
 			<dflt:switch cond="utils.count('unclassified', 'A-266', actes) gt 0">
 				<pims:group racine="01K04" modalite="J" />
 			</dflt:switch>
-			<dflt:switch cond="activite eq 4">
+			<dflt:switch cond="activite.contains(4)">
 				<pims:group racine="01K06" modalite="J" />
 			</dflt:switch>
 			<dflt:move dest="parent(1)/sibling(1)"/>
