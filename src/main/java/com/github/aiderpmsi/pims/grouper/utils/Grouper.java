@@ -1,11 +1,14 @@
 package com.github.aiderpmsi.pims.grouper.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.github.aiderpmsi.pims.grouper.customtags.Assign;
 import com.github.aiderpmsi.pims.grouper.customtags.Execute;
@@ -18,26 +21,20 @@ import com.github.aiderpmsi.pims.grouper.model.Utils;
 
 public class Grouper {
 
-	// scxml location
+	// XML TREE
 	private static final String treeLocation = "grouper.xml";
+	
+	// DOM TREE
+	private static Document document = null;
 
 	public Group group(RssContent rss) throws Exception {
-		
-		Document document = null;
-		DocumentBuilderFactory docbfactory = null;
-		
-		docbfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = docbfactory.newDocumentBuilder();
 
-		// TREE DEFINITION
-		InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
-
-		// CREATES THE DOM
-		document = builder.parse(treeSource);
+		// GETS THE DOCUMENT
+		Document thisDocument = getDocument();
 		
 		// CREATES THE DOM BROWSER
 		TreeBrowser tb = new TreeBrowser();
-		tb.setDOM(document);
+		tb.setDOM(thisDocument);
 		tb.addDataModel("rss", rss);
 		tb.addDataModel("utils", new Utils(new Dictionaries("grouper-", ".cfg")));
 		tb.AddAction("http://default.actions/default", "execute", Execute.class);
@@ -52,4 +49,18 @@ public class Grouper {
 		return result;
 	}
 
+	private synchronized Document getDocument() throws ParserConfigurationException, SAXException, IOException {
+		if (document != null) {
+			return (Document) document.cloneNode(true);
+		} else {
+			DocumentBuilderFactory docbfactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = docbfactory.newDocumentBuilder();
+
+			// TREE DEFINITION
+			InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
+
+			document = builder.parse(treeSource);
+			return (Document) document.cloneNode(true);
+		}
+	}
 }
