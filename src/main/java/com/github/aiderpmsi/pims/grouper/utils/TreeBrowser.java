@@ -103,7 +103,10 @@ public class TreeBrowser {
 					localname = elements[1];
 				}
 				// GETS THE CLASS EXECUTING THIS ACTION
-				Class<? extends Action> actionClass = actions.get(namespaces.get(namespace)).get(localname);
+				String namespaceURI = namespaces.get(namespace);
+				if (namespaceURI == null)
+					throw new IOException("namespace '" + namespace + "' is unknown");				
+				Class<? extends Action> actionClass = actions.get(namespaceURI).get(localname);
 				if (actionClass == null)
 					throw new IOException(localname + " function in namespace " + namespace + " is unknown");
 				try {

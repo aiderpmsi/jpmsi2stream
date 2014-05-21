@@ -173,9 +173,11 @@
 	</dflt:switch>
 
 	<!-- POST CMD 25, INVERT DP AND DZ IF NEEDED -->
-	<dflt:switch cond="dp.substring(0,3) eq 'Z09' or dp.substring(0,3) eq 'Z08' and not(dr.size() eq 0)" >
+	<dflt:switch cond="(dp.substring(0,3) eq 'Z09' or dp.substring(0,3) eq 'Z08') and not(dr.size() eq 0)" >
 		<dflt:assign var="inversion" expr="true" />
 		<dflt:execute expr="var temp = dp; dp = dr; dr = temp;" />
+		<dflt:assign var="diags_wo_dr" expr="utils.concat(dp, das)" />
+		<dflt:move dest="parent(1)/sibling(1)" />
 	</dflt:switch>
 
 	<!-- CMD 15 -->

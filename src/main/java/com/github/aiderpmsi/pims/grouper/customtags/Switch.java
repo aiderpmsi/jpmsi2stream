@@ -14,7 +14,7 @@ public class Switch extends BaseAction {
 	@Override
 	public String executeAction(Node node, JexlContext jc, JexlEngine jexl) throws IOException {
         // CREATE THE EXPRESSION
-        Expression e = jexl.createExpression(cond);
+        Expression e = jexl.createExpression(cond); 
         Object result = e.evaluate(jc);
         if (result instanceof Boolean) {
         	Boolean resultB = (Boolean) result;
