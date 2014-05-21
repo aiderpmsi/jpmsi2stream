@@ -1703,6 +1703,7 @@
 			<dflt:switch cond="utils.count('unclassified', 'A-090', actes) gt 0" >
 				<dflt:switch cond="utils.count('unclassified', 'D-043', diags_wo_dr) gt 0" >
 					<pims:group racine="10C11" gravite="1" />
+				</dflt:switch>
 				<pims:group racine="10C12" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-091', actes) gt 0" >
