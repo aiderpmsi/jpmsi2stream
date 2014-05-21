@@ -17,7 +17,6 @@ public class Move extends BaseAction {
 	@Override
 	public String executeAction(Node node, JexlContext jc, JexlEngine jexl)
 			throws IOException {
-		// TODO Auto-generated method stub
 		return dest;
 	}
 

@@ -34,7 +34,7 @@ public class Grouper implements Callable<Boolean> {
 	}
 	
 	// XML TREE
-	private static final String treeLocation = "grouper.xml";
+	private static final String treeLocation = "com/github/aiderpmsi/pims/grouper/grouper.xml";
 	
 	// STATIC ELEMENTS
 	private static StaticElements elts = null;
