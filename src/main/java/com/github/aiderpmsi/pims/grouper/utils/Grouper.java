@@ -3,6 +3,7 @@ package com.github.aiderpmsi.pims.grouper.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,14 +15,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.pims.grouper.customtags.Assign;
-import com.github.aiderpmsi.pims.grouper.customtags.Execute;
-import com.github.aiderpmsi.pims.grouper.customtags.Group;
-import com.github.aiderpmsi.pims.grouper.customtags.Move;
-import com.github.aiderpmsi.pims.grouper.customtags.Switch;
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
+import com.github.aiderpmsi.pims.grouper.tags.Assign;
+import com.github.aiderpmsi.pims.grouper.tags.Execute;
+import com.github.aiderpmsi.pims.grouper.tags.Group;
+import com.github.aiderpmsi.pims.grouper.tags.Move;
+import com.github.aiderpmsi.pims.grouper.tags.Switch;
 
 public class Grouper implements Callable<Boolean> {
 
@@ -37,8 +38,14 @@ public class Grouper implements Callable<Boolean> {
 	// STORES THE LAST TIMESTAMP WHEN DOCUMENT WAS USED
 	private static Long lastused = null;
 	
-	public Group group(RssContent rss) throws Exception {
-
+	public Group group(List<RssContent> multirss) throws Exception {
+		// DICOS
+		Dictionaries dicos = new Dictionaries("grouper-", ".cfg");
+		// GETS THE MIXED RSS
+		Mixer mixer = new Mixer();
+		mixer.setDicos(dicos);
+		RssContent rss = mixer.mix(multirss);
+		
 		// GETS THE DOCUMENT
 		Document thisDocument = getDocument();
 		
@@ -46,7 +53,7 @@ public class Grouper implements Callable<Boolean> {
 		TreeBrowser tb = new TreeBrowser();
 		tb.setDOM(thisDocument);
 		tb.addDataModel("rss", rss);
-		tb.addDataModel("utils", new Utils(new Dictionaries("grouper-", ".cfg")));
+		tb.addDataModel("utils", new Utils(dicos));
 		tb.AddAction("http://default.actions/default", "execute", Execute.class);
 		tb.AddAction("http://default.actions/default", "assign", Assign.class);
 		tb.AddAction("http://default.actions/default", "switch", Switch.class);

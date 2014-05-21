@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.customtags;
+package com.github.aiderpmsi.pims.grouper.tags;
 
 import java.io.IOException;
 import org.apache.commons.jexl2.JexlContext;

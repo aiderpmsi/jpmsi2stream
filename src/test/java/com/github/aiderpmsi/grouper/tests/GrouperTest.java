@@ -1,12 +1,14 @@
 package com.github.aiderpmsi.grouper.tests;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.aiderpmsi.pims.grouper.customtags.Group;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
+import com.github.aiderpmsi.pims.grouper.tags.Group;
 import com.github.aiderpmsi.pims.grouper.utils.Grouper;
 public class GrouperTest {
  
@@ -23,7 +25,7 @@ public class GrouperTest {
     @Test
     public void test28Z04Z() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T28Z04Z();
+		List<RssContent> cont = new T28Z04Z();
 
 		Group group = gp.group(cont);
 
@@ -33,7 +35,7 @@ public class GrouperTest {
     @Test
     public void test15M04E() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T15M04E();
+		List<RssContent> cont = new T15M04E();
 
 		Group group = gp.group(cont);
 
@@ -43,7 +45,7 @@ public class GrouperTest {
     @Test
     public void test15Z10E() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T15Z10E();
+		List<RssContent> cont = new T15Z10E();
 
 		Group group = gp.group(cont);
 
@@ -53,7 +55,7 @@ public class GrouperTest {
     @Test
     public void test01C041() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T01C041();
+		List<RssContent> cont = new T01C041();
 
 		Group group = gp.group(cont);
 
@@ -63,7 +65,7 @@ public class GrouperTest {
     @Test
     public void test01K06J() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T01K06J();
+		List<RssContent> cont = new T01K06J();
 
 		Group group = gp.group(cont);
 
@@ -73,7 +75,7 @@ public class GrouperTest {
     @Test
     public void test08M231() throws Exception {
 		Grouper gp = new Grouper(); 
-		RssContent cont = new T08M231();
+		List<RssContent> cont = new T08M231();
 
 		Group group = gp.group(cont);
 

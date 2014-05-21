@@ -17,6 +17,8 @@ public class RssContent {
 	private List<HashMap<String, String>> rssacte = new ArrayList<>();
 	private List<HashMap<String, String>> rssda = new ArrayList<>();
 	private List<HashMap<String, String>> rssdad = new ArrayList<>();
+	private Pattern diag = Pattern.compile("^([A-Z]\\d{2})([^ ]*)\\s*");
+	private Pattern calendar = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})");
 
 	public Object get(String domain, String key, String pattern, String type) throws IOException {
 		// GETS THE DEMANDED KEYS IN RETRIEVE AND TRIM THEM
@@ -76,55 +78,65 @@ public class RssContent {
 		}
 
 		// TRANSFORMS THE RESULTS TO THE DESIRED TYPE
-		try {
-			switch(type) {
-			case "String":
-				return formattedResults;
-			case "Integer":
-				List<Integer> castedResults = new ArrayList<>(formattedResults.size());
-				for (String formattedResult : formattedResults) {
-					castedResults.add(new Integer(formattedResult));
-				}
-				return castedResults;
-			case "Diagnostic":
-				Pattern pat = Pattern.compile("^([A-Z]\\d{2})([^ ]*)\\s*");
-				List<String> acteResults = new ArrayList<>(formattedResults.size());
-				for (String formattedResult : formattedResults) {
-					Matcher m = pat.matcher(formattedResult);
-					if (m.matches()) {
-						StringBuilder acte = new StringBuilder(m.group(1));
-						if (m.group(2).length() != 0)
-							acte.append(".").append(m.group(2));
-						acteResults.add(acte.toString());
-					} else {
-						throw new IOException(formattedResult + " is not a diagnosis");
-					}
-				}
-				return acteResults;
-			case "Calendar":
-				Pattern patcal = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})");
-				List<Calendar> acteDates = new ArrayList<>(formattedResults.size());
-				for (String formattedResult : formattedResults) {
-					Matcher m = patcal.matcher(formattedResult);
-					if (m.matches()) {
-						Calendar cal = new GregorianCalendar(
-								new Integer(m.group(1)),
-								new Integer(m.group(2))- 1 ,
-								new Integer(m.group(3)));
-						acteDates.add(cal);
-					} else {
-						throw new IOException(formattedResult + " is not a calendar date");
-					}
-				}
-				return acteDates;
-			default:
-				throw new IOException(type + " is not a possible type");
+		List<Object> castedResults;
+		switch(type) {
+		case "String":
+			return formattedResults;
+		case "Integer":
+			castedResults = new ArrayList<>(formattedResults.size());
+			for (String formattedResult : formattedResults) {
+				castedResults.add(formatInteger(formattedResult));
 			}
+			return castedResults;
+		case "Diagnostic":
+			castedResults = new ArrayList<>(formattedResults.size());
+			for (String formattedResult : formattedResults) {
+				castedResults.add(formatDiagnostic(formattedResult));
+			}
+			return castedResults;
+		case "Calendar":
+			castedResults = new ArrayList<>(formattedResults.size());
+			for (String formattedResult : formattedResults) {
+				castedResults.add(formatCalendar(formattedResult));
+			}
+			return castedResults;
+		default:
+			throw new IOException(type + " is not a possible type");
+		}
+	}
+	
+	public Integer formatInteger(String value) throws IOException {
+		try {
+			return new Integer(value);
 		} catch (NumberFormatException e) {
 			throw new IOException(e);
 		}
 	}
 
+	public String formatDiagnostic(String value) throws IOException {
+		Matcher m = diag.matcher(value);
+		if (m.matches()) {
+			StringBuilder acte = new StringBuilder(m.group(1));
+			if (m.group(2).length() != 0)
+				acte.append(".").append(m.group(2));
+			return acte.toString();
+		} else {
+			throw new IOException(value + " is not a diagnosis");
+		}
+	}
+
+	public Calendar formatCalendar(String value) throws IOException {
+		Matcher m = calendar.matcher(value);
+		if (m.matches()) {
+			Calendar cal = new GregorianCalendar(
+					new Integer(m.group(1)),
+					new Integer(m.group(2))- 1 ,
+					new Integer(m.group(3)));
+			return cal;
+		} else {
+			throw new IOException(value + " is not a calendar date");
+		}
+	}
 	
 	public HashMap<String, String> getRssmain() {
 		return rssmain;

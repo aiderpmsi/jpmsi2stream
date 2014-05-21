@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.customtags;
+package com.github.aiderpmsi.pims.grouper.tags;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.customtags;
+package com.github.aiderpmsi.pims.grouper.tags;
 
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;

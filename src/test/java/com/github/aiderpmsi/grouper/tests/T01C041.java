@@ -1,6 +1,10 @@
 package com.github.aiderpmsi.grouper.tests;
 
+import com.github.aiderpmsi.pims.grouper.model.RssContent;
+
 public class T01C041 extends BaseTest {
+
+	private static final long serialVersionUID = -8286176082721327295L;
 
 	private String[][] rssmain = {
 			{"DP", "A839     "},
@@ -33,9 +37,11 @@ public class T01C041 extends BaseTest {
 	};
 	
 	public T01C041() {
-		setRssacte(transform(acte));
-		setRssda(transform(da));
-		setRssmain(transform(new String[][][] {rssmain}).get(0));
+		RssContent rss = new RssContent();
+		rss.setRssacte(transform(acte));
+		rss.setRssda(transform(da));
+		rss.setRssmain(transform(new String[][][] {rssmain}).get(0));
+		add(rss);
 	}
 	
 }

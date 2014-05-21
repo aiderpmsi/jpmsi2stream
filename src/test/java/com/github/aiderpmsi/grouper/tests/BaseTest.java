@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 
-public class BaseTest extends RssContent {
+public class BaseTest extends ArrayList<RssContent> {
 	
+	private static final long serialVersionUID = -5321260412364005350L;
+
 	protected List<HashMap<String, String>> transform(String[][][] value) {
 		List<HashMap<String, String>> returnValue = new ArrayList<>();
 		
