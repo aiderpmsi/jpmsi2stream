@@ -91,7 +91,7 @@ public class Grouper implements Callable<Boolean> {
 				to_ret.document = (Document) elts.document.cloneNode(true);
 				
 				// CREATES THE DICTIONARIES
-				elts.dicos = new Dictionaries("grouper-", ".cfg");
+				elts.dicos = new Dictionaries("com/github/aiderpmsi/pims/grouper/grouper-", ".cfg");
 				to_ret.dicos = elts.dicos;
 				
 				// START THREAD AWAITING CLEANING

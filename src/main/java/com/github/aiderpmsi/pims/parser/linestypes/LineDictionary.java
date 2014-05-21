@@ -26,8 +26,8 @@ import com.github.aiderpmsi.pims.parser.jaxb.Linetype;
 
 public class LineDictionary {
 
-	private static final String configPath = "linedefs.xml";
-	private static final String configXslPath = "linedefsset.xsl";
+	private static final String configPath = "com/github/aiderpmsi/pims/parser/linedefs.xml";
+	private static final String configXslPath = "com/github/aiderpmsi/pims/parser/linedefsset.xsl";
 	
 	private Map<String, PmsiLineType> instances =
 			new HashMap<String, PmsiLineType>();

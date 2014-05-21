@@ -14,7 +14,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 public class Parser extends XMLFilterImpl {
 
 	// scxml location
-	private static final String scxmlLocation = "pims.xml";
+	private static final String scxmlLocation = "com/github/aiderpmsi/pims/parser/pims.xml";
 
 	/**
 	 * starting state
