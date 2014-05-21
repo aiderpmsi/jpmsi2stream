@@ -26,11 +26,18 @@ import com.github.aiderpmsi.pims.grouper.tags.Switch;
 
 public class Grouper implements Callable<Boolean> {
 
+	public class StaticElements {
+		// DOM TREE
+		public Document document = null;
+		// DICTIONARIES
+		public Dictionaries dicos = null;
+	}
+	
 	// XML TREE
 	private static final String treeLocation = "grouper.xml";
 	
-	// DOM TREE
-	private static Document document = null;
+	// STATIC ELEMENTS
+	private static StaticElements elts = null;
 
 	// LOCK THE DOCUMENT
 	private static ReentrantLock lock = new ReentrantLock(); 
@@ -39,21 +46,19 @@ public class Grouper implements Callable<Boolean> {
 	private static Long lastused = null;
 	
 	public Group group(List<RssContent> multirss) throws Exception {
-		// DICOS
-		Dictionaries dicos = new Dictionaries("grouper-", ".cfg");
+		// GETS THE DOCUMENT AND DICO
+		StaticElements thiselements = getStaticElements();
+
 		// GETS THE MIXED RSS
 		Mixer mixer = new Mixer();
-		mixer.setDicos(dicos);
+		mixer.setDicos(thiselements.dicos);
 		RssContent rss = mixer.mix(multirss);
-		
-		// GETS THE DOCUMENT
-		Document thisDocument = getDocument();
 		
 		// CREATES THE DOM BROWSER
 		TreeBrowser tb = new TreeBrowser();
-		tb.setDOM(thisDocument);
+		tb.setDOM(thiselements.document);
 		tb.addDataModel("rss", rss);
-		tb.addDataModel("utils", new Utils(dicos));
+		tb.addDataModel("utils", new Utils(thiselements.dicos));
 		tb.AddAction("http://default.actions/default", "execute", Execute.class);
 		tb.AddAction("http://default.actions/default", "assign", Assign.class);
 		tb.AddAction("http://default.actions/default", "switch", Switch.class);
@@ -66,22 +71,28 @@ public class Grouper implements Callable<Boolean> {
 		return result;
 	}
 
-	private Document getDocument() throws ParserConfigurationException, SAXException, IOException {
+	private StaticElements getStaticElements() throws ParserConfigurationException, SAXException, IOException {
 		lock.lock();
 		
 		try {
-			Document to_ret;
-			if (document != null) {
-				to_ret = (Document) document.cloneNode(true);
+			StaticElements to_ret = new StaticElements();
+			if (elts != null) {
+				to_ret.document = (Document) elts.document.cloneNode(true);
+				to_ret.dicos = elts.dicos;
 			} else {
+				elts = new StaticElements();
 				DocumentBuilderFactory docbfactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = docbfactory.newDocumentBuilder();
 	
 				// TREE DEFINITION
 				InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
 	
-				document = builder.parse(treeSource);
-				to_ret = (Document) document.cloneNode(true);
+				elts.document = builder.parse(treeSource);
+				to_ret.document = (Document) elts.document.cloneNode(true);
+				
+				// CREATES THE DICTIONARIES
+				elts.dicos = new Dictionaries("grouper-", ".cfg");
+				to_ret.dicos = elts.dicos;
 				
 				// START THREAD AWAITING CLEANING
 				Executors.newSingleThreadExecutor().submit(new Grouper());
@@ -102,7 +113,7 @@ public class Grouper implements Callable<Boolean> {
 			try {
 				if (Thread.interrupted() || (new Date()).getTime() - lastused > 6000000) {
 					lastused = null;
-					document = null;
+					elts = null;
 					break;
 				}
 			} finally {
