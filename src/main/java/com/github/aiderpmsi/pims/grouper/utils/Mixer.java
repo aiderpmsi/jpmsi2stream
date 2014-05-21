@@ -102,10 +102,9 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			@SuppressWarnings("unchecked")
-			List<String> actes = (List<String>) cont.get("acte", "CodeCCAM,Phase", "{0}/{1}", "String");
-			for (String acte : actes) {
-				if (actenonoptheraps.contains(acte))
+			for (HashMap<String, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+				if (actenonoptheraps.contains(formattedActe))
 					return i;
 			}
 		}
@@ -117,10 +116,9 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			@SuppressWarnings("unchecked")
-			List<String> actes = (List<String>) cont.get("acte", "CodeCCAM,Phase", "{0}/{1}", "String");
-			for (String acte : actes) {
-				if (actenonopcourts.contains(acte)) {
+			for (HashMap<String, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+				if (actenonopcourts.contains(formattedActe)) {
 					Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
 					Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
 					Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
@@ -137,10 +135,9 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			@SuppressWarnings("unchecked")
-			List<String> actes = (List<String>) cont.get("acte", "CodeCCAM,Phase", "{0}/{1}", "String");
-			for (String acte : actes) {
-				if (autreacteclassantnonops.contains(acte)) {
+			for (HashMap<String, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+				if (autreacteclassantnonops.contains(formattedActe)) {
 					Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
 					Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
 					Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
