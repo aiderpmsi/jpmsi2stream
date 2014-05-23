@@ -149,7 +149,7 @@
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012l'" />
 
-				<elseif cond="utils.isLine('rsf20123')" />
+				<elseif cond="utils.isLine('rsf2012m')" />
 
 					<!-- RSF M -->
 					<pims:execute expr="utils.write('rsf2012m')" />
