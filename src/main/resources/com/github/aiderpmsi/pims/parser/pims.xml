@@ -253,8 +253,8 @@
 				<if cond="nbdaread lt nbda">
 
 					<!-- Some DA stay to be read -->
-					<pims:execute expr="utils.isLine('rss116da')" >
-					<pims:execute expr="utils.write'rss116da')" >
+					<pims:execute expr="utils.isLine('rss116da')" />
+					<pims:execute expr="utils.write'rss116da')" />
 
 					<assign name="nbdaread" expr="nbdaread + 1" />
 					<send event="'rss116da'" />
@@ -262,8 +262,8 @@
 				<elseif cond="nbdadread lt nbdad" />
 
 					<!-- Some DAD stay to be read -->
-					<pims:execute expr="utils.isLine('rss116dad')" >
-					<pims:execute expr="utils.write'rss116dad')" >
+					<pims:execute expr="utils.isLine('rss116dad')" />
+					<pims:execute expr="utils.write'rss116dad')" />
 
 					<assign name="nbdadread" expr="nbdadread + 1" />
 					<send event="'rss116dad'" />
@@ -271,8 +271,8 @@
 				<elseif cond="nbzaread lt nbza" />
 
 					<!-- Some ZA stay to be read -->
-					<pims:execute expr="utils.isLine('rss116za')" >
-					<pims:execute expr="utils.write'rss116za')" >
+					<pims:execute expr="utils.isLine('rss116za')" />
+					<pims:execute expr="utils.write'rss116za')" />
 
 					<assign name="nbzaread" expr="nbzaread + 1" />
 					<send event="'rss116za'" />
