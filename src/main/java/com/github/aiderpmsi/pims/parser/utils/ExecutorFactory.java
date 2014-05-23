@@ -107,7 +107,6 @@ public class ExecutorFactory {
 		// SETS THE MACHINE CONTEXT
 		JexlContext appCtx = new JexlContext();
 		appCtx.set("utils", new Utils(memoryBufferedReader, new LineDictionary(), getErrorHandler(), contentHandler));
-
 		appCtx.set("scripts", scripts);
 		appCtx.set("jexl2", jexl2);
 		
