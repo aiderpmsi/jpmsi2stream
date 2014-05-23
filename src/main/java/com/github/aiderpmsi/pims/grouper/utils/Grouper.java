@@ -45,6 +45,21 @@ public class Grouper implements Callable<Boolean> {
 	// STORES THE LAST TIMESTAMP WHEN DOCUMENT WAS USED
 	private static Long lastused = null;
 	
+	// STORES THE DIFFERENT ACTIONS CLASSES
+	private Object[][] actions;
+	
+	public Grouper() {
+		// CREATES THE REUSABLE ACTIONS
+		actions = new Object[][] {
+				{"http://default.actions/default", "execute", new Execute()},
+				{"http://default.actions/default", "assign", new Assign()},
+				{"http://default.actions/default", "switch", new Switch()},
+				{"http://default.actions/default", "move", new Move()},
+				{"http://custom.actions/pims", "group", new Group()}
+		};
+		
+	}
+	
 	public Group group(List<RssContent> multirss) throws Exception {
 		// GETS THE DOCUMENT AND DICO
 		StaticElements thiselements = getStaticElements();
@@ -59,11 +74,9 @@ public class Grouper implements Callable<Boolean> {
 		tb.setDOM(thiselements.document);
 		tb.addDataModel("rss", rss);
 		tb.addDataModel("utils", new Utils(thiselements.dicos));
-		tb.AddAction("http://default.actions/default", "execute", Execute.class);
-		tb.AddAction("http://default.actions/default", "assign", Assign.class);
-		tb.AddAction("http://default.actions/default", "switch", Switch.class);
-		tb.AddAction("http://default.actions/default", "move", Move.class);
-		tb.AddAction("http://custom.actions/pims", "group", Group.class);
+		for (Object[] action : actions) {
+			tb.AddAction((String) action[0], (String) action[1], (Action)action[2]);
+		}
 		tb.go();
 		// GETS THE MACHINE RESULT
 		Group result = (Group) tb.getDataModel("group");

@@ -25,4 +25,16 @@ public class Assign extends BaseAction {
 		this.expr = expr;
 	}
 
+	@Override
+	public void init() {
+		// REINIT VAR AND EXPR
+		var = "";
+		expr = "";
+	}
+
+	@Override
+	public void cleanout() {
+		// NOTHING TO DO		
+	}
+
 }

@@ -12,10 +12,12 @@ import com.github.aiderpmsi.pims.grouper.tags.Group;
 import com.github.aiderpmsi.pims.grouper.utils.Grouper;
 public class GrouperTest {
  
+	private Grouper gp;
+	
     @Before
     public void setUp() {
-    	// DO NOTHING
-    }
+    	gp = new Grouper();
+   }
  
     @After
     public void tearDown() {
@@ -24,7 +26,6 @@ public class GrouperTest {
  
     @Test
     public void test28Z04Z() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T28Z04Z();
 
 		Group group = gp.group(cont);
@@ -34,7 +35,6 @@ public class GrouperTest {
 
     @Test
     public void test15M04E() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T15M04E();
 
 		Group group = gp.group(cont);
@@ -44,7 +44,6 @@ public class GrouperTest {
  
     @Test
     public void test15Z10E() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T15Z10E();
 
 		Group group = gp.group(cont);
@@ -54,7 +53,6 @@ public class GrouperTest {
 
     @Test
     public void test01C041() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T01C041();
 
 		Group group = gp.group(cont);
@@ -64,7 +62,6 @@ public class GrouperTest {
 
     @Test
     public void test01K06J() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T01K06J();
 
 		Group group = gp.group(cont);
@@ -74,7 +71,6 @@ public class GrouperTest {
 
     @Test
     public void test08M231() throws Exception {
-		Grouper gp = new Grouper(); 
 		List<RssContent> cont = new T08M231();
 
 		Group group = gp.group(cont);

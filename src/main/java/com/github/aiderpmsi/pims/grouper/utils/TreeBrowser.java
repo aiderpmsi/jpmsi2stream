@@ -25,7 +25,7 @@ public class TreeBrowser {
 	private JexlEngine jexl = new JexlEngine();
     
     // ASSOCIATES NAMESPACES WITH ACTIONS
-	private HashMap<String, HashMap<String, Class<? extends Action>>> actions = new HashMap<>();
+	private HashMap<String, HashMap<String, Action>> actions = new HashMap<>();
 
 	// ASSOCIATES NAMESPACES PREFIXES WITH NAMESPACES
 	private HashMap<String, String> namespaces = new HashMap<>();
@@ -44,8 +44,8 @@ public class TreeBrowser {
 		return jc.get(key);
 	}
 	
-	public void AddAction(String namespace, String namecommand, Class<? extends Action> action) {
-		HashMap<String, Class<? extends Action>> to_add;
+	public void AddAction(String namespace, String namecommand, Action action) {
+		HashMap<String, Action> to_add;
 		if ((to_add = actions.get(namespace)) == null) {
 			to_add = new HashMap<>();
 			actions.put(namespace, to_add);
@@ -106,24 +106,27 @@ public class TreeBrowser {
 				String namespaceURI = namespaces.get(namespace);
 				if (namespaceURI == null)
 					throw new IOException("namespace '" + namespace + "' is unknown");				
-				Class<? extends Action> actionClass = actions.get(namespaceURI).get(localname);
-				if (actionClass == null)
+				Action action = actions.get(namespaceURI).get(localname);
+				if (action == null)
 					throw new IOException(localname + " function in namespace " + namespace + " is unknown");
+				// INIT ACTION
+				action.init();
 				try {
-					Action action = actionClass.newInstance();
-					// SETS THE ARGUMENTS OF THIS CLASS
+					// SETS THE ARGUMENTS OF THE ACTION CLASS
 					attributes = element.getAttributes();
 					for (int i = 0 ; i < attributes.getLength() ; i++) {
 						Node attribute = attributes.item(i);
 						String attributeName = attribute.getNodeName();
-						Method setMethod = actionClass.getMethod(
+						Method setMethod = action.getClass().getMethod(
 								"set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1),
 								String.class);
 						setMethod.invoke(action, attribute.getNodeValue());
 					}
-					// EXECUTES THE ACTION AND MOVES THE CURSOR
+					// EXECUTES THE ACTION AND MOVES THE NODE CURRENT
 					current = action.execute(current, jc, jexl);
-				} catch (IllegalAccessException | NoSuchMethodException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException | DOMException e) {
+					// CLEANS ACTION
+					action.cleanout();
+				} catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException | DOMException e) {
 					throw new IOException(e);
 				}
 			} else {

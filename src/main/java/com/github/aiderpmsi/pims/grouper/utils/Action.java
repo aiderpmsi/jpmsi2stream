@@ -8,6 +8,9 @@ import org.w3c.dom.Node;
 
 public interface Action {
 
+	public void init();
+	
 	public Node execute(Node node, JexlContext jc, JexlEngine jexl) throws IOException;
 	
+	public void cleanout();
 }

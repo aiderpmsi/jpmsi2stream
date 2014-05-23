@@ -20,4 +20,14 @@ public class Move extends BaseAction {
 		return dest;
 	}
 
+	@Override
+	public void init() {
+		dest = "";
+	}
+
+	@Override
+	public void cleanout() {
+		// DO NOTHING
+	}
+
 }

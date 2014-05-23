@@ -7,8 +7,8 @@ import org.w3c.dom.Node;
 
 public class Group extends BaseAction {
 	
-	private String erreur = "",	racine = "",
-			modalite = "", gravite = "";
+	private String erreur,	racine,
+			modalite, gravite;
 
 	public String getErreur() {
 		return erreur;
@@ -50,6 +50,19 @@ public class Group extends BaseAction {
 		// SETS THE GROUP
 		jc.set("group", this);
 		return "this";
+	}
+
+	@Override
+	public void init() {
+		erreur = "";
+		racine = "";
+		modalite = "";
+		gravite = "";
+	}
+
+	@Override
+	public void cleanout() {
+		// DO NOTHING
 	}
 	
 }
