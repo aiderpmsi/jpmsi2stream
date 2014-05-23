@@ -211,7 +211,7 @@
 				<assign name="nbdad" expr="0" />
 				<assign name="nbza" expr="0" />
 
-				<if cond="utils.isLine('rsf20123')" >
+				<if cond="utils.isLine('rss116main')" >
 
 					<!-- RSS 116 Main -->
 					<!-- Writes the line number -->
