@@ -29,6 +29,11 @@ public class Utils {
 		this.ch = ch;
 	}
 	
+	public PmsiLineType getLine(String lineName) throws IOException {
+		// GETS THE LINE DEFINITION
+		return ld.getInstance(lineName);
+	}
+
 	public Boolean isLine(String lineName) throws IOException {
 		// GETS THE LINE DEFINITION
 		PmsiLineType line = ld.getInstance(lineName);

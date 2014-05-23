@@ -52,12 +52,13 @@
 			<if cond="utils.isLine('rsf2012header')">
 
 				<!-- RSF 2012 -->
+				<pims:execute expr="utils.write('rsf2012header')" />
 				<assign name="numline" expr="numline + 1" />
 				<send event="'rsf2012h'" />
 				
-				<!-- None -->
 			<else />
 
+				<!-- None -->
 				<send event="'none'" />
 
 			</if>
@@ -70,37 +71,24 @@
 
 	<state id="headerrss">
 
-		<datamodel>
-			<data name="isrss116h" />
-		</datamodel>
-
 		<onentry>
-			<!-- Init vars -->
-			<assign name="isrss116h" expr="false" />
-			
 			<!-- Writes the line number -->
-			<my:numlinewriter />
-			<my:print content="" newline="true" />
+			<pims:execute expr="utils.writelinenumber(numline)" />
 			
-			<!-- Searches what line this header matches  -->
-			<my:lineinvocator linename="rss116header"
-				varname="isrss116h" />
+			<if cond="utils.isLine('rss116header')">
 
-			<!-- Executes the procedure depending on which header matches -->
-			<if cond="isrss116h">
-
-				<my:linewriter linename="rss116header" />
-				<my:print content="" newline="true" />
+				<pims:execute expr="utils.write('rss116header')" />
 				<assign name="numline" expr="numline + 1" />
 				<send event="'rss116h'" />
 				
+			<else />
+
 				<!-- None -->
-				<else />
 				<send event="'none'" />
+
 			</if>
 		</onentry>
 
-		<!-- Transition map -->
 		<transition event="rss116h" target="rss116h" />
 		<transition event="none" target="headernotfound" />
 
@@ -114,113 +102,75 @@
 
 		<state id="rsf2012h.entry">
 
-			<datamodel>
-				<data name="isrsf2012a" />
-				<data name="isrsf2012b" />
-				<data name="isrsf2012c" />
-				<data name="isrsf2012h" />
-				<data name="isrsf2012i" />
-				<data name="isrsf2012l" />
-				<data name="isrsf2012m" />
-				<data name="iseof" />
-			</datamodel>
-
 			<onentry>
-				<!-- Init vars -->
-				<assign name="isrsf2012a" expr="false" />
-				<assign name="isrsf2012b" expr="false" />
-				<assign name="isrsf2012c" expr="false" />
-				<assign name="isrsf2012h" expr="false" />
-				<assign name="isrsf2012i" expr="false" />
-				<assign name="isrsf2012l" expr="false" />
-				<assign name="isrsf2012m" expr="false" />
-				<assign name="iseof" expr="false" />
 				
 				<!-- Writes the line number -->
-				<my:numlinewriter />
-				<my:print content="" newline="true" />
+				<pims:execute expr="utils.writelinenumber(numline)" />
 				
-				<!-- Searches what kind of line we have -->
-				<my:lineinvocator linename="rsf2012a"
-					varname="isrsf2012a" />
-				<my:lineinvocator linename="rsf2012b"
-					varname="isrsf2012b" />
-				<my:lineinvocator linename="rsf2012c"
-					varname="isrsf2012c" />
-				<my:lineinvocator linename="rsf2012h"
-					varname="isrsf2012h" />
-				<my:lineinvocator linename="rsf2012i"
-					varname="isrsf2012i" />
-				<my:lineinvocator linename="rsf2012l"
-					varname="isrsf2012l" />
-				<my:lineinvocator linename="rsf2012m"
-					varname="isrsf2012m" />
-				<my:lineinvocator linename="eof" varname="iseof" />
-
-				<!-- Executes the procedure depending on what line we have -->
-				<if cond="isrsf2012a">
+				<if cond="utils.isLine('rsf2012a')">
 				
 					<!-- RSF A -->
-					<my:linewriter linename="rsf2012a" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rsf2012a')" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012a'" />
 					
+				<elseif cond="utils.isLine('rsf2012b')" />
+
 					<!-- RSF B -->
-					<elseif cond="isrsf2012b" />
-					<my:linewriter linename="rsf2012b" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rsf2012b')" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012b'" />
 					
+				<elseif cond="utils.isLine('rsf2012c')" />
+
 					<!-- RSF C -->
-					<elseif cond="isrsf2012c" />
-					<my:linewriter linename="rsf2012c" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rsf2012c')" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012c'" />
 					
+				<elseif cond="utils.isLine('rsf2012h')" />
+
 					<!-- RSF H -->
-					<elseif cond="isrsf2012h" />
-					<my:linewriter linename="rsf2012h" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rsf2012h')" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012h'" />
-					
+
+				<elseif cond="utils.isLine('rsf2012i')" />
+
 					<!-- RSF I -->
-					<elseif cond="isrsf2012i" />
-					<my:linewriter linename="rsf2012i" />
+					<pims:execute expr="utils.write('rsf2012i')" />
 					<assign name="numline" expr="numline + 1" />
-					<my:print content="" newline="true" />
 					<send event="'rsf2012i'" />
 
+				<elseif cond="utils.isLine('rsf2012l')" />
+
 					<!-- RSF L -->
-					<elseif cond="isrsf2012l" />
-					<my:linewriter linename="rsf2012l" />
+					<pims:execute expr="utils.write('rsf2012l')" />
 					<assign name="numline" expr="numline + 1" />
-					<my:print content="" newline="true" />
 					<send event="'rsf2012l'" />
-					
+
+				<elseif cond="utils.isLine('rsf20123')" />
+
 					<!-- RSF M -->
-					<elseif cond="isrsf2012m" />
-					<my:linewriter linename="rsf2012m" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rsf2012m')" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rsf2012m'" />
-					
+
+				<elseif cond="utils.isLine('eof')" />
+
 					<!-- EOF -->
-					<elseif cond="iseof" />
-					<my:linewriter linename="eof" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('eof')" />
+					<assign name="numline" expr="numline + 1" />
 					<send event="'eof'" />
-					
+
+				<else />
+				
 					<!-- None -->
-					<else />
 					<send event="'none'" />
+
 				</if>
 			</onentry>
 
-			<!-- Transition map -->
 			<transition event="rsf2012a" target="rsf2012h.entry" />
 			<transition event="rsf2012b" target="rsf2012h.entry" />
 			<transition event="rsf2012c" target="rsf2012h.entry" />
@@ -232,6 +182,7 @@
 			<transition event="none" target="linenotknown" />
 			
 		</state>
+
 	</state>
 
 	<state id="rss116h">
@@ -251,11 +202,6 @@
 
 		<state id="rss116h.entry">
 
-			<datamodel>
-				<data name="isrss116main" expr="false" />
-				<data name="iseof" expr="false" />
-			</datamodel>
-
 			<onentry>
 				<!-- Init vars when reading a rss116 line -->
 				<assign name="nbdaread" expr="0" />
@@ -264,43 +210,35 @@
 				<assign name="nbda" expr="0" />
 				<assign name="nbdad" expr="0" />
 				<assign name="nbza" expr="0" />
-				<assign name="isrss116main" expr="false" />
-				<assign name="iseof" expr="false" />
-								
-				<!-- Searches if this line matches a main rss116 -->
-				<my:lineinvocator linename="rss116main"
-					varname="isrss116main" />
-				<my:lineinvocator linename="eof" varname="iseof" />
 
-				<!-- Depending on what we found, execute a procedure -->
-				<if cond="isrss116main">
-				
+				<if cond="utils.isLine('rsf20123')" >
+
 					<!-- RSS 116 Main -->
 					<!-- Writes the line number -->
-					<my:numlinewriter />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.writelinenumber(numline)" />
 					<!-- Writes the content of the RSS -->
-					<assign name="nbda" expr="_dictionary.getInstance('rss116main').getInt(26)" />
-					<assign name="nbdad" expr="_dictionary.getInstance('rss116main').getInt(27)" />
-					<assign name="nbza" expr="_dictionary.getInstance('rss116main').getInt(28)" />
-					<my:linewriter linename="rss116main" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('rss116main')" />
+					<!-- Gets nb diags -->
+					<assign name="nbda" expr="utils.getLine('rss116main').getInt(26)" />
+					<assign name="nbdad" expr="utils.getLine('rss116main').getInt(27)" />
+					<assign name="nbza" expr="utils.getLine('rss116main').getInt(28)" />
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rss116main'" />
 					
+				<elseif cond="iseof" />
+
 					<!-- EOF -->
-					<elseif cond="iseof" />
-					<my:linewriter linename="eof" />
-					<my:print content="" newline="true" />
+					<pims:execute expr="utils.write('eof')" />
 					<send event="'eof'" />
 					
+				<else />
+
 					<!-- Unknown line -->
-					<else />
 					<send event="'none'" />
+
 				</if>
 			</onentry>
 	
-			<!-- Transition map -->
 			<transition event="rss116main" target="rss116h.main" />
 			<transition event="eof" target="eof" />
 			<transition event="none" target="linenotknown" />
@@ -309,74 +247,41 @@
 
 		<state id="rss116h.main">
 
-			<datamodel>
-				<data name="isrss116da" />
-				<data name="isrss116dad" />
-				<data name="isrss116za" />
-				<data name="isrssfinished" />
-			</datamodel>
-
 			<onentry>
-				<!-- Init vars -->
-				<assign name="isrss116da" expr="false" />
-				<assign name="isrss116dad" expr="false" />
-				<assign name="isrss116za" expr="false" />
-				<assign name="isrssfinished" expr="false" />
 
 				<!-- Depending on what number of elements stay to read, read a da, a dad or za or nothing -->
 				<if cond="nbdaread lt nbda">
 
 					<!-- Some DA stay to be read -->
-					<my:lineinvocator linename="rss116da"
-						varname="isrss116da" />
+					<pims:execute expr="utils.isLine('rss116da')" >
+					<pims:execute expr="utils.write'rss116da')" >
 
-					<!-- Some DAD stay to read -->
-					<elseif cond="nbdadread lt nbdad" />
-					<my:lineinvocator linename="rss116dad"
-						varname="isrss116dad" />
-
-					<!-- Some ZA stay to read -->
-					<elseif cond="nbzaread lt nbza" />
-					<my:lineinvocator linename="rss116za"
-						varname="isrss116za" />
-
-					<!-- Nothing stays to be read, verify it -->
-					<elseif
-						cond="(nbdaread eq nbda) and (nbdadread eq nbdad) and (nbzaread eq nbza)" />
-					<assign name="isrssfinished" expr="true" />
-				</if>
-
-				<!-- Execute the procedure depending on what we found -->
-				<if cond="isrss116da">
-					
-					<!-- RSS 116 DA -->
-					<my:print content="rss116da" newline="true" />
-					<my:linewriter linename="rss116da" />
-					<my:print content="" newline="true" />
 					<assign name="nbdaread" expr="nbdaread + 1" />
 					<send event="'rss116da'" />
-					
-					<!-- RSS 116 DAD -->
-					<elseif cond="isrss116dad" />
-					<my:linewriter linename="rss116dad" />
-					<my:print content="" newline="true" />
+
+				<elseif cond="nbdadread lt nbdad" />
+
+					<!-- Some DAD stay to be read -->
+					<pims:execute expr="utils.isLine('rss116dad')" >
+					<pims:execute expr="utils.write'rss116dad')" >
+
 					<assign name="nbdadread" expr="nbdadread + 1" />
 					<send event="'rss116dad'" />
-					
-					<!-- RSS 116 ZA -->
-					<elseif cond="isrss116za" />
-					<my:linewriter linename="rss116za" />
-					<my:print content="" newline="true" />
+
+				<elseif cond="nbzaread lt nbza" />
+
+					<!-- Some ZA stay to be read -->
+					<pims:execute expr="utils.isLine('rss116za')" >
+					<pims:execute expr="utils.write'rss116za')" >
+
 					<assign name="nbzaread" expr="nbzaread + 1" />
 					<send event="'rss116za'" />
 
-					<!-- RSS line finished -->
-					<elseif cond="isrssfinished" />
+				<elseif	cond="(nbdaread eq nbda) and (nbdadread eq nbdad) and (nbzaread eq nbza)" />
+				
+					<!-- Nothing stays to be read -->
 					<send event="'rssfinished'" />
-					
-					<!-- Unknown content -->
-					<else />
-					<send event="'none'" />
+
 				</if>
 			</onentry>
 
@@ -385,7 +290,6 @@
 			<transition event="rss116da" target="rss116h.main" />
 			<transition event="rss116dad" target="rss116h.main" />
 			<transition event="rss116za" target="rss116h.main" />
-			<transition event="none" target="linenotknown" />
 
 		</state>
 
@@ -393,13 +297,13 @@
 
 	<state id="headernotfound" final="true">
 		<onentry>
-			<my:error error="Pas d'entête valide retrouvee" />
+			<pims:execute expr="utils.error(Pas d'entête valide retrouvee, numline)" />
 		</onentry>
 	</state>
 	
 	<state id="linenotknown" final="true">
 		<onentry>
-			<my:error error="Ligne non reconnue" />
+			<pims:execute expr="utils.error(Ligne non reconnue, numline)" />
 		</onentry>
 	</state>
 	
