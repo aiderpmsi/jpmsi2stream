@@ -13,7 +13,8 @@ import com.github.aiderpmsi.pims.grouper.utils.Action;
 public abstract class BaseAction implements Action {
 
 	static final Pattern pparent = Pattern.compile("^parent\\((\\d+)\\)$");
-	static final Pattern psibling = Pattern.compile("^sibling\\((\\d+)\\)$");
+	static final Pattern pnegsibling = Pattern.compile("^sibling\\((-\\d+)\\)$");
+	static final Pattern psibling = Pattern.compile("^sibling\\((\\+?\\d+)\\)$");
 	static final Pattern pchild = Pattern.compile("^child\\((\\d+)\\)$");
 	
 	@Override
@@ -43,6 +44,8 @@ public abstract class BaseAction implements Action {
 				Matcher m;
 				if ((m = pparent.matcher(resultelt)).matches()) {
 					node = parent(node, new Integer(m.group(1)));
+				} else if ((m = pnegsibling.matcher(resultelt)).matches()) {
+					node = negsibling(node, new Integer(m.group(1)));
 				} else if ((m = psibling.matcher(resultelt)).matches()) {
 					node = sibling(node, new Integer(m.group(1)));
 				} else if ((m = pchild.matcher(resultelt)).matches()) {
@@ -64,6 +67,13 @@ public abstract class BaseAction implements Action {
 		return node;
 	}
 
+	private Node previousElement(Node node) {
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getPreviousSibling();
+		}
+		return node;
+	}
+
 	private Node parent(Node node, Integer nb) {
 		for (int i = 0 ; i < nb ; i++) {
 			if (node == null) break;
@@ -76,6 +86,14 @@ public abstract class BaseAction implements Action {
 		for (int i = 0 ; i < nb ; i++) {
 			if (node == null) break;
 			node = nextElement(node.getNextSibling());
+		}
+		return node;
+	}
+
+	private Node negsibling(Node node, Integer nb) {
+		for (int i = 0 ; i < nb ; i++) {
+			if (node == null) break;
+			node = previousElement(node.getPreviousSibling());
 		}
 		return node;
 	}
