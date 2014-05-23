@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.grouper.tags;
 
 import java.io.IOException;
+
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
@@ -42,9 +43,27 @@ public class Group extends BaseAction {
 		this.gravite = gravite;
 	}
 
-	@Override
-	public String executeAction(Node node, JexlContext jc, JexlEngine jexl)
-			throws IOException {
+	public String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] args) throws IOException {
+		// GETS ARGUMENTS
+		erreur = "";
+		racine = "";
+		modalite = "";
+		gravite = "";
+		for (Argument arg : args) {
+			switch (arg.key) {
+			case "erreur":
+				erreur = arg.value; break;
+			case "racine":
+				racine = arg.value; break;
+			case "modalite":
+				modalite = arg.value; break;
+			case "gravite":
+				gravite = arg.value; break;
+			default:
+				throw new IOException("Argument " + arg.key + " unknown for " + getClass().getSimpleName());
+			}
+		}
+		
 		// STOPS THE GROUPER
 		jc.set("continue", false);
 		// SETS THE GROUP
@@ -52,17 +71,4 @@ public class Group extends BaseAction {
 		return "this";
 	}
 
-	@Override
-	public void init() {
-		erreur = "";
-		racine = "";
-		modalite = "";
-		gravite = "";
-	}
-
-	@Override
-	public void cleanout() {
-		// DO NOTHING
-	}
-	
 }

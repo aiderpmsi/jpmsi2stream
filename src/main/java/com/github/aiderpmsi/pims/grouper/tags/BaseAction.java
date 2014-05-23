@@ -17,9 +17,9 @@ public abstract class BaseAction implements Action {
 	static final Pattern pchild = Pattern.compile("^child\\((\\d+)\\)$");
 	
 	@Override
-	public Node execute(Node node, JexlContext jc, JexlEngine jexl) throws IOException {
+	public Node execute(Node node, JexlContext jc, JexlEngine jexl, Argument[] arguments) throws IOException {
 		// EXECUTES THE ACTION
-		String result = executeAction(node, jc, jexl);
+		String result = executeAction(node, jc, jexl, arguments);
 		// DEPENDING ON THE RESULT, MOVE INTO DOCUMENT
 		if (result.equals("this")) {
 			return node;
@@ -55,7 +55,7 @@ public abstract class BaseAction implements Action {
 		}
 	}
 	
-	public abstract String executeAction(Node node, JexlContext jc, JexlEngine jexl) throws IOException ;
+	public abstract String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] arguments) throws IOException ;
 
 	private Node nextElement(Node node) {
 		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {

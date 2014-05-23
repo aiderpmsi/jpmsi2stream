@@ -8,26 +8,19 @@ import org.w3c.dom.Node;
 
 public class Move extends BaseAction {
 
-	private String dest;
-	
-	public void setDest(String dest) {
-		this.dest = dest;
-	}
-
-	@Override
-	public String executeAction(Node node, JexlContext jc, JexlEngine jexl)
-			throws IOException {
+	public String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] args) throws IOException {
+		// GETS ARGUMENTS
+		String dest = "";
+		for (Argument arg : args) {
+			switch (arg.key) {
+			case "dest":
+				dest = arg.value; break;
+			default:
+				throw new IOException("Argument " + arg.key + " unknown for " + getClass().getSimpleName());
+			}
+		}
+		
 		return dest;
-	}
-
-	@Override
-	public void init() {
-		dest = "";
-	}
-
-	@Override
-	public void cleanout() {
-		// DO NOTHING
 	}
 
 }

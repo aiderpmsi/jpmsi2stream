@@ -10,13 +10,20 @@ import org.w3c.dom.Node;
 
 public class Switch extends BaseAction {
 
-	private String cond;
-	
 	private HashMap<String, Expression> expressions = new HashMap<>();
 	
-	@Override
-	public String executeAction(Node node, JexlContext jc, JexlEngine jexl) throws IOException {
-        // CREATE Or RETRIEVE THE EXPRESSION
+	public String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] args) throws IOException {
+		// GETS ARGUMENTS
+		String cond = "";
+		for (Argument arg : args) {
+			switch (arg.key) {
+			case "cond":
+				cond = arg.value; break;
+			default:
+				throw new IOException("Argument " + arg.key + " unknown for " + getClass().getSimpleName());
+			}
+		}
+        // CREATE OR RETRIEVE THE EXPRESSION
         Expression e;
         if ((e = expressions.get(cond)) == null) {
         	e = jexl.createExpression(cond);
@@ -34,17 +41,4 @@ public class Switch extends BaseAction {
         }
 	}
 
-	public void setCond(String cond) {
-		this.cond = cond;
-	}
-
-	@Override
-	public void init() {
-		cond = "";
-	}
-
-	@Override
-	public void cleanout() {
-		// DO NOTHING
-	}
 }

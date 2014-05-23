@@ -1,8 +1,6 @@
 package com.github.aiderpmsi.pims.grouper.utils;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.apache.commons.jexl2.JexlContext;
@@ -13,6 +11,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import com.github.aiderpmsi.pims.grouper.utils.Action.Argument;
 
 public class TreeBrowser {
 
@@ -109,24 +109,20 @@ public class TreeBrowser {
 				Action action = actions.get(namespaceURI).get(localname);
 				if (action == null)
 					throw new IOException(localname + " function in namespace " + namespace + " is unknown");
-				// INIT ACTION
-				action.init();
 				try {
 					// SETS THE ARGUMENTS OF THE ACTION CLASS
 					attributes = element.getAttributes();
+					Argument[] arguments = new Argument[attributes.getLength()];
 					for (int i = 0 ; i < attributes.getLength() ; i++) {
 						Node attribute = attributes.item(i);
-						String attributeName = attribute.getNodeName();
-						Method setMethod = action.getClass().getMethod(
-								"set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1),
-								String.class);
-						setMethod.invoke(action, attribute.getNodeValue());
+						Argument arg = new Argument();
+						arg.key = attribute.getNodeName();
+						arg.value = attribute.getNodeValue();
+						arguments[i] = arg;
 					}
 					// EXECUTES THE ACTION AND MOVES THE NODE CURRENT
-					current = action.execute(current, jc, jexl);
-					// CLEANS ACTION
-					action.cleanout();
-				} catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException | DOMException e) {
+					current = action.execute(current, jc, jexl, arguments);
+				} catch (SecurityException | IllegalArgumentException | DOMException e) {
 					throw new IOException(e);
 				}
 			} else {
