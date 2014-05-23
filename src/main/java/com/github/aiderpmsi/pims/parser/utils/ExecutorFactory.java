@@ -3,8 +3,11 @@ package com.github.aiderpmsi.pims.parser.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl2.Script;
 import org.apache.commons.scxml.SCXMLExecutor;
 import org.apache.commons.scxml.env.SimpleDispatcher;
 import org.apache.commons.scxml.env.SimpleErrorReporter;
@@ -20,11 +23,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import com.github.aiderpmsi.pims.parser.customtags.ErrorInvocator;
-import com.github.aiderpmsi.pims.parser.customtags.LineInvocator;
-import com.github.aiderpmsi.pims.parser.customtags.LineWriter;
-import com.github.aiderpmsi.pims.parser.customtags.NumLineWriter;
-import com.github.aiderpmsi.pims.parser.customtags.Print;
+import com.github.aiderpmsi.pims.parser.customtags.Utils;
+import com.github.aiderpmsi.pims.parser.customtags.Execute;
 import com.github.aiderpmsi.pims.parser.linestypes.LineDictionary;
 
 public class ExecutorFactory {
@@ -91,32 +91,25 @@ public class ExecutorFactory {
 		// Sets the scxml document
 		InputSource source = new InputSource(scxmlSource);
 
-		// Sets the custom tags
+		// SETS THE CUSTOM EXECUTE TAG
 		List<CustomAction> customActions = new ArrayList<CustomAction>();
+		// CREATES THE JEXL2EXECUTOR
+		JexlEngine jexl2 = new JexlEngine();
+		// CREATES THE CACHED EXPRESSIONS
+		HashMap<String, Script> scripts = new HashMap<>();
 		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "lineinvocator",
-				LineInvocator.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "linewriter",
-				LineWriter.class));
-		customActions
-				.add(new CustomAction("http://my.custom-actions.domain/CUSTOM",
-						"print", Print.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "numlinewriter",
-				NumLineWriter.class));
-		customActions.add(new CustomAction(
-				"http://my.custom-actions.domain/CUSTOM", "error",
-				ErrorInvocator.class));
-
-		// Sets the scxml definition
+				"http://custom.actions/pims", "execute",
+				Execute.class));
+		
+		// SETS THE SCXML DEFINITION
 		SCXML scxml = SCXMLParser.parse(source, new DefaultHandler2(), customActions);
-		// Sets the machine context
+
+		// SETS THE MACHINE CONTEXT
 		JexlContext appCtx = new JexlContext();
-		appCtx.set("_file", memoryBufferedReader);
-		appCtx.set("_dictionary", new LineDictionary());
-		appCtx.set("_contenthandler", contentHandler);
-		appCtx.set("_errorhandler", getErrorHandler());
+		appCtx.set("utils", new Utils(memoryBufferedReader, new LineDictionary(), getErrorHandler(), contentHandler));
+
+		appCtx.set("_scripts", scripts);
+		appCtx.set("jexl2", jexl2);
 		
 		// Creates the engine
 		SCXMLExecutor engine = new SCXMLExecutor(

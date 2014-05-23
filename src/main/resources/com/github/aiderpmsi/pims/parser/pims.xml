@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <scxml xmlns="http://www.w3.org/2005/07/scxml"
-	xmlns:my="http://my.custom-actions.domain/CUSTOM"
+	xmlns:pims="http://custom.actions/pims"
 	version="1.0" initial="test_header">
 
 	<datamodel>
@@ -10,49 +10,33 @@
 
 	<state id="test_header">
 
-		<datamodel>
-			<data name="isrsf2012h" />
-			<data name="isrss116h" />
-		</datamodel>
-
 		<onentry>
-			<!-- Init vars -->
-			<assign name="isrsf2012h" expr="false" />
-			<assign name="isrss116h" expr="false" />
-			
 			<!-- Writes the line number -->
-			<my:numlinewriter />
-			<my:print content="" newline="true" />
-			
-			<!-- Searches what line this header matches  -->
-			<my:lineinvocator linename="rsf2012header"
-				varname="isrsf2012h" />
-			<my:lineinvocator linename="rss116header"
-				varname="isrss116h" />
+			<pims:execute expr="utils.writelinenumber(numline)" />
 
-			<!-- Executes the procedure depending on which header matches -->
-			<if cond="isrsf2012h">
+			<if cond="utils.isLine('rsf2012header')">
 
 				<!-- RSF 2012 -->
-				<my:linewriter linename="rsf2012header" />
-				<my:print content="" newline="true" />
+				<pims:execute expr="utils.write('rsf2012header')" />
 				<assign name="numline" expr="numline + 1" />
 				<send event="'rsf2012h'" />
 				
+			<elseif cond="utils.isLine('rss116header')" />
+
 				<!-- RSS 116 -->
-				<elseif cond="isrss116h" />
-				<my:linewriter linename="rss116header" />
-				<my:print content="" newline="true" />
+				<pims:execute expr="utils.write('rss116header')" />
 				<assign name="numline" expr="numline + 1" />
 				<send event="'rss116h'" />
 				
-				<!-- None -->
-				<else />
+			<else />
+
+				<!-- NONE -->
 				<send event="'none'" />
+
 			</if>
+
 		</onentry>
 
-		<!-- Transition map -->
 		<transition event="rss116h" target="rss116h" />
 		<transition event="rsf2012h" target="rsf2012h" />
 		<transition event="none" target="headernotfound" />
@@ -61,38 +45,24 @@
 
 	<state id="headerrsf">
 
-		<datamodel>
-			<data name="isrsf2012h" />
-		</datamodel>
-
 		<onentry>
-			<!-- Init vars -->
-			<assign name="isrsf2012h" expr="false" />
-			
 			<!-- Writes the line number -->
-			<my:numlinewriter />
-			<my:print content="" newline="true" />
+			<pims:execute expr="utils.writelinenumber(numline)" />
 			
-			<!-- Searches what line this header matches  -->
-			<my:lineinvocator linename="rsf2012header"
-				varname="isrsf2012h" />
-
-			<!-- Executes the procedure depending on which header matches -->
-			<if cond="isrsf2012h">
+			<if cond="utils.isLine('rsf2012header')">
 
 				<!-- RSF 2012 -->
-				<my:linewriter linename="rsf2012header" />
-				<my:print content="" newline="true" />
 				<assign name="numline" expr="numline + 1" />
 				<send event="'rsf2012h'" />
 				
 				<!-- None -->
-				<else />
+			<else />
+
 				<send event="'none'" />
+
 			</if>
 		</onentry>
 
-		<!-- Transition map -->
 		<transition event="rsf2012h" target="rsf2012h" />
 		<transition event="none" target="headernotfound" />
 
