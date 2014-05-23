@@ -114,8 +114,12 @@ public class RssContent {
 	}
 
 	public String formatDiagnostic(String value) throws IOException {
-		Matcher m = diag.matcher(value);
-		if (m.matches()) {
+		Matcher m;
+		if (value.length() == 0) {
+			// THIS IS A VOID DIAGNOSIS, RETURN IT
+			return value;
+		} else if ((m = diag.matcher(value)).matches()) {
+			// WE HAVE A FULL DIAGNOSIS
 			StringBuilder acte = new StringBuilder(m.group(1));
 			if (m.group(2).length() != 0)
 				acte.append(".").append(m.group(2));

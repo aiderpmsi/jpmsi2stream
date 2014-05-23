@@ -78,6 +78,14 @@ public class GrouperTest {
 		test(group, "08M23", "1", "", "");
     }
 
+    @Test
+    public void test28Z04Zb() throws Exception {
+		List<RssContent> cont = new T28Z04Zb();
+
+		Group group = gp.group(cont);
+
+		test(group, "28Z04", "Z", "", "");
+    }
     private void test(Group gp, String racine, String gravite, String modalite, String erreur) {
 		Assert.assertNotNull(gp);
 		Assert.assertEquals(racine, gp.getRacine());
