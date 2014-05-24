@@ -24,6 +24,7 @@ public abstract class Action {
 		Node initialNode = node;
 		for (String moveor : movesor) {
 			movesand = moveor.split("/");
+			node = initialNode;
 			for (String moveand : movesand) {
 				if ((m = pparent.matcher(moveand)).matches()) {
 					node = parent(node, new Integer(m.group(1)));
@@ -39,8 +40,6 @@ public abstract class Action {
 			}
 			if (node != null)
 				break;
-			else
-				node = initialNode;
 		}
 		
 		return node;

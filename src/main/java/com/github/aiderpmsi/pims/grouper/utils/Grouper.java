@@ -77,30 +77,35 @@ public class Grouper implements Callable<Boolean> {
 		lock.lock();
 		
 		try {
-			StaticElements to_ret = new StaticElements();
-			if (elts != null) {
-				to_ret.document = (Document) elts.document.cloneNode(true);
-				to_ret.dicos = elts.dicos;
-			} else {
+			if (elts == null) {
+				// CREATE A NEW ELEMENT
 				elts = new StaticElements();
-				DocumentBuilderFactory docbfactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = docbfactory.newDocumentBuilder();
-	
-				// TREE DEFINITION
-				InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
-	
-				elts.document = builder.parse(treeSource);
-				to_ret.document = (Document) elts.document.cloneNode(true);
 				
+				// CREATE THE DOCUMENT
+				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
+				elts.document = builder.parse(treeSource);
+
 				// CREATES THE DICTIONARIES
 				elts.dicos = new Dictionaries("com/github/aiderpmsi/pims/grouper/grouper-", ".cfg");
-				to_ret.dicos = elts.dicos;
+
+				// CREATES THE JEXL EXECUTOR
+				elts.jexl = new JexlEngine();
 				
 				// START THREAD AWAITING CLEANING
 				Executors.newSingleThreadExecutor().submit(new Grouper());
 			}
+
+			// CLONES THE STATIC ELEMENTS
+			StaticElements clonedElts = new StaticElements();
+			clonedElts.document = (Document) elts.document.cloneNode(true);
+			clonedElts.dicos = elts.dicos;
+			clonedElts.jexl = elts.jexl;
+			clonedElts.lastused = elts.lastused;
+
 			elts.lastused = (new Date()).getTime();
-			return to_ret;
+			return clonedElts;
+
 		} finally {
 			lock.unlock();
 		}
@@ -114,7 +119,6 @@ public class Grouper implements Callable<Boolean> {
 			lock.lock();
 			try {
 				if (Thread.interrupted() || (new Date()).getTime() - elts.lastused > 6000000) {
-					elts.lastused = null;
 					elts = null;
 					break;
 				}
