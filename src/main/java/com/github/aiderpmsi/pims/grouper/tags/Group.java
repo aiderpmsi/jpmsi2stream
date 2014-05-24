@@ -6,7 +6,10 @@ import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
 
-public class Group extends BaseAction {
+import com.github.aiderpmsi.pims.treebrowser.Action;
+import com.github.aiderpmsi.pims.treebrowser.Argument;
+
+public class Group extends Action {
 	
 	private String erreur,	racine,
 			modalite, gravite;
@@ -43,6 +46,7 @@ public class Group extends BaseAction {
 		this.gravite = gravite;
 	}
 
+	@Override
 	public String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] args) throws IOException {
 		// GETS ARGUMENTS
 		erreur = "";
@@ -64,11 +68,9 @@ public class Group extends BaseAction {
 			}
 		}
 		
-		// STOPS THE GROUPER
-		jc.set("continue", false);
 		// SETS THE GROUP
 		jc.set("group", this);
-		return "this";
+		return "child(1)";
 	}
 
 }

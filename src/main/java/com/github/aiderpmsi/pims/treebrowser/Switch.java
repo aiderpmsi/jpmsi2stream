@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.tags;
+package com.github.aiderpmsi.pims.treebrowser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
 
-public class Switch extends BaseAction {
+public class Switch extends Action {
 
 	private HashMap<String, Expression> expressions = new HashMap<>();
 	
@@ -33,9 +33,9 @@ public class Switch extends BaseAction {
         if (result instanceof Boolean) {
         	Boolean resultB = (Boolean) result;
         	if (resultB)
-        		return "child";
+        		return "child(1)";
         	else
-        		return "sibling";
+        		return "sibling(1)";
         } else {
         	throw new IOException(cond + " is not of boolean type");
         }

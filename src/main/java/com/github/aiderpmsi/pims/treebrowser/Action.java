@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.tags;
+package com.github.aiderpmsi.pims.treebrowser;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -8,54 +8,42 @@ import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
 
-import com.github.aiderpmsi.pims.grouper.utils.Action;
-
-public abstract class BaseAction implements Action {
+public abstract class Action {
 
 	static final Pattern pparent = Pattern.compile("^parent\\((\\d+)\\)$");
 	static final Pattern pnegsibling = Pattern.compile("^sibling\\((-\\d+)\\)$");
 	static final Pattern psibling = Pattern.compile("^sibling\\((\\+?\\d+)\\)$");
 	static final Pattern pchild = Pattern.compile("^child\\((\\d+)\\)$");
 	
-	@Override
 	public Node execute(Node node, JexlContext jc, JexlEngine jexl, Argument[] arguments) throws IOException {
 		// EXECUTES THE ACTION
 		String result = executeAction(node, jc, jexl, arguments);
 		// DEPENDING ON THE RESULT, MOVE INTO DOCUMENT
-		if (result.equals("this")) {
-			return node;
-		} else if (result.equals("child|sibling")) {
-			// WE HAVE TO GO INSIDE NEXT CHILD OR SIBLING DEPENDING ON WHAT EXISTS
-			// FIRST FIND THE FIRST ELEMENT CHILD
-			Node nextNode = nextElement(node.getFirstChild());
-			if (nextNode != null)
-				return nextNode;
-			// IF THE FIRST ELEMENT CHILD DOESN'T EXIST, FIND THE FIRST SIBLING
-			nextNode = nextElement(node.getNextSibling());
-				return nextNode;
-		} else if (result.equals("child")) {
-			return nextElement(node.getFirstChild());
-		} else if (result.equals("sibling")) {
-			return nextElement(node.getNextSibling());
-		} else {
-			// WE HAVE TO EXECUTE THE COMMANDS
-			String[] results = result.split("/");
-			for (String resultelt : results) {
-				Matcher m;
-				if ((m = pparent.matcher(resultelt)).matches()) {
+		String[] movesor = result.split("\\|"), movesand;
+		Matcher m;
+		Node initialNode = node;
+		for (String moveor : movesor) {
+			movesand = moveor.split("/");
+			for (String moveand : movesand) {
+				if ((m = pparent.matcher(moveand)).matches()) {
 					node = parent(node, new Integer(m.group(1)));
-				} else if ((m = pnegsibling.matcher(resultelt)).matches()) {
+				} else if ((m = pnegsibling.matcher(moveand)).matches()) {
 					node = negsibling(node, new Integer(m.group(1)));
-				} else if ((m = psibling.matcher(resultelt)).matches()) {
+				} else if ((m = psibling.matcher(moveand)).matches()) {
 					node = sibling(node, new Integer(m.group(1)));
-				} else if ((m = pchild.matcher(resultelt)).matches()) {
+				} else if ((m = pchild.matcher(moveand)).matches()) {
 					node = child(node, new Integer(m.group(1)));
 				} else {
-					throw new RuntimeException(resultelt + " is not a possible result for BaseAction (" + result + ")");
+					throw new RuntimeException(moveand + " is not a possible move for Action (" + result + ")");
 				}
 			}
-			return node;
+			if (node != null)
+				break;
+			else
+				node = initialNode;
 		}
+		
+		return node;
 	}
 	
 	public abstract String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] arguments) throws IOException ;

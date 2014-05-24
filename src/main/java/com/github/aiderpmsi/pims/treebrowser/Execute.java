@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.tags;
+package com.github.aiderpmsi.pims.treebrowser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import org.apache.commons.jexl2.JexlEngine;
 import org.apache.commons.jexl2.Script;
 import org.w3c.dom.Node;
 
-public class Execute extends BaseAction {
+public class Execute extends Action {
 
 	private HashMap<String, Script> scripts = new HashMap<>();
 	
@@ -35,7 +35,7 @@ public class Execute extends BaseAction {
         e.execute(jc);
         
 		// GO TO NEXT CHILD ELEMENT OR NEXT SIBLING
-        return "child|sibling";
+        return "child(1)|sibling(1)";
 	}
 
 }

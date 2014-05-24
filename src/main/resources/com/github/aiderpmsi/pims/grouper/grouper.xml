@@ -1826,7 +1826,7 @@
 			<dflt:switch cond="utils.count('unclassified', 'A-168', actes) gt 0" >
 				<pims:group racine="11K07" gravite="Z" />
 			</dflt:switch>
-			<dflt:move dest="parent(1).sibling(1)"/>
+			<dflt:move dest="parent(1)/sibling(1)"/>
 		</dflt:switch>
 		<dflt:switch cond="dureesejour eq 0 and utils.count('unclassified', 'A-051', actes) gt 0" >
 			<pims:group racine="11K08" modalite="J" />
@@ -1937,7 +1937,7 @@
 				</dflt:switch>
 				<pims:group racine="12K03" gravite="Z" />
 			</dflt:switch>
-			<dflt:move dest="parent(1).sibling(1)"/>
+			<dflt:move dest="parent(1)/sibling(1)"/>
 		</dflt:switch>
 		<dflt:switch cond="dureesejour eq 0 and utils.count('unclassified', 'A-271', actes) gt 0" >
 			<pims:group racine="12K06" modalite="J" />
@@ -2045,7 +2045,7 @@
 				</dflt:switch>
 				<pims:group racine="13K05" gravite="Z" />
 			</dflt:switch>
-			<dflt:move dest="parent(1).sibling(1)"/>
+			<dflt:move dest="parent(1)/sibling(1)"/>
 		</dflt:switch>
 		<dflt:switch cond="dureesejour eq 0 and activite.contains(4)">
 			<pims:group racine="13K06" modalite="J" />

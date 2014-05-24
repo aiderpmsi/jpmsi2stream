@@ -12,17 +12,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl2.MapContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
-import com.github.aiderpmsi.pims.grouper.tags.Assign;
-import com.github.aiderpmsi.pims.grouper.tags.Execute;
 import com.github.aiderpmsi.pims.grouper.tags.Group;
-import com.github.aiderpmsi.pims.grouper.tags.Move;
-import com.github.aiderpmsi.pims.grouper.tags.Switch;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 
 public class Grouper implements Callable<Boolean> {
 
@@ -31,6 +30,10 @@ public class Grouper implements Callable<Boolean> {
 		public Document document = null;
 		// DICTIONARIES
 		public Dictionaries dicos = null;
+		// LAST DATE USE OF STATIC ELEMENTS
+		public Long lastused = null;
+		// JEXL EXECUTOR
+		public JexlEngine jexl = null;
 	}
 	
 	// XML TREE
@@ -42,22 +45,7 @@ public class Grouper implements Callable<Boolean> {
 	// LOCK THE DOCUMENT
 	private static ReentrantLock lock = new ReentrantLock(); 
 	
-	// STORES THE LAST TIMESTAMP WHEN DOCUMENT WAS USED
-	private static Long lastused = null;
-	
-	// STORES THE DIFFERENT ACTIONS CLASSES
-	private Object[][] actions;
-	
 	public Grouper() {
-		// CREATES THE REUSABLE ACTIONS
-		actions = new Object[][] {
-				{"http://default.actions/default", "execute", new Execute()},
-				{"http://default.actions/default", "assign", new Assign()},
-				{"http://default.actions/default", "switch", new Switch()},
-				{"http://default.actions/default", "move", new Move()},
-				{"http://custom.actions/pims", "group", new Group()}
-		};
-		
 	}
 	
 	public Group group(List<RssContent> multirss) throws Exception {
@@ -71,15 +59,16 @@ public class Grouper implements Callable<Boolean> {
 		
 		// CREATES THE DOM BROWSER
 		TreeBrowser tb = new TreeBrowser();
-		tb.setDOM(thiselements.document);
-		tb.addDataModel("rss", rss);
-		tb.addDataModel("utils", new Utils(thiselements.dicos));
-		for (Object[] action : actions) {
-			tb.AddAction((String) action[0], (String) action[1], (Action)action[2]);
-		}
+		tb.setTree(thiselements.document);
+		MapContext mc = new MapContext();
+		mc.set("rss", rss);
+		mc.set("utils", new Utils(thiselements.dicos));
+		tb.setJc(mc);
+		tb.addAction("http://custom.actions/pims", "group", new Group());
+		tb.setJexl(thiselements.jexl);
 		tb.go();
 		// GETS THE MACHINE RESULT
-		Group result = (Group) tb.getDataModel("group");
+		Group result = (Group) tb.getJc().get("group");
 		
 		return result;
 	}
@@ -110,7 +99,7 @@ public class Grouper implements Callable<Boolean> {
 				// START THREAD AWAITING CLEANING
 				Executors.newSingleThreadExecutor().submit(new Grouper());
 			}
-			lastused = (new Date()).getTime();
+			elts.lastused = (new Date()).getTime();
 			return to_ret;
 		} finally {
 			lock.unlock();
@@ -124,8 +113,8 @@ public class Grouper implements Callable<Boolean> {
 			// SEE IF WE HAVE TO QUIT
 			lock.lock();
 			try {
-				if (Thread.interrupted() || (new Date()).getTime() - lastused > 6000000) {
-					lastused = null;
+				if (Thread.interrupted() || (new Date()).getTime() - elts.lastused > 6000000) {
+					elts.lastused = null;
 					elts = null;
 					break;
 				}

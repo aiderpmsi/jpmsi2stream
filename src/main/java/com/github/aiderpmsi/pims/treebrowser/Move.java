@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.grouper.tags;
+package com.github.aiderpmsi.pims.treebrowser;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
 
-public class Move extends BaseAction {
+public class Move extends Action {
 
 	public String executeAction(Node node, JexlContext jc, JexlEngine jexl, Argument[] args) throws IOException {
 		// GETS ARGUMENTS

@@ -225,7 +225,7 @@
 					<assign name="numline" expr="numline + 1" />
 					<send event="'rss116main'" />
 					
-				<elseif cond="iseof" />
+				<elseif cond="utils.isLine('eof')" />
 
 					<!-- EOF -->
 					<pims:execute expr="utils.write('eof')" />
@@ -254,7 +254,7 @@
 
 					<!-- Some DA stay to be read -->
 					<pims:execute expr="utils.isLine('rss116da')" />
-					<pims:execute expr="utils.write'rss116da')" />
+					<pims:execute expr="utils.write('rss116da')" />
 
 					<assign name="nbdaread" expr="nbdaread + 1" />
 					<send event="'rss116da'" />
@@ -263,7 +263,7 @@
 
 					<!-- Some DAD stay to be read -->
 					<pims:execute expr="utils.isLine('rss116dad')" />
-					<pims:execute expr="utils.write'rss116dad')" />
+					<pims:execute expr="utils.write('rss116dad')" />
 
 					<assign name="nbdadread" expr="nbdadread + 1" />
 					<send event="'rss116dad'" />
@@ -272,7 +272,7 @@
 
 					<!-- Some ZA stay to be read -->
 					<pims:execute expr="utils.isLine('rss116za')" />
-					<pims:execute expr="utils.write'rss116za')" />
+					<pims:execute expr="utils.write('rss116za')" />
 
 					<assign name="nbzaread" expr="nbzaread + 1" />
 					<send event="'rss116za'" />
@@ -297,13 +297,13 @@
 
 	<state id="headernotfound" final="true">
 		<onentry>
-			<pims:execute expr="utils.error(Pas d'entête valide retrouvee, numline)" />
+			<pims:execute expr="utils.error('Pas d\'entête valide retrouvee', numline)" />
 		</onentry>
 	</state>
 	
 	<state id="linenotknown" final="true">
 		<onentry>
-			<pims:execute expr="utils.error(Ligne non reconnue, numline)" />
+			<pims:execute expr="utils.error('Ligne non reconnue', numline)" />
 		</onentry>
 	</state>
 	
