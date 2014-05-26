@@ -10,12 +10,13 @@ import org.junit.Test;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.tags.Group;
 import com.github.aiderpmsi.pims.grouper.utils.Grouper;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 public class GrouperTest {
  
 	private Grouper gp;
 	
     @Before
-    public void setUp() {
+    public void setUp() throws TreeBrowserException {
     	gp = new Grouper();
    }
  

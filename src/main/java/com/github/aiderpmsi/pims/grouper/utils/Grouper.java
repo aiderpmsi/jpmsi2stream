@@ -1,17 +1,19 @@
 package com.github.aiderpmsi.pims.grouper.utils;
 
 import java.util.List;
+
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.tags.Group;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserFactory;
 
 public class Grouper {
 
 	private TreeBrowserFactory<GrouperConfig> tbf;
 	
-	public Grouper() {
+	public Grouper() throws TreeBrowserException {
 		GrouperConfigBuilder gcb = new GrouperConfigBuilder();
 		this.tbf = new TreeBrowserFactory<>(gcb);
 	}

@@ -21,6 +21,16 @@ public class GrouperConfigBuilder implements ConfigBuilder<GrouperConfig> {
 
 	private static final String treeLocation = "com/github/aiderpmsi/pims/grouper/grouper.xml";
 
+	private DocumentBuilder dBuilder;
+	
+	public GrouperConfigBuilder() throws TreeBrowserException {
+		try {
+			dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new TreeBrowserException(e);
+		}
+	}
+	
 	@Override
 	public GrouperConfig build() throws TreeBrowserException {
 		GrouperConfig config = new GrouperConfig();
@@ -35,13 +45,11 @@ public class GrouperConfigBuilder implements ConfigBuilder<GrouperConfig> {
 		
 		config.setJexlEngine(new JexlEngine());
 		
-		DocumentBuilder builder;
 		try {
-			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);
-			Document tree = builder.parse(treeSource);
+			Document tree = dBuilder.parse(treeSource);
 			config.setTree(tree);
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (SAXException | IOException e) {
 			throw new TreeBrowserException(e);
 		}
 		

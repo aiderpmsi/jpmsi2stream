@@ -12,11 +12,11 @@ public class GrouperConfig implements Config {
 
 	private Document tree = null;
 
-	public Long clonedTime = null;
+	private Long clonedTime = null;
 
-	public JexlEngine jexlEngine = null;
+	private JexlEngine jexlEngine = null;
 
-	public HashMap<String, Object> context = null;
+	private HashMap<String, Object> context = null;
 	
 	@Override
 	public HashMap<String, Object> getContext() {
