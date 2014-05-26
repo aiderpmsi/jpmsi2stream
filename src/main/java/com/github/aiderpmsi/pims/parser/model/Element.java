@@ -1,9 +1,7 @@
-package com.github.aiderpmsi.pims.parser.jaxb;
+package com.github.aiderpmsi.pims.parser.model;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
 public class Element {
 
 	private String name = null;

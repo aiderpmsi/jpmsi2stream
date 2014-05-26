@@ -8,8 +8,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 
-import com.github.aiderpmsi.pims.parser.jaxb.Element;
-import com.github.aiderpmsi.pims.parser.jaxb.Linetype;
+import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.Linetype;
 import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 /**

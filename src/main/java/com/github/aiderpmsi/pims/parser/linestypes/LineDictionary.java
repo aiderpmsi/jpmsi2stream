@@ -1,108 +1,95 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.util.JAXBResult;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import com.github.aiderpmsi.pims.parser.jaxb.Linetype;
+import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.Linetype;
 
 public class LineDictionary {
 
-	private static final String configPath = "com/github/aiderpmsi/pims/parser/linedefs.xml";
-	private static final String configXslPath = "com/github/aiderpmsi/pims/parser/linedefsset.xsl";
+	private static final String configPath = "com/github/aiderpmsi/pims/parser/linedefs.cfg";
 	
-	private Map<String, PmsiLineType> instances =
+	private Map<String, PmsiLineType> lines =
 			new HashMap<String, PmsiLineType>();
 
-	private Transformer transformer = null;
-	
-	private Document document = null;
-	
-	private Unmarshaller jaxbUnmarshaller = null;
-	
-	public LineDictionary() {
-		try {
-			// CREATES THE TRANSFORMER ONLY ONCE
-			// 1. TRANSFORMER XSL
-			InputStream configXslStream = 
-					LineDictionary.class.getClassLoader().getResourceAsStream(configXslPath);
-			// 2. CREATES THE TRANSFORMER
-			TransformerFactory tFactory = org.apache.xalan.processor.TransformerFactoryImpl.newInstance();
-				transformer = tFactory.newTransformer(
-						new StreamSource(configXslStream));
-			
-			// CREATES THE DOMSOURCE ONLY ONCE
-			// 1. DOM BUILDERS
-			DocumentBuilderFactory docbfactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = docbfactory.newDocumentBuilder();
-			// 2. CONFIG STREAM
-			InputStream configStream = 
-					LineDictionary.class.getClassLoader().getResourceAsStream(configPath);
-			// 3. CREATES DOM
-			document = builder.parse(configStream);
-			
-			// CREATES UNMARSHMALLER ONCE
-			JAXBContext jaxbContext = JAXBContext.newInstance(Linetype.class);
-		    jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-		} catch (TransformerConfigurationException | ParserConfigurationException | SAXException | IOException | JAXBException e) {
-			throw new RuntimeException(e);
-		}
-		
-	}
-	
-	public synchronized PmsiLineType getInstance(String element) {
+	public synchronized PmsiLineType getLine(String element) {
 		// GETS THE LINETYPE FROM HASHMAP IF EXISTS
 		PmsiLineType instance;
         
-		if ((instance = instances.get(element)) == null) {
+		if ((instance = lines.get(element)) == null) {
 			// THE INSTANCE DOESN'T
 			try {
-				instance = createInstance(element);
+				instance = createLine(element);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			
-			instances.put(element, instance);
+			lines.put(element, instance);
 		}
 		
 		return instance;
 	}
 	
-	private PmsiLineType createInstance(String element) throws IOException, JAXBException, TransformerException {
+	private PmsiLineType createLine(String element) throws IOException {
 			// IF EOF IS ASKED
 			if (element.equals("eof"))
 				return new EndOfFile();
 			else {
-				// SETS THE KIND OF LINE WE HAVE TO PARSE
-				transformer.setParameter("linetype", element);
+				// OPENS THE CONFIG FILE
+				BufferedReader config = 
+						new BufferedReader(new InputStreamReader(LineDictionary.class.getClassLoader().getResourceAsStream(configPath), "UTF-8"));
 				
-				// CONFIG SOURCE
-				DOMSource source = new DOMSource(document);
-				    			    
-				// CREATES THE LINE TYPE
-			    JAXBResult jaxbResult = new JAXBResult(jaxbUnmarshaller);
-			    transformer.transform(source, jaxbResult);
-
-			    return new PmsiLineTypeImpl((Linetype) jaxbResult.getResult());
+				String line;
+				String typeLine = "id:" + element;
+				while ((line = config.readLine()) != null) {
+					if (line.equals(typeLine)) {
+						// WE FOUND THE LINE, STORE THE LINETYPE
+						Linetype lineConf = new Linetype();
+						
+						// FIND TYPE
+						while ((line = config.readLine()) != null && !line.startsWith("type:")) { }
+						// WE ARE ON THE TYPE OR ON EOF
+						if (line == null) throw new IOException("Config file malformed");
+						lineConf.setName(line.substring(5));
+						
+						// THEN FOR EACH NAME, PROCESS CONTENT
+						List<Element> elts = new ArrayList<>();
+						Element elt = null;
+						while ((line = config.readLine()) != null) {
+							if (line.startsWith("name:") && elt != null) {
+								elts.add(elt);
+								elt = null;
+							} else if (line.startsWith("name:")) {
+								elt = new Element();
+								elt.setIn("");
+								elt.setOut("");
+								elt.setName(line.substring(5));
+							} else if (line.startsWith("pattern:")) {
+								elt.setPattern(line.substring(8));
+							} else if (line.startsWith("in:")) {
+								elt.setPattern(line.substring(3));
+							} else if (line.startsWith("out:")) {
+								elt.setPattern(line.substring(4));
+							} else if (line.startsWith("id:")) {
+								break;
+							}
+						}
+						// LAST ELEMENT CAN BE FORGIVEN IN SOME CASES
+						if (elt != null)
+							elts.add(elt);
+						lineConf.setElements(elts);
+						
+						// SEND LINETYPE
+						return new PmsiLineTypeImpl(lineConf);
+					}
+				}
+				throw new IOException(element + " not found in config file");
 			} 
 
 	}

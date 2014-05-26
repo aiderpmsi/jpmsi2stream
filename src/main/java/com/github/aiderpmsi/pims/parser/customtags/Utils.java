@@ -31,12 +31,12 @@ public class Utils {
 	
 	public PmsiLineType getLine(String lineName) throws IOException {
 		// GETS THE LINE DEFINITION
-		return ld.getInstance(lineName);
+		return ld.getLine(lineName);
 	}
 
 	public Boolean isLine(String lineName) throws IOException {
 		// GETS THE LINE DEFINITION
-		PmsiLineType line = ld.getInstance(lineName);
+		PmsiLineType line = ld.getLine(lineName);
 
 		// CHECKS IF THE ACTUAL LINE CORRESPONS TO THIS LINE
 		return line.isFound(br);
@@ -48,7 +48,7 @@ public class Utils {
 	
 	public void write(String linename) throws IOException {
 		// GETS THE LINE DEFINITION
-		PmsiLineType line = ld.getInstance(linename);
+		PmsiLineType line = ld.getLine(linename);
 
 		// WRITES THE RESULT IN THE CONTENTHANDLER
 		line.writeResults(ch);
