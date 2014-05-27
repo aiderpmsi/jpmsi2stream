@@ -1,69 +1,62 @@
 package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.scxml.SCXMLExecutor;
-import org.apache.commons.scxml.model.ModelException;
-import org.apache.commons.scxml.model.TransitionTarget;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserFactory;
+
 public class Parser extends XMLFilterImpl {
 
-	// scxml location
-	private static final String scxmlLocation = "com/github/aiderpmsi/pims/parser/pims.xml";
+	private TreeBrowserFactory<ParserConfig> tbf;
 
-	/**
-	 * starting state
-	 */
-	private String startState = null;
+	private String type = "";
+	
+	public Parser() throws TreeBrowserException {
+		ParserConfigBuilder gcb = new ParserConfigBuilder();
+		this.tbf = new TreeBrowserFactory<>(gcb);
+	}
 	
 	@Override
 	public void parse(InputSource input) throws SAXException, IOException {
+		// THIS WORKS ONLY ON CHARACTER STREAMS
+		if (input.getCharacterStream() == null)
+			throw new IOException("No CharacterStream in input");
 
+		// GETS THE DOCUMENT
+		TreeBrowser tb;
 		try {
-			// THIS WORKS ONLY ON CHARACTER STREAMS
-			if (input.getCharacterStream() == null)
-				throw new IOException("No CharacterStream in input");
+			tb = tbf.build();
 
-			// SOURCE OF THE STATE MACHINE DEFINITION
-			InputStream scxmlSource = this.getClass().getClassLoader().getResourceAsStream(scxmlLocation);
-			// SOURCE OF THE PMSI FILE
-			MemoryBufferedReader pmsiSource = new MemoryBufferedReader(input.getCharacterStream());
-
-			ExecutorFactory machineFactory = new ExecutorFactory()
-					.setScxmlSource(scxmlSource)
-					.setMemoryBufferedReader(pmsiSource)
-					.setContentHandler(getContentHandler())
-					.setErrorHandler(getErrorHandler());
-
-			SCXMLExecutor machine = machineFactory.createMachine();
-
+			// SETS THE PARAMETERS
+			tb.getJc().set("br", new MemoryBufferedReader(input.getCharacterStream()));
+			tb.getJc().set("ch", getContentHandler());
+			tb.getJc().set("eh", getErrorHandler());
+			tb.getJc().set("start", getType());
+			
 			getContentHandler().startDocument();
 			getContentHandler().startElement("", "root", "root", new Attributes2Impl());
-
-			// RUN THE STATE MACHINE
-			if (getStartState() != null)
-				machine.getStateMachine().setInitialTarget((TransitionTarget) machine.getStateMachine().getTargets().get(getStartState()));
-			machine.go();
+	
+			// LAUNCHES THE PARSER
+			tb.go();
 			
 			getContentHandler().endElement("", "root", "root");
 			getContentHandler().endDocument();
-
-		} catch (ModelException e) {
-			throw new IOException(e);
+		} catch (TreeBrowserException e) {
+			throw new SAXException(e);
 		}
 	}
 
-	public String getStartState() {
-		return startState;
+	public String getType() {
+		return type;
 	}
 
-	public void setStartState(String startState) {
-		this.startState = startState;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

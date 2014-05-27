@@ -9,13 +9,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.ext.DefaultHandler2;
 
 import com.github.aiderpmsi.pims.parser.utils.Parser;
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class ParserTest {
  
 	private Parser p;
 	
     @Before
-    public void setUp() {
+    public void setUp() throws TreeBrowserException {
     	p = new Parser();
    }
  
@@ -35,7 +36,7 @@ public class ParserTest {
 
     	p.setContentHandler(new DefaultHandler2());
     	p.setErrorHandler(new DefaultHandler2());
-    	p.setStartState("rss116header");
+    	p.setType("rssheader");
     	p.parse(new InputSource(new StringReader(rss)));
     	
     	
