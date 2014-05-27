@@ -62,10 +62,10 @@ public class LineDictionary {
 						List<Element> elts = new ArrayList<>();
 						Element elt = null;
 						while ((line = config.readLine()) != null) {
-							if (line.startsWith("name:") && elt != null) {
-								elts.add(elt);
-								elt = null;
-							} else if (line.startsWith("name:")) {
+							if (line.startsWith("name:")) {
+								if (elt != null) {
+									elts.add(elt);
+								}
 								elt = new Element();
 								elt.setIn("");
 								elt.setOut("");
@@ -73,15 +73,15 @@ public class LineDictionary {
 							} else if (line.startsWith("pattern:")) {
 								elt.setPattern(line.substring(8));
 							} else if (line.startsWith("in:")) {
-								elt.setPattern(line.substring(3));
+								elt.setIn(line.substring(3));
 							} else if (line.startsWith("out:")) {
-								elt.setPattern(line.substring(4));
+								elt.setOut(line.substring(4));
 							} else if (line.startsWith("id:")) {
 								break;
 							}
 						}
-						// LAST ELEMENT CAN BE FORGIVEN IN SOME CASES
-						if (elt != null)
+						// LAST ELEMENT CAN BE FORGET WHEN IT WAS THE LAST ELEMENT
+						if (line == null)
 							elts.add(elt);
 						lineConf.setElements(elts);
 						

@@ -34,6 +34,8 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	
 	private String[] content;
 	
+	private MemoryBufferedReader br = null;
+	
 	int matchLength = 0;
 	
 	public PmsiLineTypeImpl(Linetype linetype) {
@@ -108,6 +110,11 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 
 			contentHandler.endElement("", getName(), getName());
 			
+			// CONSUME IT FROM MEMORYBUFFEREDREADER
+			br.consume(matchLength);
+
+			matchLength = 0;
+			
 		} catch (SAXException se) {
 			throw new IOException(se);
 		}
@@ -115,6 +122,8 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 
 	@Override
 	public boolean isFound(MemoryBufferedReader br) throws IOException {
+		this.br = br;
+		
 		// Récupération de la ligne à lire
 		String toParse = br.getLine();
 		
@@ -138,12 +147,6 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		// La ligne ne correspond pas
 		else 
 			return false;
-	}
-	
-	public void consume(MemoryBufferedReader br) throws IOException {
-		// supprime du reader ce qui a été lu.
-		br.consume(matchLength);
-		matchLength = 0;
 	}
 	
 	public int getInt(int index) {

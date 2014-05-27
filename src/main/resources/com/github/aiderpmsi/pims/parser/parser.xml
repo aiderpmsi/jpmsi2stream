@@ -1,71 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<tree xmlns:dflt="http://default.actions/default" xmlns:pims="http://custom.actions/pims" >
+<tree xmlns:dflt="http://default.actions/default" >
 
 	<dflt:assign var="linenumber" expr="1" />
 
 	<dflt:switch cond="start eq 'rsfheader'" >
-		<dflt:move dest="" />
+		<dflt:move dest="parent(1)/sibling(6)" />
 	</dflt:switch>
 
 	<dflt:switch cond="start eq 'rssheader'" >
-		<dflt:move dest="" />
+		<dflt:move dest="parent(1)/sibling(8)" />
 	</dflt:switch>
 
 	<!-- CHECK IF THIS IS A RSS OR RSF -->
-	<dflt:switch cond="utils.isLine('rsf2012header')" >
-		<dflt:move dest="parent(1)/sibling(2)" />
+	<dflt:assign var="rsf2012header" expr="dico.getLine('rsf2012header')" />
+	<dflt:switch cond="rsf2012header.isFound(br)" >
+		<dflt:move dest="parent(1)/sibling(4)/child(1)" />
 	</dflt:switch>
-	<dflt:switch cond="utils.isLine('rss116header')" >
-		<dflt:move dest="parent(1)/sibling(3)" />
+	<dflt:assign var="rss116header" expr="dico.getLine('rss116header')" />
+	<dflt:switch cond="rss116header.isFound(br)" >
+		<dflt:move dest="parent(1)/sibling(4)/child(1)" />
 	</dflt:switch>
 
-	<!-- CHECK IF IT IS A RSF -->	
-	<dflt:switch cond="utils.isLine('rsf2012header')" >
-		<pims:execute expr="utils.writelinenumber(numline)" />
+	<!-- CHECK IF IT IS A RSF -->
+	<dflt:assign var="rsf2012header" expr="dico.getLine('rsf2012header')" />
+	<dflt:switch cond="rsf2012header.isFound(br)" >
+		<dflt:assign var="rsf2012a" expr="dico.getLine('rsf2012a')" />
+		<dflt:assign var="rsf2012b" expr="dico.getLine('rsf2012b')" />
+		<dflt:assign var="rsf2012c" expr="dico.getLine('rsf2012c')" />
+		<dflt:assign var="rsf2012h" expr="dico.getLine('rsf2012h')" />
+		<dflt:assign var="rsf2012i" expr="dico.getLine('rsf2012i')" />
+		<dflt:assign var="rsf2012l" expr="dico.getLine('rsf2012l')" />
+		<dflt:assign var="rsf2012m" expr="dico.getLine('rsf2012m')" />
+		<dflt:assign var="eof" expr="dico.getLine('eof')" />
+
+		<dflt:execute expr="utils.writelinenumber(numline, ch)" />
 		<dflt:assign var="numline" expr="numline + 1" />
-		<dflt:execute expr="utils.write('rsf2012header')" />
+		<dflt:execute expr="rsf2012header.writeResults(ch)" />
 		
-		<pims:execute expr="utils.writelinenumber(numline)" />
+		<dflt:execute expr="utils.writelinenumber(numline, ch)" />
 		<dflt:assign var="numline" expr="numline + 1" />
 
-		<dflt:switch cond="utils.isLine('rsf2012a')" >
-			<dflt:execute expr="utils.write('rsf2012a')" />
+		<dflt:switch cond="rsf2012a.isFound(br)" >
+			<dflt:execute expr="rsf2012a.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-1)" />
 		</dflt:switch>
 	
-		<dflt:switch cond="utils.isLine('rsf2012b')" >
-			<dflt:execute expr="utils.write('rsf2012b')" />
+		<dflt:switch cond="rsf2012b.isFound(br)" >
+			<dflt:execute expr="rsf2012b.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-2)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('rsf2012c')" >
-			<dflt:execute expr="utils.write('rsf2012c')" />
+		<dflt:switch cond="rsf2012c.isFound(br)" >
+			<dflt:execute expr="rsf2012c.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-3)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('rsf2012h')" >
-			<dflt:execute expr="utils.write('rsf2012h')" />
+		<dflt:switch cond="rsf2012h.isFound(br)" >
+			<dflt:execute expr="rsf2012h.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-4)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('rsf2012i')" >
-			<dflt:execute expr="utils.write('rsf2012i')" />
+		<dflt:switch cond="rsf2012i.isFound(br)" >
+			<dflt:execute expr="rsf2012i.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-5)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('rsf2012l')" >
-			<dflt:execute expr="utils.write('rsf2012l')" />
+		<dflt:switch cond="rsf2012l.isFound(br)" >
+			<dflt:execute expr="rsf2012l.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-6)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('rsf2012m')" >
-			<dflt:execute expr="utils.write('rsf2012m')" />
+		<dflt:switch cond="rsf2012m.isFound(br)" >
+			<dflt:execute expr="rsf2012m.writeResults(ch)" />
 			<dflt:move dest="parent(1)/sibling(-7)" />
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('eof')" >
-			<dflt:execute expr="utils.write('eof')" />
+		<dflt:switch cond="eof.isFound(br)" >
+			<dflt:execute expr="eof.writeResults(ch)" />
 		</dflt:switch>
 		
 		<dflt:execute expr="utils.noLineError('rsfa, rsfb, rsfc, rsfh, rsfi, rsfl, rsfm', numline)">
@@ -78,10 +90,17 @@
 	</dflt:execute>
 
 	<!-- CHECK IF IT IS A RSS -->	
-	<dflt:switch cond="utils.isLine('rss116header')" >
-		<pims:execute expr="utils.writelinenumber(numline)" />
+	<dflt:assign var="rss116header" expr="dico.getLine('rss116header')" />
+	<dflt:switch cond="rss116header.isFound(br)" >
+		<dflt:assign var="rss116main" expr="dico.getLine('rss116main')" />
+		<dflt:assign var="rss116da" expr="dico.getLine('rss116da')" />
+		<dflt:assign var="rss116dad" expr="dico.getLine('rss116dad')" />
+		<dflt:assign var="rss116za" expr="dico.getLine('rss116za')" />
+		<dflt:assign var="eof" expr="dico.getLine('eof')" />
+
+		<dflt:execute expr="utils.writelinenumber(numline)" />
 		<dflt:assign var="numline" expr="numline + 1" />
-		<dflt:execute expr="utils.write('rss116header')" />
+		<dflt:execute expr="rss116header.writeResults(ch)" />
 
 		<dflt:assign var="nbdaread" expr="0" />
 		<dflt:assign var="nbdadread" expr="0" />
@@ -90,15 +109,15 @@
 		<dflt:execute expr="utils.writelinenumber(numline)" />
 		<dflt:assign var="numline" expr="numline + 1" />
 
-		<dflt:switch cond="utils.isLine('rss116main')" >
-			<dflt:execute expr="utils.write('rss116main')" />
+		<dflt:switch cond="rss116main.isFound(br)" >
+			<dflt:execute expr="rss116main.writeResults(ch)" />
 			<dflt:assign var="nbda" expr="utils.getLine('rss116main').getInt(26)" />
 			<dflt:assign var="nbdad" expr="utils.getLine('rss116main').getInt(27)" />
 			<dflt:assign var="nbza" expr="utils.getLine('rss116main').getInt(28)" />
 			
 			<dflt:switch cond="nbdaread lt nbda" >
-				<dflt:switch cond="utils.isLine('rss116da')" >
-					<dflt:execute expr="utils.write('rss116da')" />
+				<dflt:switch cond="rss116da.isFound(br)" >
+					<dflt:execute expr="rss116da.writeResults(ch)" />
 					<dflt:assign var="nbdaread" expr="nbdaread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
@@ -108,8 +127,8 @@
 			</dflt:switch>
 
 			<dflt:switch cond="nbdadread lt nbdad" >
-				<dflt:switch cond="utils.isLine('rss116dad')" >
-					<dflt:execute expr="utils.write('rss116dad')" />
+				<dflt:switch cond="rss116dad.isFound(br)" >
+					<dflt:execute expr="rss116dad.writeResults(ch)" />
 					<dflt:assign var="nbdadread" expr="nbdadread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
@@ -119,8 +138,8 @@
 			</dflt:switch>
 			
 			<dflt:switch cond="nbzaread lt nbza" >
-				<dflt:switch cond="utils.isLine('rss116za')" >
-					<dflt:execute expr="utils.write('rss116za')" />
+				<dflt:switch cond="rss116za.isFound(br)" >
+					<dflt:execute expr="rss116za.writeResults(ch)" />
 					<dflt:assign var="nbzaread" expr="nbzaread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
@@ -134,8 +153,8 @@
 
 		</dflt:switch>
 
-		<dflt:switch cond="utils.isLine('eof')" >
-			<dflt:execute expr="utils.write('eof')" />
+		<dflt:switch cond="eof.isFound(br)" >
+			<dflt:execute expr="eof.writeResults(ch)" />
 		</dflt:switch>
 
 		<dflt:execute expr="utils.noLineError('rss116 element', numline)">

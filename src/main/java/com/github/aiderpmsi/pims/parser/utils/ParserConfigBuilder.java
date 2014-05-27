@@ -18,7 +18,7 @@ import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class ParserConfigBuilder implements ConfigBuilder<ParserConfig> {
 
-	private static final String treeLocation = "com/github/aiderpmsi/pims/parser/pims.xml";
+	private static final String treeLocation = "com/github/aiderpmsi/pims/parser/parser.xml";
 
 	private DocumentBuilder dBuilder;
 	
@@ -37,9 +37,9 @@ public class ParserConfigBuilder implements ConfigBuilder<ParserConfig> {
 		config.setClonedTime(null);
 		
 		HashMap<String, Object> context = new HashMap<>();
-		LineDictionary dicos = new LineDictionary();
-		context.put("utils", new Utils(dicos));
-		context.put("dicos", dicos);
+		LineDictionary dico = new LineDictionary();
+		context.put("utils", new Utils());
+		context.put("dico", dico);
 		config.setContext(context);
 		
 		config.setJexlEngine(new JexlEngine());

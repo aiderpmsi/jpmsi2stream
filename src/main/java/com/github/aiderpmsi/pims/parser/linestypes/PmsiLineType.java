@@ -25,17 +25,10 @@ public abstract class PmsiLineType {
 	public abstract boolean isFound(MemoryBufferedReader br) throws IOException;
 
 	/**
-	 * Maps the line to content writen to the content handler
+	 * Maps the line to content writen to the content handler and removes it from the Reader
 	 * @param contentHandler
 	 * @throws IOException
 	 */
 	public abstract void writeResults(ContentHandler contentHandler) throws IOException;
-
-	/**
-	 * Consumes from the reader the number of characters matched
-	 * @param br
-	 * @throws IOException
-	 */
-	public abstract void consume(MemoryBufferedReader br) throws IOException;
 
 }

@@ -91,6 +91,7 @@ public class TreeBrowser {
 		node = tree.getDocumentElement().getFirstChild();
 
 		String localname, namespace, namespaceURI;
+		HashMap<String, Action> nsactions;
 		Action action;
 		NamedNodeMap atts;
 		Node att;
@@ -113,8 +114,10 @@ public class TreeBrowser {
 				}
 				// GETS THE CLASS EXECUTING THIS ACTION
 				if ((namespaceURI = namespaces.get(namespace)) == null)
-					throw new IOException("namespace '" + namespace + "' is unknown");				
-				if ((action = actions.get(namespaceURI).get(localname)) == null)
+					throw new IOException("namespace '" + namespace + "' is unknown");	
+				if ((nsactions = actions.get(namespaceURI)) == null)
+					throw new IOException("namespace '" + namespace + "' is not defined");
+				if ((action = nsactions.get(localname)) == null)
 					throw new IOException(localname + " function in namespace " + namespace + " is unknown");
 				// SETS THE ARGUMENTS OF THE ACTION CLASS
 				atts = node.getAttributes();

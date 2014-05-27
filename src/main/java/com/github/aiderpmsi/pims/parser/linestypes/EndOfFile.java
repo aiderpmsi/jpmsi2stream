@@ -26,8 +26,4 @@ public class EndOfFile extends PmsiLineType {
 		}
 	}
 
-	public void consume(MemoryBufferedReader br) throws IOException {
-		// Nothing to do
-	}
-
 }
