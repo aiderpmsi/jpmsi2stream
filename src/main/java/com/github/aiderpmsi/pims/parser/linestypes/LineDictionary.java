@@ -81,7 +81,7 @@ public class LineDictionary {
 							}
 						}
 						// LAST ELEMENT CAN BE FORGET WHEN IT WAS THE LAST ELEMENT
-						if (line == null)
+						if (elt != null)
 							elts.add(elt);
 						lineConf.setElements(elts);
 						

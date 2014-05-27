@@ -34,12 +34,12 @@
 		<dflt:assign var="rsf2012m" expr="dico.getLine('rsf2012m')" />
 		<dflt:assign var="eof" expr="dico.getLine('eof')" />
 
-		<dflt:execute expr="utils.writelinenumber(numline, ch)" />
-		<dflt:assign var="numline" expr="numline + 1" />
+		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
+		<dflt:assign var="linenumber" expr="linenumber + 1" />
 		<dflt:execute expr="rsf2012header.writeResults(ch)" />
 		
-		<dflt:execute expr="utils.writelinenumber(numline, ch)" />
-		<dflt:assign var="numline" expr="numline + 1" />
+		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
+		<dflt:assign var="linenumber" expr="linenumber + 1" />
 
 		<dflt:switch cond="rsf2012a.isFound(br)" >
 			<dflt:execute expr="rsf2012a.writeResults(ch)" />
@@ -80,12 +80,12 @@
 			<dflt:execute expr="eof.writeResults(ch)" />
 		</dflt:switch>
 		
-		<dflt:execute expr="utils.noLineError('rsfa, rsfb, rsfc, rsfh, rsfi, rsfl, rsfm', numline)">
+		<dflt:execute expr="utils.noLineError('rsfa, rsfb, rsfc, rsfh, rsfi, rsfl, rsfm', linenumber, eh)">
 			<dflt:move dest="child(1)" />
 		</dflt:execute>
 
 	</dflt:switch>
-	<dflt:execute expr="utils.noHeaderError(numline)">
+	<dflt:execute expr="utils.noHeaderError(linenumber, eh)">
 		<dflt:move dest="child(1)" />
 	</dflt:execute>
 
@@ -98,22 +98,22 @@
 		<dflt:assign var="rss116za" expr="dico.getLine('rss116za')" />
 		<dflt:assign var="eof" expr="dico.getLine('eof')" />
 
-		<dflt:execute expr="utils.writelinenumber(numline)" />
-		<dflt:assign var="numline" expr="numline + 1" />
+		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
+		<dflt:assign var="linenumber" expr="linenumber + 1" />
 		<dflt:execute expr="rss116header.writeResults(ch)" />
 
 		<dflt:assign var="nbdaread" expr="0" />
 		<dflt:assign var="nbdadread" expr="0" />
 		<dflt:assign var="nbzaread" expr="0" />
 
-		<dflt:execute expr="utils.writelinenumber(numline)" />
-		<dflt:assign var="numline" expr="numline + 1" />
+		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
+		<dflt:assign var="linenumber" expr="linenumber + 1" />
 
 		<dflt:switch cond="rss116main.isFound(br)" >
 			<dflt:execute expr="rss116main.writeResults(ch)" />
-			<dflt:assign var="nbda" expr="utils.getLine('rss116main').getInt(26)" />
-			<dflt:assign var="nbdad" expr="utils.getLine('rss116main').getInt(27)" />
-			<dflt:assign var="nbza" expr="utils.getLine('rss116main').getInt(28)" />
+			<dflt:assign var="nbda" expr="rss116main.getInt(26)" />
+			<dflt:assign var="nbdad" expr="rss116main.getInt(27)" />
+			<dflt:assign var="nbza" expr="rss116main.getInt(28)" />
 			
 			<dflt:switch cond="nbdaread lt nbda" >
 				<dflt:switch cond="rss116da.isFound(br)" >
@@ -121,7 +121,7 @@
 					<dflt:assign var="nbdaread" expr="nbdaread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('da element', numline)">
+				<dflt:execute expr="utils.noLineError('da element', linenumber, eh)">
 					<dflt:move dest="child(1)" />
 				</dflt:execute>
 			</dflt:switch>
@@ -132,7 +132,7 @@
 					<dflt:assign var="nbdadread" expr="nbdadread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('dad element', numline)">
+				<dflt:execute expr="utils.noLineError('dad element', linenumber, eh)">
 					<dflt:move dest="child(1)" />
 				</dflt:execute>
 			</dflt:switch>
@@ -143,7 +143,7 @@
 					<dflt:assign var="nbzaread" expr="nbzaread + 1" />
 					<dflt:move dest="parent(1)"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('za element', numline)">
+				<dflt:execute expr="utils.noLineError('za element', linenumber, eh)">
 					<dflt:move dest="child(1)" />
 				</dflt:execute>
 			</dflt:switch>
@@ -157,12 +157,12 @@
 			<dflt:execute expr="eof.writeResults(ch)" />
 		</dflt:switch>
 
-		<dflt:execute expr="utils.noLineError('rss116 element', numline)">
+		<dflt:execute expr="utils.noLineError('rss116 element', linenumber, eh)">
 			<dflt:move dest="child(1)" />
 		</dflt:execute>
 
 	</dflt:switch>
-	<dflt:execute expr="utils.noHeaderError(numline)">
+	<dflt:execute expr="utils.noHeaderError(linenumber, eh)">
 		<dflt:move dest="child(1)" />
 	</dflt:execute>
 
