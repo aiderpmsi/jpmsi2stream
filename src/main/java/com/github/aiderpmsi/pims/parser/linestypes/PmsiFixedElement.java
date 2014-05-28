@@ -16,7 +16,7 @@ public class PmsiFixedElement implements PmsiElement {
 		size = config.size;
 		name = config.name;
 		char[] array = new char[size];
-		config.type.getChars(5, 5 + size, array, 0);
+		config.type.getChars(6, 6 + size, array, 0);
 		this.matcher = new Segment(array, 0, size);
 	}
 

@@ -119,7 +119,7 @@
 				<dflt:switch cond="rss116da.isFound(br)" >
 					<dflt:execute expr="rss116da.writeResults(ch)" />
 					<dflt:assign var="nbdaread" expr="nbdaread + 1" />
-					<dflt:move dest="parent(1)"/>
+					<dflt:move dest="parent(2)"/>
 				</dflt:switch>
 				<dflt:execute expr="utils.noLineError('da element', linenumber, eh)">
 					<dflt:move dest="child(1)" />
@@ -130,7 +130,7 @@
 				<dflt:switch cond="rss116dad.isFound(br)" >
 					<dflt:execute expr="rss116dad.writeResults(ch)" />
 					<dflt:assign var="nbdadread" expr="nbdadread + 1" />
-					<dflt:move dest="parent(1)"/>
+					<dflt:move dest="parent(2)"/>
 				</dflt:switch>
 				<dflt:execute expr="utils.noLineError('dad element', linenumber, eh)">
 					<dflt:move dest="child(1)" />
@@ -141,7 +141,7 @@
 				<dflt:switch cond="rss116za.isFound(br)" >
 					<dflt:execute expr="rss116za.writeResults(ch)" />
 					<dflt:assign var="nbzaread" expr="nbzaread + 1" />
-					<dflt:move dest="parent(1)"/>
+					<dflt:move dest="parent(2)"/>
 				</dflt:switch>
 				<dflt:execute expr="utils.noLineError('za element', linenumber, eh)">
 					<dflt:move dest="child(1)" />

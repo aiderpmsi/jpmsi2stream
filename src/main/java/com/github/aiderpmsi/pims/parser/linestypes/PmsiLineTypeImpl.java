@@ -76,8 +76,6 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 			
 			// CONSUME IT FROM MEMORYBUFFEREDREADER
 			br.consume(matchLength);
-
-			matchLength = 0;
 			
 		} catch (SAXException se) {
 			throw new IOException(se);
@@ -89,11 +87,12 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		this.br = br;
 		
 		// Récupération de la ligne à lire
-		char[] toParse = br.readLine().toCharArray();
+		String toParseS = br.getLine();
 		
-		if (toParse == null)
+		if (toParseS == null)
 			return false;
 		
+		char[] toParse = toParseS.toCharArray();
 		// TENTATIVE DE MATCH
 		int readed = 0;
 		for (int i = 0 ; i < elements.length ; i++) {
@@ -101,10 +100,11 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 			if (readed + toread > toParse.length) {
 				return false;
 			} else {
-				Segment segt = new Segment(toParse, readed, readed + elements[i].getSize());
+				Segment segt = new Segment(toParse, readed, toread);
 				if (elements[i].parse(segt) == false) {
 					return false;
 				}
+				readed += toread;
 			}
 		}
 			

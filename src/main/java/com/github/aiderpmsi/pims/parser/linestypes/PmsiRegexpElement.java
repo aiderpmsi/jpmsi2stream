@@ -15,12 +15,13 @@ public class PmsiRegexpElement extends PmsiElementBase {
 	
 	public PmsiRegexpElement(Element config) {
 		super(config);
-		pattern = Pattern.compile(config.type.substring(5));
+		pattern = Pattern.compile(config.type.substring(7));
 		
 	}
 
 	@Override
 	public boolean parse(Segment segt) {
+		this.content = segt;
 		if (matcher == null) {
 			matcher = pattern.matcher(segt);
 		} else {
