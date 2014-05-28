@@ -37,7 +37,14 @@ public class PmsiFixedElement implements PmsiElement {
 
 	@Override
 	public boolean parse(Segment segt) {
+		if (segt.count != matcher.count)
+			return false;
+		for (int i = 0 ; i < size ; i++) {
+			if (matcher.array[matcher.offset + i] != segt.array[i])
+				return false;
+		}
 		return true;
+
 	}
 	
 

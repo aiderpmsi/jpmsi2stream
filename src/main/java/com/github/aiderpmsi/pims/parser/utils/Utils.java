@@ -9,7 +9,7 @@ import org.xml.sax.ext.Attributes2Impl;
 public class Utils {
 
 	public void noLineError(String error, Integer numLine, ErrorHandler erh) throws SAXException {
-		erh.error(new SAXParseException(error, "pimsparser", "pimsparser", numLine, 0));
+		erh.error(new SAXParseException(error + " were attended but not found", "pimsparser", "pimsparser", numLine, 0));
 	}
 	
 	public void noHeaderError(Integer numLine, ErrorHandler erh)  throws SAXException {
