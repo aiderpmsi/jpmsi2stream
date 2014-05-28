@@ -55,7 +55,7 @@ public class LineDictionary {
 						// FIND TYPE
 						while ((line = config.readLine()) != null && !line.startsWith("type:")) { }
 						// WE ARE ON THE TYPE OR ON EOF
-						if (line == null) throw new IOException("Config file malformed");
+						if (line == null) throw new IOException("Type " + element + " not found in config file");
 						lineConf.setName(line.substring(5));
 						
 						// THEN FOR EACH NAME, PROCESS CONTENT
@@ -67,19 +67,16 @@ public class LineDictionary {
 									elts.add(elt);
 								}
 								elt = new Element();
-								elt.setIn("");
-								elt.setOut("");
-								elt.setName(line.substring(5));
-							} else if (line.startsWith("pattern:")) {
-								elt.setPattern(line.substring(8));
-							} else if (line.startsWith("in:")) {
-								elt.setIn(line.substring(3));
-							} else if (line.startsWith("out:")) {
-								elt.setOut(line.substring(4));
+								elt.name = line.substring(5);
+							} else if (line.startsWith("size:")) {
+								elt.size = Integer.parseInt(line.substring(5));
+							} else if (line.startsWith("type:")) {
+								elt.type = line.substring(5);
 							} else if (line.startsWith("id:")) {
 								break;
 							}
 						}
+						
 						// LAST ELEMENT CAN BE FORGET WHEN IT WAS THE LAST ELEMENT
 						if (elt != null)
 							elts.add(elt);

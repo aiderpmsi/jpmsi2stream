@@ -1,8 +1,7 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.swing.text.Segment;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -24,91 +23,56 @@ import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
  */
 public class PmsiLineTypeImpl extends PmsiLineType {
 
-	private Pattern pattern;
-	
-	private String[] names;
-	
-	private String[][] transforms;
-	
+	private PmsiElement[] elements;
+
 	private String name;
-	
-	private String[] content;
 	
 	private MemoryBufferedReader br = null;
 	
 	int matchLength = 0;
 	
 	public PmsiLineTypeImpl(Linetype linetype) {
+		this.elements = new PmsiElement[linetype.getElements().size()];
 		this.name = linetype.getName();
-		this.names = new String[linetype.getElements().size()];
-		this.transforms = new String[linetype.getElements().size()][2];
-		this.content = new String[linetype.getElements().size()];
-		StringBuilder patternS = new StringBuilder("^");
-
-		int count = 0;
-		for (Element element : linetype.getElements()) {
-			this.names[count] = element.getName();
-			if (element.getIn().length() == 0) {
-				this.transforms[count][0] = null;
-				this.transforms[count][1] = null;
+		
+		int i = 0;
+		for (Element config : linetype.getElements()) {
+			if (config.type.equals("int")) {
+				elements[i] = new PmsiIntElement(config);
+			} else if (config.type.equals("text")) {
+				elements[i] = new PmsiTextElement(config);
+			} else if (config.type.startsWith("fixed,")) {
+				elements[i] = new PmsiFixedElement(config);
+			} else if (config.type.startsWith("regexp,"))  {
+				elements[i] = new PmsiRegexpElement(config);
+			} else if (config.type.equals("date"))  {
+				elements[i] = new PmsiDateElement(config);
 			} else {
-				this.transforms[count][0] = element.getIn();
-				this.transforms[count][1] = element.getOut();
+				throw new RuntimeException(config.type + "  type is unknown in " + getClass().getSimpleName());
+				
 			}
-			patternS.append("(").append(element.getPattern()).append(")");
-			count++;
+			matchLength += elements[i].getSize();
+			i++;
 		}
-
-		this.pattern = Pattern.compile(patternS.toString());
 	}
-	
-	protected Pattern getPattern() {
-		return pattern;
-	}
-	
-	protected String[] getNames() {
-		return names;
-	}
-	
-	protected String getName() {
-		return name;
-	}
-	
-	protected String[] getContent() {
-		return content;
-	}
-
-	protected void setContent(int index, String content) {
-		this.content[index] = content;
-	}
-	
 	
 	public void writeResults(ContentHandler contentHandler) throws IOException {
 		
 		try {
-			contentHandler.startElement("", getName(), getName(), new Attributes2Impl());
+			contentHandler.startElement("", name, name, new Attributes2Impl());
 			
-			for (int i = 0 ; i < names.length ; i++) {
+			for (int i = 0 ; i < elements.length ; i++) {
 				// Début d'élément :
-				contentHandler.startElement("", names[i], names[i], new Attributes2Impl());
+				contentHandler.startElement("", elements[i].getName(), elements[i].getName(), new Attributes2Impl());
 				
 				// Contenu de l'élément
-				if (transforms == null || transforms[i][0] == null)
-					// Pas de transformation
-					contentHandler.characters(content[i].toCharArray(),
-							0, content[i].length());
-				else {
-					// Transformation
-					String modContent = content[i].replaceFirst(transforms[i][0], transforms[i][1]);
-					contentHandler.characters(modContent.toCharArray(),
-							0, modContent.length());
-				}
-				
+				Segment content = elements[i].getContent();
+				contentHandler.characters(content.array, content.offset, content.count);
 				// Fin de l'élément
-				contentHandler.endElement("", names[i], names[i]);
+				contentHandler.endElement("", elements[i].getName(), elements[i].getName());
 			}
 
-			contentHandler.endElement("", getName(), getName());
+			contentHandler.endElement("", name, name);
 			
 			// CONSUME IT FROM MEMORYBUFFEREDREADER
 			br.consume(matchLength);
@@ -125,32 +89,31 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		this.br = br;
 		
 		// Récupération de la ligne à lire
-		String toParse = br.getLine();
+		char[] toParse = br.readLine().toCharArray();
 		
 		if (toParse == null)
 			return false;
 		
-		// Test du match
-		Matcher match = pattern.matcher(toParse);
-
-		// On a une ligne qui correspond
-		if (match.lookingAt()) {
-			for (int i = 0 ; i < match.groupCount() ; i++) {
-				content[i] = match.group(i + 1);
+		// TENTATIVE DE MATCH
+		int readed = 0;
+		for (int i = 0 ; i < elements.length ; i++) {
+			int toread = elements[i].getSize();
+			if (readed + toread > toParse.length) {
+				return false;
+			} else {
+				Segment segt = new Segment(toParse, readed, readed + elements[i].getSize());
+				if (elements[i].parse(segt) == false) {
+					return false;
+				}
 			}
-			
-			// On Sauvegarde la taille de ce qui a été lu
-			matchLength = match.end();
-			
-			return true;
 		}
-		// La ligne ne correspond pas
-		else 
-			return false;
+			
+		// TOUS LES MATCH ONT MARCHE
+		return true;
 	}
 	
 	public int getInt(int index) {
-		return Integer.parseInt(content[index]);
+		return Integer.parseInt(elements[index].getContent().toString());
 	}
 
 }
