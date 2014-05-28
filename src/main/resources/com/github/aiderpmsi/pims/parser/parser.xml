@@ -43,37 +43,37 @@
 
 		<dflt:switch cond="rsf2012a.isFound(br)" >
 			<dflt:execute expr="rsf2012a.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-1)" />
+			<dflt:move dest="parent(1)/sibling(-2)" />
 		</dflt:switch>
 	
 		<dflt:switch cond="rsf2012b.isFound(br)" >
 			<dflt:execute expr="rsf2012b.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-2)" />
+			<dflt:move dest="parent(1)/sibling(-3)" />
 		</dflt:switch>
 
 		<dflt:switch cond="rsf2012c.isFound(br)" >
 			<dflt:execute expr="rsf2012c.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-3)" />
+			<dflt:move dest="parent(1)/sibling(-4)" />
 		</dflt:switch>
 
 		<dflt:switch cond="rsf2012h.isFound(br)" >
 			<dflt:execute expr="rsf2012h.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-4)" />
+			<dflt:move dest="parent(1)/sibling(-5)" />
 		</dflt:switch>
 
 		<dflt:switch cond="rsf2012i.isFound(br)" >
 			<dflt:execute expr="rsf2012i.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-5)" />
+			<dflt:move dest="parent(1)/sibling(-6)" />
 		</dflt:switch>
 
 		<dflt:switch cond="rsf2012l.isFound(br)" >
 			<dflt:execute expr="rsf2012l.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-6)" />
+			<dflt:move dest="parent(1)/sibling(-7)" />
 		</dflt:switch>
 
 		<dflt:switch cond="rsf2012m.isFound(br)" >
 			<dflt:execute expr="rsf2012m.writeResults(ch)" />
-			<dflt:move dest="parent(1)/sibling(-7)" />
+			<dflt:move dest="parent(1)/sibling(-8)" />
 		</dflt:switch>
 
 		<dflt:switch cond="eof.isFound(br)" >

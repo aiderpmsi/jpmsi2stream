@@ -86,7 +86,7 @@ public abstract class Action {
 	}
 
 	private Node child(Node node, Integer nb) {
-		for (int i = 0 ; i < nb ; i++) {
+		for (int i = 0 ; i > nb ; i--) {
 			if (node == null) break;
 			node = nextElement(node.getFirstChild());
 		}
