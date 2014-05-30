@@ -3,8 +3,6 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.Segment;
-
 import com.github.aiderpmsi.pims.parser.model.Element;
 
 public class PmsiRegexpElement extends PmsiElementBase {
@@ -20,12 +18,12 @@ public class PmsiRegexpElement extends PmsiElementBase {
 	}
 
 	@Override
-	public boolean parse(Segment segt) {
-		this.content = segt;
+	public boolean validate() {
+		
 		if (matcher == null) {
-			matcher = pattern.matcher(segt);
+			matcher = pattern.matcher(content);
 		} else {
-			matcher.reset(segt);
+			matcher.reset(content);
 		}
 		
 		return matcher.matches();

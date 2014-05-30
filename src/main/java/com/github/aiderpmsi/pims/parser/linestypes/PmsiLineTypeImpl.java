@@ -107,7 +107,8 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 				return false;
 			} else {
 				Segment segt = new Segment(toParse, readed, toread);
-				if (elements[i].parse(segt) == false) {
+				elements[i].setContent(segt);
+				if (elements[i].validate() != true) {
 					return false;
 				}
 				readed += toread;

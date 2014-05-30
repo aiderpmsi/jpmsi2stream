@@ -28,6 +28,11 @@ public abstract class PmsiElementBase implements PmsiElement {
 	}
 
 	@Override
+	public void setContent(Segment segment) {
+		this.content = segment;
+	}
+
+	@Override
 	public int getSize() {
 		return size;
 	}

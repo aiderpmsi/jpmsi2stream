@@ -8,8 +8,10 @@ public interface PmsiElement {
 
 	public Segment getContent();
 
+	public void setContent(Segment segment);
+
 	public int getSize();
 
-	public boolean parse(Segment segt);
+	public boolean validate();
 
 }
