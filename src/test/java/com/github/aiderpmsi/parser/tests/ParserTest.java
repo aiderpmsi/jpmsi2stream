@@ -63,7 +63,7 @@ public class ParserTest {
     	p.setType("rssheader");
     	p.parse(new InputSource(new StringReader(rss)));
     	
-    	Assert.assertEquals(eh.numerrors, 0);
+    	Assert.assertEquals(0, eh.numerrors);
     	
     }
 }
