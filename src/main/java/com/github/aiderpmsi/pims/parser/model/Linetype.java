@@ -4,24 +4,10 @@ import java.util.List;
 
 public class Linetype {
 
-	private String name = null;
+	public String version;
+
+	public String name;
 	
-	private List<Element> elements = null;
+	public List<Element> elements;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<Element> getElements() {
-		return elements;
-	}
-
-	public void setElements(List<Element> elements) {
-		this.elements = elements;
-	}
-	
 }

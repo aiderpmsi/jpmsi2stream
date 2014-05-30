@@ -12,12 +12,9 @@ public abstract class PmsiElementBase implements PmsiElement {
 	
 	protected Segment content;
 	
-	protected String version;
-	
 	public PmsiElementBase(Element config) {
 		size = config.size;
 		name = config.name;
-		version = config.version;
 	}
 
 	@Override
@@ -35,9 +32,4 @@ public abstract class PmsiElementBase implements PmsiElement {
 		return size;
 	}
 
-	@Override
-	public String getVersion() {
-		return version;
-	}
-	
 }

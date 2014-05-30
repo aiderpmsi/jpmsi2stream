@@ -17,7 +17,6 @@ public class PmsiFixedElement implements PmsiElement {
 	public PmsiFixedElement(Element config) {
 		size = config.size;
 		name = config.name;
-		version = config.version;
 		char[] array = new char[size];
 		config.type.getChars(6, 6 + size, array, 0);
 		this.matcher = new Segment(array, 0, size);
@@ -48,11 +47,6 @@ public class PmsiFixedElement implements PmsiElement {
 		}
 		return true;
 
-	}
-
-	@Override
-	public String getVersion() {
-		return version;
 	}
 
 }

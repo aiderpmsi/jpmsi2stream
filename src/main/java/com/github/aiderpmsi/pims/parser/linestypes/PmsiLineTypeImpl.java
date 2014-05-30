@@ -29,14 +29,17 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	
 	private MemoryBufferedReader br = null;
 	
-	int matchLength = 0;
+	int matchLength;
+	
+	String lineversion;
 	
 	public PmsiLineTypeImpl(Linetype linetype) {
-		this.elements = new PmsiElement[linetype.getElements().size()];
-		this.name = linetype.getName();
+		this.elements = new PmsiElement[linetype.elements.size()];
+		this.name = linetype.name;
+		this.lineversion = linetype.version;
 		
 		int i = 0;
-		for (Element config : linetype.getElements()) {
+		for (Element config : linetype.elements) {
 			if (config.type.equals("int")) {
 				elements[i] = new PmsiIntElement(config);
 			} else if (config.type.equals("text")) {
@@ -59,6 +62,9 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	public void writeResults(ContentHandler contentHandler) throws IOException {
 		
 		try {
+			// WRITES FIRST ELEMENT WITH VERSION IN ATTRIBUTES
+			Attributes2Impl atts = new Attributes2Impl();
+			atts.addAttribute("", "version", "version", "text", lineversion);
 			contentHandler.startElement("", name, name, new Attributes2Impl());
 			
 			for (int i = 0 ; i < elements.length ; i++) {

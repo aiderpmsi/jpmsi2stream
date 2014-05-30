@@ -56,7 +56,7 @@ public class LineDictionary {
 						while ((line = config.readLine()) != null && !line.startsWith("type:")) { }
 						// WE ARE ON THE TYPE OR ON EOF
 						if (line == null) throw new IOException("Type " + element + " not found in config file");
-						lineConf.setName(line.substring(5));
+						lineConf.name = line.substring(5);
 						
 						// THEN FOR EACH NAME, PROCESS CONTENT
 						List<Element> elts = new ArrayList<>();
@@ -80,7 +80,10 @@ public class LineDictionary {
 						// LAST ELEMENT CAN BE FORGET WHEN IT WAS THE LAST ELEMENT
 						if (elt != null)
 							elts.add(elt);
-						lineConf.setElements(elts);
+						lineConf.elements = elts;
+						
+						// SET LINE VERSION
+						lineConf.version = element;
 						
 						// SEND LINETYPE
 						return new PmsiLineTypeImpl(lineConf);

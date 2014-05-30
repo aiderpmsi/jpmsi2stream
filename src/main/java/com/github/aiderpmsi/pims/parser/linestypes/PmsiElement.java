@@ -4,8 +4,6 @@ import javax.swing.text.Segment;
 
 public interface PmsiElement {
 
-	public String getVersion();
-	
 	public String getName();
 
 	public Segment getContent();
