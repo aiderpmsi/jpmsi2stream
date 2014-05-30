@@ -65,7 +65,7 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 			// WRITES FIRST ELEMENT WITH VERSION IN ATTRIBUTES
 			Attributes2Impl atts = new Attributes2Impl();
 			atts.addAttribute("", "version", "version", "text", lineversion);
-			contentHandler.startElement("", name, name, new Attributes2Impl());
+			contentHandler.startElement("", name, name, atts);
 			
 			for (int i = 0 ; i < elements.length ; i++) {
 				// Début d'élément :
