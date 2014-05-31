@@ -20,7 +20,6 @@ public class TreeBrowserFactory<T extends Config> implements Runnable {
 	
 	public TreeBrowserFactory(ConfigBuilder<T> configBuilder) {
 		this.configBuilder = configBuilder;
-		(new Thread(this)).start();
 	}
 	
 	public TreeBrowser build() throws TreeBrowserException {
@@ -32,6 +31,7 @@ public class TreeBrowserFactory<T extends Config> implements Runnable {
 			if ((config = configs.get(configBuilder.getClass())) == null) {
 				config = configBuilder.build();
 				configs.put(configBuilder.getClass(), config);
+				(new Thread(this)).start();
 			}
 			clonedConfig = (Config) config.clone();
 		} finally {
@@ -50,7 +50,8 @@ public class TreeBrowserFactory<T extends Config> implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			removeConfig();
+			if (removeConfig())
+				break;
 			
 			// SLEEPS. IF INTERRUPTION EXCEPTION HAPPENS, LET THROW AN EXCEPTION
 			try {
@@ -65,17 +66,22 @@ public class TreeBrowserFactory<T extends Config> implements Runnable {
 		}
 	}
 
-	private void removeConfig() {
+	private boolean removeConfig() {
 		lock.lock();
 		try {
 			Config config;
-			if ((config = configs.get(configBuilder.getClass())) != null && config.getClonedTime() != null && new Date().getTime() - config.getClonedTime() > 600000) {
+			if (Thread.interrupted() ||
+					((config = configs.get(configBuilder.getClass())) != null &&
+					config.getClonedTime() != null &&
+					new Date().getTime() - config.getClonedTime() > 600000)) {
 				configs.remove(configBuilder.getClass());
 				config = null;
+				return true;
 			}
 		} finally {
 			lock.unlock();
 		}
+		return false;
 	}
 	
 }
