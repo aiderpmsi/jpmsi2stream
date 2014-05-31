@@ -102,10 +102,6 @@
 		<dflt:assign var="linenumber" expr="linenumber + 1" />
 		<dflt:execute expr="rss116header.writeResults(ch)" />
 
-		<dflt:assign var="nbdaread" expr="0" />
-		<dflt:assign var="nbdadread" expr="0" />
-		<dflt:assign var="nbzaread" expr="0" />
-
 		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
 		<dflt:assign var="linenumber" expr="linenumber + 1" />
 
@@ -114,6 +110,9 @@
 			<dflt:assign var="nbda" expr="rss116main.getInt(26)" />
 			<dflt:assign var="nbdad" expr="rss116main.getInt(27)" />
 			<dflt:assign var="nbza" expr="rss116main.getInt(28)" />
+			<dflt:assign var="nbdaread" expr="0" />
+			<dflt:assign var="nbdadread" expr="0" />
+			<dflt:assign var="nbzaread" expr="0" />
 			
 			<dflt:switch cond="nbdaread lt nbda" >
 				<dflt:switch cond="rss116da.isFound(br)" >
