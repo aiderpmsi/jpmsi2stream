@@ -8,8 +8,12 @@ import com.github.aiderpmsi.pims.parser.model.Element;
 
 public class PmsiDateElement extends PmsiElementBase {
 	
+	SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
+	
 	public PmsiDateElement(Element config) {
 		super(config);
+		format.setCalendar(new GregorianCalendar());
+        format.setLenient(false);
 	}
 
 	@Override
@@ -17,12 +21,8 @@ public class PmsiDateElement extends PmsiElementBase {
 		if (content == null)
 			return false;
 		
-		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
-		format.setCalendar(new GregorianCalendar());
-        format.setLenient(false);
-        
         try {
-        	format.parse(content.toString());
+        	format.parse(new String(content.sequence, content.start, content.count));
         } catch (ParseException | IllegalArgumentException e) {
             return false;
         }

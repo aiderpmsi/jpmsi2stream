@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
-import javax.swing.text.Segment;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -73,7 +72,7 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 				
 				// Contenu de l'élément
 				Segment content = elements[i].getContent();
-				contentHandler.characters(content.array, content.offset, content.count);
+				contentHandler.characters(content.sequence, content.start, content.count);
 				// Fin de l'élément
 				contentHandler.endElement("", elements[i].getName(), elements[i].getName());
 			}
@@ -93,26 +92,26 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		this.br = br;
 		
 		// Récupération de la ligne à lire
-		String toParseS = br.getLine();
+		String toParse = br.getLine();
 		
-		if (toParseS == null)
+		if (toParse == null || toParse.length() < matchLength)
 			return false;
+
+		// RECUPERATION DE LA PART DE LIGNE
+		char[] array = new char[matchLength];
+		toParse.getChars(0, matchLength, array, 0);
 		
-		char[] toParse = toParseS.toCharArray();
 		// TENTATIVE DE MATCH
-		int readed = 0;
+		int readPosition = 0;
 		for (int i = 0 ; i < elements.length ; i++) {
-			int toread = elements[i].getSize();
-			if (readed + toread > toParse.length) {
+			int endPosition = readPosition + elements[i].getSize();
+
+			elements[i].setContent(new Segment(array, readPosition, elements[i].getSize()));
+			if (elements[i].validate() != true) {
 				return false;
-			} else {
-				Segment segt = new Segment(toParse, readed, toread);
-				elements[i].setContent(segt);
-				if (elements[i].validate() != true) {
-					return false;
-				}
-				readed += toread;
 			}
+			readPosition = endPosition;
+
 		}
 			
 		// TOUS LES MATCH ONT MARCHE
@@ -120,7 +119,9 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	}
 	
 	public int getInt(int index) {
-		return Integer.parseInt(elements[index].getContent().toString());
+		Segment segt = elements[index].getContent();
+		String num = new String(segt.sequence, segt.start, segt.count);
+		return Integer.parseInt(num);
 	}
 
 }
