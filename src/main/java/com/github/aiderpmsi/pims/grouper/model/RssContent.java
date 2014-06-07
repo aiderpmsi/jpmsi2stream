@@ -5,45 +5,46 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.EnumMap;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RssContent {
 	
-	private HashMap<String, String> rssmain;
-	private List<HashMap<String, String>> rssacte = new ArrayList<>();
-	private List<HashMap<String, String>> rssda = new ArrayList<>();
-	private List<HashMap<String, String>> rssdad = new ArrayList<>();
+	private EnumMap<RssMain, String> rssmain;
+	private List<EnumMap<RssActe, String>> rssacte = new ArrayList<>();
+	private List<EnumMap<RssDa, String>> rssda = new ArrayList<>();
+	
 	private Pattern diag = Pattern.compile("^([A-Z]\\d{2})([^ ]*)\\s*");
 	private Pattern calendar = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})");
 
-	public Object get(String domain, String key, String pattern, String type) throws IOException {
-		// GETS THE DEMANDED KEYS IN RETRIEVE AND TRIM THEM
-		String[] keys = key.split(",");
-		for (int i = 0 ; i < keys.length ; i++) {
-			keys[i] = keys[i].trim();
+	public Object get(String pattern, String type, Enum<?>... defs) throws IOException {
+		// VERIFY THAT EVERY DEFINITIONS COMES FROM THE SAME ENUM
+		Class<? extends Enum<?>> origin = null;
+		for (Enum<?> def : defs) {
+			if (origin == null) {
+				origin = def.getDeclaringClass();
+			} else if (origin != def.getDeclaringClass()) {
+				throw new IOException("Class " + def.getDeclaringClass() + " is not of " + origin + " type");
+			}
 		}
-
-		switch(domain) {
-			case "main":
-				return getValue(getRssmain(), keys, pattern, type);
-			case "acte":
-				return getValues(getRssacte(), keys, pattern, type);
-			case "da":
-				return getValues(getRssda(), keys, pattern, type);
-			case "dad":
-				return getValues(getRssdad(), keys, pattern, type);
-			default:
-				throw new IOException(domain + " is not a known domain is rss");
+		
+		if (origin == RssMain.class) {
+			return getValue(rssmain, defs, pattern, type);
+		} else if (origin == RssActe.class) {
+			return getValues(rssacte, defs, pattern, type);
+		} else if (origin == RssDa.class) {
+			return getValues(rssda, defs, pattern, type);
+		} else {
+			throw new IOException(origin + " is not a known resource enum is rss");
 		}
 	}
 
-	private Object getValue(HashMap<String, String> content, String[] keys, String pattern, String type) throws IOException {
+	private Object getValue(EnumMap<? extends Enum<?>, String> content, Enum<?>[] defs, String pattern, String type) throws IOException {
 		// USE A SPECIAL CASE OF GET VALUES
-		List<?> values = getValues(Arrays.asList(content), keys, pattern, type);
+		List<?> values = getValues(Arrays.asList(content), defs, pattern, type);
 		// IF NO VALUE EXIST, RETURN NULL, ELSE THE FIRST ELEMENT
 		if (values.size() == 0)
 			return null;
@@ -51,16 +52,18 @@ public class RssContent {
 			return values.get(0);
 	}
 
-	private List<?> getValues(List<HashMap<String, String>> content, String[] keys, String pattern, String type) throws IOException {
-		// GETS THE LIST OF DEMANDED ELEMENT
+	private List<?> getValues(List<?> content, Enum<?>[] defs, String pattern, String type) throws IOException {		
+		// LIST OF DEMANDED ELEMENT
 		List<String[]> valueslist = new ArrayList<>(content.size());
 	
-		// FOR EACH ELEMENT IN DA, DAD OR ACTE, EXTRACT THE NECESSARY ELEMENTS
-		extractvalues : for (HashMap<String, String> element : content) {
-			String[] values = new String[keys.length];
-			for (int i = 0 ; i < keys.length ; i++) {
+		// FOR EACH ELEMENT IN DA, OR ACTE, EXTRACT THE NECESSARY ELEMENTS
+		extractvalues : for (Object element : content) {
+			@SuppressWarnings("unchecked")
+			EnumMap<? extends Enum<?>, String> castedElement = (EnumMap<? extends Enum<?>, String>) element;
+			String[] values = new String[defs.length];
+			for (int i = 0 ; i < defs.length ; i++) {
 				// CONSIDER THE CASE WHERE THE KEY DOESN'T EXIST OR VALUE IS NULL
-				String value = element.get(keys[i]);
+				String value = castedElement.get(defs[i]);
 				if (value == null)
 					// IF NO VALUE EXISTS FOR THIS KEY, WE CAN'T CREATE THE VALUE IN VALUELIST
 					continue extractvalues;
@@ -142,36 +145,28 @@ public class RssContent {
 		}
 	}
 	
-	public HashMap<String, String> getRssmain() {
-		return rssmain;
-	}
-	
-	public void setRssmain(HashMap<String, String> rssmain) {
+	public void setRssmain(EnumMap<RssMain, String> rssmain) {
 		this.rssmain = rssmain;
 	}
 	
-	public List<HashMap<String, String>> getRssacte() {
-		return rssacte;
-	}
-	
-	public void setRssacte(List<HashMap<String, String>> rssacte) {
+	public void setRssacte(List<EnumMap<RssActe, String>> rssacte) {
 		this.rssacte = rssacte;
 	}
 	
-	public List<HashMap<String, String>> getRssda() {
-		return rssda;
-	}
-	
-	public void setRssda(List<HashMap<String, String>> rssda) {
+	public void setRssda(List<EnumMap<RssDa, String>> rssda) {
 		this.rssda = rssda;
 	}
-	
-	public List<HashMap<String, String>> getRssdad() {
-		return rssdad;
+
+	public EnumMap<RssMain, String> getRssmain() {
+		return rssmain;
 	}
-	
-	public void setRssdad(List<HashMap<String, String>> rssdad) {
-		this.rssdad = rssdad;
+
+	public List<EnumMap<RssActe, String>> getRssacte() {
+		return rssacte;
+	}
+
+	public List<EnumMap<RssDa, String>> getRssda() {
+		return rssda;
 	}
 	
 }

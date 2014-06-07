@@ -1,47 +1,30 @@
 package com.github.aiderpmsi.grouper.tests;
 
+import com.github.aiderpmsi.pims.grouper.model.RssActe;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
+import com.github.aiderpmsi.pims.grouper.model.RssDa;
+import com.github.aiderpmsi.pims.grouper.model.RssMain;
 
 public class T08M231 extends BaseTest {
 
 	private static final long serialVersionUID = -8040696258925155443L;
 
-	private String[][] rssmain = {
-			{"DP", "S9241    "},
-			{"DR", "B202    "},
-			{"NbSeances", "0      "},
-			{"ModeSortie", "9 "},
-			{"DDN", "1970-04-05"},
-			{"DateEntree", "2013-04-08"},
-			{"DateSortie", "2013-04-14"}
-	};
-	
-	private String[][][] acte = {
-			{
-				{"CodeCCAM", "JVJF004 "},
-				{"Phase", "0"}
-			},
-			{
-				{"CodeCCAM", "AAJA001 "},
-				{"Phase", "0"}
-			}
-	};
-	
-	private String[][][] da = {
-			{
-				{"DA", "A280"},
-			},
-			{
-				{"DA", "Z491"}
-			}
-	};
-	
+	private Object[][] rssmain = { { RssMain.dp, "S9241    " },
+			{ RssMain.dr, "B202    " }, { RssMain.nbseances, "0      " },
+			{ RssMain.modesortie, "9 " }, { RssMain.ddn, "1970-04-05" },
+			{ RssMain.dateentree, "2013-04-08" },
+			{ RssMain.datesortie, "2013-12-15" } };
+
+	private Object[][][] acte = {
+			{ { RssActe.codeccam, "JVJF004 " }, { RssActe.phase, "0" } },
+			{ { RssActe.codeccam, "AAJA001 " }, { RssActe.phase, "0" } } };
+
+	private Object[][][] da = { { { RssDa.da, "A280" }, },
+			{ { RssDa.da, "Z491" } } };
+
 	public T08M231() {
-		RssContent rss = new RssContent();
-		rss.setRssacte(transform(acte));
-		rss.setRssda(transform(da));
-		rss.setRssmain(transform(new String[][][] {rssmain}).get(0));
+		RssContent rss = buildRssContent(rssmain, acte, da);
 		add(rss);
 	}
-	
+
 }

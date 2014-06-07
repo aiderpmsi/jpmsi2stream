@@ -13,6 +13,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
+import com.github.aiderpmsi.pims.grouper.model.RssActe;
+import com.github.aiderpmsi.pims.grouper.model.RssDa;
+import com.github.aiderpmsi.pims.grouper.model.RssMain;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
 import com.github.aiderpmsi.pims.treebrowser.ConfigBuilder;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
@@ -41,9 +44,13 @@ public class GrouperConfigBuilder implements ConfigBuilder<GrouperConfig> {
 		Dictionaries dicos = new Dictionaries("com/github/aiderpmsi/pims/grouper/grouper-", ".cfg");
 		context.put("utils", new Utils(dicos));
 		context.put("dicos", dicos);
+		context.put("rssmain", RssMain.dp);
+		context.put("rssacte", RssActe.codeccam);
+		context.put("rssda", RssDa.da);
 		config.setContext(context);
 		
-		config.setJexlEngine(new JexlEngine());
+		JexlEngine engine = new JexlEngine();
+		config.setJexlEngine(engine);
 		
 		try {
 			InputStream treeSource = this.getClass().getClassLoader().getResourceAsStream(treeLocation);

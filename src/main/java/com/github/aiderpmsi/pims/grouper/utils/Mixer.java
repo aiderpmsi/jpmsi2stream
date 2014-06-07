@@ -3,13 +3,16 @@ package com.github.aiderpmsi.pims.grouper.utils;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
+import com.github.aiderpmsi.pims.grouper.model.RssActe;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
+import com.github.aiderpmsi.pims.grouper.model.RssDa;
+import com.github.aiderpmsi.pims.grouper.model.RssMain;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
 
 /**
@@ -35,20 +38,20 @@ public class Mixer {
 		rss.setRssmain(multirss.get(rumnb).getRssmain());
 
 		// GETS DP AND DR OF THIS NEW RSS
-		String dp = (String) rss.get("main", "DP", "{0}", "Diagnostic");
-		String dr = (String) rss.get("main", "DR", "{0}", "Diagnostic");
+		String dp = (String) rss.get("{0}", "Diagnostic", RssMain.dp);
+		String dr = (String) rss.get("{0}", "Diagnostic", RssMain.dr);
 		
 		// SETS THE ACTS AS SUM OF ACTS
 		for (RssContent content : multirss) {
-			for (HashMap<String, String> acte : content.getRssacte()) {
+			for (EnumMap<RssActe, String> acte : content.getRssacte()) {
 				rss.getRssacte().add(acte);
 			}
 		}
 
 		// ADDS EACH DAS AS SUM OF DIAGS (EXCEPT IF IT IS DP OR DR)
 		for (RssContent content : multirss) {
-			for (HashMap<String, String> diag : content.getRssda()) {
-				String diagcim = content.formatDiagnostic(diag.get("DA"));
+			for (EnumMap<RssDa, String> diag : content.getRssda()) {
+				String diagcim = content.formatDiagnostic(diag.get(RssDa.da));
 				if (!diagcim.equals(dp) && !diagcim.equals(dr)) {
 					rss.getRssda().add(diag);
 				}
@@ -69,7 +72,7 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			String dp = (String) cont.get("main", "DP", "{0}", "Diagnostic");
+			String dp = (String) cont.get("{0}", "Diagnostic", RssMain.dp);
 			if (acteclassantops.contains(dp))
 				return i;
 		}
@@ -80,10 +83,10 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			String dp = (String) cont.get("main", "DP", "{0}", "Diagnostic");
+			String dp = (String) cont.get("{0}", "Diagnostic", RssMain.dp);
 			if (dp.equals("Z51.5") || dp.equals("Z50.2") || dp.equals("Z50.3")) {
-				Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
-				Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
+				Calendar dateentree = (Calendar) cont.get("{0}", "Calendar", RssMain.dateentree);
+				Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 				Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 				if (stay == null || stay < dureesejour) {
 					stay = dureesejour;
@@ -102,8 +105,8 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			for (HashMap<String, String> acte : cont.getRssacte()) {
-				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+			for (EnumMap<RssActe, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get(RssActe.codeccam).trim() + "/" + acte.get(RssActe.phase).trim();
 				if (actenonoptheraps.contains(formattedActe))
 					return i;
 			}
@@ -116,11 +119,11 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			for (HashMap<String, String> acte : cont.getRssacte()) {
-				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+			for (EnumMap<RssActe, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get(RssActe.codeccam).trim() + "/" + acte.get(RssActe.phase).trim();
 				if (actenonopcourts.contains(formattedActe)) {
-					Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
-					Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
+					Calendar dateentree = (Calendar) cont.get("{0}", "Calendar", RssMain.dateentree);
+					Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 					Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 					if (dureesejour <= 1)
 						return i;
@@ -135,11 +138,11 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			for (HashMap<String, String> acte : cont.getRssacte()) {
-				String formattedActe = acte.get("CodeCCAM").trim() + "/" + acte.get("Phase").trim();
+			for (EnumMap<RssActe, String> acte : cont.getRssacte()) {
+				String formattedActe = acte.get(RssActe.codeccam).trim() + "/" + acte.get(RssActe.phase).trim();
 				if (autreacteclassantnonops.contains(formattedActe)) {
-					Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
-					Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
+					Calendar dateentree = (Calendar) cont.get("{0}", "Calendar", RssMain.dateentree);
+					Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 					Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 					if (dureesejour == 0)
 						return i;
@@ -151,14 +154,14 @@ public class Mixer {
 		it = multirss.iterator();
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			RssContent cont = it.next();
-			String dp = (String) cont.get("main", "DP", "{0}", "Diagnostic");
+			String dp = (String) cont.get("{0}", "Diagnostic", RssMain.dp);
 			if (!dp.startsWith("S")) {
 				stay = null;
 				rumnb = null;
 				break;
 			} else {
-				Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
-				Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
+				Calendar dateentree = (Calendar) cont.get("{0}", "Calendar", RssMain.dateentree);
+				Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 				Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 				if (stay == null || stay < dureesejour) {
 					stay = dureesejour;
@@ -178,9 +181,9 @@ public class Mixer {
 		for (int i = 0 ; i < multirss.size() ; i++) {
 			penalties[i] = 0;
 			RssContent cont = it.next();
-			String dp = (String) cont.get("main", "DP", "{0}", "Diagnostic");
-			Calendar dateentree = (Calendar) cont.get("main", "DateEntree", "{0}", "Calendar");
-			Calendar datesortie = (Calendar) cont.get("main", "DateSortie", "{0}", "Calendar");
+			String dp = (String) cont.get("{0}", "Diagnostic", RssMain.dp);
+			Calendar dateentree = (Calendar) cont.get("{0}", "Calendar", RssMain.dateentree);
+			Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 			Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 			// IF DP NOT Z AND NOT R AND DURATION GREATER OR EQUAL THAN 2, ADD 100 POINTS FOR EACH RUM
 			if (!dp.substring(0, 1).equals("Z") && !dp.substring(0, 1).equals("R") && dureesejour >= 2) {
