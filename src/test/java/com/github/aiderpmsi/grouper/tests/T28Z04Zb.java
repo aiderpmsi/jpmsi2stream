@@ -11,9 +11,9 @@ public class T28Z04Zb extends BaseTest {
 
 	private Object[][] rssmain = { { RssMain.dp, "Z491     " },
 			{ RssMain.dr, "        " }, { RssMain.nbseances, "1      " },
-			{ RssMain.modesortie, "9 " }, { RssMain.ddn, "1980-04-05" },
-			{ RssMain.dateentree, "2013-04-08" },
-			{ RssMain.datesortie, "2013-12-15" } };
+			{ RssMain.modesortie, "9 " }, { RssMain.ddn, "05041980" },
+			{ RssMain.dateentree, "08042013" },
+			{ RssMain.datesortie, "15122013" } };
 
 	private Object[][][] acte = {
 			{ { RssActe.codeccam, "JVJF004 " }, { RssActe.phase, "0" } },

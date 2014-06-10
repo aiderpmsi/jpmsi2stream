@@ -18,7 +18,7 @@ public class RssContent {
 	private List<EnumMap<RssDa, String>> rssda = new ArrayList<>();
 	
 	private Pattern diag = Pattern.compile("^([A-Z]\\d{2})([^ ]*)\\s*");
-	private Pattern calendar = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})");
+	private Pattern calendar = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})");
 
 	public Object get(String pattern, String type, Enum<?>... defs) throws IOException {
 		// VERIFY THAT EVERY DEFINITIONS COMES FROM THE SAME ENUM
@@ -136,9 +136,9 @@ public class RssContent {
 		Matcher m = calendar.matcher(value);
 		if (m.matches()) {
 			Calendar cal = new GregorianCalendar(
-					new Integer(m.group(1)),
+					new Integer(m.group(3)),
 					new Integer(m.group(2))- 1 ,
-					new Integer(m.group(3)));
+					new Integer(m.group(1)));
 			return cal;
 		} else {
 			throw new IOException(value + " is not a calendar date");

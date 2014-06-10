@@ -14,9 +14,9 @@ public class T01K06J extends BaseTest {
 			{RssMain.dr, "B202    "},
 			{RssMain.nbseances, "0      "},
 			{RssMain.modesortie, "8 "},
-			{RssMain.ddn, "1980-04-05"},
-			{RssMain.dateentree, "2013-04-08"},
-			{RssMain.datesortie, "2013-04-08"}
+			{RssMain.ddn, "05041980"},
+			{RssMain.dateentree, "08042013"},
+			{RssMain.datesortie, "08042013"}
 	};
 	
 	private Object[][][] acte = {
