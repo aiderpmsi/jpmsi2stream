@@ -77,6 +77,8 @@ public class Parser2 extends XMLFilterImpl{
 					rsf2012header.writeResults(getContentHandler());
 					
 					while (true) {
+						utils.writelinenumber(linenumber, getContentHandler());
+						linenumber++;
 						if (rsf2012a.isFound(br)) {
 							rsf2012a.writeResults(getContentHandler());
 						} else if (rsf2012b.isFound(br)) {

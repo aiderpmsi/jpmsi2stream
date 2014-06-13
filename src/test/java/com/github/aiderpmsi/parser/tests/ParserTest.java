@@ -45,9 +45,15 @@ public class ParserTest {
 
 		public List<String> elements = new ArrayList<>();
 		
+		public StringBuilder contentBuffer;
+		
+		public String lastLineNumber = null;
 		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
+			if (elements.get(elements.size() - 1).equals("numline")) {
+				contentBuffer.append(ch, start, length);
+			}
 		}
 
 		@Override
@@ -57,7 +63,9 @@ public class ParserTest {
 		@Override
 		public void endElement(String uri, String localName, String qName)
 				throws SAXException {
-			
+			if (elements.get(elements.size() - 1).equals("numline")) {
+				lastLineNumber = contentBuffer.toString();
+			}
 		}
 
 		@Override
@@ -90,6 +98,7 @@ public class ParserTest {
 		public void startElement(String uri, String localName, String qName,
 				Attributes atts) throws SAXException {
 			elements.add(localName);
+			contentBuffer = new StringBuilder();
 		}
 
 		@Override
@@ -170,5 +179,6 @@ public class ParserTest {
     	Assert.assertEquals(5, Collections.frequency(ch.elements, "rsfb"));
     	Assert.assertEquals(6, Collections.frequency(ch.elements, "rsfc"));
     	Assert.assertEquals(1, Collections.frequency(ch.elements, "rsfl"));
+    	Assert.assertEquals("17", ch.lastLineNumber);
     }
 }
