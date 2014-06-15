@@ -8,10 +8,20 @@ import org.apache.commons.jexl2.JexlEngine;
 
 import com.github.aiderpmsi.pims.treemodel.Node;
 
-public interface Action {
+public abstract class BaseAction implements Action {
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public Node<Action> execute(Node<Action> node,
 			HashMap<String, Node<Action>> labels, JexlContext jc,
+			JexlEngine jexl) throws IOException {
+		execute(jc, jexl);
+		return (Node<Action>) (node.firstChild == null ?
+				node.nextSibling :
+					node.firstChild);
+	}
+	
+	public abstract void execute(JexlContext jc,
 			JexlEngine jexl) throws IOException;
 
 }

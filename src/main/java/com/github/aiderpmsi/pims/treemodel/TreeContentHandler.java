@@ -29,9 +29,6 @@ public class TreeContentHandler implements ContentHandler {
 	/** associations between namespaces and actions */
 	private HashMap<String, HashMap<String, ActionFactory<? extends Action>>> actions = new HashMap<>();
 
-	/** list of namespaces mappings (for nested definitions) */
-	private LinkedList<HashMap<String, String>> namespaces = new LinkedList<>();
-	
 	/**
 	 * Adds an action for a namespace
 	 * @param namespace
@@ -68,8 +65,7 @@ public class TreeContentHandler implements ContentHandler {
 
 	@Override
 	public void endPrefixMapping(String prefix) throws SAXException {
-		// REMOVE NAMESPACE MAPPING
-		namespaces.removeLast();
+		// DO NOTHING
 	}
 
 	@Override
@@ -151,19 +147,7 @@ public class TreeContentHandler implements ContentHandler {
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
-
-		// CREATES A NEW MAPPING
-		namespaces.add(new HashMap<String, String>());
-		
-		if (prefix.startsWith("xmlns")) {
-			// THIS ATTRIBUTE DEFINES A NAMESPACE, WE HAVE TO ASSOCIATE THE PREFIX WITH THE NAMESPACE
-			if (prefix.length() == 5) {
-				prefix = "";
-			} else {
-				prefix = prefix.substring(6);
-			}
-			namespaces.getLast().put(prefix, uri);
-		}
+		// DO NOTHING
 	}
 
 	public Node<Action> getTree() {
