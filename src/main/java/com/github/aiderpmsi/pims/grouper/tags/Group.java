@@ -7,7 +7,7 @@ import org.apache.commons.jexl2.JexlEngine;
 import org.w3c.dom.Node;
 
 import com.github.aiderpmsi.pims.treebrowser.Action;
-import com.github.aiderpmsi.pims.treebrowser.Argument;
+import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
 
 public class Group extends Action {
 	
