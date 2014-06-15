@@ -1,5 +1,6 @@
 package com.github.aiderpmsi.pims.treemodel;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -123,7 +124,11 @@ public class TreeContentHandler implements ContentHandler {
 		}
 		
 		// GETS THE CORRESPONDING ACTION
-		newNode.setContent(actionFactory.createAction(args));
+		try {
+			newNode.setContent(actionFactory.createAction(args));
+		} catch (IOException e) {
+			throw new SAXException(e);
+		}
 				
 		// IF WE ARE AT ROOT LEVEL, STORE THIS NODE AS THE ROOT NODE
 		root = newNode;
