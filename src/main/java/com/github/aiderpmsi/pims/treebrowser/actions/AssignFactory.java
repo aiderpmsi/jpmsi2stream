@@ -42,6 +42,7 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 		private String var;
 		
 		public Assign(Compilable se, String var, String expr) {
+
 			try {
 				e = se.compile(expr);
 				this.var = var;
@@ -54,7 +55,8 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 		public void execute(ScriptContext sc) throws IOException {
 	        // RUNS THE EXPRESSION
 			try {
-				sc.setAttribute(var, e.eval(sc), 0);
+				Object result = e.eval(sc);
+				sc.setAttribute(var, result, ScriptContext.ENGINE_SCOPE);
 			} catch (ScriptException e) {
 				throw new IOException(e);
 			}

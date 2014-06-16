@@ -38,12 +38,12 @@ public class Grouper {
 
 		// CREATES THE VARS MAP
 		ScriptContext sc = new SimpleScriptContext();
-		sc.setAttribute("utils", new Utils(dicos), 0);
-		sc.setAttribute("dicos", dicos, 0);
-		sc.setAttribute("rss", rss, 0);
-		sc.setAttribute("rssmain", RssMain.dp, 0);
-		sc.setAttribute("rssacte", RssActe.codeccam, 0);
-		sc.setAttribute("rssda", RssDa.da, 0);
+		sc.setAttribute("utils", new Utils(dicos), ScriptContext.ENGINE_SCOPE);
+		sc.setAttribute("dicos", dicos, ScriptContext.ENGINE_SCOPE);
+		sc.setAttribute("rss", rss, ScriptContext.ENGINE_SCOPE);
+		sc.setAttribute("rssmain", RssMain.dp, ScriptContext.ENGINE_SCOPE);
+		sc.setAttribute("rssacte", RssActe.codeccam, ScriptContext.ENGINE_SCOPE);
+		sc.setAttribute("rssda", RssDa.da, ScriptContext.ENGINE_SCOPE);
 
 		// CREATES AND EXECUTES THE TREE BROWSER
 		TreeBrowser tb = new TreeBrowser(tree);

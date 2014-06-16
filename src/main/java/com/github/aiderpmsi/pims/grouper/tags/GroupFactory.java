@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.script.Compilable;
 import javax.script.ScriptContext;
+import javax.script.SimpleScriptContext;
 
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
@@ -47,7 +48,7 @@ public class GroupFactory implements ActionFactory<GroupFactory.Group> {
 		@Override
 		public Node<Action> execute(Node<Action> node, ScriptContext jc)
 				throws IOException {
-			jc.setAttribute("group", this, 0);
+			jc.setAttribute("group", this, SimpleScriptContext.ENGINE_SCOPE);
 			return null;
 		}
 		

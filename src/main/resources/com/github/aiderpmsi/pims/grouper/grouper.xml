@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <tree xmlns:dflt="http://default.actions/default" xmlns:pims="http://custom.actions/pims" >
-	<dflt:assign var="numseances" expr="rss.get('{0}', 'Integer', rssmain.nbseances())" />
-	<dflt:assign var="actes" expr="rss.get('{0}/{1}', 'String', rssacte.codeccam(), rssacte.phase())" />
-	<dflt:assign var="dp" expr="rss.get('{0}', 'Diagnostic', rssmain.dp())" />
-	<dflt:assign var="das" expr="rss.get('{0}', 'Diagnostic', rssda.da())" />
-	<dflt:assign var="dr" expr="rss.get('{0}', 'Diagnostic', rssmain.dr())" />
-	<dflt:assign var="modeentree" expr="rss.get('{0}', 'Integer', rssmain.modeentree())" />
-	<dflt:assign var="poidsnn" expr="rss.get('{0}', 'Integer', rssmain.poidsnouveaune())" />
-	<dflt:assign var="sexe" expr="rss.get('{0}', 'Integer', rssmain.sexe())" />
+	<dflt:assign var="numseances" expr="rss.get('{0}', 'Integer', [rssmain.nbseances()])" />
+	<dflt:assign var="actes" expr="rss.get('{0}/{1}', 'String', [rssacte.codeccam(), rssacte.phase()])" />
+	<dflt:assign var="dp" expr="rss.get('{0}', 'Diagnostic', [rssmain.dp()])" />
+	<dflt:assign var="das" expr="rss.get('{0}', 'Diagnostic', [rssda.da()])" />
+	<dflt:assign var="dr" expr="rss.get('{0}', 'Diagnostic', [rssmain.dr()])" />
+	<dflt:assign var="modeentree" expr="rss.get('{0}', 'Integer', [rssmain.modeentree()])" />
+	<dflt:assign var="poidsnn" expr="rss.get('{0}', 'Integer', [rssmain.poidsnouveaune()])" />
+	<dflt:assign var="sexe" expr="rss.get('{0}', 'Integer', [rssmain.sexe()])" />
 
-	<dflt:assign var="dateentree" expr="rss.get('{0}', 'Calendar', rssmain.dateentree())" />
-	<dflt:assign var="datesortie" expr="rss.get('{0}', 'Calendar', rssmain.datesortie())" />
-	<dflt:assign var="datenaissance" expr="rss.get('{0}', 'Calendar', rssmain.ddn())" />
+	<dflt:assign var="dateentree" expr="rss.get('{0}', 'Calendar', [rssmain.dateentree()])" />
+	<dflt:assign var="datesortie" expr="rss.get('{0}', 'Calendar', [rssmain.datesortie()])" />
+	<dflt:assign var="datenaissance" expr="rss.get('{0}', 'Calendar', [rssmain.ddn()])" />
 	<dflt:assign var="dureesejour" expr="utils.duration(dateentree, datesortie, 'day')" />
 	<dflt:assign var="ageyear" expr="utils.duration(datenaissance, dateentree, 'year')" />
 	<dflt:assign var="ageday" expr="utils.duration(datenaissance, dateentree, 'day')" />
 
-	<dflt:assign var="modesortie" expr="rss.get('{0}', 'Integer', rssmain.modesortie())" />
-	<dflt:assign var="activite" expr="rss.get('{0}', 'Integer', rssacte.activite())" />
+	<dflt:assign var="modesortie" expr="rss.get('{0}', 'Integer', [rssmain.modesortie()])" />
+	<dflt:assign var="activite" expr="rss.get('{0}', 'Integer', [rssacte.activite()])" />
 	
 	<dflt:assign var="inversion" expr="false" />
 
-	<dflt:assign var="diags" expr="utils.concat(dp, dr, das)" />
-	<dflt:assign var="diags_wo_dr" expr="utils.concat(dp, das)" />
+	<dflt:assign var="diags" expr="utils.concat([dp, dr, das])" />
+	<dflt:assign var="diags_wo_dr" expr="utils.concat([dp, das])" />
 	
 	<!-- CMD 28 -->
 	<dflt:switch cond="numseances != 0" >
@@ -178,7 +178,7 @@
 	<dflt:switch cond="(dp.substring(0,3) == 'Z09' || dp.substring(0,3) == 'Z08') &amp;&amp; not(dr.size() == 0)" >
 		<dflt:assign var="inversion" expr="true" />
 		<dflt:execute expr="var temp = dp; dp = dr; dr = temp;" />
-		<dflt:assign var="diags_wo_dr" expr="utils.concat(dp, das)" />
+		<dflt:assign var="diags_wo_dr" expr="utils.concat([dp, das])" />
 		<dflt:goto dest="cmd15" />
 	</dflt:switch>
 
@@ -199,7 +199,7 @@
 		<dflt:switch id="inside_cmd15" cond="utils.count('unclassified', 'D-056', dp) &gt; 0" >
 			<pims:group racine="15Z10" gravite="E" />
 		</dflt:switch>
-		<dflt:assign var="agegest" expr="rss.get('{0}', 'Integer', rssmain.agegestationnel())" />
+		<dflt:assign var="agegest" expr="rss.get('{0}', 'Integer', [rssmain.agegestationnel()])" />
 		<dflt:assign var="gnn" expr="(poidsnn &gt;= 3300 &amp;&amp; agegest &gt;= 40 ? 1 :
 									 (poidsnn &gt;= 2400 &amp;&amp; agegest &gt;= 38 ? 2 :
 									 (poidsnn &gt;= 2200 &amp;&amp; agegest &gt;= 37 ? 3 :
