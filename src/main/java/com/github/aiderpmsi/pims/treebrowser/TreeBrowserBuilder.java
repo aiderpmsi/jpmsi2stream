@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.jexl2.JexlEngine;
+import javax.script.Compilable;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -32,7 +32,7 @@ public abstract class TreeBrowserBuilder {
 	
 	public Node<?> build() throws TreeBrowserException {
 		// CREATES THE JEXL ENGINE
-		JexlEngine je = getJexlEngine();
+		Compilable se = getScriptEngine();
 		
 		// CREATES THE LIST OF ACTION DEFINITIONS
 		List<ActionDefinition> actionDefinitions = new LinkedList<>();
@@ -49,20 +49,20 @@ public abstract class TreeBrowserBuilder {
 		
 		// CREATES THE ACTION TREE
 		try (InputStream is = new BufferedInputStream(this.getClass().getClassLoader().getResourceAsStream(resource))) {
-			Node<Action> tree = createTree(is, actionDefinitions, je);
+			Node<Action> tree = createTree(is, actionDefinitions, se);
 			return tree;
 		} catch (IOException | SAXException e) {
 			throw new TreeBrowserException(e);
 		}
 	}
 
-	private Node<Action> createTree(InputStream is, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
+	private Node<Action> createTree(InputStream is, List<ActionDefinition> actionDefinitions, Compilable se) throws SAXException, IOException {
 		// CREATES THE CONTENTHANDLER
 		TreeContentHandler tc = new TreeContentHandler();
 		for (ActionDefinition actionDefinition : actionDefinitions) {
 			tc.addAction(actionDefinition.nameSpace, actionDefinition.command, actionDefinition.actionFactory);
 		}
-		tc.setEngine(je);
+		tc.setEngine(se);
 		
 		// CREATES THE XML READER
 		XMLReader saxReader = XMLReaderFactory.createXMLReader();
@@ -82,7 +82,7 @@ public abstract class TreeBrowserBuilder {
 	
 	protected abstract List<ActionDefinition> getCustomActions();
 	
-	protected abstract JexlEngine getJexlEngine();
+	protected abstract Compilable getScriptEngine();
 	
 	/** Default actions */
 	private static final Object[][] dfltactions = {
@@ -92,4 +92,5 @@ public abstract class TreeBrowserBuilder {
 			{"http://default.actions/default", "goto", new GotoFactory()},
 			{"", "tree", new TreeFactory()}
 	};
+
 }

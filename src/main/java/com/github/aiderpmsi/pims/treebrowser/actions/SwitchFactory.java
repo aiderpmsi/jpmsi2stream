@@ -2,16 +2,17 @@ package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
 
-import org.apache.commons.jexl2.Expression;
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.JexlEngine;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptContext;
+import javax.script.ScriptException;
 
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 
 	@Override
-	public Switch createAction(JexlEngine je, Argument[] arguments) throws IOException {
+	public Switch createAction(Compilable se, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String cond = null;
 		for (Argument argument : arguments) {
@@ -29,33 +30,41 @@ public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 			throw new IOException("cond parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Switch(je, cond);
+		return new Switch(se, cond);
 	}
 
 	public class Switch implements ActionFactory.Action {
 		
-		private Expression e; 
+		private CompiledScript e; 
 		
-		public Switch(JexlEngine je, String cond) {
-			e = je.createExpression(cond);
+		public Switch(Compilable se, String cond) {
+			try {
+				e = se.compile(cond);
+			} catch (ScriptException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
 		public Node<Action> execute(Node<Action> node,
-				JexlContext jc) throws IOException {
+				ScriptContext sc) throws IOException {
 
-			Object result = e.evaluate(jc);
+			try {
+				Object result = e.eval(sc);
 	        
-	        if (result != null && result instanceof Boolean) {
-	        	Boolean resultB = (Boolean) result;
-	        	if (resultB)
-	        		return (Node<ActionFactory.Action>) node.firstChild;
-	        	else
-	        		return (Node<ActionFactory.Action>) node.nextSibling;
-	        } else {
-	        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
-	        }
+		        if (result != null && result instanceof Boolean) {
+		        	Boolean resultB = (Boolean) result;
+		        	if (resultB)
+		        		return (Node<ActionFactory.Action>) node.firstChild;
+		        	else
+		        		return (Node<ActionFactory.Action>) node.nextSibling;
+		        } else {
+		        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
+		        }
+			} catch (ScriptException e) {
+				throw new IOException(e);
+			}
 		}
 	}
 	

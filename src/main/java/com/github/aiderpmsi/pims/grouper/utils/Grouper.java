@@ -1,10 +1,9 @@
 package com.github.aiderpmsi.pims.grouper.utils;
 
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.MapContext;
+import javax.script.ScriptContext;
+import javax.script.SimpleScriptContext;
 
 import com.github.aiderpmsi.pims.grouper.model.Dictionaries;
 import com.github.aiderpmsi.pims.grouper.model.RssActe;
@@ -38,24 +37,23 @@ public class Grouper {
 		RssContent rss = mixer.mix(multirss);
 
 		// CREATES THE VARS MAP
-		HashMap<String, Object> context = new HashMap<>();
-		context.put("utils", new Utils(dicos));
-		context.put("dicos", dicos);
-		context.put("rss", rss);
-		context.put("rssmain", RssMain.dp);
-		context.put("rssacte", RssActe.codeccam);
-		context.put("rssda", RssDa.da);
-		JexlContext jc = new MapContext(context);
+		ScriptContext sc = new SimpleScriptContext();
+		sc.setAttribute("utils", new Utils(dicos), 0);
+		sc.setAttribute("dicos", dicos, 0);
+		sc.setAttribute("rss", rss, 0);
+		sc.setAttribute("rssmain", RssMain.dp, 0);
+		sc.setAttribute("rssacte", RssActe.codeccam, 0);
+		sc.setAttribute("rssda", RssDa.da, 0);
 
 		// CREATES AND EXECUTES THE TREE BROWSER
 		TreeBrowser tb = new TreeBrowser(tree);
-		tb.setJc(jc);
+		tb.setContext(sc);
 
 		// LAUNCHES THE BROWSER
 		tb.go();
 		
 		// GETS THE MACHINE RESULT
-		GroupFactory.Group result = (GroupFactory.Group) tb.getJc().get("group");
+		GroupFactory.Group result = (GroupFactory.Group) tb.getContext().getAttribute("group");
 		
 		return result;
 	}

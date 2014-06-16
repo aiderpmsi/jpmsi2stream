@@ -1,14 +1,16 @@
 package com.github.aiderpmsi.pims.treebrowser;
 
 import java.io.IOException;
-import org.apache.commons.jexl2.JexlContext;
+
+import javax.script.ScriptContext;
+
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class TreeBrowser {
 
 	/** jexl2 context map */
-	private JexlContext jc = null;
+	private ScriptContext sc = null;
 
 	/** Tree source */
 	private Node<Action> tree = null;
@@ -19,16 +21,16 @@ public class TreeBrowser {
 	
 	public void go() throws IOException {
 		while (tree != null) {
-			tree = tree.getContent().execute(tree, jc);
+			tree = tree.getContent().execute(tree, sc);
 		}
 	}    
 	
-	public JexlContext getJc() {
-		return jc;
+	public ScriptContext getContext() {
+		return sc;
 	}
 
-	public void setJc(JexlContext jc) {
-		this.jc = jc;
+	public void setContext(ScriptContext sc) {
+		this.sc = sc;
 	}
 
 }

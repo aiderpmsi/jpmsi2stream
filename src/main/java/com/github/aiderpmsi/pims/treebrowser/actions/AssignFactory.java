@@ -1,14 +1,16 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
-import org.apache.commons.jexl2.Expression;
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.JexlEngine;
+
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptContext;
+import javax.script.ScriptException;
 
 public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 
 	@Override
-	public Assign createAction(JexlEngine je, Argument[] arguments) throws IOException {
+	public Assign createAction(Compilable se, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String expr = null, var = null;
 		for (Argument argument : arguments) {
@@ -30,24 +32,32 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 			throw new IOException("var parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Assign(je, var, expr);
+		return new Assign(se, var, expr);
 	}
 
 	public class Assign extends BaseAction {
 		
-		private Expression e;
+		private CompiledScript e;
 		
 		private String var;
 		
-		public Assign(JexlEngine je, String var, String expr) {
-			e = je.createExpression(expr);
-			this.var = var;
+		public Assign(Compilable se, String var, String expr) {
+			try {
+				e = se.compile(expr);
+				this.var = var;
+			} catch (ScriptException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		@Override
-		public void execute(JexlContext jc) throws IOException {
+		public void execute(ScriptContext sc) throws IOException {
 	        // RUNS THE EXPRESSION
-			jc.set(var, e.evaluate(jc));
+			try {
+				sc.setAttribute(var, e.eval(sc), 0);
+			} catch (ScriptException e) {
+				throw new IOException(e);
+			}
 		}
 	}
 
