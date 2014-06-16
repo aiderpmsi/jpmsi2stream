@@ -24,6 +24,7 @@ public class GroupFactory implements ActionFactory<GroupFactory.Group> {
 				modalite = argument.value; break;
 			case "gravite":
 				gravite = argument.value; break;
+			case "id": break;
 			default:
 				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
 			}

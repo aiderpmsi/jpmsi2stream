@@ -23,6 +23,8 @@ public class Grouper {
 
 	private Node<ActionFactory.Action> tree;
 	
+	private Dictionaries dicos = new Dictionaries();
+	
 	@SuppressWarnings("unchecked")
 	public Grouper() throws TreeBrowserException {
 		GrouperConfigBuilder gcb = new GrouperConfigBuilder();
@@ -30,9 +32,6 @@ public class Grouper {
 	}
 	
 	public GroupFactory.Group group(List<RssContent> multirss) throws Exception {
-		// DICTIONARIES
-		Dictionaries dicos = new Dictionaries("com/github/aiderpmsi/pims/grouper/grouper-", ".cfg");
-		
 		// GETS THE MIXED RSS
 		Mixer mixer = new Mixer();
 		mixer.setDicos(dicos);

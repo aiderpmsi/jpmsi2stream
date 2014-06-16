@@ -16,6 +16,7 @@ public class ExecuteFactory implements ActionFactory<ExecuteFactory.Execute> {
 			switch (argument.key) {
 			case "expr":
 				expr = argument.value; break;
+			case "id": break;
 			default:
 				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
 			}

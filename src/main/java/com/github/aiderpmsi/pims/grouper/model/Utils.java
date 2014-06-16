@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary.Type;
+
 public class Utils {
 	
 	private Dictionaries dicos;
@@ -18,9 +20,9 @@ public class Utils {
 	
 	public Integer count(String resource, String key, Object value) throws IOException {
 		// GETS THE DICO
-		SimpleDictionary dico = dicos.get(resource);
+		SimpleDictionary dico = dicos.get(SimpleDictionary.Type.valueOf(resource));
 		// GETS THE DEFINITION IN DICO
-		Set<String> dicoContent = dico.getDefintion(key);
+		Set<String> dicoContent = dico.getDefinition(key);
 
 		// RESULT
 		Integer matches = 0;
@@ -107,8 +109,8 @@ public class Utils {
 	}
 	
 	public void awrdp(List<String> actes) throws IOException {
-		HashSet<String> dicoacteschirmineur = dicos.get("actemineurchirreclassant").getDefintion("all");
-		HashSet<String> dicoacteschir = dicos.get("classeacte").getDefintion("ADC");
+		HashSet<String> dicoacteschirmineur = dicos.get(Type.acteMineurChirReclassant).getDefinition("all");
+		HashSet<String> dicoacteschir = dicos.get(Type.classeActe).getDefinition("ADC");
 
 		// LIST OF ACTES CHIR MINEUR
 		HashSet<String> acteschirmineur = new HashSet<>();
@@ -128,7 +130,7 @@ public class Utils {
 			remove(actes, acteschir);
 		} else {
 			// ELSE IF THERE IS AT LEAST ONE ACTE CLASSANT OP, IGNORE IT
-			HashSet<String> dicoactesclassantsop = dicos.get("acteclassantop").getDefintion("all");
+			HashSet<String> dicoactesclassantsop = dicos.get(Type.acteClassantOp).getDefinition("all");
 			remove(actes, dicoactesclassantsop);
 		}
 	}

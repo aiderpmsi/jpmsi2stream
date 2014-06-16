@@ -14,6 +14,7 @@ import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.RssDa;
 import com.github.aiderpmsi.pims.grouper.model.RssMain;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
+import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary.Type;
 
 /**
  * Groups multiple rss
@@ -66,7 +67,7 @@ public class Mixer {
 		Iterator<RssContent> it;
 		
 		// GETS THE LIST OF ACTECLASSANTOP
-		HashSet<String> acteclassantops = dicos.get("acteclassantop").getDefintion("all");
+		HashSet<String> acteclassantops = dicos.get(Type.acteClassantOp).getDefinition("all");
 		
 		// 1. FIRST RUM WITH LIST 1 ACT IS RETAINED
 		it = multirss.iterator();
@@ -99,7 +100,7 @@ public class Mixer {
 		}
 		
 		// GETS THE LIST OF ACTENONOPTHERAP
-		HashSet<String> actenonoptheraps = dicos.get("actenonoptherap").getDefintion("all");
+		HashSet<String> actenonoptheraps = dicos.get(Type.acteNonOpTherap).getDefinition("all");
 		
 		// 3. THE FIRST RUM WITH ONE ACTENONOPTHERAP IS RETAINED
 		it = multirss.iterator();
@@ -113,7 +114,7 @@ public class Mixer {
 		}
 	
 		// GETS THE LIST OF ACTENONOPCOURT
-		HashSet<String> actenonopcourts = dicos.get("actenonopcourt").getDefintion("all");
+		HashSet<String> actenonopcourts = dicos.get(Type.acteNonOpCourt).getDefinition("all");
 
 		// 4. THE FIRST RUM WITH ONE ACTENONOPCOURT IS RETAINED (IF STAY DURATION IS LESS OR EQUAL THAN 1 DAY)
 		it = multirss.iterator();
@@ -132,7 +133,7 @@ public class Mixer {
 		}
 
 		// GETS THE LIST OF AUTREACTECLASSANTNONOP
-		HashSet<String> autreacteclassantnonops = dicos.get("autreacteclassantnonop").getDefintion("all");
+		HashSet<String> autreacteclassantnonops = dicos.get(Type.autreActeClasssantNonOp).getDefinition("all");
 		
 		// 5. THE FIRST RUM WITH AUTREACTECLASSANTNONOP AND DURATION IS 0 IS RETAINED
 		it = multirss.iterator();
@@ -173,7 +174,7 @@ public class Mixer {
 			return rumnb;
 		
 		// GETS THE LIST OF IMPRECISE DIAGS
-		HashSet<String> diagsimprecis = dicos.get("diagimprecis").getDefintion("all");
+		HashSet<String> diagsimprecis = dicos.get(Type.diagImprecis).getDefinition("all");
 
 		// 6. IF NOT RUM IS RETAINED, CALCULATE PENALTIES
 		Integer[] penalties = new Integer[multirss.size()];
@@ -209,7 +210,6 @@ public class Mixer {
 				rumnb = i;
 		}
 		return rumnb;
-		
 		
 	}
 	

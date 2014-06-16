@@ -1,23 +1,18 @@
 package com.github.aiderpmsi.pims.grouper.model;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 
 public class Dictionaries {
 
-	private HashMap<String, SimpleDictionary> dictionnaries = new HashMap<>();
+	private EnumMap<SimpleDictionary.Type, SimpleDictionary> dictionaries =
+			new EnumMap<>(SimpleDictionary.Type.class);
 	
-	String prefix, suffix;
-	
-	public Dictionaries(String prefix, String suffix) {
-		this.prefix = prefix;
-		this.suffix = suffix;
-	}
-	
-	public SimpleDictionary get(String resourceName) {
-		SimpleDictionary dico = null;
-		if ((dico = dictionnaries.get(resourceName)) == null) {
-			dico = new SimpleDictionary(prefix + resourceName + suffix);
-			dictionnaries.put(resourceName, dico);
+
+	public SimpleDictionary get(SimpleDictionary.Type type) {
+		SimpleDictionary dico;
+		if ((dico = dictionaries.get(type)) == null) {
+			dico = new SimpleDictionary(type);
+			dictionaries.put(type, dico);
 		}
 		return dico;
 	}

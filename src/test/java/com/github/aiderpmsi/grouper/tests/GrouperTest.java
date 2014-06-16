@@ -87,6 +87,20 @@ public class GrouperTest {
 
 		test(group, "28Z04", "Z", "", "");
     }
+    
+    @Test
+    public void testMultigrouper() throws Exception {
+		List<RssContent> cont1 = new T28Z04Zb();
+		List<RssContent> cont2 = new T15Z10E();
+
+		for (int i = 0 ; i < 1000 ; i++) {
+			gp.group(cont1);
+			gp.group(cont2);
+		}
+
+    }
+    
+    
     private void test(Group gp, String racine, String gravite, String modalite, String erreur) {
 		Assert.assertNotNull(gp);
 		Assert.assertEquals(racine, gp.racine);

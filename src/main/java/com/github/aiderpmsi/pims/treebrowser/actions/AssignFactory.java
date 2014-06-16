@@ -17,6 +17,7 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 				expr = argument.value; break;
 			case "var":
 				var = argument.value; break;
+			case "id": break;
 			default:
 				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
 			}

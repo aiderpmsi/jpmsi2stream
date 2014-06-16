@@ -18,6 +18,7 @@ public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 			switch (argument.key) {
 			case "cond":
 				cond = argument.value; break;
+			case "id": break;
 			default:
 				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
 			}
