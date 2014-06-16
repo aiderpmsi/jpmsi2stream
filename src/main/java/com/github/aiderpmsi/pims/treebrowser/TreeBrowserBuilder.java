@@ -18,6 +18,7 @@ import com.github.aiderpmsi.pims.treebrowser.actions.AssignFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.ExecuteFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.GotoFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.SwitchFactory;
+import com.github.aiderpmsi.pims.treebrowser.actions.TreeFactory;
 import com.github.aiderpmsi.pims.treemodel.Node;
 import com.github.aiderpmsi.pims.treemodel.TreeContentHandler;
 
@@ -64,7 +65,7 @@ public abstract class TreeBrowserBuilder {
 		tc.setEngine(je);
 		
 		// CREATES THE XML READER
-		XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		XMLReader saxReader = XMLReaderFactory.createXMLReader();
         saxReader.setContentHandler(tc);
 
         // PARSES THE TREE DEFINITION
@@ -89,5 +90,6 @@ public abstract class TreeBrowserBuilder {
 			{"http://default.actions/default", "assign", new AssignFactory()},
 			{"http://default.actions/default", "switch", new SwitchFactory()},
 			{"http://default.actions/default", "goto", new GotoFactory()},
+			{"", "tree", new TreeFactory()}
 	};
 }

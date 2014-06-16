@@ -67,9 +67,11 @@ public class TreeContentHandler implements ContentHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		// DECREASE LEVEL AND REMOVE LAST NODE
+		// JUST LET LEVELS STAY LESS OR EQUAL TO SIZE OF NODES
+		if (nodes.size() > level) {
+			nodes.removeLast();
+		}
 		level--;
-		nodes.removeLast();
 	}
 
 	@Override
@@ -139,13 +141,18 @@ public class TreeContentHandler implements ContentHandler {
 		}
 				
 		// IF WE ARE AT ROOT LEVEL, STORE THIS NODE AS THE ROOT NODE
-		root = newNode;
-		
+		if (root == null) {
+			root = newNode;
+		}		
 		// INCREMENTS LEVEL
 		level++;
 		
+		// IF WE ARE AT THE START, ADD THIS ELEMENT
+		if (nodes.size() == 0) {
+			nodes.add(newNode);
+		}
 		// IF WE HAVE THE SAME NUMBER OF NODES THAN LEVEL, IT MEANS WE HAVE A SIBLING
-		if (nodes.size() == level) {
+		else if (nodes.size() == level) {
 			// ADD THIS NODE AS A SIBLING
 			nodes.removeLast().nextSibling = newNode;
 			nodes.addLast(newNode);
