@@ -154,12 +154,12 @@
 	</dflt:switch>
 	
 	<!-- CMD 25 -->
-	<dflt:switch id="cmd25" cond="(utils.count('unclassified', 'D-127', dp) &gt; 0 and utils.count('unclassified', 'D-128', das) &gt; 0) or
-					   (utils.count('unclassified', 'D-128', dp) &gt; 0 and utils.count('unclassified', 'D-127', das) &gt; 0)">
+	<dflt:switch id="cmd25" cond="(utils.count('unclassified', 'D-127', dp) &gt; 0 &amp;&amp; utils.count('unclassified', 'D-128', das) &gt; 0) ||
+					   (utils.count('unclassified', 'D-128', dp) &gt; 0 &amp;&amp; utils.count('unclassified', 'D-127', das) &gt; 0)">
 		<dflt:switch cond="modesortie == 9">
 			<pims:group racine="25Z02" gravite="E" />
 		</dflt:switch>
-		<dflt:switch cond="ageyear lt 13">
+		<dflt:switch cond="ageyear &lt; 13">
 			<pims:group racine="25Z03" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('classeActe', 'ADC', actes) &gt; 0">
@@ -174,8 +174,8 @@
 		<pims:group racine="25M02" gravite="A" modalite="B" />
 	</dflt:switch>
 
-	<!-- POST CMD 25, INVERT DP AND DZ IF NEEDED -->
-	<dflt:switch cond="(dp.substring(0,3) == 'Z09' or dp.substring(0,3) == 'Z08') and not(dr.size() == 0)" >
+	<!-- POST CMD 25, INVERT DP &amp;&amp; DZ IF NEEDED -->
+	<dflt:switch cond="(dp.substring(0,3) == 'Z09' || dp.substring(0,3) == 'Z08') &amp;&amp; not(dr.size() == 0)" >
 		<dflt:assign var="inversion" expr="true" />
 		<dflt:execute expr="var temp = dp; dp = dr; dr = temp;" />
 		<dflt:assign var="diags_wo_dr" expr="utils.concat(dp, das)" />
@@ -183,14 +183,14 @@
 	</dflt:switch>
 
 	<!-- CMD 15 -->
-	<dflt:switch id="cmd15" cond="ageday lt 8" >
+	<dflt:switch id="cmd15" cond="ageday &lt; 8" >
 		<dflt:goto dest="inside_cmd15" />
 	</dflt:switch>
-	<dflt:switch cond="(modeentree &gt;= 1 and modeentree le 4) or (modeentree &gt;= 61 and modeentree le 66) or (modeentree &gt;= 71 and modeentree le 76)">
-		<dflt:switch cond="ageday lt 29" >
+	<dflt:switch cond="(modeentree &gt;= 1 &amp;&amp; modeentree &lt;= 4) || (modeentree &gt;= 61 &amp;&amp; modeentree &lt;= 66) || (modeentree &gt;= 71 &amp;&amp; modeentree &lt;= 76)">
+		<dflt:switch cond="ageday &lt; 29" >
 			<dflt:goto dest="inside_cmd15" />
 		</dflt:switch>
-		<dflt:switch cond="ageyear lt 1 and poidsnn lt 2500" >
+		<dflt:switch cond="ageyear &lt; 1 &amp;&amp; poidsnn &lt; 2500" >
 			<dflt:goto dest="inside_cmd15" />
 		</dflt:switch>
 		<dflt:goto dest="cmd01" />
@@ -200,16 +200,16 @@
 			<pims:group racine="15Z10" gravite="E" />
 		</dflt:switch>
 		<dflt:assign var="agegest" expr="rss.get('{0}', 'Integer', rssmain.agegestationnel())" />
-		<dflt:assign var="gnn" expr="(poidsnn &gt;= 3300 and agegest &gt;= 40 ? 1 :
-									 (poidsnn &gt;= 2400 and agegest &gt;= 38 ? 2 :
-									 (poidsnn &gt;= 2200 and agegest &gt;= 37 ? 3 :
-									 (poidsnn &gt;= 2000 and agegest &gt;= 37 ? 4 :
-									 (poidsnn &gt;= 1800 and agegest &gt;= 36 ? 5 :
-									 (poidsnn &gt;= 1700 and agegest &gt;= 35 ? 6 :
-									 (poidsnn &gt;= 1500 and agegest &gt;= 33 ? 7 :
-									 (poidsnn &gt;= 1300 and agegest &gt;= 32 ? 8 :
-									 (poidsnn &gt;= 1100 and agegest &gt;= 30 ? 9 :
-									 (poidsnn &gt;= 800 and agegest &gt;= 28 ? 10 : 11))))))))))" />
+		<dflt:assign var="gnn" expr="(poidsnn &gt;= 3300 &amp;&amp; agegest &gt;= 40 ? 1 :
+									 (poidsnn &gt;= 2400 &amp;&amp; agegest &gt;= 38 ? 2 :
+									 (poidsnn &gt;= 2200 &amp;&amp; agegest &gt;= 37 ? 3 :
+									 (poidsnn &gt;= 2000 &amp;&amp; agegest &gt;= 37 ? 4 :
+									 (poidsnn &gt;= 1800 &amp;&amp; agegest &gt;= 36 ? 5 :
+									 (poidsnn &gt;= 1700 &amp;&amp; agegest &gt;= 35 ? 6 :
+									 (poidsnn &gt;= 1500 &amp;&amp; agegest &gt;= 33 ? 7 :
+									 (poidsnn &gt;= 1300 &amp;&amp; agegest &gt;= 32 ? 8 :
+									 (poidsnn &gt;= 1100 &amp;&amp; agegest &gt;= 30 ? 9 :
+									 (poidsnn &gt;= 800 &amp;&amp; agegest &gt;= 28 ? 10 : 11))))))))))" />
 		<dflt:switch cond="utils.count('classeActe', 'ADC', actes) &gt; 0">
 			<dflt:switch cond="gnn == 10" >
 				<dflt:switch cond="utils.count('unclassified', 'D-303', diags) &gt; 0">
@@ -217,13 +217,13 @@
 				</dflt:switch>
 				<pims:group racine="15C06" gravite="A" />
 			</dflt:switch>
-			<dflt:switch cond="gnn == 9 or gnn == 8" >
+			<dflt:switch cond="gnn == 9 || gnn == 8" >
 				<dflt:switch cond="utils.count('unclassified', 'D-303', diags) &gt; 0">
 					<pims:group racine="15C05" gravite="B" />
 				</dflt:switch>
 				<pims:group racine="15C05" gravite="A" />
 			</dflt:switch>
-			<dflt:switch cond="gnn le 7 and gnn &gt;= 1" >
+			<dflt:switch cond="gnn &lt;= 7 &amp;&amp; gnn &gt;= 1" >
 				<dflt:switch cond="utils.count('unclassified', 'A-337', actes) &gt; 0">
 					<dflt:switch cond="utils.count('unclassified', 'D-303', diags) &gt; 0">
 						<pims:group racine="15C02" gravite="B" />
@@ -243,11 +243,11 @@
 			</dflt:switch>
 			<pims:group erreur="90Z02Z" />
 		</dflt:switch>
-		<dflt:switch cond="modesortie == 71 and dureesejour lt 4" >
+		<dflt:switch cond="modesortie == 71 &amp;&amp; dureesejour &lt; 4" >
 			<pims:group racine="15M02" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="modesortie == 9" >
-			<dflt:switch cond="dureesejour lt 4" >
+			<dflt:switch cond="dureesejour &lt; 4" >
 				<pims:group racine="15M03" gravite="E" />
 			</dflt:switch>
 			<pims:group racine="15M04" gravite="E" />
@@ -349,7 +349,7 @@
 				<pims:group racine="01C09" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-002', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<dflt:switch cond="utils.count('unclassified', 'D-039', diags_wo_dr) &gt; 0">
 						<pims:group racine="01C11" gravite="1" />
 					</dflt:switch>
@@ -372,7 +372,7 @@
 			<dflt:switch cond="utils.count('unclassified', 'A-346', actes) &gt; 0">
 				<pims:group racine="01C14" gravite="1" modalite="J" />
 			</dflt:switch>
-			<dflt:switch cond="utils.count('unclassified', 'A-005', actes) &gt; 0 or utils.count('unclassified', 'D-326', dp) &gt; 0">
+			<dflt:switch cond="utils.count('unclassified', 'A-005', actes) &gt; 0 || utils.count('unclassified', 'D-326', dp) &gt; 0">
 				<pims:group racine="01C15" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-006', actes) &gt; 0">
@@ -389,7 +389,7 @@
 		<dflt:switch cond="utils.count('unclassified', 'A-198', actes) &gt; 0">
 			<pims:group racine="01K03" gravite="1" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour lt 2 and modesortie == 9">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; modesortie == 9">
 			<dflt:switch cond="utils.count('unclassified', 'D-064', dp) &gt; 0">
 				<pims:group racine="01M36" gravite="E" />
 			</dflt:switch>
@@ -404,7 +404,7 @@
 			</dflt:switch>
 			<dflt:goto dest="id1"/>
 		</dflt:switch>
-		<dflt:switch id="id1" cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch id="id1" cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="01M32" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0101', dp) &gt; 0">
@@ -414,7 +414,7 @@
 			<pims:group racine="01M23" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0103', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="01M24" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="01M25" gravite="1" modalite="T" />
@@ -486,7 +486,7 @@
 			<pims:group racine="01M20" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0122', dp) &gt; 0">
-			<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'A-267', actes) &gt; 0" >
+			<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-267', actes) &gt; 0" >
 				<pims:group racine="01K05" modalite="J" />
 			</dflt:switch>
 			<pims:group racine="01M21" gravite="1" modalite="T" />
@@ -521,7 +521,7 @@
 				<pims:group racine="02C03" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-305', actes) &gt; 0" >
-				<dflt:switch cond="utils.count('unclassified', 'A-306', actes) &gt; 0 and utils.count('unclassified', 'D-068', diags_wo_dr) &gt; 0" >
+				<dflt:switch cond="utils.count('unclassified', 'A-306', actes) &gt; 0 &amp;&amp; utils.count('unclassified', 'D-068', diags_wo_dr) &gt; 0" >
 					<pims:group racine="02C10" gravite="1" modalite="J" />
 				</dflt:switch>
 				<dflt:switch cond="utils.count('unclassified', 'A-010', actes) &gt; 0" >
@@ -536,7 +536,7 @@
 				<pims:group racine="02C06" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-013', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18" >
+				<dflt:switch cond="ageyear &lt; 18" >
 					<dflt:switch cond="utils.count('unclassified', 'A-347', actes) &gt; 0" >
 						<pims:group racine="02C13" gravite="1" modalite="J" />
 					</dflt:switch>
@@ -548,7 +548,7 @@
 
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="02M09" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0201', dp) &gt; 0">
@@ -561,7 +561,7 @@
 			<pims:group racine="02M04" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0204', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="02M05" gravite="1" modalite="T" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'D-058', dp) &gt; 0">
@@ -633,7 +633,7 @@
 			<pims:group racine="01M20" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0122', dp) &gt; 0">
-			<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'A-267', actes) &gt; 0" >
+			<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-267', actes) &gt; 0" >
 				<pims:group racine="01K05" modalite="J" />
 			</dflt:switch>
 			<pims:group racine="01M21" gravite="1" modalite="T" />
@@ -678,7 +678,7 @@
 				<pims:group racine="03C19" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-018', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="03C06" gravite="1" modalite="J" />
 				</dflt:switch>
 				<pims:group racine="03C07" gravite="1" modalite="J" />
@@ -702,19 +702,19 @@
 				<dflt:goto dest="id2" />
 			</dflt:switch>
 			<dflt:switch id="id2" cond="utils.count('unclassified', 'A-021', actes) == actes.size()" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="03C10" gravite="1" />
 				</dflt:switch>
 				<pims:group racine="03C11" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-022', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="03C12" gravite="1" />
 				</dflt:switch>
 				<pims:group racine="03C13" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-023', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="03C14" gravite="1" modalite="J" />
 				</dflt:switch>
 				<pims:group racine="03C15" gravite="1"  modalite="J" />
@@ -747,14 +747,14 @@
 			</dflt:switch>
 			<dflt:goto dest="id3" />
 		</dflt:switch>
-		<dflt:switch id="id3" cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch id="id3" cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="03M14" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0301', dp) &gt; 0">
 			<pims:group racine="03M02" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0302', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<dflt:switch cond="utils.count('unclassified', 'D-059', dp) &gt; 0">
 					<pims:group racine="03M12" gravite="1" />
 				</dflt:switch>
@@ -775,7 +775,7 @@
 			<pims:group racine="03M07" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0306', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="03M08" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="03M09" gravite="1" modalite="T" />
@@ -784,7 +784,7 @@
 			<dflt:switch cond="utils.count('unclassified', 'D-053', actes) &gt; 0">
 				<pims:group racine="03K02" gravite="1" modalite="J" />
 			</dflt:switch>
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="03M10" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="03M11" gravite="1" modalite="T" />
@@ -813,17 +813,17 @@
 
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'A-228', actes) &gt; 0">
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-228', actes) &gt; 0">
 			<pims:group racine="04K02" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour lt 2 and modesortie == 9">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; modesortie == 9">
 			<pims:group racine="04M24" modalite="E" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="04M22" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0401', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="04M02" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="04M03" gravite="1" modalite="T" />
@@ -832,7 +832,7 @@
 			<pims:group racine="04M18" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0403', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="04M04" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="04M05" gravite="1" modalite="T" />
@@ -841,7 +841,7 @@
 			<pims:group racine="04M25" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0405', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="04M06" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="04M07" gravite="1" modalite="T" />
@@ -972,7 +972,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour lt 2 and utils.count('unclassified', 'A-168', actes) &gt; 0">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; utils.count('unclassified', 'A-168', actes) &gt; 0">
 			<pims:group racine="05K14" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'A-321', actes) &gt; 0" >
@@ -988,7 +988,7 @@
 			<pims:group racine="05K06" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-102', diags_wo_dr) &gt; 0" >
-			<dflt:switch cond="dureesejour lt 2" >
+			<dflt:switch cond="dureesejour &lt; 2" >
 				<dflt:switch cond="modesortie == 9" >
 					<pims:group racine="05M21" gravite="E" />
 				</dflt:switch>
@@ -997,7 +997,7 @@
 			<pims:group racine="05M04" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'A-188', actes) &gt; 0" >
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="05K12" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-351', actes) &gt; 0" >
@@ -1025,13 +1025,13 @@
 		<dflt:switch cond="utils.count('unclassified', 'A-211', actes) &gt; 0" >
 			<pims:group racine="05K10" gravite="1" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour == 0 and activite.contains(4)" >
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; activite.contains(4)" >
 			<pims:group racine="05K17" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour lt 2 and modesortie == 9" >
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; modesortie == 9" >
 			<pims:group racine="05M22" gravite="E" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="05M20" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0501', dp) &gt; 0">
@@ -1050,7 +1050,7 @@
 			<pims:group racine="05M09" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0506', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="05M10" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="05M11" gravite="1" modalite="T" />
@@ -1094,7 +1094,7 @@
 				<pims:group racine="06C04" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-044', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="06C05" gravite="1" />
 				</dflt:switch>
 				<dflt:switch cond="utils.count('unclassified', 'D-040', diags) &gt; 0" >
@@ -1118,7 +1118,7 @@
 				<pims:group racine="06C09" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-048', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18" >
+				<dflt:switch cond="ageyear &lt; 18" >
 					<pims:group racine="06C10" gravite="1" modalite="J" />
 				</dflt:switch>
 				<dflt:switch cond="utils.count('unclassified', 'A-356', actes) &gt; 0" >
@@ -1148,7 +1148,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour lt 2 and utils.count('unclassified', 'A-222', actes) &gt; 0 and activite.contains(4)">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; utils.count('unclassified', 'A-222', actes) &gt; 0 &amp;&amp; activite.contains(4)">
 			<pims:group racine="06K02" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="dureesejour == 0" >
@@ -1166,14 +1166,14 @@
 			</dflt:switch>
 			<dflt:goto dest="id4" />
 		</dflt:switch>
-		<dflt:switch id="id4" cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch id="id4" cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="06M16" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0601', dp) &gt; 0">
 			<pims:group racine="06M19" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0602', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="06M02" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="06M03" gravite="1" modalite="T" />
@@ -1200,7 +1200,7 @@
 			<pims:group racine="06M07" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0610', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="06M08" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="06M09" gravite="1" modalite="T" />
@@ -1268,16 +1268,16 @@
 		<dflt:switch cond="utils.count('unclassified', 'A-366', actes) &gt; 0" >
 			<pims:group racine="07K06" gravite="1" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour lt 2 and utils.count('unclassified', 'A-219', actes) &gt; 0 and activite.contains(4)">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; utils.count('unclassified', 'A-219', actes) &gt; 0 &amp;&amp; activite.contains(4)">
 			<pims:group racine="07K02" gravite="Z" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'A-218', actes) &gt; 0" >
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-218', actes) &gt; 0" >
 			<dflt:switch cond="activite.contains(4)" >
 				<pims:group racine="07K04" modalite="J" />
 			</dflt:switch>
 			<pims:group racine="07K05" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="07M13" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0701', dp) &gt; 0">
@@ -1346,7 +1346,7 @@
 				<pims:group racine="08C25" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-063', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="08C04" gravite="1" />
 				</dflt:switch>
 				<dflt:switch cond="utils.count('unclassified', 'D-069', diags_wo_dr) &gt; 0" >
@@ -1370,7 +1370,7 @@
 				<pims:group racine="08C28" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-273', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18" >
+				<dflt:switch cond="ageyear &lt; 18" >
 					<pims:group racine="08C31" gravite="1" />
 				</dflt:switch>
 				<dflt:switch cond="utils.count('unclassified', 'A-357', actes) &gt; 0" >
@@ -1390,7 +1390,7 @@
 				</dflt:switch>
 				<pims:group racine="08C33" gravite="1" />
 			</dflt:switch>
-			<dflt:switch cond="utils.count('unclassified', 'A-274', actes) &gt; 0 and
+			<dflt:switch cond="utils.count('unclassified', 'A-274', actes) &gt; 0 &amp;&amp;
 							   utils.count('unclassified', 'D-042', diags_wo_dr) &gt; 0" >
 				<pims:group racine="08C29" gravite="1" modalite="J" />
 			</dflt:switch>
@@ -1401,7 +1401,7 @@
 				<pims:group racine="08C35" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-073', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18" >
+				<dflt:switch cond="ageyear &lt; 18" >
 					<pims:group racine="08C36" gravite="1" modalite="J" />
 				</dflt:switch>
 				<pims:group racine="08C37" gravite="1" modalite="J" />
@@ -1458,7 +1458,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour == 0 and activite.contains(4)">
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; activite.contains(4)">
 			<pims:group racine="08K02" modalite="J" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'A-289', actes) &gt; 0" >
@@ -1467,11 +1467,11 @@
 		<dflt:switch cond="utils.count('unclassified', 'A-270', actes) &gt; 0" >
 			<pims:group racine="08K03" gravite="1" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="08M35" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0801', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="08M20" gravite="1" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'D-072', diags_wo_dr) &gt; 0">
@@ -1492,7 +1492,7 @@
 			<pims:group racine="08M05" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0806', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="08M06" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="08M07" gravite="1" modalite="T" />
@@ -1571,7 +1571,7 @@
 			<pims:group racine="09Z02" gravite="A" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('acteClassant', '09', actes) &gt; 0" >
-			<dflt:switch cond="utils.count('unclassified', 'A-078', actes) &gt; 0 and
+			<dflt:switch cond="utils.count('unclassified', 'A-078', actes) &gt; 0 &amp;&amp;
 							   utils.count('unclassified', 'D-096', diags_wo_dr) &gt; 0" >
 				<pims:group racine="09C02" gravite="1" modalite="J"/>
 			</dflt:switch>
@@ -1624,10 +1624,10 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour == 0 and activite.contains(4)">
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; activite.contains(4)">
 			<pims:group racine="09K02" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<dflt:switch cond="utils.count('unclassified', 'D-075', dp) &gt; 0" >
 				<pims:group racine="09M12" gravite="Z" />
 			</dflt:switch>
@@ -1637,13 +1637,13 @@
 			<dflt:goto dest="id5" />
 		</dflt:switch>
 		<dflt:switch id="id5" cond="utils.count('unclassified', 'D-0901', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="09M02" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="09M03" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-0902', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="09M04" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="09M05" gravite="1" modalite="T" />
@@ -1717,7 +1717,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="10M13" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1001', dp) &gt; 0">
@@ -1730,13 +1730,13 @@
 			<pims:group racine="10M08" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1003', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="10M15" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="10M16" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1004', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="10M17" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="10M18" gravite="1" modalite="T" />
@@ -1795,7 +1795,7 @@
 				<pims:group racine="11C12" gravite="1" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-097', actes) &gt; 0" >
-				<dflt:switch cond="ageyear lt 18" >
+				<dflt:switch cond="ageyear &lt; 18" >
 					<pims:group racine="11C06" gravite="1" />
 				</dflt:switch>
 				<pims:group racine="11C07" gravite="1" modalite="J" />
@@ -1810,7 +1810,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour lt 2">
+		<dflt:switch cond="dureesejour &lt; 2">
 			<dflt:switch cond="utils.count('unclassified', 'A-225', actes) &gt; 0" >
 				<dflt:switch cond="activite.contains(4)">
 					<pims:group racine="11K03" gravite="Z" />
@@ -1828,23 +1828,23 @@
 			</dflt:switch>
 			<dflt:goto dest="id6"/>
 		</dflt:switch>
-		<dflt:switch id="id6" cond="dureesejour == 0 and utils.count('unclassified', 'A-051', actes) &gt; 0" >
+		<dflt:switch id="id6" cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-051', actes) &gt; 0" >
 			<pims:group racine="11K08" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="11M18" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1101', dp) &gt; 0">
 			<pims:group racine="11M02" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1102', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18">
+			<dflt:switch cond="ageyear &lt; 18">
 				<pims:group racine="11M03" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="11M04" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1103', dp) &gt; 0">
-			<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'D-325', diags) &gt; 0">
+			<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'D-325', diags) &gt; 0">
 				<pims:group erreur="90Z02Z" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-143', actes) &gt; 0">
@@ -1856,7 +1856,7 @@
 			<pims:group racine="11M07" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1105', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="11M08" gravite="1" modalite="T" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'D-062', diags_wo_dr) &gt; 0">
@@ -1868,7 +1868,7 @@
 			<pims:group racine="11M10" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1107', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="11M11" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="11M12" gravite="1" modalite="T" />
@@ -1909,7 +1909,7 @@
 				<dflt:switch cond="utils.count('unclassified', 'D-009', diags_wo_dr) &gt; 0" >
 					<pims:group racine="12C05" gravite="1" />
 				</dflt:switch>
-				<dflt:switch cond="ageyear lt 18">
+				<dflt:switch cond="ageyear &lt; 18">
 					<pims:group racine="12C06" gravite="1" modalite="J" />
 				</dflt:switch>
 				<pims:group racine="12C07" gravite="1" modalite="J" />
@@ -1930,7 +1930,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour lt 2">
+		<dflt:switch cond="dureesejour &lt; 2">
 			<dflt:switch cond="utils.count('unclassified', 'A-224', actes) &gt; 0" >
 				<dflt:switch cond="activite.contains(4)">
 					<pims:group racine="12K02" gravite="Z" />
@@ -1939,10 +1939,10 @@
 			</dflt:switch>
 			<dflt:goto dest="id7"/>
 		</dflt:switch>
-		<dflt:switch id="id7" cond="dureesejour == 0 and utils.count('unclassified', 'A-271', actes) &gt; 0" >
+		<dflt:switch id="id7" cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-271', actes) &gt; 0" >
 			<pims:group racine="12K06" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="12M08" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1201', dp) &gt; 0">
@@ -1974,7 +1974,7 @@
 			<pims:group erreur="90Z01Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('acteClassant', '12', actes) &gt; 0" >
-			<dflt:switch cond="dureesejour == 0 and utils.count('unclassified', 'A-194', actes) &gt; 0" >
+			<dflt:switch cond="dureesejour == 0 &amp;&amp; utils.count('unclassified', 'A-194', actes) &gt; 0" >
 				<pims:group racine="13C12" modalite="J" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-106', actes) &gt; 0" >
@@ -2032,7 +2032,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour lt 2">
+		<dflt:switch cond="dureesejour &lt; 2">
 			<dflt:switch cond="utils.count('unclassified', 'A-225', actes) &gt; 0" >
 				<dflt:switch cond="activite.contains(4)">
 					<pims:group racine="13K02" gravite="Z" />
@@ -2047,10 +2047,10 @@
 			</dflt:switch>
 			<dflt:goto dest="id8"/>
 		</dflt:switch>
-		<dflt:switch id="id8" cond="dureesejour == 0 and activite.contains(4)">
+		<dflt:switch id="id8" cond="dureesejour == 0 &amp;&amp; activite.contains(4)">
 			<pims:group racine="13K06" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="13M08" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1301', dp) &gt; 0">
@@ -2211,7 +2211,7 @@
 			<pims:group racine="14Z16" gravite="Z" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1402', diags) &gt; 0" >
-			<dflt:switch cond="utils.count('unclassified', 'D-016', diags) &gt; 0 and dureesejour lt 3" >
+			<dflt:switch cond="utils.count('unclassified', 'D-016', diags) &gt; 0 &amp;&amp; dureesejour &lt; 3" >
 				<pims:group racine="14Z08" gravite="Z" />
 			</dflt:switch>
 			<dflt:switch cond="utils.count('unclassified', 'A-120', actes) &gt; 0" >
@@ -2271,7 +2271,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="16M14" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1601', dp) &gt; 0">
@@ -2287,13 +2287,13 @@
 			<pims:group racine="16M09" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1605', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="16M16" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="16M10" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1606', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="16M17" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="16M11" gravite="1" modalite="T" />
@@ -2332,10 +2332,10 @@
 			</dflt:switch>
 			<pims:group racine="17C05" gravite="1" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour == 0 and activite.contains(4)" >
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; activite.contains(4)" >
 			<pims:group racine="17K07" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="17M14" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1701', dp) &gt; 0">
@@ -2381,26 +2381,26 @@
 		<dflt:switch cond="utils.count('classeActe', 'ADC', actes) &gt; 0">
 			<pims:group racine="18C02" gravite="1" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour == 0 and modesortie == 9" >
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; modesortie == 9" >
 			<pims:group racine="18M13" gravite="E" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="18M12" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1801', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="18M02" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="18M03" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1802', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="18M02" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="18M04" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1803', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="18M06" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="18M07" gravite="1" modalite="T" />
@@ -2430,7 +2430,7 @@
 		<dflt:switch cond="utils.count('classeActe', 'ADC', actes) &gt; 0">
 			<pims:group racine="19C02" gravite="1" />
 		</dflt:switch>
-		<dflt:switch cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="19M21" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-1901', dp) &gt; 0">
@@ -2519,7 +2519,7 @@
 		<dflt:execute expr="utils.awrdp(actes)" />
 
 		<dflt:switch cond="utils.count('unclassified', 'D-2101', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="21M02" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="21M10" gravite="1" modalite="T" />
@@ -2531,13 +2531,13 @@
 			<pims:group racine="21M12" gravite="1" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-2104', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="21M04" gravite="1" modalite="T" />
 			</dflt:switch>
 			<pims:group racine="21M05" gravite="1" modalite="T" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-2105', dp) &gt; 0">
-			<dflt:switch cond="ageyear lt 18" >
+			<dflt:switch cond="ageyear &lt; 18" >
 				<pims:group racine="21M06" gravite="1" />
 			</dflt:switch>
 			<pims:group racine="21M07" gravite="1" modalite="T" />
@@ -2558,7 +2558,7 @@
 
 	<!-- CMD 22 -->
 	<dflt:switch cond="utils.count('dpClassant', 'CMD-22', dp) &gt; 0" >
-		<dflt:switch cond="modesortie == 71 and dureesejour lt 2" >
+		<dflt:switch cond="modesortie == 71 &amp;&amp; dureesejour &lt; 2" >
 			<pims:group racine="22Z03" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-2202', diags_wo_dr) &gt; 0" >
@@ -2575,7 +2575,7 @@
 			
 		<dflt:execute expr="utils.awrdp(actes)" />
 
-		<dflt:switch cond="dureesejour == 0 and activite.contains(4)" >
+		<dflt:switch cond="dureesejour == 0 &amp;&amp; activite.contains(4)" >
 			<pims:group racine="22K02" modalite="J" />
 		</dflt:switch>
 		<pims:group racine="22M02" gravite="1" modalite="T" />
@@ -2592,7 +2592,7 @@
 		<dflt:switch cond="utils.count('classeActe', 'ADC', actes) &gt; 0">
 			<pims:group racine="23C02" gravite="1" modalite="J" />
 		</dflt:switch>
-		<dflt:switch cond="dureesejour lt 2 and utils.count('unclassified', 'A-177', actes) &gt; 0">
+		<dflt:switch cond="dureesejour &lt; 2 &amp;&amp; utils.count('unclassified', 'A-177', actes) &gt; 0">
 			<pims:group racine="23C02" gravite="1" modalite="J" />
 		</dflt:switch>
 		<dflt:switch cond="dureesejour == 0" >
@@ -2607,7 +2607,7 @@
 			</dflt:switch>
 			<dflt:goto dest="id9" />
 		</dflt:switch>
-		<dflt:switch id="id9" cond="inversion and utils.count('unclassified', 'D-057', dp) &gt; 0">
+		<dflt:switch id="id9" cond="inversion &amp;&amp; utils.count('unclassified', 'D-057', dp) &gt; 0">
 			<pims:group racine="23M19" gravite="Z" />
 		</dflt:switch>
 		<dflt:switch cond="utils.count('unclassified', 'D-2301', dp) &gt; 0">
