@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
@@ -12,7 +11,7 @@ import com.github.aiderpmsi.pims.treemodel.Node;
 public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 
 	@Override
-	public Switch createAction(Argument[] arguments) throws IOException {
+	public Switch createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String cond = null;
 		for (Argument argument : arguments) {
@@ -29,28 +28,23 @@ public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 			throw new IOException("cond parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Switch(cond);
+		return new Switch(je, cond);
 	}
 
 	public class Switch implements ActionFactory.Action {
 		
-		private String cond;
+		private Expression e; 
 		
-		private Expression e = null; 
-		
-		public Switch(String cond) {
-			this.cond = cond;
+		public Switch(JexlEngine je, String cond) {
+			e = je.createExpression(cond);
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
 		public Node<Action> execute(Node<Action> node,
-				HashMap<String, Node<Action>> labels, JexlContext jc,
-				JexlEngine jexl) throws IOException {
-			if (e == null)
-				e = jexl.createExpression(cond);
+				JexlContext jc) throws IOException {
 
-	        Object result = e.evaluate(jc);
+			Object result = e.evaluate(jc);
 	        
 	        if (result != null && result instanceof Boolean) {
 	        	Boolean resultB = (Boolean) result;
@@ -59,7 +53,7 @@ public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
 	        	else
 	        		return (Node<ActionFactory.Action>) node.nextSibling;
 	        } else {
-	        	throw new IOException(cond + " is not of boolean type");
+	        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
 	        }
 		}
 	}

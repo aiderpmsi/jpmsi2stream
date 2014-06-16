@@ -8,7 +8,7 @@ import org.apache.commons.jexl2.JexlEngine;
 public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 
 	@Override
-	public Assign createAction(Argument[] arguments) throws IOException {
+	public Assign createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String expr = null, var = null;
 		for (Argument argument : arguments) {
@@ -29,26 +29,22 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 			throw new IOException("var parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Assign(var, expr);
+		return new Assign(je, var, expr);
 	}
 
 	public class Assign extends BaseAction {
 		
-		private String var, expr;
+		private Expression e;
 		
-		private Expression e = null;
+		private String var;
 		
-		public Assign(String var, String expr) {
+		public Assign(JexlEngine je, String var, String expr) {
+			e = je.createExpression(expr);
 			this.var = var;
-			this.expr = expr;
 		}
 		
 		@Override
-		public void execute(JexlContext jc, JexlEngine jexl) throws IOException {
-	        // CREATES THE EXPRESSION IF NEEDED
-			if (e == null) {
-				e = jexl.createExpression(expr);
-			}
+		public void execute(JexlContext jc) throws IOException {
 	        // RUNS THE EXPRESSION
 			jc.set(var, e.evaluate(jc));
 		}

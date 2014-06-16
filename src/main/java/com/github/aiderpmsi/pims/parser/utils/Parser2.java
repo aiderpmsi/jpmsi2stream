@@ -12,7 +12,7 @@ import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType;
 import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineTypeImpl;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
-public class Parser2 extends XMLFilterImpl{
+public class Parser2 extends XMLFilterImpl {
 
 	private String start;
 	

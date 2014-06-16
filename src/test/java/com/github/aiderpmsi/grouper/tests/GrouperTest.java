@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
-import com.github.aiderpmsi.pims.grouper.tags.Group;
+import com.github.aiderpmsi.pims.grouper.tags.GroupFactory.Group;
 import com.github.aiderpmsi.pims.grouper.utils.Grouper;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 public class GrouperTest {
@@ -89,9 +89,9 @@ public class GrouperTest {
     }
     private void test(Group gp, String racine, String gravite, String modalite, String erreur) {
 		Assert.assertNotNull(gp);
-		Assert.assertEquals(racine, gp.getRacine());
-		Assert.assertEquals(gravite, gp.getGravite());
-		Assert.assertEquals(modalite, gp.getModalite());
-		Assert.assertEquals(erreur, gp.getErreur());
+		Assert.assertEquals(racine, gp.racine);
+		Assert.assertEquals(gravite, gp.gravite);
+		Assert.assertEquals(modalite, gp.modalite);
+		Assert.assertEquals(erreur, gp.erreur);
     }
 }

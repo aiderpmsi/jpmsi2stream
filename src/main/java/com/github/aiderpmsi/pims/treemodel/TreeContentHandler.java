@@ -4,28 +4,32 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.apache.commons.jexl2.JexlEngine;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.pims.treebrowser.Action;
+import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
 
 public class TreeContentHandler implements ContentHandler {
 
 	/** Index on ids */
-	private HashMap<String, Node<Action>> indexId = new HashMap<>();
+	private HashMap<String, Node<?>> indexId = new HashMap<>();
 	
 	/** Tree representation */
-	private Node<Action> root = new Node<>(Action.class);
+	private Node<Action> root = null;
 	
 	/** Working Nodes From precedent levels */
 	private LinkedList<Node<?>> nodes = new LinkedList<>();
 	
 	/** Current level */
-	int level = 0;
+	private int level = 0;
+	
+	/** Script Engine */
+	private JexlEngine je = null;
 	
 	/** associations between namespaces and actions */
 	private HashMap<String, HashMap<String, ActionFactory<? extends Action>>> actions = new HashMap<>();
@@ -45,6 +49,10 @@ public class TreeContentHandler implements ContentHandler {
 		actionFactories.put(namecommand, actionFactory);
 	}
 
+	public void setEngine(JexlEngine je) {
+		this.je = je;
+	}
+	
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
@@ -100,7 +108,7 @@ public class TreeContentHandler implements ContentHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 		// CREATES THE CORRESPONDING NODE
-		Node<Action> newNode = new Node<>(Action.class);
+		Node<Action> newNode = new Node<>(Action.class, indexId);
 
 		// GETS THE ACTION FACTORY FOR THIS CLASS
 		HashMap<String, ActionFactory<? extends Action>> actionFactories = null;
@@ -125,7 +133,7 @@ public class TreeContentHandler implements ContentHandler {
 		
 		// GETS THE CORRESPONDING ACTION
 		try {
-			newNode.setContent(actionFactory.createAction(args));
+			newNode.setContent(actionFactory.createAction(je, args));
 		} catch (IOException e) {
 			throw new SAXException(e);
 		}
@@ -159,7 +167,8 @@ public class TreeContentHandler implements ContentHandler {
 		return root;
 	}
 
-	public HashMap<String, Node<Action>> getIndexId() {
+	public HashMap<String, Node<?>> getIndexId() {
 		return indexId;
 	}
+
 }

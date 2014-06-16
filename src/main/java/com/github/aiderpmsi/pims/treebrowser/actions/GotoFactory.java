@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
@@ -11,7 +10,7 @@ import com.github.aiderpmsi.pims.treemodel.Node;
 public class GotoFactory implements ActionFactory<GotoFactory.Goto> {
 
 	@Override
-	public Goto createAction(Argument[] arguments) throws IOException {
+	public Goto createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String toid = null;
 		for (Argument argument : arguments) {
@@ -39,12 +38,12 @@ public class GotoFactory implements ActionFactory<GotoFactory.Goto> {
 			this.toid = toid;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public Node<Action> execute(Node<Action> node,
-				HashMap<String, Node<Action>> labels, JexlContext jc,
-				JexlEngine jexl) throws IOException {
+				JexlContext jc) throws IOException {
 			Node<Action> toGoto;
-			if ((toGoto = labels.get(toid)) == null) {
+			if ((toGoto = (Node<ActionFactory.Action>) node.index.get(toid)) == null) {
 				throw new IOException("id " + toid + " not found");
 			} else {
 				return toGoto;

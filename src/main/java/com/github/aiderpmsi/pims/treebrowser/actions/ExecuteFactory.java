@@ -9,7 +9,7 @@ import org.apache.commons.jexl2.Script;
 public class ExecuteFactory implements ActionFactory<ExecuteFactory.Execute> {
 
 	@Override
-	public Execute createAction(Argument[] arguments) throws IOException {
+	public Execute createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String expr = null;
 		for (Argument argument : arguments) {
@@ -26,25 +26,19 @@ public class ExecuteFactory implements ActionFactory<ExecuteFactory.Execute> {
 			throw new IOException("expr parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Execute(expr);
+		return new Execute(je, expr);
 	}
 
 	public class Execute extends BaseAction {
 		
-		private String expr;
+		private Script e;
 		
-		private Script e = null;
-		
-		public Execute(String expr) {
-			this.expr = expr;
+		public Execute(JexlEngine je, String expr) {
+			e = je.createScript(expr);
 		}
 		
 		@Override
-		public void execute(JexlContext jc, JexlEngine jexl) throws IOException {
-	        // CREATES THE EXPRESSION IF NEEDED
-			if (e == null) {
-				e = jexl.createScript(expr);
-			}
+		public void execute(JexlContext jc) throws IOException {
 	        // RUNS THE EXPRESSION
 			e.execute(jc);
 		}

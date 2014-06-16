@@ -1,5 +1,7 @@
 package com.github.aiderpmsi.pims.treemodel;
 
+import java.util.HashMap;
+
 
 public class Node<T> {
 
@@ -11,12 +13,15 @@ public class Node<T> {
 	
 	public Node<?> nextSibling = null;
 	
-	public Node(Class<? extends T> type) {
+	public HashMap<String, Node<?>> index;
+	
+	public Node(Class<? extends T> type, HashMap<String, Node<?>> index) {
 		this.type = type;
+		this.index = index;
 	}
 	
-	public Node(Class<? extends T> type, T content) {
-		this(type);
+	public Node(Class<? extends T> type, HashMap<String, Node<?>> index, T content) {
+		this(type, index);
 		this.setContent(content);
 	}
 
