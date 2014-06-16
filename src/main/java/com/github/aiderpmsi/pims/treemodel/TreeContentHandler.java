@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.script.Compilable;
-
+import org.apache.commons.jexl2.JexlEngine;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
+import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
 
 public class TreeContentHandler implements ContentHandler {
@@ -30,7 +29,7 @@ public class TreeContentHandler implements ContentHandler {
 	private int level = 0;
 	
 	/** Script Engine */
-	private Compilable se = null;
+	private JexlEngine je = null;
 	
 	/** associations between namespaces and actions */
 	private HashMap<String, HashMap<String, ActionFactory<? extends Action>>> actions = new HashMap<>();
@@ -50,8 +49,8 @@ public class TreeContentHandler implements ContentHandler {
 		actionFactories.put(namecommand, actionFactory);
 	}
 
-	public void setEngine(Compilable se) {
-		this.se = se;
+	public void setEngine(JexlEngine je) {
+		this.je = je;
 	}
 	
 	@Override
@@ -136,7 +135,7 @@ public class TreeContentHandler implements ContentHandler {
 		
 		// GETS THE CORRESPONDING ACTION
 		try {
-			newNode.setContent(actionFactory.createAction(se, args));
+			newNode.setContent(actionFactory.createAction(je, args));
 		} catch (IOException e) {
 			throw new SAXException(e);
 		}

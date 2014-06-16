@@ -2,15 +2,14 @@ package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
 
-import javax.script.Compilable;
-import javax.script.CompiledScript;
-import javax.script.ScriptContext;
-import javax.script.ScriptException;
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl2.Script;
 
 public class ExecuteFactory implements ActionFactory<ExecuteFactory.Execute> {
 
 	@Override
-	public Execute createAction(Compilable se, Argument[] arguments) throws IOException {
+	public Execute createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String expr = null;
 		for (Argument argument : arguments) {
@@ -28,29 +27,28 @@ public class ExecuteFactory implements ActionFactory<ExecuteFactory.Execute> {
 			throw new IOException("expr parameter has to be set in " + getClass().getSimpleName());
 		}
 		
-		return new Execute(se, expr);
+		return new Execute(je, expr);
 	}
 
 	public class Execute extends BaseAction {
 		
-		private CompiledScript e;
+		private Script e = null;
+
+		private String expr;
 		
-		public Execute(Compilable se, String expr) {
-			try {
-				e = se.compile(expr);
-			} catch (ScriptException e) {
-				throw new RuntimeException(e);
-			}
+		private JexlEngine je;
+		
+		public Execute(JexlEngine je, String expr) {
+			this.expr = expr;
+			this.je = je;
 		}
 		
 		@Override
-		public void execute(ScriptContext sc) throws IOException {
+		public void execute(JexlContext jc) throws IOException {
+			if (e == null)
+				e = je.createScript(expr);
 	        // RUNS THE EXPRESSION
-			try {
-				e.eval(sc);
-			} catch (ScriptException e) {
-				throw new IOException(e);
-			}
+			e.execute(jc);
 		}
 	}
 

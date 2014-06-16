@@ -2,10 +2,8 @@ package com.github.aiderpmsi.pims.grouper.tags;
 
 import java.io.IOException;
 
-import javax.script.Compilable;
-import javax.script.ScriptContext;
-import javax.script.SimpleScriptContext;
-
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.JexlEngine;
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
 import com.github.aiderpmsi.pims.treemodel.Node;
@@ -13,7 +11,7 @@ import com.github.aiderpmsi.pims.treemodel.Node;
 public class GroupFactory implements ActionFactory<GroupFactory.Group> {
 
 	@Override
-	public Group createAction(Compilable se, Argument[] arguments) throws IOException {
+	public Group createAction(JexlEngine je, Argument[] arguments) throws IOException {
 		// GETS ARGUMENTS
 		String erreur = "", racine = "", modalite = "", gravite = "";
 		for (Argument argument : arguments) {
@@ -46,9 +44,9 @@ public class GroupFactory implements ActionFactory<GroupFactory.Group> {
 		}
 
 		@Override
-		public Node<Action> execute(Node<Action> node, ScriptContext jc)
+		public Node<Action> execute(Node<Action> node, JexlContext jc)
 				throws IOException {
-			jc.setAttribute("group", this, SimpleScriptContext.ENGINE_SCOPE);
+			jc.set("group", this);
 			return null;
 		}
 		

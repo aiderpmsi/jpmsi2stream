@@ -3,9 +3,7 @@ package com.github.aiderpmsi.pims.grouper.utils;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.script.Compilable;
-import javax.script.ScriptEngineManager;
-
+import org.apache.commons.jexl2.JexlEngine;
 import com.github.aiderpmsi.pims.grouper.tags.GroupFactory;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserBuilder;
 
@@ -32,12 +30,8 @@ public class GrouperConfigBuilder extends TreeBrowserBuilder {
 	}
 
 	@Override
-	protected Compilable getScriptEngine() {
-		ScriptEngineManager manager = new ScriptEngineManager();
-		Compilable js = (Compilable) manager.getEngineByName("js");
-		if (js == null)
-			throw new RuntimeException("Javascript engine not found");
-		return js;
+	protected JexlEngine getJexlEngine() {
+		return new JexlEngine();
 	}
 		
 }
