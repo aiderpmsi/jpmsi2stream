@@ -47,6 +47,7 @@ public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
 		public Assign(JexlEngine je, String var, String expr) {
 			this.var = var;
 			this.expr = expr;
+			this.je = je;
 		}
 		
 		@Override
