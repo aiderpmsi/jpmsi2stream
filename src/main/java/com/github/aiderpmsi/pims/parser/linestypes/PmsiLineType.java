@@ -16,7 +16,7 @@ import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
  * @author delabre
  *
  */
-public abstract class PmsiLineType {
+public abstract class PmsiLineType implements Cloneable {
 	
 	/**
 	 * Checks if thie line is a valid line

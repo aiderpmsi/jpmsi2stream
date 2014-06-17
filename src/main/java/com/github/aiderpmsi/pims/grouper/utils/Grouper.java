@@ -1,5 +1,6 @@
 package com.github.aiderpmsi.pims.grouper.utils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Grouper {
 		tree = (Node<Action>) gcb.build();
 	}
 	
-	public GroupFactory.Group group(List<RssContent> multirss) throws Exception {
+	public GroupFactory.Group group(List<RssContent> multirss) throws IOException {
 		// GETS THE MIXED RSS
 		Mixer mixer = new Mixer();
 		mixer.setDicos(dicos);
