@@ -45,6 +45,7 @@ public class Parser extends XMLFilterImpl {
 		context.put("br", new MemoryBufferedReader(input.getCharacterStream()));
 		context.put("ch", getContentHandler());
 		context.put("eh", getErrorHandler());
+		context.put("utils", new Utils());
 		context.put("start", type);
 		JexlContext jc = new MapContext(context);
 

@@ -102,9 +102,9 @@
 		<dflt:assign var="linenumber" expr="linenumber + 1" />
 		<dflt:execute expr="rss116header.writeResults(ch)" />
 
-		<dflt:switch cond="rss116main.isFound(br)" >
+		<dflt:switch id="rssstart" cond="rss116main.isFound(br)" >
 
-			<dflt:execute id="rssstart" expr="utils.writelinenumber(linenumber, ch)" />
+			<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
 			<dflt:assign var="linenumber" expr="linenumber + 1" />
 
 			<dflt:execute expr="rss116main.writeResults(ch)" />
@@ -133,7 +133,7 @@
 					<dflt:goto dest="rssdad"/>
 				</dflt:switch>
 				<dflt:execute expr="utils.noLineError('dad element', linenumber, eh)">
-					<dflt:goto dest="rssdad" />
+					<dflt:execute expr="" />
 				</dflt:execute>
 			</dflt:switch>
 			
@@ -144,7 +144,7 @@
 					<dflt:goto dest="rssza"/>
 				</dflt:switch>
 				<dflt:execute expr="utils.noLineError('za element', linenumber, eh)">
-					<dflt:goto dest="rssza" />
+					<dflt:execute expr="" />
 				</dflt:execute>
 			</dflt:switch>
 
