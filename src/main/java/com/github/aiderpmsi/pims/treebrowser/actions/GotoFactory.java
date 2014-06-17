@@ -35,6 +35,8 @@ public class GotoFactory implements ActionFactory<GotoFactory.Goto> {
 		
 		private String dest;
 		
+		private Node<Action> toGoto = null;
+		
 		public Goto(String dest) {
 			this.dest = dest;
 		}
@@ -43,9 +45,12 @@ public class GotoFactory implements ActionFactory<GotoFactory.Goto> {
 		@Override
 		public Node<Action> execute(Node<Action> node,
 				JexlContext jc) throws IOException {
-			Node<Action> toGoto;
-			if ((toGoto = (Node<ActionFactory.Action>) node.index.get(dest)) == null) {
-				throw new IOException("id " + dest + " not found");
+			if (toGoto == null) {
+				if ((toGoto = (Node<ActionFactory.Action>) node.index.get(dest)) == null) {
+					throw new IOException("id " + dest + " not found");
+				} else {
+					return toGoto;
+				}
 			} else {
 				return toGoto;
 			}
