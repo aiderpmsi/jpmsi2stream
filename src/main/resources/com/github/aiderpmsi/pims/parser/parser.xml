@@ -35,7 +35,6 @@
 		<dflt:assign var="eof" expr="lb.createLine('eof')" />
 
 		<dflt:execute expr="utils.writelinenumber(linenumber, ch)" />
-		<dflt:assign var="linenumber" expr="linenumber + 1" />
 		<dflt:execute expr="rsf2012header.writeResults(ch)" />
 		
 		<dflt:execute id="startrsf" expr="utils.writelinenumber(linenumber, ch)" />
