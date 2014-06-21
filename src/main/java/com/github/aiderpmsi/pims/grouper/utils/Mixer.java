@@ -52,9 +52,12 @@ public class Mixer {
 		// ADDS EACH DAS AS SUM OF DIAGS (EXCEPT IF IT IS DP OR DR)
 		for (RssContent content : multirss) {
 			for (EnumMap<RssDa, String> diag : content.getRssda()) {
-				String diagcim = content.formatDiagnostic(diag.get(RssDa.da));
-				if (!diagcim.equals(dp) && !diagcim.equals(dr)) {
-					rss.getRssda().add(diag);
+				String da;
+				if ((da = diag.get(RssDa.da)) != null) {
+					String diagcim = content.formatDiagnostic(da);
+					if (!diagcim.equals(dp) && !diagcim.equals(dr)) {
+						rss.getRssda().add(diag);
+					}
 				}
 			}
 		}
@@ -187,7 +190,7 @@ public class Mixer {
 			Calendar datesortie = (Calendar) cont.get("{0}", "Calendar", RssMain.datesortie);
 			Integer dureesejour = (new Utils(dicos)).duration(dateentree, datesortie, "day");
 			// IF DP NOT Z AND NOT R AND DURATION GREATER OR EQUAL THAN 2, ADD 100 POINTS FOR EACH RUM
-			if (!dp.substring(0, 1).equals("Z") && !dp.substring(0, 1).equals("R") && dureesejour >= 2) {
+			if (!dp.startsWith("Z") && !dp.startsWith("R") && dureesejour >= 2) {
 				penalties[i] = penalties[i] + i * 100;
 			}
 			// ADD 2 POINTS IF DURATION IS O AND 1 IF DURATION IS 1
@@ -195,7 +198,7 @@ public class Mixer {
 				penalties[i] = penalties[i] + 1;
 			else if (dureesejour == 0)
 				penalties[i] = penalties[i] + 2;
-			if (dp.substring(0, 1).equals("Z") || dp.substring(0, 1).equals("R")) {
+			if (dp.startsWith("Z") || dp.startsWith("R")) {
 				// ADD 150 POINTS IF DP IS Z OR R
 				penalties[i] = penalties[i] + 150;
 			} else if (diagsimprecis.contains(dp)) {

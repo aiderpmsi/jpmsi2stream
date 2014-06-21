@@ -89,6 +89,15 @@ public class GrouperTest {
     }
     
     @Test
+    public void testAvoir() throws Exception {
+		List<RssContent> cont = new T11M061T();
+
+		Group group = gp.group(cont);
+
+		test(group, "11M06", "1", "T", "");
+    }
+    
+    @Test
     public void testMultigrouper() throws Exception {
 		List<RssContent> cont1 = new T28Z04Zb();
 		List<RssContent> cont2 = new T15Z10E();
