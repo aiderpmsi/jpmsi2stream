@@ -89,12 +89,12 @@ public class GrouperTest {
     }
     
     @Test
-    public void testAvoir() throws Exception {
-		List<RssContent> cont = new T11M061T();
+    public void test11K021J() throws Exception {
+		List<RssContent> cont = new T11K021J();
 
 		Group group = gp.group(cont);
 
-		test(group, "11M06", "1", "T", "");
+		test(group, "11K02", "1", "J", "");
     }
     
     @Test

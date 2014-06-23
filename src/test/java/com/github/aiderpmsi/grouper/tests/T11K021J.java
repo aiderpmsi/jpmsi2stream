@@ -4,7 +4,7 @@ import com.github.aiderpmsi.pims.grouper.model.RssActe;
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.RssMain;
 
-public class T11M061T extends BaseTest {
+public class T11K021J extends BaseTest {
 
 	private static final long serialVersionUID = -8286176082721327295L;
 
@@ -24,7 +24,7 @@ public class T11M061T extends BaseTest {
 
 	private Object[][][] acte = {
 			{
-				{RssActe.codeccam, "JVJF000 "},
+				{RssActe.codeccam, "JVJF008 "},
 				{RssActe.phase, "0"},
 				{RssActe.activite, "1"}
 			}
@@ -35,7 +35,7 @@ public class T11M061T extends BaseTest {
 			}
 	};
 	
-	public T11M061T() {
+	public T11K021J() {
 		RssContent rss = buildRssContent(rssmain, acte, da);
 		add(rss);
 	}
