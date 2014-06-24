@@ -3,10 +3,6 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.Attributes2Impl;
-
 import com.github.aiderpmsi.pims.parser.model.Element;
 import com.github.aiderpmsi.pims.parser.model.LineTypeDefinition;
 import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
@@ -35,7 +31,9 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	
 	private String lineversion;
 	
-	public PmsiLineTypeImpl(LineTypeDefinition linetype) {
+	public PmsiLineTypeImpl(LineWriter lineWriter, LineTypeDefinition linetype) {
+		super(lineWriter);
+		
 		this.elements = new ArrayList<>(linetype.elements.size());
 		this.name = linetype.name;
 		this.lineversion = linetype.version;
@@ -61,35 +59,6 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		}
 	}
 	
-	public void writeResults(ContentHandler contentHandler) throws IOException {
-		
-		try {
-			// WRITES FIRST ELEMENT WITH VERSION IN ATTRIBUTES
-			Attributes2Impl atts = new Attributes2Impl();
-			atts.addAttribute("", "version", "version", "text", lineversion);
-			contentHandler.startElement("", name, name, atts);
-
-			for (PmsiElement element : elements) {
-				// Début d'élément :
-				contentHandler.startElement("", element.getName(), element.getName(), new Attributes2Impl());
-				
-				// Contenu de l'élément
-				Segment content = element.getContent();
-				contentHandler.characters(content.sequence, content.start, content.count);
-				// Fin de l'élément
-				contentHandler.endElement("", element.getName(), element.getName());
-			}
-
-			contentHandler.endElement("", name, name);
-			
-			// CONSUME IT FROM MEMORYBUFFEREDREADER
-			br.consume(matchLength);
-			
-		} catch (SAXException se) {
-			throw new IOException(se);
-		}
-	}
-
 	@Override
 	public boolean isFound(MemoryBufferedReader br) throws IOException {
 		this.br = br;
@@ -127,20 +96,28 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		return Integer.parseInt(num);
 	}
 
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
-	protected String getReadedLine() {
+	public String getReadedLine() {
 		return readedLine;
 	}
 
-	protected int getMatchLength() {
+	public int getMatchLength() {
 		return matchLength;
 	}
 
-	protected String getLineversion() {
+	public String getLineversion() {
 		return lineversion;
 	}
 
+	public ArrayList<PmsiElement> getElements() {
+		return elements;
+	}
+
+	public MemoryBufferedReader getBr() {
+		return br;
+	}
+	
 }

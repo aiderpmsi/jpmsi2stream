@@ -16,10 +16,21 @@ import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
  * @author delabre
  *
  */
-public abstract class PmsiLineType implements Cloneable {
+public abstract class PmsiLineType {
+	
+	@FunctionalInterface
+	public interface LineWriter {
+		public void writeResults(PmsiLineType pmsiLineType, ContentHandler contentHandler) throws IOException;
+	}
+
+	private LineWriter lineWriter;
+	
+	public PmsiLineType(LineWriter lineWriter) {
+		this.lineWriter = lineWriter;
+	}
 	
 	/**
-	 * Checks if thie line is a valid line
+	 * Checks if this line is a valid line
 	 * @return
 	 */
 	public abstract boolean isFound(MemoryBufferedReader br) throws IOException;
@@ -29,6 +40,8 @@ public abstract class PmsiLineType implements Cloneable {
 	 * @param contentHandler
 	 * @throws IOException
 	 */
-	public abstract void writeResults(ContentHandler contentHandler) throws IOException;
+	public void writeResults(ContentHandler contentHandler) throws IOException {
+		lineWriter.writeResults(this, contentHandler);
+	}
 
 }

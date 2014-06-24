@@ -12,6 +12,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.github.aiderpmsi.pims.parser.linestypes.LineBuilder;
 import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
+import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType.LineWriter;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
@@ -25,10 +26,13 @@ public class Parser extends XMLFilterImpl {
 	
 	private LineConfDictionary dico;
 	
-	public Parser(Node<ActionFactory.Action> tree, LineConfDictionary dico, String type) throws TreeBrowserException {
+	private LineWriter lineWriter;
+	
+	public Parser(Node<ActionFactory.Action> tree, LineConfDictionary dico, LineWriter lineWriter, String type) throws TreeBrowserException {
 		this.tree = tree;
 		this.type = type;
 		this.dico = dico;
+		this.lineWriter = lineWriter;
 	}
 
 
@@ -41,7 +45,7 @@ public class Parser extends XMLFilterImpl {
 
 		// CREATES THE VARS MAP
 		HashMap<String, Object> context = new HashMap<>();
-		context.put("lb", new LineBuilder(dico));
+		context.put("lb", new LineBuilder(dico, lineWriter));
 		context.put("br", new MemoryBufferedReader(input.getCharacterStream()));
 		context.put("ch", getContentHandler());
 		context.put("eh", getErrorHandler());

@@ -1,5 +1,6 @@
 package com.github.aiderpmsi.parser.tests;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +17,59 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.ext.Attributes2Impl;
 import org.xml.sax.ext.DefaultHandler2;
 
+import com.github.aiderpmsi.pims.parser.linestypes.EndOfFile;
+import com.github.aiderpmsi.pims.parser.linestypes.PmsiElement;
+import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType;
+import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineTypeImpl;
+import com.github.aiderpmsi.pims.parser.linestypes.Segment;
+import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType.LineWriter;
 import com.github.aiderpmsi.pims.parser.utils.Parser;
 import com.github.aiderpmsi.pims.parser.utils.ParserFactory;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class ParserTest {
+	
+	LineWriter testLineWriter = (PmsiLineType pmsiLineType, ContentHandler contentHandler) -> {
+
+		if (pmsiLineType instanceof EndOfFile) {
+			try {
+				contentHandler.startElement("", "eof", "eof", new Attributes2Impl());
+				contentHandler.endElement("",  "eof",  "eof");
+			} catch (SAXException e) {
+				throw new IOException(e);
+			}
+		} else if (pmsiLineType instanceof PmsiLineTypeImpl) {
+			try {
+				PmsiLineTypeImpl pmsiLineTypeImpl = (PmsiLineTypeImpl) pmsiLineType;
+				// WRITES FIRST ELEMENT WITH VERSION IN ATTRIBUTES
+				Attributes2Impl atts = new Attributes2Impl();
+				atts.addAttribute("", "version", "version", "text", pmsiLineTypeImpl.getLineversion());
+				contentHandler.startElement("", pmsiLineTypeImpl.getName(), pmsiLineTypeImpl.getName(), atts);
+				
+				for (PmsiElement element : pmsiLineTypeImpl.getElements()) {
+					// Début d'élément :
+					contentHandler.startElement("", element.getName(), element.getName(), new Attributes2Impl());
+					
+					// Contenu de l'élément
+					Segment content = element.getContent();
+					contentHandler.characters(content.sequence, content.start, content.count);
+					// Fin de l'élément
+					contentHandler.endElement("", element.getName(), element.getName());
+				}
+
+				contentHandler.endElement("", pmsiLineTypeImpl.getName(), pmsiLineTypeImpl.getName());
+				
+				// CONSUME IT FROM MEMORYBUFFEREDREADER
+				pmsiLineTypeImpl.getBr().consume(pmsiLineTypeImpl.getMatchLength());
+				
+			} catch (SAXException se) {
+				throw new IOException(se);
+			}
+		}	
+	};
  
 	public class TestEh implements ErrorHandler {
 
@@ -129,7 +176,7 @@ public class ParserTest {
     			+ "1328Z04Z 116000123456789016131709              302000259           150903    150819521RES1  040320138 040320138 30110000000        010000001Z491            000                                 04032013JVJF00801       01\n"
     			+ "1328Z04Z 116000123456789016131711              302000261           150905    150819521RES1  080320138 080320138 30110000000        010000001Z491            000                                 08032013JVJF00801       01";
 
-    	ParserFactory pf = new ParserFactory();
+    	ParserFactory pf = new ParserFactory(testLineWriter);
     	
     	Parser p = pf.newParser("rssheader");
 
@@ -169,7 +216,7 @@ public class ParserTest {
     			+ "C78001731409027               25312302230166700030213002919796431012013B    0100690004000002700018631000001863000186300000000001863PAI"
     			+ "L78001731409027               2531230223016670003021300291979603012013011104    03012013011109    03012013019005    03012013019105    0101190000        ";
 
-    	ParserFactory pf = new ParserFactory();
+    	ParserFactory pf = new ParserFactory(testLineWriter);
     	
     	Parser p = pf.newParser("rsfheader");
 
@@ -208,7 +255,7 @@ public class ParserTest {
     			+ "C78001731409027               25312302230166700030213002919796431012013B    0100690004000002700018631000001863000186300000000001863PAI"
     			+ "L78001731409027               2531230223016670003021300291979603012013011104    03012013011109    03012013019005    03012013019105    0101190000        ";
 
-    	ParserFactory pf = new ParserFactory();
+    	ParserFactory pf = new ParserFactory(testLineWriter);
     	
     	DefaultHandler2 ch = new DefaultHandler2();
     	for (int i = 0 ; i < 10000 ; i++) {
