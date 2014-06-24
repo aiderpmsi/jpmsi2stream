@@ -1,6 +1,8 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
@@ -8,55 +10,48 @@ import org.apache.commons.jexl2.JexlEngine;
 
 import com.github.aiderpmsi.pims.treemodel.Node;
 
-public class SwitchFactory implements ActionFactory<SwitchFactory.Switch> {
+public class SwitchFactory extends SimpleActionFactory {
 
-	@Override
-	public Switch createAction(JexlEngine je, Argument[] arguments) throws IOException {
-		// GETS ARGUMENTS
-		String cond = null;
-		for (Argument argument : arguments) {
-			switch (argument.key) {
-			case "cond":
-				cond = argument.value; break;
-			case "id": break;
-			default:
-				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
-			}
-		}
-		
-		// CHECK ARGUMENTS
-		if (cond == null) {
-			throw new IOException("cond parameter has to be set in " + getClass().getSimpleName());
-		}
-		
-		return new Switch(je, cond);
+	private final static HashSet<String> neededArguments = new HashSet<>(1);
+	
+	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(0);
+	
+	static {
+		neededArguments.add("cond");
+	}
+	
+	public SwitchFactory() {
+		super(neededArguments, defaultArgumentsValues);
 	}
 
-	public class Switch implements ActionFactory.Action {
-		
-		private Expression e; 
-		
-		public Switch(JexlEngine je, String cond) {
-			e = je.createExpression(cond);
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public Node<Action> execute(Node<Action> node,
-				JexlContext jc) throws IOException {
+	@Override
+	public final IAction createSimpleAction(final JexlEngine je,
+			final HashMap<String, String> arguments) throws IOException {
 
-			Object result = e.evaluate(jc);
-	        
-	        if (result != null && result instanceof Boolean) {
-	        	Boolean resultB = (Boolean) result;
-	        	if (resultB)
-	        		return (Node<ActionFactory.Action>) node.firstChild;
-	        	else
-	        		return (Node<ActionFactory.Action>) node.nextSibling;
-	        } else {
-	        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
-	        }
-		}
+		return new IAction() {
+			
+			private Expression e = null; 
+
+			@Override
+			public final Node<?> execute(final Node<?> node, final JexlContext jc) throws IOException {
+				if (e == null) {
+					e = je.createExpression(arguments.get("cond"));
+				}
+				
+				Object result = e.evaluate(jc);
+		        
+		        if (result != null && result instanceof Boolean) {
+		        	Boolean resultB = (Boolean) result;
+		        	if (resultB)
+		        		return (Node<?>) node.firstChild;
+		        	else
+		        		return (Node<?>) node.nextSibling;
+		        } else {
+		        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
+		        }
+			}
+		};
+
 	}
 	
 }

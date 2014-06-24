@@ -13,23 +13,22 @@ import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.model.RssDa;
 import com.github.aiderpmsi.pims.grouper.model.RssMain;
 import com.github.aiderpmsi.pims.grouper.model.Utils;
-import com.github.aiderpmsi.pims.grouper.tags.GroupFactory;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class Grouper {
 
-	private Node<ActionFactory.Action> tree;
+	private Node<IActionFactory.IAction> tree;
 	
 	private Dictionaries dicos = new Dictionaries();
 	
 	@SuppressWarnings("unchecked")
 	public Grouper() throws TreeBrowserException {
 		GrouperConfigBuilder gcb = new GrouperConfigBuilder();
-		tree = (Node<Action>) gcb.build();
+		tree = (Node<IAction>) gcb.build();
 	}
 	
 	/**
@@ -38,7 +37,7 @@ public class Grouper {
 	 * @return
 	 * @throws IOException
 	 */
-	public GroupFactory.Group group(List<RssContent> multirss) throws IOException {
+	public HashMap<?, ?> group(List<RssContent> multirss) throws IOException {
 		// GETS THE MIXED RSS
 		Mixer mixer = new Mixer(dicos);
 		RssContent rss = mixer.mix(multirss);
@@ -65,9 +64,7 @@ public class Grouper {
 		}
 		
 		// GETS THE MACHINE RESULT
-		GroupFactory.Group result = (GroupFactory.Group) tb.getJc().get("group");
-		
-		return result;
+		return (HashMap<?, ?>) tb.getJc().get("group");
 	}
 
 }

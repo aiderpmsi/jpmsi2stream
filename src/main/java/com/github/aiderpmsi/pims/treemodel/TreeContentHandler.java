@@ -10,9 +10,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
-import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 
 public class TreeContentHandler implements ContentHandler {
 
@@ -20,7 +19,7 @@ public class TreeContentHandler implements ContentHandler {
 	private HashMap<String, Node<?>> indexId = new HashMap<>();
 	
 	/** Tree representation */
-	private Node<Action> root = null;
+	private Node<IAction> root = null;
 	
 	/** Working Nodes From precedent levels */
 	private LinkedList<Node<?>> nodes = new LinkedList<>();
@@ -32,7 +31,7 @@ public class TreeContentHandler implements ContentHandler {
 	private JexlEngine je = null;
 	
 	/** associations between namespaces and actions */
-	private HashMap<String, HashMap<String, ActionFactory<? extends Action>>> actions = new HashMap<>();
+	private HashMap<String, HashMap<String, IActionFactory>> actions = new HashMap<>();
 
 	/**
 	 * Adds an action for a namespace
@@ -40,8 +39,8 @@ public class TreeContentHandler implements ContentHandler {
 	 * @param namecommand
 	 * @param action
 	 */
-	public void addAction(String namespace, String namecommand, ActionFactory<? extends Action> actionFactory) {
-		HashMap<String, ActionFactory<? extends Action>> actionFactories;
+	public void addAction(String namespace, String namecommand, IActionFactory actionFactory) {
+		HashMap<String, IActionFactory> actionFactories;
 		if ((actionFactories = actions.get(namespace)) == null) {
 			actionFactories = new HashMap<>();
 			actions.put(namespace, actionFactories);
@@ -110,32 +109,30 @@ public class TreeContentHandler implements ContentHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 		// CREATES THE CORRESPONDING NODE
-		Node<Action> newNode = new Node<>(Action.class, indexId);
+		Node<IAction> newNode = new Node<>(IAction.class, indexId);
 
 		// GETS THE ACTION FACTORY FOR THIS CLASS
-		HashMap<String, ActionFactory<? extends Action>> actionFactories = null;
-		ActionFactory<? extends Action> actionFactory = null;
+		HashMap<String, IActionFactory> actionFactories = null;
+		IActionFactory actionFactory = null;
 		if ((actionFactories = actions.get(uri)) == null)
 			throw new SAXException("namespace '" + uri + "' is not defined");
 		if ((actionFactory = actionFactories.get(localName)) == null)
 			throw new SAXException(localName + " function in namespace " + uri + " is unknown");
 
 		// SETS THE ARGUMENTS OF THE ACTION CLASS
-		Argument[] args = new Argument[atts.getLength()];
-		for (int i = 0 ; i < args.length ; i++) {
-			args[i] = new Argument();
-			args[i].key = atts.getLocalName(i);
-			args[i].value = atts.getValue(i);
+		HashMap<String, String> arguments = new HashMap<>(atts.getLength());
+		for (int i = 0 ; i < atts.getLength() ; i++) {
+			arguments.put(atts.getLocalName(i), atts.getValue(i));
 			
 			// IF THIS ELEMENT HAS AN ID, USE IT TO INDEX IT
-			if (args[i].key.equals("id")) {
-				indexId.put(args[i].value, newNode);
+			if (atts.getLocalName(i).equals("id")) {
+				indexId.put(atts.getValue(i), newNode);
 			}
 		}
 		
 		// GETS THE CORRESPONDING ACTION
 		try {
-			newNode.setContent(actionFactory.createAction(je, args));
+			newNode.setContent(actionFactory.createAction(je, arguments));
 		} catch (IOException e) {
 			throw new SAXException(e);
 		}
@@ -170,7 +167,7 @@ public class TreeContentHandler implements ContentHandler {
 		// DO NOTHING
 	}
 
-	public Node<Action> getTree() {
+	public Node<IAction> getTree() {
 		return root;
 	}
 

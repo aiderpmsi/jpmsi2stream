@@ -1,62 +1,47 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
+import com.github.aiderpmsi.pims.treemodel.Node;
 
-public class AssignFactory implements ActionFactory<AssignFactory.Assign> {
+public class AssignFactory extends SimpleActionFactory {
 
-	@Override
-	public Assign createAction(JexlEngine je, Argument[] arguments) throws IOException {
-		// GETS ARGUMENTS
-		String expr = null, var = null;
-		for (Argument argument : arguments) {
-			switch (argument.key) {
-			case "expr":
-				expr = argument.value; break;
-			case "var":
-				var = argument.value; break;
-			case "id": break;
-			default:
-				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
-			}
-		}
-		
-		// CHECK ARGUMENTS
-		if (expr == null) {
-			throw new IOException("expr parameter has to be set in " + getClass().getSimpleName());
-		} else if (var == null) {
-			throw new IOException("var parameter has to be set in " + getClass().getSimpleName());
-		}
-		
-		return new Assign(je, var, expr);
+	private final static HashSet<String> neededArguments = new HashSet<>(1);
+	
+	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(0);
+	
+	static {
+		neededArguments.add("expr");neededArguments.add("var");
+	}
+	
+	public AssignFactory() {
+		super(neededArguments, defaultArgumentsValues);
 	}
 
-	public class Assign extends BaseAction {
-		
-		private Expression e = null;
-		
-		private String var;
-		
-		private String expr;
-		
-		private JexlEngine je;
-		
-		public Assign(JexlEngine je, String var, String expr) {
-			this.var = var;
-			this.expr = expr;
-			this.je = je;
-		}
-		
-		@Override
-		public void execute(JexlContext jc) throws IOException {
-			if (e == null)
-				e = je.createExpression(expr);
-			// RUNS THE EXPRESSION
-			jc.set(var, e.evaluate(jc));
-		}
+	@Override
+	public final IAction createSimpleAction(final JexlEngine je,
+			final HashMap<String, String> arguments) throws IOException {
+
+		return new IAction() {
+			
+			private Expression e = null;
+			
+			@Override
+			public final Node<?> execute(final Node<?> node, final JexlContext jc) throws IOException {
+				if (e == null)
+					e = je.createExpression(arguments.get("expr"));
+		        // RUNS THE EXPRESSION
+				jc.set(arguments.get("var"), e.evaluate(jc));
+				// RETURNS A NODE
+				return node.firstChild == null ? node.nextSibling : node.firstChild;				
+			}
+		};
+
 	}
 
 }

@@ -1,55 +1,42 @@
 package com.github.aiderpmsi.pims.grouper.tags;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
-import com.github.aiderpmsi.pims.treebrowser.actions.Argument;
+
+import com.github.aiderpmsi.pims.treebrowser.actions.SimpleActionFactory;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
-public class GroupFactory implements ActionFactory<GroupFactory.Group> {
+public class GroupFactory extends SimpleActionFactory {
 
-	@Override
-	public Group createAction(JexlEngine je, Argument[] arguments) throws IOException {
-		// GETS ARGUMENTS
-		String erreur = "", racine = "", modalite = "", gravite = "";
-		for (Argument argument : arguments) {
-			switch (argument.key) {
-			case "erreur":
-				erreur = argument.value; break;
-			case "racine":
-				racine = argument.value; break;
-			case "modalite":
-				modalite = argument.value; break;
-			case "gravite":
-				gravite = argument.value; break;
-			case "id": break;
-			default:
-				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
-			}
-		}
-		return new Group(erreur, racine, modalite, gravite);
+	private final static HashSet<String> neededArguments = new HashSet<>(4);
+	
+	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(4);
+	
+	static {
+		neededArguments.add("erreur");defaultArgumentsValues.put("erreur", "");
+		neededArguments.add("racine");defaultArgumentsValues.put("racine", "");
+		neededArguments.add("modalite");defaultArgumentsValues.put("modalite", "");
+		neededArguments.add("gravite");defaultArgumentsValues.put("gravite", "");
+	}
+	
+	public GroupFactory() {
+		super(neededArguments, defaultArgumentsValues);
 	}
 
-	public class Group implements ActionFactory.Action {
-		
-		public String erreur, racine, modalite, gravite;
+	@Override
+	public final IAction createSimpleAction(final JexlEngine je,
+			final HashMap<String, String> arguments) throws IOException {
 
-		public Group(String erreur, String racine, String modalite, String gravite) {
-			this.erreur = erreur;
-			this.racine = racine;
-			this.modalite = modalite;
-			this.gravite = gravite;
-		}
-
-		@Override
-		public Node<Action> execute(Node<Action> node, JexlContext jc)
-				throws IOException {
-			jc.set("group", this);
-			return null;
-		}
 		
+		return (final Node<?> node, final JexlContext jc) -> {
+			jc.set("group", arguments);
+			return node.firstChild;
+		};
+
 	}
 
 }

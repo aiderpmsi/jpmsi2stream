@@ -15,8 +15,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
 import com.github.aiderpmsi.pims.treebrowser.actions.AssignFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.ExecuteFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.GotoFactory;
@@ -44,7 +44,7 @@ public abstract class TreeBrowserBuilder {
 			ActionDefinition aDef = new ActionDefinition();
 			aDef.nameSpace = (String) dfltaction[0];
 			aDef.command = (String) dfltaction[1];
-			aDef.actionFactory = (ActionFactory<?>) dfltaction[2];
+			aDef.actionFactory = (IActionFactory) dfltaction[2];
 			actionDefinitions.add(aDef);
 		}
 		// CUSTOM
@@ -53,14 +53,14 @@ public abstract class TreeBrowserBuilder {
 		// CREATES THE ACTION TREE
 		try (Reader reader = Files.newBufferedReader(
 				Paths.get(this.getClass().getClassLoader().getResource(resource).toURI()), Charset.forName("UTF-8"))) {
-			Node<Action> tree = createTree(reader, actionDefinitions, je);
+			Node<IAction> tree = createTree(reader, actionDefinitions, je);
 			return tree;
 		} catch (IOException | SAXException | URISyntaxException e) {
 			throw new TreeBrowserException(e);
 		}
 	}
 
-	private Node<Action> createTree(Reader reader, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
+	private Node<IAction> createTree(Reader reader, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
 		// CREATES THE CONTENTHANDLER
 		TreeContentHandler tc = new TreeContentHandler();
 		for (ActionDefinition actionDefinition : actionDefinitions) {
@@ -81,7 +81,7 @@ public abstract class TreeBrowserBuilder {
 	
 	public class ActionDefinition {
 		public String nameSpace, command;
-		public ActionFactory<?> actionFactory;
+		public IActionFactory actionFactory;
 	}
 	
 	protected abstract List<ActionDefinition> getCustomActions();

@@ -5,13 +5,13 @@ import java.io.IOException;
 import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
 import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType.LineWriter;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory.Action;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class ParserFactory {
 
-	private Node<ActionFactory.Action> tree;
+	private Node<IActionFactory.IAction> tree;
 	
 	private LineConfDictionary dico;
 	
@@ -20,7 +20,7 @@ public class ParserFactory {
 	@SuppressWarnings("unchecked")
 	public ParserFactory(LineWriter lineWriter) throws TreeBrowserException {
 		ParserConfigBuilder pcb = new ParserConfigBuilder();
-		tree = (Node<Action>) pcb.build();
+		tree = (Node<IAction>) pcb.build();
 		dico = new LineConfDictionary();
 		this.lineWriter = lineWriter;
 	}

@@ -1,60 +1,50 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 
 import com.github.aiderpmsi.pims.treemodel.Node;
 
-public class GotoFactory implements ActionFactory<GotoFactory.Goto> {
+public class GotoFactory extends SimpleActionFactory {
 
-	@Override
-	public Goto createAction(JexlEngine je, Argument[] arguments) throws IOException {
-		// GETS ARGUMENTS
-		String dest = null;
-		for (Argument argument : arguments) {
-			switch (argument.key) {
-			case "dest":
-				dest = argument.value; break;
-			case "id": break;
-			default:
-				throw new IOException("Argument " + argument.key + " unknown for " + getClass().getSimpleName());
-			}
-		}
-		
-		// CHECK ARGUMENTS
-		if (dest == null) {
-			throw new IOException("id parameter has to be set in " + getClass().getSimpleName());
-		}
-		
-		return new Goto(dest);
+	private final static HashSet<String> neededArguments = new HashSet<>(1);
+	
+	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(0);
+	
+	static {
+		neededArguments.add("dest");
+	}
+	
+	public GotoFactory() {
+		super(neededArguments, defaultArgumentsValues);
 	}
 
-	public class Goto implements ActionFactory.Action {
-		
-		private String dest;
-		
-		private Node<Action> toGoto = null;
-		
-		public Goto(String dest) {
-			this.dest = dest;
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public Node<Action> execute(Node<Action> node,
-				JexlContext jc) throws IOException {
-			if (toGoto == null) {
-				if ((toGoto = (Node<ActionFactory.Action>) node.index.get(dest)) == null) {
-					throw new IOException("id " + dest + " not found");
+	@Override
+	public final IAction createSimpleAction(final JexlEngine je,
+			final HashMap<String, String> arguments) throws IOException {
+
+		return new IAction() {
+			
+			private Node<?> dest = null;
+			
+			@Override
+			public final Node<?> execute(final Node<?> node, final JexlContext jc) throws IOException {
+				if (dest == null) {
+					if ((dest = node.index.get(arguments.get("dest"))) == null) {
+						throw new IOException("id " + arguments.get("dest") + " not found");
+					} else {
+						return dest;
+					}
 				} else {
-					return toGoto;
+					return dest;
 				}
-			} else {
-				return toGoto;
 			}
-		}
+		};
+
 	}
 	
 }

@@ -15,12 +15,12 @@ import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
 import com.github.aiderpmsi.pims.parser.linestypes.PmsiLineType.LineWriter;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
-import com.github.aiderpmsi.pims.treebrowser.actions.ActionFactory;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class Parser extends XMLFilterImpl {
 
-	private Node<ActionFactory.Action> tree;
+	private Node<IActionFactory.IAction> tree;
 
 	private String type;
 	
@@ -28,7 +28,7 @@ public class Parser extends XMLFilterImpl {
 	
 	private LineWriter lineWriter;
 	
-	public Parser(Node<ActionFactory.Action> tree, LineConfDictionary dico, LineWriter lineWriter, String type) throws TreeBrowserException {
+	public Parser(Node<IActionFactory.IAction> tree, LineConfDictionary dico, LineWriter lineWriter, String type) throws TreeBrowserException {
 		this.tree = tree;
 		this.type = type;
 		this.dico = dico;
