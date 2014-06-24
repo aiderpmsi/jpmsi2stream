@@ -60,7 +60,12 @@ public class Parser extends XMLFilterImpl {
 			TreeBrowser tb = new TreeBrowser(tree);
 			tb.setJc(jc);
 
-			tb.go();
+			try {
+				tb.go();
+			} catch (Exception e) {
+				// BE SURE TO CATCH EVERY EXCEPTION FROM MACHINE
+				throw new IOException(e);
+			}
 			
 			getContentHandler().endElement("", "root", "root");
 			

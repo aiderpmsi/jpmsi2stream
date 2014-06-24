@@ -1,13 +1,14 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 
 import com.github.aiderpmsi.pims.parser.model.Element;
-import com.github.aiderpmsi.pims.parser.model.Linetype;
+import com.github.aiderpmsi.pims.parser.model.LineTypeDefinition;
 import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 /**
@@ -22,39 +23,41 @@ import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
  */
 public class PmsiLineTypeImpl extends PmsiLineType {
 
-	private PmsiElement[] elements;
+	private ArrayList<PmsiElement> elements;
 
 	private String name;
 	
 	private MemoryBufferedReader br = null;
 	
-	int matchLength;
+	private String readedLine = null;
 	
-	String lineversion;
+	private int matchLength;
 	
-	public PmsiLineTypeImpl(Linetype linetype) {
-		this.elements = new PmsiElement[linetype.elements.size()];
+	private String lineversion;
+	
+	public PmsiLineTypeImpl(LineTypeDefinition linetype) {
+		this.elements = new ArrayList<>(linetype.elements.size());
 		this.name = linetype.name;
 		this.lineversion = linetype.version;
+		this.matchLength = 0;
 		
-		int i = 0;
 		for (Element config : linetype.elements) {
+			PmsiElement element;
 			if (config.type.equals("int")) {
-				elements[i] = new PmsiIntElement(config);
+				element = new PmsiIntElement(config);
 			} else if (config.type.equals("text")) {
-				elements[i] = new PmsiTextElement(config);
+				element = new PmsiTextElement(config);
 			} else if (config.type.startsWith("fixed,")) {
-				elements[i] = new PmsiFixedElement(config);
+				element = new PmsiFixedElement(config);
 			} else if (config.type.startsWith("regexp,"))  {
-				elements[i] = new PmsiRegexpElement(config);
+				element = new PmsiRegexpElement(config);
 			} else if (config.type.equals("date"))  {
-				elements[i] = new PmsiDateElement(config);
+				element = new PmsiDateElement(config);
 			} else {
 				throw new RuntimeException(config.type + "  type is unknown in " + getClass().getSimpleName());
-				
 			}
-			matchLength += elements[i].getSize();
-			i++;
+			elements.add(element);
+			matchLength += element.getSize();
 		}
 	}
 	
@@ -65,16 +68,16 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 			Attributes2Impl atts = new Attributes2Impl();
 			atts.addAttribute("", "version", "version", "text", lineversion);
 			contentHandler.startElement("", name, name, atts);
-			
-			for (int i = 0 ; i < elements.length ; i++) {
+
+			for (PmsiElement element : elements) {
 				// Début d'élément :
-				contentHandler.startElement("", elements[i].getName(), elements[i].getName(), new Attributes2Impl());
+				contentHandler.startElement("", element.getName(), element.getName(), new Attributes2Impl());
 				
 				// Contenu de l'élément
-				Segment content = elements[i].getContent();
+				Segment content = element.getContent();
 				contentHandler.characters(content.sequence, content.start, content.count);
 				// Fin de l'élément
-				contentHandler.endElement("", elements[i].getName(), elements[i].getName());
+				contentHandler.endElement("", element.getName(), element.getName());
 			}
 
 			contentHandler.endElement("", name, name);
@@ -103,25 +106,41 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		
 		// TENTATIVE DE MATCH
 		int readPosition = 0;
-		for (int i = 0 ; i < elements.length ; i++) {
-			int endPosition = readPosition + elements[i].getSize();
-
-			elements[i].setContent(new Segment(array, readPosition, elements[i].getSize()));
-			if (elements[i].validate() != true) {
+		for (PmsiElement element : elements) {
+			int endPosition = readPosition + element.getSize();
+			element.setContent(new Segment(array, readPosition, element.getSize()));
+			// IF READED ELEMENT DOESN'T CORRESPOND, CLEAR THE LINE AND RETURN FALSE
+			if (!element.validate()) {
+				readedLine = null;
 				return false;
 			}
 			readPosition = endPosition;
-
 		}
-			
-		// TOUS LES MATCH ONT MARCHE
+		// EVERY MATCH WORKED, STORES THE READED LINE AS FULL LINE
+		readedLine = new String(array);
 		return true;
 	}
 	
 	public int getInt(int index) {
-		Segment segt = elements[index].getContent();
+		Segment segt = elements.get(index).getContent();
 		String num = new String(segt.sequence, segt.start, segt.count);
 		return Integer.parseInt(num);
+	}
+
+	protected String getName() {
+		return name;
+	}
+
+	protected String getReadedLine() {
+		return readedLine;
+	}
+
+	protected int getMatchLength() {
+		return matchLength;
+	}
+
+	protected String getLineversion() {
+		return lineversion;
 	}
 
 }

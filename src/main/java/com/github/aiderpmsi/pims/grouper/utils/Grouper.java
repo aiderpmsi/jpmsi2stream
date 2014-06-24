@@ -32,10 +32,15 @@ public class Grouper {
 		tree = (Node<Action>) gcb.build();
 	}
 	
+	/**
+	 * Groups a list of {@link RssContent}
+	 * @param multirss
+	 * @return
+	 * @throws IOException
+	 */
 	public GroupFactory.Group group(List<RssContent> multirss) throws IOException {
 		// GETS THE MIXED RSS
-		Mixer mixer = new Mixer();
-		mixer.setDicos(dicos);
+		Mixer mixer = new Mixer(dicos);
 		RssContent rss = mixer.mix(multirss);
 
 		// CREATES THE VARS MAP
@@ -52,8 +57,12 @@ public class Grouper {
 		TreeBrowser tb = new TreeBrowser(tree);
 		tb.setJc(jc);
 
-		// LAUNCHES THE BROWSER
-		tb.go();
+		// LAUNCHES THE BROWSER, GETTING ALL EXCEPTIONS IF NEEDED
+		try {
+			tb.go();
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 		
 		// GETS THE MACHINE RESULT
 		GroupFactory.Group result = (GroupFactory.Group) tb.getJc().get("group");

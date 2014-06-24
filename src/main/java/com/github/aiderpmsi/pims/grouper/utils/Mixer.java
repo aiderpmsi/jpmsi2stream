@@ -23,7 +23,11 @@ import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary.Type;
  */
 public class Mixer {
 	
-	private Dictionaries dicos = null;
+	private Dictionaries dicos;
+	
+	public Mixer(Dictionaries dicos) {
+		this.dicos = dicos;
+	}
 
 	public RssContent mix(List<RssContent> multirss) throws IOException {
 		// GETS THE PRINCIPAL RUM
@@ -214,14 +218,6 @@ public class Mixer {
 		}
 		return rumnb;
 		
-	}
-	
-	public Dictionaries getDicos() {
-		return dicos;
-	}
-
-	public void setDicos(Dictionaries dicos) {
-		this.dicos = dicos;
 	}
 	
 }

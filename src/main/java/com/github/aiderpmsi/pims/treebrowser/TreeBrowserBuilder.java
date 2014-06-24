@@ -1,8 +1,11 @@
 package com.github.aiderpmsi.pims.treebrowser;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,15 +51,16 @@ public abstract class TreeBrowserBuilder {
 		actionDefinitions.addAll(getCustomActions());
 		
 		// CREATES THE ACTION TREE
-		try (InputStream is = new BufferedInputStream(this.getClass().getClassLoader().getResourceAsStream(resource))) {
-			Node<Action> tree = createTree(is, actionDefinitions, je);
+		try (Reader reader = Files.newBufferedReader(
+				Paths.get(this.getClass().getClassLoader().getResource(resource).toURI()), Charset.forName("UTF-8"))) {
+			Node<Action> tree = createTree(reader, actionDefinitions, je);
 			return tree;
-		} catch (IOException | SAXException e) {
+		} catch (IOException | SAXException | URISyntaxException e) {
 			throw new TreeBrowserException(e);
 		}
 	}
 
-	private Node<Action> createTree(InputStream is, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
+	private Node<Action> createTree(Reader reader, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
 		// CREATES THE CONTENTHANDLER
 		TreeContentHandler tc = new TreeContentHandler();
 		for (ActionDefinition actionDefinition : actionDefinitions) {
@@ -69,7 +73,7 @@ public abstract class TreeBrowserBuilder {
         saxReader.setContentHandler(tc);
 
         // PARSES THE TREE DEFINITION
-        saxReader.parse(new InputSource(is));
+        saxReader.parse(new InputSource(reader));
 
         // RETURNS THE TREE OF ACTIONS
         return tc.getTree();

@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.aiderpmsi.pims.parser.model.Element;
-import com.github.aiderpmsi.pims.parser.model.Linetype;
+import com.github.aiderpmsi.pims.parser.model.LineTypeDefinition;
 
 public class LineConfDictionary {
 
 	private static final String configPath = "com/github/aiderpmsi/pims/parser/linedefs.cfg";
 	
-	private Map<String, Linetype> lines =
+	private Map<String, LineTypeDefinition> lines =
 			new HashMap<>();
 
-	public synchronized Linetype getLineConf(String element) {
+	public synchronized LineTypeDefinition getLineConf(String element) {
 		// GETS THE LINETYPE FROM HASHMAP IF EXISTS
-		Linetype conf;
+		LineTypeDefinition conf;
         
 		if ((conf = lines.get(element)) == null) {
 			// THE INSTANCE DOESN'T EXIST
@@ -40,7 +40,7 @@ public class LineConfDictionary {
 		return conf;
 	}
 	
-	private Linetype createLineType(String element) throws IOException, URISyntaxException {
+	private LineTypeDefinition createLineType(String element) throws IOException, URISyntaxException {
 		// OPENS THE CONFIG FILE
 		Path resourcePath = Paths.get(this.getClass().getClassLoader().getResource(configPath).toURI());
 		try (BufferedReader config = Files.newBufferedReader(resourcePath, Charset.forName("UTF-8"))) {
@@ -51,7 +51,7 @@ public class LineConfDictionary {
 			while ((line = config.readLine()) != null) {
 				if (line.equals(typeLine)) {
 					// WE FOUND THE LINE, STORE THE LINETYPE
-					Linetype lineConf = new Linetype();
+					LineTypeDefinition lineConf = new LineTypeDefinition();
 						
 					// FIND TYPE
 					while ((line = config.readLine()) != null && !line.startsWith("type:")) { }

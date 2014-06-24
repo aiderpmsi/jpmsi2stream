@@ -12,25 +12,36 @@ import com.github.aiderpmsi.pims.grouper.model.SimpleDictionary.Type;
 
 public class Utils {
 	
+	/** Dictionaries used (for caching and sharing between classes) */
 	private Dictionaries dicos;
 	
+	/**
+	 * Constructs from an existing list of dictionaries (for sharing these buffers)
+	 * @param dicos
+	 */
 	public Utils(Dictionaries dicos) {
 		this.dicos = dicos;
 	}
 	
 	public Integer count(String resource, String key, Object value) throws IOException {
-		// GETS THE DICO
-		SimpleDictionary dico = dicos.get(SimpleDictionary.Type.valueOf(resource));
-		// GETS THE DEFINITION IN DICO
-		Set<String> dicoContent = dico.getDefinition(key);
+		Set<String> dicoContent = null;
+		try {
+			// GETS THE DICO AND THROW EXCEPTION (NULLPOINTER OR ILLEGALARGUMENT) IF DICO NOT FOUND
+			SimpleDictionary dico = dicos.get(SimpleDictionary.Type.valueOf(resource));
+			// GETS THE DEFINITION IN DICO AND THROW EXCEPTION (IOEXCEPTION) IF KEY NOT FOUND
+			dicoContent = dico.getDefinition(key);
+		} catch (NullPointerException | IllegalArgumentException e) {
+			throw new IOException(e);
+		}
 
-		// RESULT
+		// NUMBER OF COUNTS
 		Integer matches = 0;
 		
-		// IF VALUE IS NULL, WE RETURN FALSE
+		// IF VALUE IS NULL, WE RETURN NO MATCH
 		if (value == null) {
-			// DO NOTHING, MATCHES IS ALREADY FALSE
+			// DO NOTHING, MATCHES IS ALREADY AT 0
 		}
+		
 		// IF WE HAVE TO CHECK AGAINST A COLLECTION, CHECK EACH ITEM
 		else if (value instanceof Collection<?>) {
 			for (Object element : (Collection<?>) value) {
@@ -52,7 +63,12 @@ public class Utils {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Insert values (or elements in values if values is collection) into a single hashset of strings, eliminating duplicates
+	 * @param values list of {@link String} or {@link Collection}
+	 * @return {@link HashSet} of {@link String}
+	 * @throws IOException if an element in {@code values} is not a {@link String} or a {@link Collection}
+	 */
 	public HashSet<String> concat(Object... values) throws IOException {
 		
 		// SETS THE RESULT HASH
@@ -72,7 +88,7 @@ public class Utils {
 			
 			// VALUE IS A COLLECTION
 			else if (value instanceof Collection<?>) {
-				for (Object valueObject : (Collection<Object>) value) {
+				for (Object valueObject : (Collection<?>) value) {
 					if (valueObject instanceof String) {
 						resultHash.add((String) valueObject);
 					}
@@ -85,6 +101,14 @@ public class Utils {
 		return resultHash;
 	}
 
+	/**
+	 * Calculate duration from {@code begining} to {@code end} in {@code type}
+	 * @param begining
+	 * @param end
+	 * @param type {@code "year"} if result in years, {@code "day"} if result in days
+	 * @return
+	 * @throws IOException
+	 */
 	public Integer duration(Calendar begining, Calendar end, String type) throws IOException {
 
 		// CALCULATE AGE
@@ -109,6 +133,7 @@ public class Utils {
 	}
 	
 	public void awrdp(List<String> actes) throws IOException {
+		// GETS NEEDED DICTIONARIES, THROWING AN IOEXCEPTION IF NOT EXISTING
 		HashSet<String> dicoacteschirmineur = dicos.get(Type.acteMineurChirReclassant).getDefinition("all");
 		HashSet<String> dicoacteschir = dicos.get(Type.classeActe).getDefinition("ADC");
 
@@ -134,14 +159,19 @@ public class Utils {
 			remove(actes, dicoactesclassantsop);
 		}
 	}
-	
-	private void remove(List<String> actes, HashSet<String> toRemove) {
+
+	/**
+	 * Removes a list of {@link String} from an {@link HashSet}
+	 * @param toRemove
+	 * @param setToModify
+	 */
+	private void remove(List<String> toRemove, HashSet<String> setToModify) {
 		// REMOVE CORRESPONDING ACTES
-		Iterator<String> it = actes.iterator();
+		Iterator<String> it = toRemove.iterator();
 		while (it.hasNext()) {
 			String acte = it.next();
 			// CHECK IF THIS FORMATTED VALUE EXISTS IN DICOCONTENT
-			if (toRemove.contains(acte)) {
+			if (setToModify.contains(acte)) {
 				// REMOVE THIS ELEMENT FROM CONTENT IF EXISTS IN DICOCONTENT
 				it.remove();
 			} // ELSE DO NOTHING

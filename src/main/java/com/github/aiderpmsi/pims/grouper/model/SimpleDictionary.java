@@ -12,6 +12,11 @@ import java.util.HashSet;
 
 public class SimpleDictionary {
 	
+	/**
+	 * Enum listing all the grouper configuration files 
+	 * @author jpc
+	 *
+	 */
 	public enum Type {
 		acteClassant("grouper-acteclassant.cfg"),
 		acteClassantOp("grouper-acteclassantop.cfg"),
@@ -34,15 +39,27 @@ public class SimpleDictionary {
 		}
 	}
 	
+	/** Type of this dictionary (defines the config file used too) */
 	private Type type;
 	
+	/** Cache for this dictionary */
 	private HashMap<String, HashSet<String>> content = new HashMap<>();
 
+	/**
+	 * Constructor. Needs the kind of dictionary (for the config file definition)
+	 * @param type
+	 */
 	public SimpleDictionary(Type type) {
 		this.type = type;
 	}
 
-	public HashSet<String> getDefinition(String key) {
+	/**
+	 * Gets the list of elements contained for a key
+	 * @param key
+	 * @return
+	 * @throws IOException 
+	 */
+	public HashSet<String> getDefinition(String key) throws IOException {
 		HashSet<String> definition;
 	        
 		// IF KEY DEFINITION DOES NOT EXIST, CREATE IT AND LOAD IT
@@ -55,8 +72,14 @@ public class SimpleDictionary {
 			
 		return definition;
 	}
-		
-	protected HashSet<String> createDefinition(String key) {
+	
+	/**
+	 * If a list of elements contained for a key is not cached, read it from the config file
+	 * @param key
+	 * @return
+	 * @throws IOException 
+	 */
+	protected HashSet<String> createDefinition(String key) throws IOException {
 		// OPENS THE CONFIG FILE
 		Path origin;
 		try {
@@ -64,26 +87,28 @@ public class SimpleDictionary {
 
 			try (BufferedReader br = Files.newBufferedReader(origin, Charset.forName("UTF-8"))) {
 
-				HashSet<String> def = new HashSet<>();
-				String line = br.readLine();
+				String line;
 			
-				while (line != null) {
+				// READ UNTIL REACHING THE NEEDED KEY 
+				while ((line = br.readLine()) != null) {
 					// CHECK IF WE HAVE THE KEY
 					if (line.startsWith("01:") && line.subSequence(3, line.length()).equals(key)) {
+						// WE HAVE THE KEY, CREATE THE BUFFER
+						HashSet<String> def = new HashSet<>();
 						// ITERATE OVER FILE WHILE WE HAVE A VALUE
 						while ((line = br.readLine()) != null && line.startsWith("02:")) {
 							def.add(line.substring(3, line.length()));
 						}
 						// WE FINISHED, EXIT IMMEDIATELY
-						break;
-					} else {
-						line = br.readLine();
+						return def;
 					}
 				}
-				return def;
+				
+				// IF WE ARRIVE HERE, IT MEANS THE KEY WAS NOT FOUND, THROW IOEXCEPTION
+				throw new IOException("Key " + key + " not found in " + type.name);
 			}
-		} catch (URISyntaxException | IOException e) {
-			throw new RuntimeException(e);
+		} catch (URISyntaxException e) {
+			throw new IOException(e);
 		}
 	}
 

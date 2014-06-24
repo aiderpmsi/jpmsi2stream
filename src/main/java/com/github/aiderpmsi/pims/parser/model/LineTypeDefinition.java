@@ -2,7 +2,7 @@ package com.github.aiderpmsi.pims.parser.model;
 
 import java.util.List;
 
-public class Linetype {
+public class LineTypeDefinition {
 
 	public String version;
 
