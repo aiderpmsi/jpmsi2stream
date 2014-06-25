@@ -1,5 +1,6 @@
-package com.github.aiderpmsi.pims.parser.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
+import com.github.aiderpmsi.pims.parser.linestypes.Segment;
 import com.github.aiderpmsi.pims.parser.model.Element;
 
 public class PmsiFixedElement extends PmsiElementBase {

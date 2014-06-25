@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.parser.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

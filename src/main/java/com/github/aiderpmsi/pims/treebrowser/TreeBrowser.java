@@ -13,7 +13,7 @@ public class TreeBrowser {
 	/** Tree source */
 	private Node<?> tree = null;
 
-	public TreeBrowser(Node<IAction> tree) {
+	public TreeBrowser(Node<?> tree) {
 		this.tree = tree;
 	}
 	

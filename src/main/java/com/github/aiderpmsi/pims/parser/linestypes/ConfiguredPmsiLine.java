@@ -2,38 +2,34 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiDateElement;
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiElement;
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiFixedElement;
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiIntElement;
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiRegexpElement;
+import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiTextElement;
 import com.github.aiderpmsi.pims.parser.model.Element;
 import com.github.aiderpmsi.pims.parser.model.LineTypeDefinition;
-import com.github.aiderpmsi.pims.parser.utils.MemoryBufferedReader;
 
 /**
- * Défini l'architecture pour créer des patrons de lignes pmsi avec :
- * <ul>
- *  <li>Les noms des éléments</li>
- *  <li>Les regex des éléments</li>
- *  <li>Les contenus des éléments</li>
- * </ul>
  * @author delabre
  *
  */
-public class PmsiLineTypeImpl extends PmsiLineType {
+public class ConfiguredPmsiLine implements IPmsiLine {
+
+	private LinkedHashMap<String, Segment> contents = null;
 
 	private ArrayList<PmsiElement> elements;
-
+	
 	private String name;
-	
-	private MemoryBufferedReader br = null;
-	
-	private String readedLine = null;
 	
 	private int matchLength;
 	
 	private String lineversion;
 	
-	public PmsiLineTypeImpl(LineWriter lineWriter, LineTypeDefinition linetype) {
-		super(lineWriter);
-		
+	public ConfiguredPmsiLine(LineTypeDefinition linetype) {
 		this.elements = new ArrayList<>(linetype.elements.size());
 		this.name = linetype.name;
 		this.lineversion = linetype.version;
@@ -60,51 +56,39 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 	}
 	
 	@Override
-	public boolean isFound(MemoryBufferedReader br) throws IOException {
-		this.br = br;
-		
-		// Récupération de la ligne à lire
-		String toParse = br.getLine();
-		
-		if (toParse == null || toParse.length() < matchLength)
-			return false;
+	public boolean matches(Segment line) throws IOException {
 
-		// RECUPERATION DE LA PART DE LIGNE
-		char[] array = new char[matchLength];
-		toParse.getChars(0, matchLength, array, 0);
+		if (line == null || line.length() < matchLength)
+			return false;
+		else if (line.length() > matchLength) {
+			throw new IOException("Implementation error : liner bigger than awaited");
+		}
 		
+		contents = new LinkedHashMap<>();
+
 		// TENTATIVE DE MATCH
-		int readPosition = 0;
+		int readPosition = line.start;
 		for (PmsiElement element : elements) {
 			int endPosition = readPosition + element.getSize();
-			element.setContent(new Segment(array, readPosition, element.getSize()));
+			element.setContent(new Segment(line.sequence, readPosition, element.getSize()));
 			// IF READED ELEMENT DOESN'T CORRESPOND, CLEAR THE LINE AND RETURN FALSE
 			if (!element.validate()) {
-				readedLine = null;
+				contents = null;
 				return false;
+			} else {
+				readPosition = endPosition;
+				contents.put(element.getName(), element.getContent());
 			}
-			readPosition = endPosition;
 		}
-		// EVERY MATCH WORKED, STORES THE READED LINE AS FULL LINE
-		readedLine = new String(array);
 		return true;
-	}
-	
-	public int getInt(int index) {
-		Segment segt = elements.get(index).getContent();
-		String num = new String(segt.sequence, segt.start, segt.count);
-		return Integer.parseInt(num);
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getReadedLine() {
-		return readedLine;
-	}
-
-	public int getMatchLength() {
+	@Override
+	public int getLineSize() {
 		return matchLength;
 	}
 
@@ -116,8 +100,9 @@ public class PmsiLineTypeImpl extends PmsiLineType {
 		return elements;
 	}
 
-	public MemoryBufferedReader getBr() {
-		return br;
+	@Override
+	public LinkedHashMap<String, Segment> getResults() throws IOException {
+		return contents;
 	}
 	
 }

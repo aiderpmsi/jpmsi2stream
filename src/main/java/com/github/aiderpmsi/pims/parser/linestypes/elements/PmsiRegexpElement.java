@@ -1,4 +1,4 @@
-package com.github.aiderpmsi.pims.parser.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

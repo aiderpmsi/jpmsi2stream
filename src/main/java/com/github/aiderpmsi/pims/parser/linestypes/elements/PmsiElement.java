@@ -1,4 +1,6 @@
-package com.github.aiderpmsi.pims.parser.linestypes;
+package com.github.aiderpmsi.pims.parser.linestypes.elements;
+
+import com.github.aiderpmsi.pims.parser.linestypes.Segment;
 
 public interface PmsiElement {
 

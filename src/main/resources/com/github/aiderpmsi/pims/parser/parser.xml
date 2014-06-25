@@ -3,6 +3,7 @@
 <tree xmlns:dflt="http://default.actions/default" >
 
 	<dflt:assign var="linenumber" expr="1" />
+	<dflt:assign var="linetype" expr="lb.createLine('linenumber')" />
 
 	<dflt:switch cond="start eq 'rsfheader'" >
 		<dflt:goto dest="rsf" />
@@ -14,11 +15,11 @@
 
 	<!-- CHECK IF THIS IS A RSS OR RSF -->
 	<dflt:assign var="rsf2012header" expr="lb.createLine('rsf2012header')" />
-	<dflt:switch cond="rsf2012header.isFound(br)" >
+	<dflt:switch cond="utils.isFound(rsf2012header)" >
 		<dflt:goto dest="withrsf" />
 	</dflt:switch>
 	<dflt:assign var="rss116header" expr="lb.createLine('rss116header')" />
-	<dflt:switch cond="rss116header.isFound(br)" >
+	<dflt:switch cond="utils.isFound(rss116header)" >
 		<dflt:goto dest="withrss" />
 	</dflt:switch>
 
