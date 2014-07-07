@@ -2,53 +2,51 @@ package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
+import com.github.aiderpmsi.pims.parser.linestypes.ConfiguredPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.EndOfFilePmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine;
-import com.github.aiderpmsi.pims.parser.linestypes.ConfiguredPmsiLine;
+import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine.Element;
 import com.github.aiderpmsi.pims.parser.linestypes.LineNumberPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.Segment;
 
 public class Utils {
 	
 	@FunctionalInterface
-	public interface LineWriter {
-		public void write(IPmsiLine pmsiLine, ContentHandler ch) throws IOException;
+	public interface LineHandler {
+		public void handle(final IPmsiLine pmsiLine) throws IOException;
+	}
+	
+	@FunctionalInterface
+	public interface ErrorHandler {
+		public void error(final String msg, final long line);
 	}
 
-	private LineWriter lineWriter;
+	private final LineHandler lineHandler;
 	
-	private MemoryBufferedReader mbr;
+	private final MemoryBufferedReader mbr;
 
-	private ContentHandler ch;
-
-	private ErrorHandler erh;
+	private final ErrorHandler erh;
 	
-	public Utils(MemoryBufferedReader mbr, LineWriter lineWriter, ContentHandler ch, ErrorHandler erh) {
-		this.lineWriter = lineWriter;
+	public Utils(final MemoryBufferedReader mbr, final LineHandler lineWriter, final ErrorHandler erh) {
+		this.lineHandler = lineWriter;
 		this.mbr = mbr;
-		this.ch = ch;
 		this.erh = erh;
 	}
 
-	public void noLineError(String error, long numLine) throws SAXException {
-		erh.error(new SAXParseException(error + " were attended but not found", "pimsparser", "pimsparser", (int) numLine, 0));
+	public void noLineError(final String error, final long numLine) {
+		erh.error(error + " were attended but not found", numLine);
 	}
 	
-	public void noHeaderError(long numLine)  throws SAXException {
-		erh.error(new SAXParseException("No header found", "pimsparser", "pimsparser", (int) numLine, 0));
+	public void noHeaderError(final long numLine) {
+		erh.error("No header found", numLine);
 	}
 	
-	public void writelinenumber(long lineNumber, LineNumberPmsiLine lineNumberPmsiLine) throws IOException {
+	public void handleLineNumber(final long lineNumber, final LineNumberPmsiLine lineNumberPmsiLine) throws IOException {
 		lineNumberPmsiLine.setLineNumber(lineNumber);
-		lineWriter.write(lineNumberPmsiLine, ch);
+		lineHandler.handle(lineNumberPmsiLine);
 	}
 	
-	public boolean isFound(IPmsiLine pmsiLine) throws IOException {
+	public boolean isFound(final IPmsiLine pmsiLine) throws IOException {
 		if (pmsiLine instanceof EndOfFilePmsiLine) {
 			if (mbr.readLine() == null)
 				return true;
@@ -57,11 +55,11 @@ public class Utils {
 		} else if (pmsiLine instanceof LineNumberPmsiLine) {
 			return false;
 		} else if (pmsiLine instanceof ConfiguredPmsiLine) {
-			ConfiguredPmsiLine cPmsiLine = (ConfiguredPmsiLine) pmsiLine;
+			final ConfiguredPmsiLine cPmsiLine = (ConfiguredPmsiLine) pmsiLine;
 			if (mbr.readLine().length() < cPmsiLine.getLineSize())
 				return false;
 			else {
-				Segment sgt = new Segment(mbr.readLine().toCharArray(), 0, cPmsiLine.getLineSize());
+				final Segment sgt = new Segment(mbr.readLine().toCharArray(), 0, cPmsiLine.getLineSize());
 				return cPmsiLine.matches(sgt);
 			}
 		} else {
@@ -69,9 +67,17 @@ public class Utils {
 		}
 	}
 
-	public void writeElement(IPmsiLine pmsiLine) throws IOException {
-		lineWriter.write(pmsiLine, ch);
+	public void handleLine(final IPmsiLine pmsiLine) throws IOException {
+		lineHandler.handle(pmsiLine);
 		mbr.consume(pmsiLine.getLineSize());
 	}
 	
+	public Integer getElementLineAsInt(final IPmsiLine pmsiLine, String elementName) {
+		for (final Element element : pmsiLine.getElements()) {
+			if (element.getName().equals(elementName)) {
+				return Integer.parseInt(element.getElement().toString());
+			}
+		}
+		return null;
+	}
 }

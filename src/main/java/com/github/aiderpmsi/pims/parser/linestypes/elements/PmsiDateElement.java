@@ -4,13 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public class PmsiDateElement extends PmsiElementBase {
 	
 	SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
 	
-	public PmsiDateElement(Element config) {
+	public PmsiDateElement(PmsiElementConfig config) {
 		super(config);
 		format.setCalendar(new GregorianCalendar());
         format.setLenient(false);

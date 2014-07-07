@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 import com.github.aiderpmsi.pims.parser.model.LineTypeDefinition;
 
 public class LineConfDictionary {
@@ -63,14 +63,14 @@ public class LineConfDictionary {
 					lineConf.name = line.substring(5);
 						
 					// THEN FOR EACH NAME, PROCESS CONTENT
-					List<Element> elts = new ArrayList<>();
-					Element elt = null;
+					List<PmsiElementConfig> elts = new ArrayList<>();
+					PmsiElementConfig elt = null;
 					while ((line = config.readLine()) != null) {
 						if (line.startsWith("name:")) {
 							if (elt != null) {
 								elts.add(elt);
 							}
-							elt = new Element();
+							elt = new PmsiElementConfig();
 							elt.name = line.substring(5);
 						} else if (line.startsWith("size:")) {
 							elt.size = Integer.parseInt(line.substring(5));

@@ -1,7 +1,7 @@
 package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
 import com.github.aiderpmsi.pims.parser.linestypes.Segment;
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public abstract class PmsiElementBase implements PmsiElement {
 
@@ -11,7 +11,7 @@ public abstract class PmsiElementBase implements PmsiElement {
 	
 	protected Segment content;
 	
-	public PmsiElementBase(Element config) {
+	public PmsiElementBase(PmsiElementConfig config) {
 		size = config.size;
 		name = config.name;
 	}

@@ -1,6 +1,6 @@
 package com.github.aiderpmsi.pims.parser.model;
 
-public class Element {
+public class PmsiElementConfig {
 
 	public String name;
 	

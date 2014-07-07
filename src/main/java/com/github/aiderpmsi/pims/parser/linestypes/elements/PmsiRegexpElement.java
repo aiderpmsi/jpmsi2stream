@@ -3,7 +3,7 @@ package com.github.aiderpmsi.pims.parser.linestypes.elements;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public class PmsiRegexpElement extends PmsiElementBase {
 
@@ -11,7 +11,7 @@ public class PmsiRegexpElement extends PmsiElementBase {
 	
 	private Matcher matcher = null;
 	
-	public PmsiRegexpElement(Element config) {
+	public PmsiRegexpElement(PmsiElementConfig config) {
 		super(config);
 		pattern = Pattern.compile(config.type.substring(7));
 		

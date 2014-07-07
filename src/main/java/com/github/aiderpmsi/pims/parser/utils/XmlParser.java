@@ -14,12 +14,12 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.github.aiderpmsi.pims.parser.linestypes.LineBuilder;
 import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
-import com.github.aiderpmsi.pims.parser.utils.Utils.LineWriter;
+import com.github.aiderpmsi.pims.parser.utils.Utils.LineHandler;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
-public class Parser extends XMLFilterImpl {
+public class XmlParser extends XMLFilterImpl {
 
 	private Node<?> tree;
 
@@ -27,9 +27,9 @@ public class Parser extends XMLFilterImpl {
 	
 	private LineConfDictionary dico;
 		
-	private LineWriter lineWriter = null;
+	private LineHandler lineWriter = null;
 	
-	public Parser(Node<?> tree, LineConfDictionary dico, String type) throws TreeBrowserException {
+	public XmlParser(Node<?> tree, LineConfDictionary dico, String type) throws TreeBrowserException {
 		this.tree = tree;
 		this.type = type;
 		this.dico = dico;
@@ -53,7 +53,7 @@ public class Parser extends XMLFilterImpl {
 		context.put("br", mbr);
 		context.put("ch", ch);
 		context.put("eh", ch);
-		context.put("utils", new Utils(mbr, lineWriter, ch, eh));
+		context.put("utils", new Utils(mbr, lineWriter, eh));
 		context.put("start", type);
 	
 		JexlContext jc = new MapContext(context);
@@ -89,10 +89,10 @@ public class Parser extends XMLFilterImpl {
 		return type;
 	}
 
-	public void setLineWriter(LineWriter lineWriter) {
+	public void setLineWriter(LineHandler lineWriter) {
 		this.lineWriter = lineWriter;
 	}
-		
+
 }
 
 

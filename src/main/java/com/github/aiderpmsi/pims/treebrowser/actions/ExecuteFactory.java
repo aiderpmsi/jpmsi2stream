@@ -2,8 +2,6 @@ package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 import org.apache.commons.jexl2.Script;
@@ -12,16 +10,26 @@ import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class ExecuteFactory extends SimpleActionFactory {
 
-	private final static HashSet<String> neededArguments = new HashSet<>(1);
-	
-	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(0);
-	
-	static {
-		neededArguments.add("expr");
+	protected enum ExecuteField implements Field {
+		expr(null, true);
+		
+		private final String defaultValue;
+		private final boolean mandatory;
+		
+		private ExecuteField(final String defaultValue, final boolean mandatory) {
+			this.defaultValue = defaultValue;
+			this.mandatory = mandatory;
+		}
+		@Override public String getDefaultValue() {
+			return defaultValue;
+		}
+		@Override public boolean isMandatory() {
+			return mandatory;
+		}
 	}
-	
+
 	public ExecuteFactory() {
-		super(neededArguments, defaultArgumentsValues);
+		super(ExecuteField.values());
 	}
 
 	@Override

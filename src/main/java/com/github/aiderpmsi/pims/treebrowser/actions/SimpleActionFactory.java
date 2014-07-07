@@ -1,57 +1,53 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-
-import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
-
-import com.github.aiderpmsi.pims.treemodel.Node;
 
 public abstract class SimpleActionFactory implements IActionFactory {
 
-	private final HashSet<String> neededArguments;
+	private final HashMap<String, String> defaultArguments;
 	
-	private final HashMap<String, String> defaultArgumentsValues;
+	private final Field[] fields;
 	
-	public SimpleActionFactory(
-			final HashSet<String> neededArguments,
-			final HashMap<String, String> defaultArgumentsValues) {
-		this.neededArguments = neededArguments;
-		this.defaultArgumentsValues = defaultArgumentsValues;
-		
+	public SimpleActionFactory(final Field[] fields) {
+		this.fields = fields;
+		this.defaultArguments = new HashMap<>(fields.length);
+		for (final Field fieldDefinition : fields) {
+			this.defaultArguments.put(fieldDefinition.toString(), fieldDefinition.getDefaultValue());
+		}
 	}
 	
 	@Override
-	public final IAction createAction(final JexlEngine je, final HashMap<String, String> arguments)
+	public final IAction createAction(final JexlEngine je, final Collection<Argument> arguments)
 			throws IOException {
-		if (validate(arguments)) {
-			final IAction simpleAction = createSimpleAction(je, arguments);
-			return (final Node<?> node, final JexlContext jc) -> {
-				return simpleAction.execute(node, jc);
-			};
-		} else {
-			throw new IOException("Arguments do not validate");
+		// 1 - VALIDATES THE ARGUMENTS BY PUTTING THEM IN A NEW HASHMAP
+		@SuppressWarnings("unchecked")
+		final HashMap<String, String> filledArguments = (HashMap<String, String>) defaultArguments.clone();
+		// FILLS THE FIELDDEFINTIONS WITH THE ARGUMENTS, REPLACING IF NEEDED
+		for (Argument argument : arguments) {
+			filledArguments.put(argument.getName(), argument.getValue());
 		}
+		// CHECK THAT EVERY NOT NULL FIELD IS NOT NULL
+		for (Field field : fields) {
+			if (field.isMandatory() && filledArguments.get(field.toString()) == null) {
+				throw new IOException("Arguments do not validate : field " + field.toString() + " is mandatory");
+			}
+		}
+		
+		// IF WE ARE THERE, EVERY MANDATORY FIELD IS FILLED, CREATES THE ACTION
+		final IAction simpleAction = createSimpleAction(je, filledArguments);
+		return (node, jc) -> simpleAction.execute(node, jc);
 	}
 	
 	public abstract IAction createSimpleAction(
 			final JexlEngine je,
 			final HashMap<String, String> arguments) throws IOException;
 
-	private final boolean validate(final HashMap<String, String> arguments) {
-		for (String neededArgument : neededArguments) {
-			if (arguments.get(neededArgument) == null) {
-				final String argumentValue;
-				if ((argumentValue = defaultArgumentsValues.get(neededArgument)) != null) {
-					arguments.put(neededArgument, argumentValue);
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
+	protected interface Field {
+		public String getDefaultValue();
+		public boolean isMandatory();
 	}
-	
+
 }

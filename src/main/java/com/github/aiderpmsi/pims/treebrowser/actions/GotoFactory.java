@@ -2,8 +2,6 @@ package com.github.aiderpmsi.pims.treebrowser.actions;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 
@@ -11,16 +9,26 @@ import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class GotoFactory extends SimpleActionFactory {
 
-	private final static HashSet<String> neededArguments = new HashSet<>(1);
-	
-	private final static HashMap<String, String> defaultArgumentsValues = new HashMap<>(0);
-	
-	static {
-		neededArguments.add("dest");
+	protected enum GotoField implements Field {
+		dest(null, true);
+		
+		private final String defaultValue;
+		private final boolean mandatory;
+		
+		private GotoField(final String defaultValue, final boolean mandatory) {
+			this.defaultValue = defaultValue;
+			this.mandatory = mandatory;
+		}
+		@Override public String getDefaultValue() {
+			return defaultValue;
+		}
+		@Override public boolean isMandatory() {
+			return mandatory;
+		}
 	}
-	
+
 	public GotoFactory() {
-		super(neededArguments, defaultArgumentsValues);
+		super(GotoField.values());
 	}
 
 	@Override

@@ -8,6 +8,6 @@ public class LineTypeDefinition {
 
 	public String name;
 	
-	public List<Element> elements;
+	public List<PmsiElementConfig> elements;
 
 }

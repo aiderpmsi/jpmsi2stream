@@ -11,7 +11,7 @@ public class LineBuilder {
 	public IPmsiLine createLine(String type) {
 		if (type.equals("eof")) {
 			return new EndOfFilePmsiLine();
-		} else if (type.equals("linenumber")) {
+		} else if (type.equals("lineNumber")) {
 			return new LineNumberPmsiLine();
 		} else {
 			return new ConfiguredPmsiLine(dico.getLineConf(type));

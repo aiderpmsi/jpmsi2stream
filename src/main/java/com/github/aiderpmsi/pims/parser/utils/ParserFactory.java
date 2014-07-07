@@ -21,9 +21,9 @@ public class ParserFactory {
 		dico = new LineConfDictionary();
 	}
 	
-	public Parser newParser(String type) throws IOException {
+	public SimpleParser newParser(String type) throws IOException {
 		try {
-			return new Parser(tree, dico, type);
+			return new SimpleParser(tree, dico, type);
 		} catch (TreeBrowserException e) {
 			throw new IOException(e);
 		}

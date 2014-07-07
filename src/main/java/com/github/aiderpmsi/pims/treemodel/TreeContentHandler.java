@@ -10,6 +10,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.Argument;
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 
@@ -120,9 +121,9 @@ public class TreeContentHandler implements ContentHandler {
 			throw new SAXException(localName + " function in namespace " + uri + " is unknown");
 
 		// SETS THE ARGUMENTS OF THE ACTION CLASS
-		HashMap<String, String> arguments = new HashMap<>(atts.getLength());
+		final LinkedList<Argument> arguments = new LinkedList<>();
 		for (int i = 0 ; i < atts.getLength() ; i++) {
-			arguments.put(atts.getLocalName(i), atts.getValue(i));
+			arguments.add(new Argument(atts.getLocalName(i), atts.getValue(i)));
 			
 			// IF THIS ELEMENT HAS AN ID, USE IT TO INDEX IT
 			if (atts.getLocalName(i).equals("id")) {

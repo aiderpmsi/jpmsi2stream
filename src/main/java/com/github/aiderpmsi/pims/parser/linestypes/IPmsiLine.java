@@ -1,7 +1,7 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.Collection;
 
 /**
  * Défini l'architecture pour créer des patrons de lignes pmsi avec :
@@ -14,12 +14,18 @@ import java.util.LinkedHashMap;
  *
  */
 public interface IPmsiLine {
-		
+
+	/**
+	 * Gets the declared name of this line
+	 * @return
+	 */
+	public String getName();
+	
 	/**
 	 * Checks if this line is a valid line
 	 * @return
 	 */
-	public abstract boolean matches(Segment line) throws IOException;
+	public abstract boolean matches(final Segment line) throws IOException;
 
 	/**
 	 * Gets the number of chars needed for this kind of line
@@ -27,7 +33,45 @@ public interface IPmsiLine {
 	 */
 	public int getLineSize();
 	
-	public LinkedHashMap<String, Segment> getResults() throws IOException;
+	/**
+	 * Returns the last matched line
+	 * @return
+	 * @throws IOException
+	 */
+	public Segment getMatchedLine();
+	
+	/**
+	 * 
+	 * @return returns the ordered elements of this line
+	 * @throws IOException
+	 */
+	public Collection<Element> getElements();
 
-	public String getName();
+	/**
+	 * An element in Pmsi Line
+	 * @author jpc
+	 *
+	 */
+	public class Element {
+		
+		private final String name;
+
+		private final Segment element;
+
+		public Element(final String name, final Segment element) {
+			super();
+			this.name = name;
+			this.element = element;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Segment getElement() {
+			return element;
+		}
+
+		
+	}
 }

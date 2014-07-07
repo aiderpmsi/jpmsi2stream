@@ -1,13 +1,13 @@
 package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
 import com.github.aiderpmsi.pims.parser.linestypes.Segment;
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public class PmsiFixedElement extends PmsiElementBase {
 
 	private Segment matcher;
 	
-	public PmsiFixedElement(Element config) {
+	public PmsiFixedElement(PmsiElementConfig config) {
 		super(config);
 		char[] array = new char[size];
 		config.type.getChars(6, 6 + size, array, 0);

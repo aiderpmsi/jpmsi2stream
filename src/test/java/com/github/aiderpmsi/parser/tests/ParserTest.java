@@ -23,32 +23,46 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.github.aiderpmsi.pims.parser.linestypes.ConfiguredPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine;
+import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLineHandler;
 import com.github.aiderpmsi.pims.parser.linestypes.Segment;
 import com.github.aiderpmsi.pims.parser.utils.Parser;
 import com.github.aiderpmsi.pims.parser.utils.ParserFactory;
-import com.github.aiderpmsi.pims.parser.utils.Utils.LineWriter;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class ParserTest {
+
+	public class TestLineWriter implements IPmsiLineHandler {
+
+		public TestLineWriter(ContentHandler ch)
+		
+		@Override
+		public void handle(IPmsiLine line) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	
 	LineWriter lineWriter = (IPmsiLine pmsiLine, ContentHandler ch) -> {
-			try {
-				Attributes2Impl attributes = new Attributes2Impl();
-				if (pmsiLine instanceof ConfiguredPmsiLine) {
-					attributes.addAttribute("", "version", "version", "text", ((ConfiguredPmsiLine) pmsiLine).getLineversion());
-				}
-				ch.startElement("", pmsiLine.getName(), pmsiLine.getName(), attributes);
-				for (Entry<String, Segment> entry : pmsiLine.getResults().entrySet()) {
-					ch.startElement("", entry.getKey(), entry.getKey(), new Attributes2Impl());
-					ch.characters(entry.getValue().sequence, entry.getValue().start, entry.getValue().count);
-					ch.endElement("", entry.getKey(), entry.getKey());
-				}
-			} catch (SAXException e) {
-				throw new IOException(e);
+		try {
+			Attributes2Impl attributes = new Attributes2Impl();
+			if (pmsiLine instanceof ConfiguredPmsiLine) {
+				attributes.addAttribute("", "version", "version", "text", ((ConfiguredPmsiLine) pmsiLine).getLineversion());
 			}
-			
-		};
+			ch.startElement("", pmsiLine.getName(), pmsiLine.getName(), attributes);
+			for (Entry<String, Segment> entry : pmsiLine.getResults().entrySet()) {
+				ch.startElement("", entry.getKey(), entry.getKey(), new Attributes2Impl());
+				ch.characters(entry.getValue().sequence, entry.getValue().start, entry.getValue().count);
+				ch.endElement("", entry.getKey(), entry.getKey());
+			}
+		} catch (SAXException e) {
+			throw new IOException(e);
+		}
+		
+	};
 
+	
 	public class TestEh implements ErrorHandler {
 
 		public int numerrors = 0;

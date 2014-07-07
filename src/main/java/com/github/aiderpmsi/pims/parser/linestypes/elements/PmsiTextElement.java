@@ -1,10 +1,10 @@
 package com.github.aiderpmsi.pims.parser.linestypes.elements;
 
-import com.github.aiderpmsi.pims.parser.model.Element;
+import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public class PmsiTextElement extends PmsiElementBase {
 
-	public PmsiTextElement(Element config) {
+	public PmsiTextElement(PmsiElementConfig config) {
 		super(config);
 	}
 

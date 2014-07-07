@@ -1,18 +1,22 @@
 package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class LineNumberPmsiLine implements IPmsiLine {
 
-	private LinkedHashMap<String, Segment> content;
+	private final ArrayList<Element> elements = new ArrayList<>(1);
+
+	public Segment matchedSegment = null;
 	
 	public LineNumberPmsiLine() {
-		content = new LinkedHashMap<>();
+		elements.set(0, new Element("linenumber", new Segment(new char[] {'0'}, 0, 1)));
 	}
 	
 	@Override
-	public boolean matches(Segment line) throws IOException {
+	public boolean matches(final Segment line) throws IOException {
+		matchedSegment = line;
 		return true;
 	}
 
@@ -22,17 +26,23 @@ public class LineNumberPmsiLine implements IPmsiLine {
 	}
 
 	@Override
-	public LinkedHashMap<String, Segment> getResults() throws IOException {
-		return content;
-	}
-
-	public void setLineNumber(Long number) {
-		String numberS = number.toString();
-		content.put("linenumber", new Segment(numberS.toCharArray(), 0, numberS.length()));
-	}
-
-	@Override
 	public String getName() {
 		return "linenumber";
 	}
+
+	@Override
+	public Segment getMatchedLine() {
+		return matchedSegment;
+	}
+
+	@Override
+	public Collection<Element> getElements() {
+		return elements;
+	}
+
+	public void setLineNumber(final Long number) {
+		final String numberToString = number.toString();
+		elements.set(0, new Element("linenumber", new Segment(numberToString.toCharArray(), 0, numberToString.length())));
+	}
+
 }
