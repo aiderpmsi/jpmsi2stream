@@ -45,4 +45,13 @@ public class LineNumberPmsiLine implements IPmsiLine {
 		elements.set(0, new Element("linenumber", new Segment(numberToString.toCharArray(), 0, numberToString.length())));
 	}
 
+	@Override
+	public String getVersion() {
+		return "lineNumber";
+	}
+	
+	public String getLine() {
+		return elements.get(0).toString();
+	}
+
 }

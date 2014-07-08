@@ -37,7 +37,7 @@ public class ParserTest {
 			try {
 				final Attributes2Impl attributes = new Attributes2Impl();
 				if (pmsiLine instanceof ConfiguredPmsiLine) {
-					attributes.addAttribute("", "version", "version", "text", ((ConfiguredPmsiLine) pmsiLine).getLineversion());
+					attributes.addAttribute("", "version", "version", "text", pmsiLine.getVersion());
 				}
 				ch.startElement("", pmsiLine.getName(), pmsiLine.getName(), attributes);
 				for (final Element element : pmsiLine.getElements()) {

@@ -48,6 +48,12 @@ public interface IPmsiLine {
 	public Collection<Element> getElements();
 
 	/**
+	 * Returns the version of this line
+	 * @return
+	 */
+	public String getVersion();
+	
+	/**
 	 * An element in Pmsi Line
 	 * @author jpc
 	 *

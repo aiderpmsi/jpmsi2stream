@@ -3,6 +3,7 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiDateElement;
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiElement;
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiFixedElement;
@@ -107,11 +108,13 @@ public class ConfiguredPmsiLine implements IPmsiLine {
 		return elements;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	public String getLineversion() {
+	@Override
+	public String getVersion() {
 		return lineversion;
 	}
 	

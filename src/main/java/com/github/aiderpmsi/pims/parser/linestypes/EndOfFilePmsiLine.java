@@ -39,4 +39,9 @@ public class EndOfFilePmsiLine implements IPmsiLine {
 		return elements;
 	}
 
+	@Override
+	public String getVersion() {
+		return "eof";
+	}
+
 }
