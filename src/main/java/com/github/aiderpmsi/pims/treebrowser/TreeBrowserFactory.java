@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.commons.jexl2.JexlEngine;
 import org.xml.sax.InputSource;
@@ -25,51 +26,55 @@ import com.github.aiderpmsi.pims.treebrowser.actions.TreeFactory;
 import com.github.aiderpmsi.pims.treemodel.Node;
 import com.github.aiderpmsi.pims.treemodel.TreeContentHandler;
 
-public abstract class TreeBrowserBuilder {
+public class TreeBrowserFactory {
 
-	private String resource;
+	private final String resource;
+
+	private final Supplier<JexlEngine> jexlEngineSupplier;
+
+	private final LinkedList<ActionDefinition> actionsDefinition = new LinkedList<>();
 	
-	public TreeBrowserBuilder(String resource) {
+	public TreeBrowserFactory(final String resource, final Supplier<JexlEngine> jexlEngineSupplier) {
 		this.resource = resource;
+		this.jexlEngineSupplier = jexlEngineSupplier;
+		
+		// FILLS THE LIST OF ACTION DEFINITIONS
+		for (final Object[] dfltaction : dfltactions) {
+			addActionDefinition(new ActionDefinition(
+					(String) dfltaction[0], (String) dfltaction[1], (IActionFactory) dfltaction[2]));
+		}
+
 	}
 	
-	public Node<?> build() throws TreeBrowserException {
+	public Node<?> newTree() throws TreeBrowserException {
 		// CREATES THE JEXL ENGINE
-		JexlEngine je = getJexlEngine();
-		
-		// CREATES THE LIST OF ACTION DEFINITIONS
-		List<ActionDefinition> actionDefinitions = new LinkedList<>();
-		// BUILD IN
-		for (Object[] dfltaction : dfltactions) {
-			ActionDefinition aDef = new ActionDefinition();
-			aDef.nameSpace = (String) dfltaction[0];
-			aDef.command = (String) dfltaction[1];
-			aDef.actionFactory = (IActionFactory) dfltaction[2];
-			actionDefinitions.add(aDef);
-		}
-		// CUSTOM
-		actionDefinitions.addAll(getCustomActions());
-		
+		final JexlEngine je = jexlEngineSupplier.get();
+				
 		// CREATES THE ACTION TREE
 		try (Reader reader = Files.newBufferedReader(
 				Paths.get(this.getClass().getClassLoader().getResource(resource).toURI()), Charset.forName("UTF-8"))) {
-			Node<IAction> tree = createTree(reader, actionDefinitions, je);
-			return tree;
+			return createTree(reader, actionsDefinition, je);
 		} catch (IOException | SAXException | URISyntaxException e) {
 			throw new TreeBrowserException(e);
 		}
 	}
 
-	private Node<IAction> createTree(Reader reader, List<ActionDefinition> actionDefinitions, JexlEngine je) throws SAXException, IOException {
-		// CREATES THE CONTENTHANDLER
-		TreeContentHandler tc = new TreeContentHandler();
-		for (ActionDefinition actionDefinition : actionDefinitions) {
+	private Node<IAction> createTree(final Reader reader,
+			final List<ActionDefinition> actionDefinitions,
+			final JexlEngine je) throws SAXException, IOException {
+		// CREATES THE CONTENTHANDLER FOR TREE GENERATION
+		final TreeContentHandler tc = new TreeContentHandler();
+		
+		// SETS THE ACTIONS DEFINITION FROM LIST OF ACTION DEFINITION
+		for (final ActionDefinition actionDefinition : actionDefinitions) {
 			tc.addAction(actionDefinition.nameSpace, actionDefinition.command, actionDefinition.actionFactory);
 		}
+		
+		// SETS THE JEXLENGINE
 		tc.setEngine(je);
 		
 		// CREATES THE XML READER
-		XMLReader saxReader = XMLReaderFactory.createXMLReader();
+		final XMLReader saxReader = XMLReaderFactory.createXMLReader();
         saxReader.setContentHandler(tc);
 
         // PARSES THE TREE DEFINITION
@@ -79,14 +84,21 @@ public abstract class TreeBrowserBuilder {
         return tc.getTree();
 	}
 	
-	public class ActionDefinition {
-		public String nameSpace, command;
-		public IActionFactory actionFactory;
+	public void addActionDefinition(final ActionDefinition actionDefinition) {
+		actionsDefinition.add(actionDefinition);
 	}
 	
-	protected abstract List<ActionDefinition> getCustomActions();
-	
-	protected abstract JexlEngine getJexlEngine();
+	public class ActionDefinition {
+		public final String nameSpace, command;
+		public final IActionFactory actionFactory;
+		
+		public ActionDefinition(final String nameSpace, final String command, final IActionFactory actionFactory) {
+			this.nameSpace = nameSpace;
+			this.command = command;
+			this.actionFactory = actionFactory;
+		}
+		
+	}
 	
 	/** Default actions */
 	private static final Object[][] dfltactions = {

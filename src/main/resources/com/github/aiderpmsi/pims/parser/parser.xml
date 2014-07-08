@@ -99,52 +99,52 @@
 		<dflt:assign var="rss116za" expr="lb.createLine('rss116za')" />
 		<dflt:assign var="eof" expr="lb.createLine('eof')" />
 
-		<dflt:execute expr="utils.writeLineNumber(lineNumber, lineNumberElement)" />
+		<dflt:execute expr="utils.handleLineNumber(lineNumber, lineNumberElement)" />
 		<dflt:assign var="lineNumber" expr="lineNumber + 1" />
 		<dflt:execute expr="utils.handleLine(rss116header)" />
 
 		<dflt:switch id="rssstart" cond="utils.isFound(rss116main)" >
 
-			<dflt:execute expr="utils.writeLineNumber(lineNumber, lineNumberElement)" />
+			<dflt:execute expr="utils.handleLineNumber(lineNumber, lineNumberElement)" />
 			<dflt:assign var="lineNumber" expr="lineNumber + 1" />
 
-			<dflt:execute expr="rss116main.writeResults(ch)" />
-			<dflt:assign var="nbda" expr="rss116main.getInt(26)" />
-			<dflt:assign var="nbdad" expr="rss116main.getInt(27)" />
-			<dflt:assign var="nbza" expr="rss116main.getInt(28)" />
+			<dflt:execute expr="utils.handleLine(rss116main)" />
+			<dflt:assign var="nbda" expr="utils.getElementLineAsInt(rss116main, 'NbDA')" />
+			<dflt:assign var="nbdad" expr="utils.getElementLineAsInt(rss116main, 'NbDAD')" />
+			<dflt:assign var="nbza" expr="utils.getElementLineAsInt(rss116main, 'NbZA')" />
 			<dflt:assign var="nbdaread" expr="0" />
 			<dflt:assign var="nbdadread" expr="0" />
 			<dflt:assign var="nbzaread" expr="0" />
 			
 			<dflt:switch id="rssda" cond="nbdaread lt nbda" >
 				<dflt:switch cond="utils.isFound(rss116da)" >
-					<dflt:execute expr="rss116da.writeResults(ch)" />
+					<dflt:execute expr="utils.handleLine(rss116da)" />
 					<dflt:assign var="nbdaread" expr="nbdaread + 1" />
 					<dflt:goto dest="rssda"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('da element', linenumber, eh)">
+				<dflt:execute expr="utils.noLineError('da element', lineNumber)">
 					<dflt:execute expr="" />
 				</dflt:execute>
 			</dflt:switch>
 
 			<dflt:switch id="rssdad" cond="nbdadread lt nbdad" >
 				<dflt:switch cond="utils.isFound(rss116dad)" >
-					<dflt:execute expr="rss116dad.writeResults(ch)" />
+					<dflt:execute expr="utils.handleLine(rss116dad)" />
 					<dflt:assign var="nbdadread" expr="nbdadread + 1" />
 					<dflt:goto dest="rssdad"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('dad element', linenumber, eh)">
+				<dflt:execute expr="utils.noLineError('dad element', lineNumber)">
 					<dflt:execute expr="" />
 				</dflt:execute>
 			</dflt:switch>
 			
 			<dflt:switch id="rssza" cond="nbzaread lt nbza" >
 				<dflt:switch cond="utils.isFound(rss116za)" >
-					<dflt:execute expr="rss116za.writeResults(ch)" />
+					<dflt:execute expr="utils.handleLine(rss116za)" />
 					<dflt:assign var="nbzaread" expr="nbzaread + 1" />
 					<dflt:goto dest="rssza"/>
 				</dflt:switch>
-				<dflt:execute expr="utils.noLineError('za element', linenumber, eh)">
+				<dflt:execute expr="utils.noLineError('za element', lineNumber)">
 					<dflt:execute expr="" />
 				</dflt:execute>
 			</dflt:switch>
@@ -155,15 +155,15 @@
 		</dflt:switch>
 
 		<dflt:switch cond="utils.isFound(eof)" >
-			<dflt:execute expr="eof.writeResults(ch)" />
+			<dflt:execute expr="utils.handleLine(eof)" />
 		</dflt:switch>
 
-		<dflt:execute expr="utils.noLineError('rss116 element', linenumber, eh)">
+		<dflt:execute expr="utils.noLineError('rss116 element', lineNumber)">
 			<dflt:execute expr="" />
 		</dflt:execute>
 
 	</dflt:switch>
-	<dflt:execute expr="utils.noHeaderError(linenumber, eh)">
+	<dflt:execute expr="utils.noHeaderError(linenumber)">
 		<dflt:execute expr="" />
 	</dflt:execute>
 

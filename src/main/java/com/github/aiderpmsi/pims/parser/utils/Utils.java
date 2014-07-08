@@ -18,7 +18,7 @@ public class Utils {
 	
 	@FunctionalInterface
 	public interface ErrorHandler {
-		public void error(final String msg, final long line);
+		public void error(final String msg, final long line) throws IOException;
 	}
 
 	private final LineHandler lineHandler;
@@ -33,11 +33,11 @@ public class Utils {
 		this.erh = erh;
 	}
 
-	public void noLineError(final String error, final long numLine) {
+	public void noLineError(final String error, final long numLine) throws IOException {
 		erh.error(error + " were attended but not found", numLine);
 	}
 	
-	public void noHeaderError(final long numLine) {
+	public void noHeaderError(final long numLine) throws IOException {
 		erh.error("No header found", numLine);
 	}
 	
@@ -56,7 +56,7 @@ public class Utils {
 			return false;
 		} else if (pmsiLine instanceof ConfiguredPmsiLine) {
 			final ConfiguredPmsiLine cPmsiLine = (ConfiguredPmsiLine) pmsiLine;
-			if (mbr.readLine().length() < cPmsiLine.getLineSize())
+			if (mbr.readLine() == null || mbr.readLine().length() < cPmsiLine.getLineSize())
 				return false;
 			else {
 				final Segment sgt = new Segment(mbr.readLine().toCharArray(), 0, cPmsiLine.getLineSize());

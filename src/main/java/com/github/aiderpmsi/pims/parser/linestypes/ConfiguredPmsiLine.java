@@ -3,7 +3,6 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiDateElement;
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiElement;
 import com.github.aiderpmsi.pims.parser.linestypes.elements.PmsiFixedElement;
@@ -53,6 +52,7 @@ public class ConfiguredPmsiLine implements IPmsiLine {
 			} else {
 				throw new RuntimeException(config.type + "  type is unknown in " + getClass().getSimpleName());
 			}
+			elements.add(new Element(element.getName(), null));
 			elementsConfig.add(element);
 			calculatedMatchLength += element.getSize();
 		}
@@ -69,7 +69,7 @@ public class ConfiguredPmsiLine implements IPmsiLine {
 		}
 		
 		// RESETS THE MATCHED ELEMENTS AND THE MATCHED LINE
-		elements.clear();
+		elements.replaceAll((listElement) -> new Element(listElement.getName(), null));
 		segment = line;
 
 		// TRY TO MATCH
@@ -81,7 +81,7 @@ public class ConfiguredPmsiLine implements IPmsiLine {
 			
 			// IF READED ELEMENT DOESN'T CORRESPOND, CLEAR THE LINE AND RETURN FALSE
 			if (!element.validate()) {
-				elements.clear();
+				elements.replaceAll((listElement) -> new Element(listElement.getName(), null));
 				segment = null;
 				return false;
 			} else {

@@ -3,8 +3,6 @@ package com.github.aiderpmsi.pims.parser.utils;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.MapContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -12,63 +10,66 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.Attributes2Impl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.LineBuilder;
 import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
-import com.github.aiderpmsi.pims.parser.utils.Utils.LineHandler;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class XmlParser extends XMLFilterImpl {
 
-	private Node<?> tree;
+	private final Node<?> tree;
 
-	private String type;
+	private final String type;
 	
-	private LineConfDictionary dico;
+	private final LineConfDictionary dico;
+
+	private final XmlLineHandler xmlLineHandler;
+	
+	private final XmlErrorHandler xmlErrorHandler;
 		
-	private LineHandler lineWriter = null;
-	
-	public XmlParser(Node<?> tree, LineConfDictionary dico, String type) throws TreeBrowserException {
+	public XmlParser(
+			final Node<?> tree,
+			final LineConfDictionary dico,
+			final String type,
+			final XmlLineHandler xmlLineHandler,
+			final XmlErrorHandler xmlErrorHandler) throws TreeBrowserException {
 		this.tree = tree;
 		this.type = type;
 		this.dico = dico;
+		this.xmlLineHandler = xmlLineHandler;
+		this.xmlErrorHandler = xmlErrorHandler;
 	}
 
 	@Override
-	public void parse(InputSource input) throws SAXException, IOException {
+	public void parse(final InputSource input) throws SAXException, IOException {
 
 		// THIS WORKS ONLY ON CHARACTER STREAMS
 		if (input.getCharacterStream() == null)
 			throw new IOException("No CharacterStream on input");
-		else if (lineWriter == null)
-			throw new IOException("Line Writer is null");
 
-		// CREATES THE VARS MAP
-		MemoryBufferedReader mbr = new MemoryBufferedReader(input.getCharacterStream());
-		ContentHandler ch = getContentHandler();
-		ErrorHandler eh = getErrorHandler();
-		HashMap<String, Object> context = new HashMap<>();
+		// CREATES THE MEMORYBUFFERED READER (KEEPS IN MEMORY THE LAST READING LINE AND CONSUMES ONLY EXPLICITELY CHARACTERS)
+		final MemoryBufferedReader mbr = new MemoryBufferedReader(input.getCharacterStream());
+
+		// SETS THE CONTEXT VARS
+		final HashMap<String, Object> context = new HashMap<>(4);
 		context.put("lb", new LineBuilder(dico));
 		context.put("br", mbr);
-		context.put("ch", ch);
-		context.put("eh", ch);
-		context.put("utils", new Utils(mbr, lineWriter, eh));
+		context.put("utils", new Utils(mbr,
+				(pmsiLine) -> xmlLineHandler.handle(pmsiLine, getContentHandler()),
+				(msg, line) -> xmlErrorHandler.handle(msg, line, getErrorHandler())));
 		context.put("start", type);
-	
-		JexlContext jc = new MapContext(context);
 
-		boolean started = false;
+		// CREATES THE TREE BROWSER
+		final TreeBrowser tb = new TreeBrowser(tree, context);
+
 		try {
 			getContentHandler().startDocument();
-			started = true;
 
 			getContentHandler().startElement("", "root", "root", new Attributes2Impl());
 
-			// CREATES AND EXECUTES THE TREE BROWSER
-			TreeBrowser tb = new TreeBrowser(tree);
-			tb.setJc(jc);
-
+			// EXECUTES THE TREE BROWSER
 			try {
 				tb.go();
 			} catch (Exception e) {
@@ -80,8 +81,7 @@ public class XmlParser extends XMLFilterImpl {
 			
 		} finally {
 			// ALWAYS BE SURE TO SEND END DOCUMENT (CAN CLOSE STREAMS, ...)
-			if (started)
-				getContentHandler().endDocument();
+			getContentHandler().endDocument();
 		}
 	}
 
@@ -89,10 +89,13 @@ public class XmlParser extends XMLFilterImpl {
 		return type;
 	}
 
-	public void setLineWriter(LineHandler lineWriter) {
-		this.lineWriter = lineWriter;
+	public interface XmlLineHandler {
+		public void handle(final IPmsiLine pmsiLine, final ContentHandler ch) throws IOException;
 	}
-
+	
+	public interface XmlErrorHandler {
+		public void handle(final String msg, final long lineNumber, final ErrorHandler eh) throws IOException;
+	}
 }
 
 

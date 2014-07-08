@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -23,45 +22,34 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.github.aiderpmsi.pims.parser.linestypes.ConfiguredPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine;
-import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLineHandler;
-import com.github.aiderpmsi.pims.parser.linestypes.Segment;
-import com.github.aiderpmsi.pims.parser.utils.Parser;
-import com.github.aiderpmsi.pims.parser.utils.ParserFactory;
+import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine.Element;
+import com.github.aiderpmsi.pims.parser.utils.XmlParser;
+import com.github.aiderpmsi.pims.parser.utils.XmlParserFactory;
+import com.github.aiderpmsi.pims.parser.utils.XmlParser.XmlLineHandler;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class ParserTest {
 
-	public class TestLineWriter implements IPmsiLineHandler {
+	public class TestXmlLineHandler implements XmlLineHandler {
 
-		public TestLineWriter(ContentHandler ch)
-		
 		@Override
-		public void handle(IPmsiLine line) {
-			// TODO Auto-generated method stub
-			
+		public void handle(final IPmsiLine pmsiLine, final ContentHandler ch) throws IOException {
+			try {
+				final Attributes2Impl attributes = new Attributes2Impl();
+				if (pmsiLine instanceof ConfiguredPmsiLine) {
+					attributes.addAttribute("", "version", "version", "text", ((ConfiguredPmsiLine) pmsiLine).getLineversion());
+				}
+				ch.startElement("", pmsiLine.getName(), pmsiLine.getName(), attributes);
+				for (final Element element : pmsiLine.getElements()) {
+					ch.startElement("", element.getName(), element.getName(), new Attributes2Impl());
+					ch.characters(element.getElement().sequence, element.getElement().start, element.getElement().count);
+					ch.endElement("", element.getName(), element.getName());
+				}
+			} catch (SAXException e) {
+				throw new IOException(e);
+			}
 		}
-		
 	}
-	
-	
-	LineWriter lineWriter = (IPmsiLine pmsiLine, ContentHandler ch) -> {
-		try {
-			Attributes2Impl attributes = new Attributes2Impl();
-			if (pmsiLine instanceof ConfiguredPmsiLine) {
-				attributes.addAttribute("", "version", "version", "text", ((ConfiguredPmsiLine) pmsiLine).getLineversion());
-			}
-			ch.startElement("", pmsiLine.getName(), pmsiLine.getName(), attributes);
-			for (Entry<String, Segment> entry : pmsiLine.getResults().entrySet()) {
-				ch.startElement("", entry.getKey(), entry.getKey(), new Attributes2Impl());
-				ch.characters(entry.getValue().sequence, entry.getValue().start, entry.getValue().count);
-				ch.endElement("", entry.getKey(), entry.getKey());
-			}
-		} catch (SAXException e) {
-			throw new IOException(e);
-		}
-		
-	};
-
 	
 	public class TestEh implements ErrorHandler {
 
@@ -92,7 +80,7 @@ public class ParserTest {
 		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
-			if (elements.get(elements.size() - 1).equals("numline")) {
+			if (elements.get(elements.size() - 1).equals("linenumber")) {
 				contentBuffer.append(ch, start, length);
 			}
 		}
@@ -104,7 +92,7 @@ public class ParserTest {
 		@Override
 		public void endElement(String uri, String localName, String qName)
 				throws SAXException {
-			if (elements.get(elements.size() - 1).equals("numline")) {
+			if (elements.get(elements.size() - 1).equals("linenumber")) {
 				lastLineNumber = contentBuffer.toString();
 			}
 		}
@@ -168,16 +156,22 @@ public class ParserTest {
     			+ "1328Z04Z 116000123456789016131709              302000259           150903    150819521RES1  040320138 040320138 30110000000        010000001Z491            000                                 04032013JVJF00801       01\n"
     			+ "1328Z04Z 116000123456789016131711              302000261           150905    150819521RES1  080320138 080320138 30110000000        010000001Z491            000                                 08032013JVJF00801       01";
 
-    	ParserFactory pf = new ParserFactory();
+    	XmlParserFactory pf = new XmlParserFactory();
     	
-    	Parser p = pf.newParser("rssheader");
-
+    	XmlParser p = pf.newParser("rssHeader",
+    			new TestXmlLineHandler(),
+    			(msg, lineNumber, eh) -> {
+    				try {
+						eh.error(new SAXParseException(msg, "pims", "pims", (int)lineNumber, 0));
+					} catch (SAXException e) {
+						throw new IOException(e);
+					}	
+    			});
+    	
     	TestCh ch = new TestCh();
     	p.setContentHandler(ch);
     	TestEh eh = new TestEh();
     	p.setErrorHandler(eh);
-
-    	p.setLineWriter(lineWriter);
 
     	p.parse(new InputSource(new StringReader(rss)));
 
@@ -210,19 +204,25 @@ public class ParserTest {
     			+ "C78001731409027               25312302230166700030213002919796431012013B    0100690004000002700018631000001863000186300000000001863PAI"
     			+ "L78001731409027               2531230223016670003021300291979603012013011104    03012013011109    03012013019005    03012013019105    0101190000        ";
 
-    	ParserFactory pf = new ParserFactory();
+    	XmlParserFactory pf = new XmlParserFactory();
     	
-    	Parser p = pf.newParser("rsfheader");
-
+    	XmlParser p = pf.newParser("rsfHeader",
+    	    			new TestXmlLineHandler(),
+    	    			(msg, lineNumber, eh) -> {
+    	    				try {
+    							eh.error(new SAXParseException(msg, "pims", "pims", (int)lineNumber, 0));
+    						} catch (SAXException e) {
+    							throw new IOException(e);
+    						}	
+    	    			});
+    	
     	TestCh ch = new TestCh();
     	p.setContentHandler(ch);
     	TestEh eh = new TestEh();
     	p.setErrorHandler(eh);
 
-    	p.setLineWriter(lineWriter);
-
     	p.parse(new InputSource(new StringReader(rsf)));
-    	
+
     	Assert.assertEquals(0, eh.numerrors);
     	Assert.assertEquals(3, Collections.frequency(ch.elements, "rsfa"));
     	Assert.assertEquals(5, Collections.frequency(ch.elements, "rsfb"));
@@ -251,17 +251,23 @@ public class ParserTest {
     			+ "C78001731409027               25312302230166700030213002919796431012013B    0100690004000002700018631000001863000186300000000001863PAI"
     			+ "L78001731409027               2531230223016670003021300291979603012013011104    03012013011109    03012013019005    03012013019105    0101190000        ";
 
-    	ParserFactory pf = new ParserFactory();
-    	
+    	XmlParserFactory pf = new XmlParserFactory();
+    	    	
     	DefaultHandler2 ch = new DefaultHandler2();
     	for (int i = 0 ; i < 10000 ; i++) {
-	    	Parser p = pf.newParser("rsfheader");
+    		XmlParser p = pf.newParser("rsfHeader",
+    				(line, ch2) -> {},
+	    			(msg, lineNumber, eh) -> {
+	    				try {
+							eh.error(new SAXParseException(msg, "pims", "pims", (int)lineNumber, 0));
+						} catch (SAXException e) {
+							throw new IOException(e);
+						}	
+	    			});
 	
 	    	p.setContentHandler(ch);
 	    	p.setErrorHandler(ch);
 	
-	    	p.setLineWriter(lineWriter);
-
 	    	p.parse(new InputSource(new StringReader(rsf)));
     	}
     	

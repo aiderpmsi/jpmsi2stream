@@ -27,15 +27,30 @@ public class Segment implements CharSequence {
 		return new Segment(sequence, this.start + start, this.start + end);
 	}
 	
-	public boolean equals(Segment segt) {
-		if (count != segt.count)
+	@Override
+	public String toString() {
+		return new String(sequence, start, count);
+	}
+	
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null) {
 			return false;
-		else {
-			for (int i = 0 ; i < this.count ; i++) {
-				if (sequence[i + start] != segt.sequence[i + segt.start])
-					return false;
-			}
-			return true;
-		}
+		} else if (obj == this) {
+            return true;
+        } else if (obj instanceof Segment) {
+        	final Segment segt = (Segment) obj;
+        	if (count != segt.count)
+        		return false;
+        	else {
+        		for (int i = 0 ; i < this.count ; i++) {
+        			if (sequence[i + start] != segt.sequence[i + segt.start])
+        				return false;
+        		}
+        		return true;
+        	}
+        } else {
+        	return false;
+        }
 	}
 }

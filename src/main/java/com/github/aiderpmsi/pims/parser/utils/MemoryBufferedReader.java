@@ -16,9 +16,10 @@ public class MemoryBufferedReader extends BufferedReader {
 		super(in, sz);
 	}
 
-	public String getLine() throws IOException {
+	@Override
+	public String readLine() throws IOException {
 		if (readed == null || readed.length() == 0) {
-			readed = readLine();
+			readed = super.readLine();
 		}
 		return readed;
 	}
@@ -30,7 +31,8 @@ public class MemoryBufferedReader extends BufferedReader {
 	 * @param nbElts
 	 */
 	public void consume(int nbElts) {
-		readed = readed.substring(nbElts);
+		if (readed != null)
+			readed = readed.substring(nbElts);
 	}
 	
 }

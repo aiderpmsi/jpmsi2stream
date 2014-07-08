@@ -11,7 +11,7 @@ public class LineNumberPmsiLine implements IPmsiLine {
 	public Segment matchedSegment = null;
 	
 	public LineNumberPmsiLine() {
-		elements.set(0, new Element("linenumber", new Segment(new char[] {'0'}, 0, 1)));
+		elements.add(new Element("linenumber", new Segment(new char[] {'0'}, 0, 1)));
 	}
 	
 	@Override
