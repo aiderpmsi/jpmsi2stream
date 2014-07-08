@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.xml.sax.ContentHandler;
@@ -13,6 +14,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import com.github.aiderpmsi.pims.parser.linestypes.IPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.LineBuilder;
 import com.github.aiderpmsi.pims.parser.linestypes.LineConfDictionary;
+import com.github.aiderpmsi.pims.parser.utils.Utils.LineHandler;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowser;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treemodel.Node;
@@ -56,8 +58,9 @@ public class XmlParser extends XMLFilterImpl {
 		final HashMap<String, Object> context = new HashMap<>(4);
 		context.put("lb", new LineBuilder(dico));
 		context.put("br", mbr);
+		LineHandler lh = (pmsiLine) -> xmlLineHandler.handle(pmsiLine, getContentHandler());
 		context.put("utils", new Utils(mbr,
-				(pmsiLine) -> xmlLineHandler.handle(pmsiLine, getContentHandler()),
+				Arrays.asList(lh),
 				(msg, line) -> xmlErrorHandler.handle(msg, line, getErrorHandler())));
 		context.put("start", type);
 

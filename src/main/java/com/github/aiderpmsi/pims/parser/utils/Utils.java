@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import com.github.aiderpmsi.pims.parser.linestypes.ConfiguredPmsiLine;
 import com.github.aiderpmsi.pims.parser.linestypes.EndOfFilePmsiLine;
@@ -21,14 +22,14 @@ public class Utils {
 		public void error(final String msg, final long line) throws IOException;
 	}
 
-	private final LineHandler lineHandler;
+	private final Collection<LineHandler> lineHandlers;
 	
 	private final MemoryBufferedReader mbr;
 
 	private final ErrorHandler erh;
 	
-	public Utils(final MemoryBufferedReader mbr, final LineHandler lineWriter, final ErrorHandler erh) {
-		this.lineHandler = lineWriter;
+	public Utils(final MemoryBufferedReader mbr, final Collection<LineHandler> lineHandlers, final ErrorHandler erh) {
+		this.lineHandlers = lineHandlers;
 		this.mbr = mbr;
 		this.erh = erh;
 	}
@@ -43,7 +44,8 @@ public class Utils {
 	
 	public void handleLineNumber(final long lineNumber, final LineNumberPmsiLine lineNumberPmsiLine) throws IOException {
 		lineNumberPmsiLine.setLineNumber(lineNumber);
-		lineHandler.handle(lineNumberPmsiLine);
+		for (final LineHandler lineHandler : lineHandlers)
+			lineHandler.handle(lineNumberPmsiLine);
 	}
 	
 	public boolean isFound(final IPmsiLine pmsiLine) throws IOException {
@@ -68,14 +70,24 @@ public class Utils {
 	}
 
 	public void handleLine(final IPmsiLine pmsiLine) throws IOException {
-		lineHandler.handle(pmsiLine);
+		for (final LineHandler lineHandler : lineHandlers)
+			lineHandler.handle(pmsiLine);
 		mbr.consume(pmsiLine.getLineSize());
 	}
 	
-	public Integer getElementLineAsInt(final IPmsiLine pmsiLine, String elementName) {
+	public static Integer getElementLineAsInt(final IPmsiLine pmsiLine, String elementName) {
 		for (final Element element : pmsiLine.getElements()) {
 			if (element.getName().equals(elementName)) {
 				return Integer.parseInt(element.getElement().toString());
+			}
+		}
+		return null;
+	}
+
+	public static String getElementLineAsString(final IPmsiLine pmsiLine, String elementName) {
+		for (final Element element : pmsiLine.getElements()) {
+			if (element.getName().equals(elementName)) {
+				return element.getElement().toString();
 			}
 		}
 		return null;

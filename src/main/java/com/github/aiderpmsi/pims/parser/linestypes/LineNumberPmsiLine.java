@@ -51,7 +51,7 @@ public class LineNumberPmsiLine implements IPmsiLine {
 	}
 	
 	public String getLine() {
-		return elements.get(0).toString();
+		return elements.get(0).getElement().toString();
 	}
 
 }

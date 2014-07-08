@@ -1,6 +1,7 @@
 package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.commons.jexl2.JexlEngine;
 
@@ -26,9 +27,9 @@ public class SimpleParserFactory {
 		dico = new LineConfDictionary();
 	}
 	
-	public SimpleParser newParser(final String type, final LineHandler lineHandler, final ErrorHandler errorHandler) throws IOException {
+	public SimpleParser newParser(final String type, final Collection<LineHandler> lineHandlers, final ErrorHandler errorHandler) throws IOException {
 		try {
-			return new SimpleParser(tree, dico, type, lineHandler, errorHandler);
+			return new SimpleParser(tree, dico, type, lineHandlers, errorHandler);
 		} catch (TreeBrowserException e) {
 			throw new IOException(e);
 		}

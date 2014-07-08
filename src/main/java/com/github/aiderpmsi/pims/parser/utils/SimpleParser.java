@@ -2,6 +2,7 @@ package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.github.aiderpmsi.pims.parser.linestypes.LineBuilder;
@@ -20,7 +21,7 @@ public class SimpleParser {
 	
 	private final LineConfDictionary dico;
 
-	private final LineHandler lineHandler;
+	private final Collection<LineHandler> lineHandlers;
 	
 	private final ErrorHandler errorHandler;
 	
@@ -28,12 +29,12 @@ public class SimpleParser {
 			final Node<?> tree,
 			final LineConfDictionary dico,
 			final String type,
-			final LineHandler lineHandler,
+			final Collection<LineHandler> lineHandlers,
 			final ErrorHandler errorHandler) throws TreeBrowserException {
 		this.tree = tree;
 		this.type = type;
 		this.dico = dico;
-		this.lineHandler = lineHandler;
+		this.lineHandlers = lineHandlers;
 		this.errorHandler = errorHandler;
 	}
 
@@ -44,7 +45,7 @@ public class SimpleParser {
 		final HashMap<String, Object> context = new HashMap<>(4);
 		context.put("lb", new LineBuilder(dico));
 		context.put("br", mbr);
-		context.put("utils", new Utils(mbr, lineHandler, errorHandler));
+		context.put("utils", new Utils(mbr, lineHandlers, errorHandler));
 		context.put("start", type);
 	
 		// CREATES AND EXECUTES THE TREE BROWSER
