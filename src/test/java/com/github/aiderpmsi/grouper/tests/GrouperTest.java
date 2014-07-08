@@ -1,5 +1,6 @@
 package com.github.aiderpmsi.grouper.tests;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import com.github.aiderpmsi.pims.grouper.model.RssContent;
 import com.github.aiderpmsi.pims.grouper.utils.Grouper;
+import com.github.aiderpmsi.pims.grouper.utils.GrouperFactory;
 import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public class GrouperTest {
@@ -17,9 +19,10 @@ public class GrouperTest {
 	private Grouper gp;
 	
     @Before
-    public void setUp() throws TreeBrowserException {
-    	gp = new Grouper();
-   }
+    public void setUp() throws IOException, TreeBrowserException {
+    	GrouperFactory gpf = new GrouperFactory();
+    	gp = gpf.newGrouper();
+    }
  
     @After
     public void tearDown() {

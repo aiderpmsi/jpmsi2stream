@@ -18,6 +18,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
+import com.github.aiderpmsi.pims.treebrowser.actions.ActionDefinition;
 import com.github.aiderpmsi.pims.treebrowser.actions.AssignFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.ExecuteFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.GotoFactory;
@@ -86,18 +87,6 @@ public class TreeBrowserFactory {
 	
 	public void addActionDefinition(final ActionDefinition actionDefinition) {
 		actionsDefinition.add(actionDefinition);
-	}
-	
-	public class ActionDefinition {
-		public final String nameSpace, command;
-		public final IActionFactory actionFactory;
-		
-		public ActionDefinition(final String nameSpace, final String command, final IActionFactory actionFactory) {
-			this.nameSpace = nameSpace;
-			this.command = command;
-			this.actionFactory = actionFactory;
-		}
-		
 	}
 	
 	/** Default actions */
