@@ -145,8 +145,6 @@ public class ParserTest {
     public void tearDown() {
     	// DO NOTHING
     }
- 
-    
     
     @Test
     public void testrss() throws Exception {
@@ -183,7 +181,7 @@ public class ParserTest {
     	Assert.assertEquals(2, actes);
     	
     }
-    
+
     @Test
     public void testrsf() throws Exception {
     	String rsf =

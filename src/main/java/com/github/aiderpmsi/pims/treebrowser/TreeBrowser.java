@@ -29,7 +29,15 @@ public class TreeBrowser {
 		try {
 			while (node != null) {
 				if (node.getContent() instanceof IAction) {
-					node = ((IAction) node.getContent()).execute(node, jc);
+					try {
+						node = ((IAction) node.getContent()).execute(node, jc);
+					} catch (Throwable e) {
+						if (e instanceof TreeBrowserException || e instanceof InterruptedException) {
+							// DO NOTHING
+						} else {
+							throw new TreeBrowserException(e);
+						}
+					}
 					// TEST IF THE OPERATION HAS BEEN INTERRUPTED
 					synchronized(this) {
 						if (Thread.interrupted())
