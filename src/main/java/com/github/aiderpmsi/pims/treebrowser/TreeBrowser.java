@@ -1,6 +1,5 @@
 package com.github.aiderpmsi.pims.treebrowser;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.commons.jexl2.JexlContext;
@@ -25,21 +24,29 @@ public class TreeBrowser {
 		this.jc = new MapContext(vars);
 	}
 	
-	public void go() throws Exception {
+	public void go() throws TreeBrowserException, InterruptedException {
 		Node<?> node = root;
-		while (node != null) {
-			if (node.getContent() instanceof IAction) {
-				node = ((IAction) node.getContent()).execute(node, jc);
-				// TEST IF THE OPERATION HAS BEEN INTERRUPTED
-				synchronized(this) {
-					if (interrupted) {
-						interrupted = false;
-						break;
+		try {
+			while (node != null) {
+				if (node.getContent() instanceof IAction) {
+					node = ((IAction) node.getContent()).execute(node, jc);
+					// TEST IF THE OPERATION HAS BEEN INTERRUPTED
+					synchronized(this) {
+						if (Thread.interrupted())
+							interrupted = true;
+						if (interrupted) {
+							interrupted = false;
+							throw new InterruptedException();
+						}
 					}
+				} else {
+					throw new TreeBrowserException("Node is not an action node");
 				}
-			} else {
-				throw new IOException("Node is not an action node");
 			}
+		} catch (InterruptedException | TreeBrowserException e) {
+			throw e;
+		} catch (Throwable e) {
+			throw new TreeBrowserException(e);
 		}
 	}    
 	

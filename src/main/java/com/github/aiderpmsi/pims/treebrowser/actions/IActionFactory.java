@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 @FunctionalInterface
@@ -18,12 +19,12 @@ public interface IActionFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public IAction createAction(final JexlEngine je, final Collection<Argument> arguments) throws IOException;
+	public IAction createAction(final JexlEngine je, final Collection<Argument> arguments) throws TreeBrowserException;
 	
 	@FunctionalInterface
 	public interface IAction {
 
-		public Node<?> execute(final Node<?> node, final JexlContext jc) throws IOException;
+		public Node<?> execute(final Node<?> node, final JexlContext jc) throws TreeBrowserException;
 
 	}
 

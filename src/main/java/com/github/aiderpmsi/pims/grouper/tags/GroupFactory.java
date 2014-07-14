@@ -1,10 +1,11 @@
 package com.github.aiderpmsi.pims.grouper.tags;
 
-import java.io.IOException;
 import java.util.HashMap;
+
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treebrowser.actions.SimpleActionFactory;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
@@ -37,7 +38,7 @@ public class GroupFactory extends SimpleActionFactory {
 
 	@Override
 	public final IAction createSimpleAction(final JexlEngine je,
-			final HashMap<String, String> arguments) throws IOException {
+			final HashMap<String, String> arguments) throws TreeBrowserException {
 
 		
 		return (final Node<?> node, final JexlContext jc) -> {

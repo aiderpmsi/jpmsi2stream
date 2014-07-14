@@ -1,11 +1,12 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
-import java.io.IOException;
 import java.util.HashMap;
+
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
 
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 import com.github.aiderpmsi.pims.treemodel.Node;
 
 public class SwitchFactory extends SimpleActionFactory {
@@ -34,14 +35,14 @@ public class SwitchFactory extends SimpleActionFactory {
 
 	@Override
 	public final IAction createSimpleAction(final JexlEngine je,
-			final HashMap<String, String> arguments) throws IOException {
+			final HashMap<String, String> arguments) throws TreeBrowserException {
 
 		return new IAction() {
 			
 			private Expression e = null; 
 
 			@Override
-			public final Node<?> execute(final Node<?> node, final JexlContext jc) throws IOException {
+			public final Node<?> execute(final Node<?> node, final JexlContext jc) throws TreeBrowserException {
 				if (e == null) {
 					e = je.createExpression(arguments.get("cond"));
 				}
@@ -55,7 +56,7 @@ public class SwitchFactory extends SimpleActionFactory {
 		        	else
 		        		return (Node<?>) node.nextSibling;
 		        } else {
-		        	throw new IOException(result == null ? "Null" : result.toString() + " is not of boolean type");
+		        	throw new TreeBrowserException(result == null ? "Null" : result.toString() + " is not of boolean type");
 		        }
 			}
 		};

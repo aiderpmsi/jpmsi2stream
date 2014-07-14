@@ -17,7 +17,7 @@ public interface IPmsiLine {
 
 	/**
 	 * Gets the declared name of this line
-	 * @return
+	 * @return Name of this line (multiple version of a same line name can exist)
 	 */
 	public String getName();
 	

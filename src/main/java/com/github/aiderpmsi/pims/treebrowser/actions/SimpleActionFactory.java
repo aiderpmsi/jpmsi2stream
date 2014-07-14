@@ -1,9 +1,11 @@
 package com.github.aiderpmsi.pims.treebrowser.actions;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+
 import org.apache.commons.jexl2.JexlEngine;
+
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
 
 public abstract class SimpleActionFactory implements IActionFactory {
 
@@ -21,7 +23,7 @@ public abstract class SimpleActionFactory implements IActionFactory {
 	
 	@Override
 	public final IAction createAction(final JexlEngine je, final Collection<Argument> arguments)
-			throws IOException {
+			throws TreeBrowserException {
 		// 1 - VALIDATES THE ARGUMENTS BY PUTTING THEM IN A NEW HASHMAP
 		@SuppressWarnings("unchecked")
 		final HashMap<String, String> filledArguments = (HashMap<String, String>) defaultArguments.clone();
@@ -32,7 +34,7 @@ public abstract class SimpleActionFactory implements IActionFactory {
 		// CHECK THAT EVERY NOT NULL FIELD IS NOT NULL
 		for (Field field : fields) {
 			if (field.isMandatory() && filledArguments.get(field.toString()) == null) {
-				throw new IOException("Arguments do not validate : field " + field.toString() + " is mandatory");
+				throw new TreeBrowserException("Arguments do not validate : field " + field.toString() + " is mandatory");
 			}
 		}
 		
@@ -43,7 +45,7 @@ public abstract class SimpleActionFactory implements IActionFactory {
 	
 	public abstract IAction createSimpleAction(
 			final JexlEngine je,
-			final HashMap<String, String> arguments) throws IOException;
+			final HashMap<String, String> arguments) throws TreeBrowserException;
 
 	protected interface Field {
 		public String getDefaultValue();

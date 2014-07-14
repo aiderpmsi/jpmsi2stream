@@ -1,6 +1,5 @@
 package com.github.aiderpmsi.pims.treemodel;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -10,9 +9,10 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import com.github.aiderpmsi.pims.treebrowser.TreeBrowserException;
+import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.Argument;
 import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory.IAction;
-import com.github.aiderpmsi.pims.treebrowser.actions.IActionFactory;
 
 public class TreeContentHandler implements ContentHandler {
 
@@ -134,7 +134,7 @@ public class TreeContentHandler implements ContentHandler {
 		// GETS THE CORRESPONDING ACTION
 		try {
 			newNode.setContent(actionFactory.createAction(je, arguments));
-		} catch (IOException e) {
+		} catch (TreeBrowserException e) {
 			throw new SAXException(e);
 		}
 				
