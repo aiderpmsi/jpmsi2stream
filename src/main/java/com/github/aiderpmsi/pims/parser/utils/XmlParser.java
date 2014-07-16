@@ -52,7 +52,7 @@ public class XmlParser extends XMLFilterImpl {
 			throw new IOException("No CharacterStream on input");
 
 		// CREATES THE MEMORYBUFFERED READER (KEEPS IN MEMORY THE LAST READING LINE AND CONSUMES ONLY EXPLICITELY CHARACTERS)
-		final MemoryBufferedReader mbr = new MemoryBufferedReader(input.getCharacterStream());
+		final PimsParserFromReader mbr = new PimsParserFromReader(input.getCharacterStream());
 
 		// SETS THE CONTEXT VARS
 		final HashMap<String, Object> context = new HashMap<>(4);

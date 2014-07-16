@@ -13,22 +13,22 @@ import com.github.aiderpmsi.pims.parser.linestypes.Segment;
 public class Utils {
 	
 	@FunctionalInterface
-	public interface LineHandler {
+	public static interface LineHandler {
 		public void handle(final IPmsiLine pmsiLine) throws IOException;
 	}
 	
 	@FunctionalInterface
-	public interface ErrorHandler {
+	public static interface ErrorHandler {
 		public void error(final String msg, final long line) throws IOException;
 	}
 
 	private final Collection<LineHandler> lineHandlers;
 	
-	private final MemoryBufferedReader mbr;
+	private final PimsParserSupplier mbr;
 
 	private final ErrorHandler erh;
 	
-	public Utils(final MemoryBufferedReader mbr, final Collection<LineHandler> lineHandlers, final ErrorHandler erh) {
+	public Utils(final PimsParserSupplier mbr, final Collection<LineHandler> lineHandlers, final ErrorHandler erh) {
 		this.lineHandlers = lineHandlers;
 		this.mbr = mbr;
 		this.erh = erh;

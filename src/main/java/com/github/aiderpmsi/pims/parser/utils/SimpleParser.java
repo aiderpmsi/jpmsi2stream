@@ -1,7 +1,6 @@
 package com.github.aiderpmsi.pims.parser.utils;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -38,14 +37,12 @@ public class SimpleParser {
 		this.errorHandler = errorHandler;
 	}
 
-	public void parse(final Reader reader) throws IOException {
-		// CREATES THE MEMORYBUFFERED READER (KEEPS IN MEMORY THE LAST READING LINE AND CONSUMES ONLY EXPLICITELY CHARACTERS)
-		final MemoryBufferedReader mbr = new MemoryBufferedReader(reader);
+	public void parse(final PimsParserSupplier supplier) throws IOException {
 
 		final HashMap<String, Object> context = new HashMap<>(4);
 		context.put("lb", new LineBuilder(dico));
-		context.put("br", mbr);
-		context.put("utils", new Utils(mbr, lineHandlers, errorHandler));
+		context.put("br", supplier);
+		context.put("utils", new Utils(supplier, lineHandlers, errorHandler));
 		context.put("start", type);
 	
 		// CREATES AND EXECUTES THE TREE BROWSER

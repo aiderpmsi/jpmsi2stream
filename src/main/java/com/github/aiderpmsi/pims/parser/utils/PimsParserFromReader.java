@@ -4,15 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-public class MemoryBufferedReader extends BufferedReader {
+public class PimsParserFromReader extends BufferedReader implements PimsParserSupplier {
 
 	private String readed = "";
 	
-	public MemoryBufferedReader(Reader in) {
+	public PimsParserFromReader(Reader in) {
 		super(in);
 	}
 
-	public MemoryBufferedReader(Reader in, int sz) {
+	public PimsParserFromReader(Reader in, int sz) {
 		super(in, sz);
 	}
 
@@ -30,6 +30,7 @@ public class MemoryBufferedReader extends BufferedReader {
 	 * seule la ligne actuelle est effacée, pas les lignes suivantes
 	 * @param nbElts
 	 */
+	@Override
 	public void consume(int nbElts) {
 		if (readed != null)
 			readed = readed.substring(nbElts);
