@@ -1,11 +1,10 @@
 package com.github.aiderpmsi.pims.treebrowser;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -52,10 +51,10 @@ public class TreeBrowserFactory {
 		final JexlEngine je = jexlEngineSupplier.get();
 				
 		// CREATES THE ACTION TREE
-		try (Reader reader = Files.newBufferedReader(
-				Paths.get(this.getClass().getClassLoader().getResource(resource).toURI()), Charset.forName("UTF-8"))) {
+		try (Reader reader = new BufferedReader(new InputStreamReader(
+				this.getClass().getClassLoader().getResourceAsStream(resource), Charset.forName("UTF-8")))) {
 			return createTree(reader, actionsDefinition, je);
-		} catch (IOException | SAXException | URISyntaxException e) {
+		} catch (IOException | SAXException e) {
 			throw new TreeBrowserException(e);
 		}
 	}

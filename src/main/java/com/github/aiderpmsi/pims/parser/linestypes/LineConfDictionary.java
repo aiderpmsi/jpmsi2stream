@@ -2,11 +2,10 @@ package com.github.aiderpmsi.pims.parser.linestypes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,19 +41,22 @@ public class LineConfDictionary {
 	
 	private LineTypeDefinition createLineType(String element) throws IOException, URISyntaxException {
 		// OPENS THE CONFIG FILE
-		Path resourcePath = Paths.get(this.getClass().getClassLoader().getResource(configPath).toURI());
-		try (BufferedReader config = Files.newBufferedReader(resourcePath, Charset.forName("UTF-8"))) {
-				
+		try (
+				InputStream is = this.getClass().getClassLoader().getResourceAsStream(configPath);
+				InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
+				BufferedReader reader = new BufferedReader(isr);
+				) {
+			
 			String line;
 			String typeLine = "id:" + element;
 
-			while ((line = config.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 				if (line.equals(typeLine)) {
 					// WE FOUND THE LINE, STORE THE LINETYPE
 					LineTypeDefinition lineConf = new LineTypeDefinition();
 						
 					// FIND TYPE
-					while ((line = config.readLine()) != null && !line.startsWith("type:")) { }
+					while ((line = reader.readLine()) != null && !line.startsWith("type:")) { }
 					// WE ARE ON THE TYPE OR ON EOF, THROW AN EXCEPTION
 					if (line == null)
 						throw new IllegalArgumentException("Type " + element + " not found in config file");
@@ -65,7 +67,7 @@ public class LineConfDictionary {
 					// THEN FOR EACH NAME, PROCESS CONTENT
 					List<PmsiElementConfig> elts = new ArrayList<>();
 					PmsiElementConfig elt = null;
-					while ((line = config.readLine()) != null) {
+					while ((line = reader.readLine()) != null) {
 						if (line.startsWith("name:")) {
 							if (elt != null) {
 								elts.add(elt);
