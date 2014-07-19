@@ -29,19 +29,19 @@ public interface IPmsiLine {
 
 	/**
 	 * Gets the number of chars needed for this kind of line
-	 * @return
+	 * @return number of chars that this line requests
 	 */
 	public int getLineSize();
 	
 	/**
 	 * Returns the last matched line
-	 * @return
+	 * @return matched part of the line
 	 * @throws IOException
 	 */
 	public Segment getMatchedLine();
 	
 	/**
-	 * 
+	 * Obtains the elements of this line, ordered by order of apparition
 	 * @return returns the ordered elements of this line
 	 * @throws IOException
 	 */
@@ -49,7 +49,7 @@ public interface IPmsiLine {
 
 	/**
 	 * Returns the version of this line
-	 * @return
+	 * @return version
 	 */
 	public String getVersion();
 	
