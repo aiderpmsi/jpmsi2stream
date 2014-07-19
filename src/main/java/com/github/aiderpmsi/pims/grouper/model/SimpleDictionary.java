@@ -2,11 +2,9 @@ package com.github.aiderpmsi.pims.grouper.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -81,34 +79,31 @@ public class SimpleDictionary {
 	 */
 	protected HashSet<String> createDefinition(String key) throws IOException {
 		// OPENS THE CONFIG FILE
-		Path origin;
-		try {
-			origin = Paths.get(getClass().getClassLoader().getResource("com/github/aiderpmsi/pims/grouper/" + type.name).toURI());
+		try (
+				InputStream is = this.getClass().getClassLoader().getResourceAsStream("com/github/aiderpmsi/pims/grouper/" + type.name);
+				InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);
+				) {
 
-			try (BufferedReader br = Files.newBufferedReader(origin, Charset.forName("UTF-8"))) {
-
-				String line;
-			
-				// READ UNTIL REACHING THE NEEDED KEY 
-				while ((line = br.readLine()) != null) {
-					// CHECK IF WE HAVE THE KEY
-					if (line.startsWith("01:") && line.subSequence(3, line.length()).equals(key)) {
-						// WE HAVE THE KEY, CREATE THE BUFFER
-						HashSet<String> def = new HashSet<>();
-						// ITERATE OVER FILE WHILE WE HAVE A VALUE
-						while ((line = br.readLine()) != null && line.startsWith("02:")) {
-							def.add(line.substring(3, line.length()));
-						}
-						// WE FINISHED, EXIT IMMEDIATELY
-						return def;
+			String line;
+		
+			// READ UNTIL REACHING THE NEEDED KEY 
+			while ((line = br.readLine()) != null) {
+				// CHECK IF WE HAVE THE KEY
+				if (line.startsWith("01:") && line.subSequence(3, line.length()).equals(key)) {
+					// WE HAVE THE KEY, CREATE THE BUFFER
+					HashSet<String> def = new HashSet<>();
+					// ITERATE OVER FILE WHILE WE HAVE A VALUE
+					while ((line = br.readLine()) != null && line.startsWith("02:")) {
+						def.add(line.substring(3, line.length()));
 					}
+					// WE FINISHED, EXIT IMMEDIATELY
+					return def;
 				}
-				
-				// IF WE ARRIVE HERE, IT MEANS THE KEY WAS NOT FOUND, THROW IOEXCEPTION
-				throw new IOException("Key " + key + " not found in " + type.name);
 			}
-		} catch (URISyntaxException e) {
-			throw new IOException(e);
+			
+			// IF WE ARRIVE HERE, IT MEANS THE KEY WAS NOT FOUND, THROW IOEXCEPTION
+			throw new IOException("Key " + key + " not found in " + type.name);
 		}
 	}
 
