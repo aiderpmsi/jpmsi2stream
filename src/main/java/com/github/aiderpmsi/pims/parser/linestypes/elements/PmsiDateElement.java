@@ -8,7 +8,7 @@ import com.github.aiderpmsi.pims.parser.model.PmsiElementConfig;
 
 public class PmsiDateElement extends PmsiElementBase {
 	
-	SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
+	private final SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy");
 	
 	public PmsiDateElement(PmsiElementConfig config) {
 		super(config);
